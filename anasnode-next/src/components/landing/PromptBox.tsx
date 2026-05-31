@@ -59,21 +59,6 @@ export function PromptBox({ onGenerate, compact }: Props) {
     return "Restaurant";
   };
 
-  if (!mounted) {
-    return (
-      <div className={`w-full ${compact ? "max-w-xl" : "max-w-2xl"} mx-auto text-left`}>
-        <div className="rounded-xl border border-border bg-card shadow-sm">
-          <textarea
-            placeholder="Describe your business in one sentence — what you sell, who you serve, what you'd like automated."
-            rows={2}
-            className="w-full resize-none bg-transparent px-4 py-3.5 text-[14px] text-foreground focus:outline-none leading-relaxed"
-            readOnly
-          />
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className={`w-full ${compact ? "max-w-xl" : "max-w-2xl"} mx-auto text-left`}>
       <div className="rounded-xl border border-border bg-card focus-within:border-foreground/30 focus-within:ring-2 focus-within:ring-foreground/5 transition-all shadow-sm">
@@ -85,54 +70,56 @@ export function PromptBox({ onGenerate, compact }: Props) {
           className="w-full resize-none bg-transparent px-4 pt-3.5 pb-2 text-[14px] text-foreground placeholder:text-muted-foreground/70 focus:outline-none leading-relaxed"
         />
         
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-3 pb-3 pt-2 border-t border-border/50">
-          <div className="flex flex-wrap items-center gap-1.5">
-            <span className="text-[10px] text-muted-foreground/60 font-mono uppercase tracking-wider">Try:</span>
-            {EXAMPLES.map((chip) => (
-              <button
-                key={chip.label}
-                type="button"
-                onClick={() => setValue(chip.text)}
-                className="text-[11px] px-2.5 py-0.5 rounded-md bg-muted text-muted-foreground hover:bg-foreground hover:text-background transition-all cursor-pointer"
-              >
-                {chip.label}
-              </button>
-            ))}
-          </div>
-
-          <button
-            onClick={handleGenerate}
-            disabled={loading || !value.trim()}
-            className="h-8 px-3.5 rounded-lg bg-foreground text-background text-[12px] font-medium flex items-center justify-center gap-1.5 hover:opacity-90 transition-all disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer shrink-0"
-          >
-            <AnimatePresence mode="wait" initial={false}>
-              {loading ? (
-                <motion.span
-                  key={stage}
-                  initial={{ opacity: 0, y: 4 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -4 }}
-                  transition={{ duration: 0.15 }}
-                  className="flex items-center gap-1.5"
+        {mounted && (
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-3 pb-3 pt-2 border-t border-border/50">
+            <div className="flex flex-wrap items-center gap-1.5">
+              <span className="text-[10px] text-muted-foreground/60 font-mono uppercase tracking-wider">Try:</span>
+              {EXAMPLES.map((chip) => (
+                <button
+                  key={chip.label}
+                  type="button"
+                  onClick={() => setValue(chip.text)}
+                  className="text-[11px] px-2.5 py-0.5 rounded-md bg-muted text-muted-foreground hover:bg-foreground hover:text-background transition-all cursor-pointer"
                 >
-                  <span className="flex gap-0.5">
-                    <span className="w-1 h-1 rounded-full bg-background animate-pulse" />
-                    <span className="w-1 h-1 rounded-full bg-background animate-pulse" style={{ animationDelay: "150ms" }} />
-                  </span>
-                  <span className="font-mono text-[11px]">{stages[stage]}</span>
-                </motion.span>
-              ) : (
-                <motion.span key="idle" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-center gap-1">
-                  <span>Generate workspace</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
-                </motion.span>
-              )}
-            </AnimatePresence>
-          </button>
-        </div>
+                  {chip.label}
+                </button>
+              ))}
+            </div>
+
+            <button
+              onClick={handleGenerate}
+              disabled={loading || !value.trim()}
+              className="h-8 px-3.5 rounded-lg bg-foreground text-background text-[12px] font-medium flex items-center justify-center gap-1.5 hover:opacity-90 transition-all disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer shrink-0"
+            >
+              <AnimatePresence mode="wait" initial={false}>
+                {loading ? (
+                  <motion.span
+                    key={stage}
+                    initial={{ opacity: 0, y: 4 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -4 }}
+                    transition={{ duration: 0.15 }}
+                    className="flex items-center gap-1.5"
+                  >
+                    <span className="flex gap-0.5">
+                      <span className="w-1 h-1 rounded-full bg-background animate-pulse" />
+                      <span className="w-1 h-1 rounded-full bg-background animate-pulse" style={{ animationDelay: "150ms" }} />
+                    </span>
+                    <span className="font-mono text-[11px]">{stages[stage]}</span>
+                  </motion.span>
+                ) : (
+                  <motion.span key="idle" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-center gap-1">
+                    <span>Generate workspace</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </motion.span>
+                )}
+              </AnimatePresence>
+            </button>
+          </div>
+        )}
       </div>
       
-      <p className="mt-2 text-[11.5px] text-muted-foreground/75 text-center">
+      <p className="mt-2.5 text-[11.5px] text-muted-foreground/75 text-center">
         Free for your first workspace. No credit card required.
       </p>
     </div>

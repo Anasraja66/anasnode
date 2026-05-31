@@ -26,14 +26,14 @@ export function PromptBox({ onGenerate, compact }: Props) {
   }, []);
 
   const stages = [
-    "Reading your business…",
-    "Drafting your WhatsApp agent…",
-    "Wiring up your CRM…",
-    "Finalizing workspace…",
+    "Reading business...",
+    "Drafting agent...",
+    "Wiring up CRM...",
+    "Done!",
   ];
 
   const handleGenerate = () => {
-    if (loading) return;
+    if (loading || !value.trim()) return;
     setLoading(true);
     setStage(0);
     const interval = setInterval(() => {
@@ -62,11 +62,11 @@ export function PromptBox({ onGenerate, compact }: Props) {
   if (!mounted) {
     return (
       <div className={`w-full ${compact ? "max-w-xl" : "max-w-2xl"} mx-auto text-left`}>
-        <div className="rounded-2xl border border-border bg-card">
+        <div className="rounded-xl border border-border bg-card shadow-sm">
           <textarea
             placeholder="Describe your business in one sentence — what you sell, who you serve, what you'd like automated."
-            rows={3}
-            className="w-full resize-none rounded-2xl bg-transparent px-4 py-3.5 text-[15px] text-foreground focus:outline-none leading-relaxed"
+            rows={2}
+            className="w-full resize-none bg-transparent px-4 py-3.5 text-[14px] text-foreground focus:outline-none leading-relaxed"
             readOnly
           />
         </div>
@@ -76,59 +76,63 @@ export function PromptBox({ onGenerate, compact }: Props) {
 
   return (
     <div className={`w-full ${compact ? "max-w-xl" : "max-w-2xl"} mx-auto text-left`}>
-      <div className="rounded-2xl border border-border bg-card focus-within:border-foreground/30 transition-colors">
+      <div className="rounded-xl border border-border bg-card focus-within:border-foreground/30 focus-within:ring-2 focus-within:ring-foreground/5 transition-all shadow-sm">
         <textarea
           value={value}
           onChange={(e) => setValue(e.target.value)}
-          placeholder="Describe your business in one sentence — what you sell, who you serve, what you'd like automated."
-          rows={3}
-          className="w-full resize-none rounded-2xl bg-transparent px-4 py-3.5 text-[15px] text-foreground placeholder:text-muted-foreground/80 focus:outline-none leading-relaxed"
+          placeholder="Describe your business in one sentence... (e.g. 'I run a dentist clinic')"
+          rows={2}
+          className="w-full resize-none bg-transparent px-4 pt-3.5 pb-2 text-[14px] text-foreground placeholder:text-muted-foreground/70 focus:outline-none leading-relaxed"
         />
-        <div className="flex flex-wrap items-center gap-1.5 px-3 pb-3 pt-1 border-t border-border/60">
-          <span className="text-[11px] text-muted-foreground/70 mr-1 font-mono uppercase tracking-wider">Try</span>
-          {EXAMPLES.map((chip) => (
-            <button
-              key={chip.label}
-              onClick={() => setValue(chip.text)}
-              className="text-[12px] px-2.5 py-1 rounded-md bg-muted text-muted-foreground hover:bg-foreground hover:text-background transition-colors"
-            >
-              {chip.label}
-            </button>
-          ))}
+        
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-3 pb-3 pt-2 border-t border-border/50">
+          <div className="flex flex-wrap items-center gap-1.5">
+            <span className="text-[10px] text-muted-foreground/60 font-mono uppercase tracking-wider">Try:</span>
+            {EXAMPLES.map((chip) => (
+              <button
+                key={chip.label}
+                type="button"
+                onClick={() => setValue(chip.text)}
+                className="text-[11px] px-2.5 py-0.5 rounded-md bg-muted text-muted-foreground hover:bg-foreground hover:text-background transition-all cursor-pointer"
+              >
+                {chip.label}
+              </button>
+            ))}
+          </div>
+
+          <button
+            onClick={handleGenerate}
+            disabled={loading || !value.trim()}
+            className="h-8 px-3.5 rounded-lg bg-foreground text-background text-[12px] font-medium flex items-center justify-center gap-1.5 hover:opacity-90 transition-all disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer shrink-0"
+          >
+            <AnimatePresence mode="wait" initial={false}>
+              {loading ? (
+                <motion.span
+                  key={stage}
+                  initial={{ opacity: 0, y: 4 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -4 }}
+                  transition={{ duration: 0.15 }}
+                  className="flex items-center gap-1.5"
+                >
+                  <span className="flex gap-0.5">
+                    <span className="w-1 h-1 rounded-full bg-background animate-pulse" />
+                    <span className="w-1 h-1 rounded-full bg-background animate-pulse" style={{ animationDelay: "150ms" }} />
+                  </span>
+                  <span className="font-mono text-[11px]">{stages[stage]}</span>
+                </motion.span>
+              ) : (
+                <motion.span key="idle" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-center gap-1">
+                  <span>Generate workspace</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </motion.span>
+              )}
+            </AnimatePresence>
+          </button>
         </div>
       </div>
-
-      <button
-        onClick={handleGenerate}
-        disabled={loading}
-        className="mt-3 w-full h-11 rounded-xl bg-primary text-primary-foreground text-[14px] font-medium flex items-center justify-center gap-2 hover:opacity-95 transition-opacity disabled:opacity-90 cursor-pointer"
-      >
-        <AnimatePresence mode="wait" initial={false}>
-          {loading ? (
-            <motion.span
-              key={stage}
-              initial={{ opacity: 0, y: 6 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -6 }}
-              transition={{ duration: 0.2 }}
-              className="flex items-center gap-2"
-            >
-              <span className="flex gap-1">
-                <span className="w-1 h-1 rounded-full bg-primary-foreground animate-bounce" style={{ animationDelay: "0ms" }} />
-                <span className="w-1 h-1 rounded-full bg-primary-foreground animate-bounce" style={{ animationDelay: "120ms" }} />
-                <span className="w-1 h-1 rounded-full bg-primary-foreground animate-bounce" style={{ animationDelay: "240ms" }} />
-              </span>
-              {stages[stage]}
-            </motion.span>
-          ) : (
-            <motion.span key="idle" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-center gap-1.5">
-              Generate workspace <ArrowRight className="w-3.5 h-3.5" />
-            </motion.span>
-          )}
-        </AnimatePresence>
-      </button>
-
-      <p className="mt-2.5 text-[12px] text-muted-foreground text-center">
+      
+      <p className="mt-2 text-[11.5px] text-muted-foreground/75 text-center">
         Free for your first workspace. No credit card required.
       </p>
     </div>

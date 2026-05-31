@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { ArrowUpRight } from "lucide-react";
 import { FadeIn, Section, SectionLabel } from "./Section";
 import Image from "next/image";
 import realEstateImg from "@/assets/industry-realestate.jpg";
@@ -98,27 +99,60 @@ export function Industries() {
         </p>
       </FadeIn>
 
-      {/* Tab pills */}
-      <div className="mt-8 flex flex-wrap gap-1.5">
+      {/* Industry image cards grid */}
+      <div className="mt-10 grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
         {industries.map((ind, i) => {
           const active = selected === i;
           return (
-            <button
-              key={ind.name}
-              onClick={() => setSelected(i)}
-              className={`px-3.5 py-1.5 rounded-full text-[12.5px] font-medium transition-all duration-200 cursor-pointer ${
-                active
-                  ? "bg-foreground text-background"
-                  : "bg-card text-muted-foreground border border-border hover:border-foreground/30 hover:text-foreground"
-              }`}
-            >
-              {ind.name}
-            </button>
+            <FadeIn key={ind.name} delay={i * 0.05}>
+              <button
+                onClick={() => setSelected(i)}
+                className={`w-full text-left rounded-xl border bg-card overflow-hidden transition-all duration-300 group cursor-pointer hover-shine ${
+                  active
+                    ? "border-foreground shadow-[0_0_0_1px_var(--foreground)]"
+                    : "border-border hover:border-foreground/40 hover:shadow-sm"
+                }`}
+              >
+                {/* Image */}
+                <div className="aspect-[16/10] overflow-hidden bg-muted relative">
+                  <Image
+                    src={ind.image}
+                    alt={ind.name}
+                    priority={i < 2}
+                    fill
+                    className={`object-cover transition-transform duration-700 ${
+                      active ? "scale-105" : "group-hover:scale-105"
+                    }`}
+                  />
+                  {/* Active overlay tint */}
+                  {active && (
+                    <div className="absolute inset-0 bg-foreground/10" />
+                  )}
+                </div>
+
+                {/* Card content */}
+                <div className="p-4">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-[14px] font-semibold text-foreground">{ind.name}</h3>
+                    <ArrowUpRight
+                      className={`w-3.5 h-3.5 transition-all duration-200 ${
+                        active
+                          ? "text-foreground rotate-0"
+                          : "text-muted-foreground group-hover:text-foreground group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+                      }`}
+                    />
+                  </div>
+                  <p className="mt-1 text-[12.5px] text-muted-foreground leading-relaxed line-clamp-1">
+                    {ind.tag}
+                  </p>
+                </div>
+              </button>
+            </FadeIn>
           );
         })}
       </div>
 
-      {/* Content panel */}
+      {/* Detail panel — animated on card click */}
       {mounted && (
         <AnimatePresence mode="wait">
           <motion.div
@@ -126,8 +160,8 @@ export function Industries() {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -8 }}
-            transition={{ duration: 0.3 }}
-            className="mt-6 rounded-2xl border border-border bg-card grid md:grid-cols-[1.2fr_1fr] overflow-hidden"
+            transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+            className="mt-4 rounded-2xl border border-border bg-card grid md:grid-cols-[1.2fr_1fr] overflow-hidden"
           >
             {/* Left: automations list */}
             <div className="p-7 sm:p-9">
@@ -143,18 +177,19 @@ export function Industries() {
                     transition={{ delay: idx * 0.06, duration: 0.3 }}
                     className="py-3 flex items-baseline gap-4 text-[14px] text-foreground"
                   >
-                    <span className="text-[11px] font-mono text-muted-foreground w-6">{String(idx + 1).padStart(2, "0")}</span>
+                    <span className="text-[11px] font-mono text-muted-foreground w-6 shrink-0">
+                      {String(idx + 1).padStart(2, "0")}
+                    </span>
                     <span>{a}</span>
                   </motion.li>
                 ))}
               </ul>
             </div>
 
-            {/* Right: WhatsApp mockup */}
+            {/* Right: WhatsApp phone mockup */}
             <div className="bg-muted/60 p-7 sm:p-9 flex items-center justify-center border-t md:border-t-0 md:border-l border-border">
-              <div className="w-full max-w-[280px] rounded-[28px] border border-border bg-card p-2.5 shadow-sm">
-                {/* Phone screen */}
-                <div className="rounded-[22px] bg-muted/60 p-3 min-h-[300px] flex flex-col gap-2">
+              <div className="w-full max-w-[260px] rounded-[28px] border border-border bg-card p-2.5 shadow-sm">
+                <div className="rounded-[22px] bg-muted/60 p-3 min-h-[260px] flex flex-col gap-2">
                   <div className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground text-center pb-2 border-b border-border/80">
                     WhatsApp · AnasNode
                   </div>
@@ -174,14 +209,14 @@ export function Industries() {
                     </motion.div>
                   ))}
                 </div>
-
-                {/* Industry image thumbnail */}
-                <div className="mt-2 rounded-[18px] overflow-hidden aspect-[16/10]">
+                {/* Industry image inside phone */}
+                <div className="mt-2 rounded-[18px] overflow-hidden aspect-[16/9]">
                   <Image
                     src={current.image}
                     alt={current.name}
                     className="w-full h-full object-cover"
-                    priority={selected < 2}
+                    width={260}
+                    height={146}
                   />
                 </div>
               </div>

@@ -6,7 +6,7 @@ import { PromptBox } from "./PromptBox";
 import { ResultCard } from "./ResultCard";
 
 export function Hero() {
-  const [industry, setIndustry] = useState<string | null>(null);
+  const [workspace, setWorkspace] = useState<any>(null);
 
   return (
     <section className="pt-10 sm:pt-14 pb-14 px-6 relative">
@@ -47,10 +47,10 @@ export function Hero() {
           transition={{ duration: 0.55, delay: 0.18 }}
           className="mt-7"
         >
-          <PromptBox onGenerate={setIndustry} />
+          <PromptBox onGenerate={setWorkspace} />
         </motion.div>
 
-        {industry && <ResultCard industry={industry} />}
+        {workspace && <ResultCard workspace={workspace} />}
       </div>
     </section>
   );

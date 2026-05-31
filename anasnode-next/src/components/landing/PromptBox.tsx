@@ -11,7 +11,7 @@ const EXAMPLES: { label: string; text: string }[] = [
 ];
 
 interface Props {
-  onGenerate?: (industry: string) => void;
+  onGenerate?: (workspace: any) => void;
   compact?: boolean;
 }
 
@@ -32,31 +32,45 @@ export function PromptBox({ onGenerate, compact }: Props) {
     "Done!",
   ];
 
-  const handleGenerate = () => {
+  const handleGenerate = async () => {
     if (loading || !value.trim()) return;
     setLoading(true);
     setStage(0);
+    
+    // Visual progress increments
     const interval = setInterval(() => {
       setStage((s) => {
-        if (s >= stages.length - 1) {
+        if (s >= stages.length - 2) {
           clearInterval(interval);
-          setTimeout(() => {
-            setLoading(false);
-            onGenerate?.(detectIndustry(value));
-          }, 600);
           return s;
         }
         return s + 1;
       });
-    }, 650);
-  };
+    }, 550);
 
-  const detectIndustry = (v: string) => {
-    const l = v.toLowerCase();
-    if (l.includes("restaurant") || l.includes("menu")) return "Restaurant";
-    if (l.includes("real estate") || l.includes("property") || l.includes("brokerage")) return "Real Estate";
-    if (l.includes("clinic") || l.includes("doctor") || l.includes("patient")) return "Clinic";
-    return "Restaurant";
+    try {
+      const response = await fetch("/api/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompt: value }),
+      });
+      const data = await response.json();
+      
+      // End the visual stage gracefully
+      clearInterval(interval);
+      setStage(stages.length - 1); // "Done!"
+      
+      setTimeout(() => {
+        setLoading(false);
+        if (data.success && data.workspace) {
+          onGenerate?.(data.workspace);
+        }
+      }, 500);
+    } catch (e) {
+      console.error(e);
+      clearInterval(interval);
+      setLoading(false);
+    }
   };
 
   return (

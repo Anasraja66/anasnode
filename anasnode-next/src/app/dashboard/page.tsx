@@ -706,13 +706,46 @@ export default function Dashboard() {
   const [ws, setWs] = useState(WORKSPACES[0]);
   const [mounted, setMounted] = useState(false);
 
-  useEffect(() => { setMounted(true); }, []);
+  useEffect(() => {
+    setMounted(true);
+    
+    const saved = localStorage.getItem("anasnode_custom_workspaces");
+    if (saved) {
+      try {
+        const customWorkspaces = JSON.parse(saved);
+        if (customWorkspaces && customWorkspaces.length > 0) {
+          const allWorkspaces = [...customWorkspaces, ...WORKSPACES];
+          setWorkspaces(allWorkspaces);
+          
+          const params = new URLSearchParams(window.location.search);
+          const activeId = params.get("ws");
+          const activeWs = allWorkspaces.find(w => w.id === activeId) || allWorkspaces[0];
+          setWs(activeWs);
+        }
+      } catch (e) {
+        console.error("Failed to parse custom workspaces", e);
+      }
+    }
+  }, []);
 
   const toggleAutomation = (automationId: string) => {
     setWorkspaces(prev => prev.map(w => {
       if (w.id !== ws.id) return w;
       const updated = { ...w, automations: w.automations.map(a => a.id === automationId ? { ...a, enabled: !a.enabled } : a) };
       setWs(updated);
+      
+      if (w.id.startsWith("ws-custom-")) {
+        const saved = localStorage.getItem("anasnode_custom_workspaces");
+        if (saved) {
+          try {
+            const customWorkspaces = JSON.parse(saved);
+            const nextCustoms = customWorkspaces.map((cw: any) => cw.id === w.id ? updated : cw);
+            localStorage.setItem("anasnode_custom_workspaces", JSON.stringify(nextCustoms));
+          } catch (e) {
+            console.error(e);
+          }
+        }
+      }
       return updated;
     }));
   };

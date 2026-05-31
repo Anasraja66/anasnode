@@ -5,7 +5,7 @@ import { useEffect, useState, type ReactNode } from "react";
 
 export function Section({ id, children, className = "" }: { id?: string; children: ReactNode; className?: string }) {
   return (
-    <section id={id} className={`py-20 sm:py-28 px-6 ${className}`}>
+    <section id={id} className={`py-16 sm:py-20 px-6 ${className}`}>
       <div className="max-w-6xl mx-auto">{children}</div>
     </section>
   );

@@ -1,0 +1,86 @@
+datasource db {
+  provider = "sqlite"
+}
+
+generator client {
+  provider = "prisma-client-js"
+  engineType = "library"
+}
+
+model Account {
+  id          String                  @id @default(uuid())
+  email       String                  @unique
+  name        String?
+  createdAt   DateTime                @default(now())
+  workspaces  Workspace[]
+  workflows   Workflow[]
+  credentials IntegrationCredential[]
+
+  @@map("accounts")
+}
+
+model Workspace {
+  id        String     @id @default(uuid())
+  accountId String
+  name      String
+  industry  String
+  slug      String
+  status    String     @default("draft")
+  version   Int        @default(1)
+  createdAt DateTime   @default(now())
+  account   Account    @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  workflows Workflow[]
+
+  @@map("workspaces")
+}
+
+model Workflow {
+  id          String              @id @default(uuid())
+  accountId   String
+  workspaceId String
+  name        String
+  description String?
+  isActive    Boolean             @default(false)
+  version     Int                 @default(1)
+  nodes       String              // Stringified JSON WorkflowNode[]
+  edges       String              // Stringified JSON WorkflowEdge[]
+  variables   String              @default("[]") // Stringified JSON string[]
+  stats       String              @default("{\"runs\":0,\"success\":0,\"failed\":0}")
+  lastRunAt   DateTime?
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @updatedAt
+  account     Account             @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  workspace   Workspace           @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  executions  WorkflowExecution[]
+
+  @@map("workflows")
+}
+
+model WorkflowExecution {
+  id         String    @id @default(uuid())
+  workflowId String
+  contactId  String?
+  status     String    @default("running") // running|success|failed|timeout
+  input      String    @default("{}") // Stringified JSON
+  output     String    @default("{}") // Stringified JSON
+  logs       String    @default("[]") // Stringified JSON WorkflowExecutionLog[]
+  startedAt  DateTime  @default(now())
+  finishedAt DateTime?
+  duration   Int?      // milliseconds
+  workflow   Workflow  @relation(fields: [workflowId], references: [id], onDelete: Cascade)
+
+  @@map("workflow_executions")
+}
+
+model IntegrationCredential {
+  id          String   @id @default(uuid())
+  accountId   String
+  type        String   // openai|claude|gemini|custom_llm|google_calendar|shopify|hubspot|whatsapp|instagram|telegram|smtp
+  name        String   // user-given name e.g. "My OpenAI Key"
+  credentials String   // encrypted JSON key-value pairs
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  account     Account  @relation(fields: [accountId], references: [id], onDelete: Cascade)
+
+  @@map("integration_credentials")
+}

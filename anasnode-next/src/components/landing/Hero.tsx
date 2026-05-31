@@ -9,18 +9,23 @@ export function Hero() {
   const [workspace, setWorkspace] = useState<any>(null);
 
   return (
-    <section className="pt-10 sm:pt-14 pb-14 px-6 relative">
-      <div className="max-w-3xl mx-auto text-center">
+    <section className="pt-10 sm:pt-14 pb-14 px-6 relative hero-gradient grid-overlay">
+      <div className="max-w-3xl mx-auto text-center relative z-10">
+        {/* Badge */}
         <motion.div
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4 }}
-          className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full border border-border/80 bg-muted/40 text-[11px] font-mono uppercase tracking-[0.06em] text-muted-foreground"
+          className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-border/80 bg-background/60 backdrop-blur-sm text-[11px] font-mono uppercase tracking-[0.06em] text-muted-foreground"
         >
-          <span className="w-1.5 h-1.5 rounded-full bg-success animate-pulse" />
+          <span className="relative flex h-2 w-2">
+            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-success/60" />
+            <span className="relative inline-flex h-2 w-2 rounded-full bg-success" />
+          </span>
           <span>New · WhatsApp automations now live</span>
         </motion.div>
 
+        {/* Heading */}
         <motion.h1
           initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
@@ -28,9 +33,11 @@ export function Hero() {
           className="mt-5 text-[36px] sm:text-[52px] lg:text-[60px] font-semibold text-foreground tracking-[-0.03em] leading-[1.08]"
         >
           One prompt.<br />
-          Your entire business, <span className="italic font-normal text-muted-foreground">automated.</span>
+          Your entire business,{" "}
+          <span className="italic font-normal text-muted-foreground">automated.</span>
         </motion.h1>
 
+        {/* Subtitle */}
         <motion.p
           initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
@@ -41,15 +48,17 @@ export function Hero() {
           CRM and operational workflows in under a minute.
         </motion.p>
 
+        {/* PromptBox – tight gap */}
         <motion.div
           initial={{ opacity: 0, y: 18 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.55, delay: 0.18 }}
-          className="mt-7"
+          className="mt-8"
         >
           <PromptBox onGenerate={setWorkspace} />
         </motion.div>
 
+        {/* ResultCard */}
         {workspace && <ResultCard workspace={workspace} />}
       </div>
     </section>

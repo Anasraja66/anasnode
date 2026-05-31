@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 
+export const dynamic = "force-dynamic";
+
 // Dynamic generator based on the prompt keywords
 function generateWorkspaceFromPrompt(prompt: string) {
   const cleanPrompt = prompt.toLowerCase();

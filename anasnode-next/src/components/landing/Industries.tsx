@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowUpRight } from "lucide-react";
 import { FadeIn, Section, SectionLabel } from "./Section";
 import Image from "next/image";
 import realEstateImg from "@/assets/industry-realestate.jpg";
@@ -90,50 +89,36 @@ export function Industries() {
   return (
     <Section id="industries" className="bg-muted/40">
       <FadeIn>
-        <div className="flex items-end justify-between gap-6 flex-wrap">
-          <div>
-            <SectionLabel number="02">Industries</SectionLabel>
-            <h2 className="mt-5 text-[28px] sm:text-[40px] font-semibold text-foreground tracking-tight leading-[1.1] max-w-2xl">
-              Built for the work you already do.
-            </h2>
-          </div>
-          <p className="text-[14px] text-muted-foreground max-w-sm">
-            Pick a sector to see the exact automations AnasNode ships on day one.
-          </p>
-        </div>
+        <SectionLabel number="02">Industries</SectionLabel>
+        <h2 className="mt-4 text-[28px] sm:text-[40px] font-semibold text-foreground tracking-tight leading-[1.1] max-w-2xl">
+          Built for the work you already do.
+        </h2>
+        <p className="mt-3 text-[14px] text-muted-foreground max-w-md">
+          Pick a sector to see the exact automations AnasNode ships on day one.
+        </p>
       </FadeIn>
 
-      <div className="mt-12 grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+      {/* Tab pills */}
+      <div className="mt-8 flex flex-wrap gap-1.5">
         {industries.map((ind, i) => {
           const active = selected === i;
           return (
             <button
               key={ind.name}
               onClick={() => setSelected(i)}
-              className={`text-left rounded-xl border bg-card overflow-hidden transition-all group cursor-pointer ${
-                active ? "border-foreground" : "border-border hover:border-foreground/30"
+              className={`px-3.5 py-1.5 rounded-full text-[12.5px] font-medium transition-all duration-200 cursor-pointer ${
+                active
+                  ? "bg-foreground text-background"
+                  : "bg-card text-muted-foreground border border-border hover:border-foreground/30 hover:text-foreground"
               }`}
             >
-              <div className="aspect-[16/10] overflow-hidden bg-muted relative">
-                <Image
-                  src={ind.image}
-                  alt={ind.name}
-                  priority={i < 2}
-                  className={`w-full h-full object-cover transition-transform duration-700 ${active ? "scale-105" : "group-hover:scale-105"}`}
-                />
-              </div>
-              <div className="p-4">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-[14px] font-semibold text-foreground">{ind.name}</h3>
-                  <ArrowUpRight className={`w-3.5 h-3.5 transition-colors ${active ? "text-foreground" : "text-muted-foreground"}`} />
-                </div>
-                <p className="mt-1 text-[12.5px] text-muted-foreground leading-relaxed">{ind.tag}</p>
-              </div>
+              {ind.name}
             </button>
           );
         })}
       </div>
 
+      {/* Content panel */}
       {mounted && (
         <AnimatePresence mode="wait">
           <motion.div
@@ -144,29 +129,38 @@ export function Industries() {
             transition={{ duration: 0.3 }}
             className="mt-6 rounded-2xl border border-border bg-card grid md:grid-cols-[1.2fr_1fr] overflow-hidden"
           >
+            {/* Left: automations list */}
             <div className="p-7 sm:p-9">
               <span className="text-[11px] font-mono uppercase tracking-wider text-muted-foreground">
                 What ships for {current.name}
               </span>
               <ul className="mt-5 divide-y divide-border">
                 {current.automations.map((a, idx) => (
-                  <li key={a} className="py-3 flex items-baseline gap-4 text-[14px] text-foreground">
+                  <motion.li
+                    key={a}
+                    initial={{ opacity: 0, x: -8 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: idx * 0.06, duration: 0.3 }}
+                    className="py-3 flex items-baseline gap-4 text-[14px] text-foreground"
+                  >
                     <span className="text-[11px] font-mono text-muted-foreground w-6">{String(idx + 1).padStart(2, "0")}</span>
                     <span>{a}</span>
-                  </li>
+                  </motion.li>
                 ))}
               </ul>
             </div>
 
-            <div className="bg-muted/60 p-7 sm:p-9 flex items-center justify-center border-l border-border">
+            {/* Right: WhatsApp mockup */}
+            <div className="bg-muted/60 p-7 sm:p-9 flex items-center justify-center border-t md:border-t-0 md:border-l border-border">
               <div className="w-full max-w-[280px] rounded-[28px] border border-border bg-card p-2.5 shadow-sm">
+                {/* Phone screen */}
                 <div className="rounded-[22px] bg-muted/60 p-3 min-h-[300px] flex flex-col gap-2">
                   <div className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground text-center pb-2 border-b border-border/80">
                     WhatsApp · AnasNode
                   </div>
                   {current.chat.map((m, idx) => (
                     <motion.div
-                      key={idx}
+                      key={`${selected}-${idx}`}
                       initial={{ opacity: 0, y: 6 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: idx * 0.12 }}
@@ -179,6 +173,16 @@ export function Industries() {
                       {m.text}
                     </motion.div>
                   ))}
+                </div>
+
+                {/* Industry image thumbnail */}
+                <div className="mt-2 rounded-[18px] overflow-hidden aspect-[16/10]">
+                  <Image
+                    src={current.image}
+                    alt={current.name}
+                    className="w-full h-full object-cover"
+                    priority={selected < 2}
+                  />
                 </div>
               </div>
             </div>

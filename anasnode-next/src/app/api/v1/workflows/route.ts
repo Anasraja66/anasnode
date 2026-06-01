@@ -1,16 +1,18 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
+import { auth } from "@/auth";
 
 export const dynamic = "force-dynamic";
 
 // GET /api/v1/workflows - List workflows for accounts
 export async function GET(request: Request) {
   try {
-    const mockAccountId = "acc-default-user";
+    const session = await auth();
+    const accountId = session?.user?.accountId || "acc-default-user";
     const { searchParams } = new URL(request.url);
     const workspaceId = searchParams.get("workspaceId");
 
-    const query: any = { accountId: mockAccountId };
+    const query: any = { accountId };
     if (workspaceId) {
       query.workspaceId = workspaceId;
     }
@@ -49,7 +51,8 @@ export async function GET(request: Request) {
 // POST /api/v1/workflows - Create new workflow
 export async function POST(request: Request) {
   try {
-    const mockAccountId = "acc-default-user";
+    const session = await auth();
+    const accountId = session?.user?.accountId || "acc-default-user";
     const body = await request.json();
     const { name, description, workspaceId, nodes = [], edges = [] } = body;
 
@@ -63,7 +66,7 @@ export async function POST(request: Request) {
       update: {},
       create: {
         id: workspaceId,
-        accountId: mockAccountId,
+        accountId,
         name: "My Business Workspace",
         industry: "General",
         slug: "my-business-workspace",
@@ -73,7 +76,7 @@ export async function POST(request: Request) {
 
     const workflow = await prisma.workflow.create({
       data: {
-        accountId: mockAccountId,
+        accountId,
         workspaceId: workspace.id,
         name,
         description,

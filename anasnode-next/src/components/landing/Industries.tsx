@@ -1,229 +1,294 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { ArrowUpRight } from "lucide-react";
-import { FadeIn, Section, SectionLabel } from "./Section";
-import Image from "next/image";
-import realEstateImg from "@/assets/industry-realestate.jpg";
-import restaurantImg from "@/assets/industry-restaurant.jpg";
-import clinicImg from "@/assets/industry-clinic.jpg";
-import ecommerceImg from "@/assets/industry-ecommerce.jpg";
-import salonImg from "@/assets/industry-salon.jpg";
-import gymImg from "@/assets/industry-gym.jpg";
+import { ArrowUpRight, ArrowDownRight, Database, Mail, Terminal, Calendar, Code, Shield } from "lucide-react";
 
-type Industry = {
+type Template = {
   name: string;
   tag: string;
-  image: any;
-  automations: string[];
-  chat: { from: "bot" | "user"; text: string }[];
+  renderGraphic: () => React.ReactNode;
 };
 
-const industries: Industry[] = [
+const TEMPLATES: Template[] = [
   {
-    name: "Real Estate", tag: "Lead qualification, follow-ups, listing match", image: realEstateImg,
-    automations: ["Qualify every inbound lead instantly", "Match active listings to buyer criteria", "Auto-schedule viewings around agent calendars", "Drip nurture sequences for cold leads", "Voice-note replies in Arabic and English"],
-    chat: [
-      { from: "user", text: "Hi, looking for a 3BR in Dubai Marina." },
-      { from: "bot", text: "Welcome — could you share your budget?" },
-      { from: "user", text: "Around AED 2.2M." },
-      { from: "bot", text: "Four listings match. Want me to send them?" },
-    ],
+    name: "CRM & Lead Router",
+    tag: "Qualify leads, segment users & sync to HubSpot/Salesforce",
+    renderGraphic: () => (
+      <div className="relative w-full h-full bg-[#1C1F1A]">
+        <img
+          src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=600&q=80"
+          alt="CRM Router"
+          className="absolute inset-0 w-full h-full object-cover opacity-60 grayscale contrast-125 transition-transform duration-500 group-hover:scale-105"
+        />
+        {/* CRM Message Bubble Overlay */}
+        <div className="absolute inset-0 bg-black/45 flex flex-col justify-between p-4">
+          <div className="flex justify-between items-center">
+            <span className="text-white/60 text-[8px] font-mono tracking-widest uppercase">DATABASES</span>
+            <span className="bg-emerald-500 text-white text-[7px] px-1.5 py-0.5 rounded-full font-bold flex items-center gap-0.5"><Database className="w-1.5 h-1.5" /> CRM SYNC</span>
+          </div>
+          <div className="my-auto flex items-center justify-center">
+            <span className="text-white text-[13px] sm:text-[14px] tracking-[0.15em] font-serif uppercase text-center font-medium drop-shadow-md">
+              LEAD SEGMENTER
+            </span>
+          </div>
+          <div className="bg-white/95 backdrop-blur-[2px] p-2 rounded-lg shadow-sm border border-white/20 flex items-center justify-between">
+            <span className="text-[8px] font-bold text-zinc-800">Lead: Enterprise · $50k ARR</span>
+            <span className="text-[7px] font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded-full">Routed ➔ CRM</span>
+          </div>
+        </div>
+      </div>
+    ),
   },
   {
-    name: "Restaurant", tag: "Orders, reservations, daily broadcasts", image: restaurantImg,
-    automations: ["WhatsApp ordering with menu cards", "Table reservations with conflict checks", "Daily specials broadcast to regulars", "Post-visit review requests", "Loyalty offers tied to visit count"],
-    chat: [
-      { from: "user", text: "Table for four tonight at 8?" },
-      { from: "bot", text: "Booked — table 12 at 8:00 PM." },
-      { from: "user", text: "Can I pre-order drinks?" },
-      { from: "bot", text: "Of course. Here's our menu." },
-    ],
+    name: "Multi-Channel Dispatcher",
+    tag: "Seamless broadcasts over WhatsApp, Email & SMS",
+    renderGraphic: () => (
+      <div className="relative w-full h-full bg-gradient-to-tr from-[#0A6BFF] via-[#5200FF] to-[#FF007F] flex flex-col justify-between p-4 transition-transform duration-500 group-hover:scale-105">
+        <div className="flex justify-between items-center relative z-10">
+          <span className="text-white/70 text-[8px] font-mono tracking-widest uppercase">Omnichannel</span>
+          <span className="w-2 h-2 rounded-full bg-blue-300 animate-pulse" />
+        </div>
+        <div className="flex flex-col items-center justify-center text-center relative z-10 my-auto">
+          <span className="text-white font-extrabold text-[16px] sm:text-[18px] tracking-tight">Broadcaster</span>
+          <span className="text-[9px] text-blue-100/70 font-mono mt-1 font-semibold">anaos.ai/dispatch-core</span>
+        </div>
+        <div className="flex gap-1.5 justify-center relative z-10">
+          <span className="bg-white/10 text-white text-[7px] px-1.5 py-0.5 rounded font-mono">WhatsApp</span>
+          <span className="bg-white/10 text-white text-[7px] px-1.5 py-0.5 rounded font-mono">Email</span>
+          <span className="bg-white/10 text-white text-[7px] px-1.5 py-0.5 rounded font-mono">SMS</span>
+        </div>
+      </div>
+    ),
   },
   {
-    name: "Clinic", tag: "Appointments, reminders, patient follow-ups", image: clinicImg,
-    automations: ["Smart appointment booking by specialty", "Pre-visit reminders 24h and 1h before", "Prescription refill follow-ups", "Test result notifications", "Insurance verification at intake"],
-    chat: [
-      { from: "user", text: "I need to see Dr. Ahmed." },
-      { from: "bot", text: "Next available is tomorrow, 11:00 AM. Book it?" },
-      { from: "user", text: "Yes, please." },
-      { from: "bot", text: "Confirmed. We'll send a reminder." },
-    ],
+    name: "AI Knowledge Brain",
+    tag: "Train custom neural agents on PDFs, docs & URLs",
+    renderGraphic: () => (
+      <div className="relative w-full h-full bg-[#1A1A1A]">
+        <img
+          src="https://images.unsplash.com/photo-1629909613654-28e377c37b09?auto=format&fit=crop&w=600&q=80"
+          alt="AI Brain"
+          className="absolute inset-0 w-full h-full object-cover opacity-60 grayscale transition-transform duration-500 group-hover:scale-105"
+        />
+        <div className="absolute inset-0 bg-black/35 flex flex-col justify-between p-4">
+          <div className="flex justify-between items-center">
+            <span className="text-white/60 text-[8px] font-mono tracking-widest uppercase">NEURAL NET</span>
+            <span className="w-1.5 h-1.5 rounded-full bg-blue-500" />
+          </div>
+          <div className="my-auto text-center">
+            <span className="text-white text-[12px] sm:text-[13px] font-bold tracking-[0.1em] font-sans uppercase border-y border-white/20 py-1.5 px-3 bg-black/10 backdrop-blur-[2px]">
+              KNOWLEDGE BASE
+            </span>
+          </div>
+          <div className="bg-blue-600/90 text-white text-[8px] font-semibold py-1 px-2 rounded-md flex items-center justify-between">
+            <span>Trained: Q1_Report.pdf</span>
+            <span className="text-[7.5px] bg-blue-500 px-1 py-0.2 rounded font-bold font-mono">100% READY</span>
+          </div>
+        </div>
+      </div>
+    ),
   },
   {
-    name: "E-commerce", tag: "Order tracking, cart recovery, reviews", image: ecommerceImg,
-    automations: ["Real-time order status updates", "Abandoned cart recovery flows", "Post-delivery review requests", "Restock alerts for saved items", "Personalized upsell campaigns"],
-    chat: [
-      { from: "bot", text: "Your order #2241 is out for delivery." },
-      { from: "user", text: "What's the ETA?" },
-      { from: "bot", text: "Arriving in about 45 minutes." },
-    ],
+    name: "Abandoned Cart Recovery",
+    tag: "Auto-trigger lost cart emails, messages & track revenue",
+    renderGraphic: () => (
+      <div className="relative w-full h-full bg-[#FAF7F2] p-4 flex flex-col justify-between overflow-hidden transition-transform duration-500 group-hover:scale-105 select-none">
+        <div className="flex justify-between items-center text-[7px] tracking-widest text-zinc-500 font-semibold">
+          <span>ABANDONED RECOVERY</span>
+          <span className="text-blue-600 font-bold">MONITORED</span>
+        </div>
+        <div className="my-auto text-left flex flex-col justify-center">
+          <span className="text-[13px] sm:text-[14px] font-black text-zinc-800 uppercase leading-none mb-1">
+            CART CONVERSION
+          </span>
+          <p className="text-[5.8px] leading-[1.3] text-zinc-500 max-w-[95%] font-medium my-1 font-mono">
+            if (cart.status == "abandoned") {
+              dispatch.personalDiscount(10);
+            }
+          </p>
+          <span className="text-[5px] text-[#0A6BFF] font-mono tracking-widest uppercase font-bold mt-1">
+            ➔ RECOVERED $12,480 THIS MONTH
+          </span>
+        </div>
+        <div className="h-1 bg-zinc-200/60 rounded-full w-full overflow-hidden">
+          <div className="bg-[#0A6BFF] h-full w-[75%]" />
+        </div>
+      </div>
+    ),
   },
   {
-    name: "Salon & Beauty", tag: "Slot booking, reminders, review collection", image: salonImg,
-    automations: ["Book by stylist and service type", "24-hour reminder with location", "Birthday and anniversary offers", "Automated review collection", "Rebooking prompts at the right cadence"],
-    chat: [
-      { from: "user", text: "Haircut Saturday at 4?" },
-      { from: "bot", text: "Booked with Sara — see you then." },
-    ],
+    name: "Guest & RSVP Registrar",
+    tag: "Manage registers, send dynamic invites & check-ins",
+    renderGraphic: () => (
+      <div className="relative w-full h-full bg-[#FCF9F5] p-4 flex flex-col justify-between overflow-hidden transition-transform duration-500 group-hover:scale-105 select-none">
+        <div className="flex justify-between items-center">
+          <div className="flex gap-1">
+            <span className="w-1.5 h-1.5 rounded-full bg-zinc-200" />
+            <span className="w-1.5 h-1.5 rounded-full bg-zinc-200" />
+            <span className="w-1.5 h-1.5 rounded-full bg-zinc-200" />
+          </div>
+          <div className="w-5 h-5 rounded-full bg-blue-500/10 border border-blue-500/30 flex items-center justify-center shadow-sm">
+            <Calendar className="w-2.5 h-2.5 text-blue-600" />
+          </div>
+        </div>
+        
+        <div className="my-auto text-center flex flex-col items-center justify-center gap-1.5">
+          <div className="text-[12px] font-extrabold text-zinc-800 tracking-tight leading-tight flex flex-col items-center gap-1">
+            <div className="flex items-center gap-1">
+              <span>Automated</span>
+              <span className="bg-[#0A6BFF] text-white text-[9px] px-2 py-0.5 rounded-full font-bold">RSVPs</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <span>over</span>
+              <span className="border border-zinc-950 text-zinc-950 text-[9px] px-2 py-0.5 rounded-full font-bold">Any API</span>
+            </div>
+          </div>
+        </div>
+        
+        <div className="flex items-center justify-between text-[6px] text-zinc-400 font-mono font-semibold">
+          <span>Dispatched Invitation [Pass #28]</span>
+          <span className="w-2.5 h-2.5 rounded-full bg-emerald-500/20 flex items-center justify-center">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+          </span>
+        </div>
+      </div>
+    ),
   },
   {
-    name: "Gym & Fitness", tag: "Memberships, class booking, renewals", image: gymImg,
-    automations: ["Class bookings with waitlist", "Membership renewal reminders", "Trainer matching by goal", "Attendance and streak tracking", "Plan check-ins with nutrition notes"],
-    chat: [
-      { from: "user", text: "Yoga tomorrow at 7?" },
-      { from: "bot", text: "Spot reserved. See you in the studio." },
-    ],
+    name: "Task Scheduler & Cron OS",
+    tag: "Schedule triggers, recurrent healthchecks & database syncs",
+    renderGraphic: () => (
+      <div className="relative w-full h-full bg-[#F4EFEB] p-3.5 flex flex-col justify-between overflow-hidden transition-transform duration-500 group-hover:scale-105 select-none">
+        <div className="flex items-center justify-between border-b border-zinc-200/40 pb-1.5">
+          <span className="text-[6.5px] font-bold text-zinc-400 font-mono tracking-wider">CRON SCHEDULER</span>
+          <span className="text-[6.5px] font-bold text-emerald-600">ONLINE</span>
+        </div>
+        <div className="my-auto flex flex-col items-center text-center">
+          <div className="w-[80px] h-[50px] rounded overflow-hidden shadow-[0_2px_5px_rgba(0,0,0,0.04)] border border-zinc-200/40 mb-1.5 relative">
+            <img
+              src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=200&q=80"
+              className="w-full h-full object-cover"
+              alt="Cron Charts"
+            />
+          </div>
+          <p className="text-[9px] font-mono font-bold text-zinc-800 leading-tight">
+            cron_job: active 🟢
+          </p>
+          <p className="text-[5.5px] text-zinc-500 max-w-[90%] mt-0.5 leading-[1.3] font-semibold">
+            "Trigger database healthcheck every day at 00:00 UTC."
+          </p>
+        </div>
+        <div className="h-1 bg-emerald-500/30 rounded-full w-full overflow-hidden">
+          <div className="bg-emerald-500 h-full w-[95%]" />
+        </div>
+      </div>
+    ),
+  },
+  {
+    name: "API & Webhook Gateway",
+    tag: "Dispatch custom webhooks & integrate REST APIs instantly",
+    renderGraphic: () => (
+      <div className="relative w-full h-full bg-[#ECE9E4]">
+        <img
+          src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=600&q=80"
+          alt="API Webhooks"
+          className="absolute inset-0 w-full h-full object-cover opacity-75 grayscale contrast-110 transition-transform duration-500 group-hover:scale-105"
+        />
+        <div className="absolute inset-0 bg-black/20 flex items-end justify-center p-2.5">
+          <div className="w-full bg-white/95 backdrop-blur-[2px] p-2 rounded shadow-sm border border-black/5 flex items-center justify-between">
+            <div className="flex flex-col text-left">
+              <span className="text-[7.5px] font-bold text-zinc-800 tracking-tight leading-snug line-clamp-1">
+                Webhook trigger: Stripe ➔ Slack
+              </span>
+              <span className="text-[6px] text-blue-600 font-semibold mt-0.5 uppercase tracking-wide">
+                API Handshake 200 OK
+              </span>
+            </div>
+            <ArrowUpRight className="w-2.5 h-2.5 text-zinc-700 shrink-0" />
+          </div>
+        </div>
+      </div>
+    ),
+  },
+  {
+    name: "Automated Helpdesk Core",
+    tag: "Resolve 90% of business FAQs with proprietary AI models",
+    renderGraphic: () => (
+      <div className="relative w-full h-full bg-[#EAE6DF] flex overflow-hidden transition-transform duration-500 group-hover:scale-105 select-none">
+        <div className="w-1/2 h-full relative overflow-hidden border-r border-white/20">
+          <img
+            src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=300&q=80"
+            className="w-full h-full object-cover contrast-105"
+            alt="Customer Support Workspace"
+          />
+        </div>
+        <div className="w-1/2 h-full relative overflow-hidden">
+          <img
+            src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=300&q=80"
+            className="w-full h-full object-cover contrast-105"
+            alt="AI Helpdesk"
+          />
+        </div>
+        <div className="absolute inset-0 bg-black/5 flex items-center justify-center p-4">
+          <div className="bg-white/95 backdrop-blur-[3px] border border-black/5 px-2.5 py-1.5 rounded-md shadow-md flex flex-col items-center justify-center">
+            <span className="text-[8px] font-mono font-extrabold tracking-[0.2em] text-zinc-950 uppercase leading-none">
+              HELPDESK ACTIVE
+            </span>
+            <span className="text-[5.5px] text-[#0A6BFF] font-bold mt-1">✔ Auto-resolved 88% tickets</span>
+          </div>
+        </div>
+      </div>
+    ),
   },
 ];
 
 export function Industries() {
-  const [selected, setSelected] = useState(0);
-  const current = industries[selected];
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
   return (
-    <Section id="industries" className="bg-muted/40">
-      <FadeIn>
-        <SectionLabel number="02">Industries</SectionLabel>
-        <h2 className="mt-4 text-[28px] sm:text-[40px] font-semibold text-foreground tracking-tight leading-[1.1] max-w-2xl">
-          Built for the work you already do.
-        </h2>
-        <p className="mt-3 text-[14px] text-muted-foreground max-w-md">
-          Pick a sector to see the exact automations AnasNode ships on day one.
-        </p>
-      </FadeIn>
-
-      {/* Industry image cards grid */}
-      <div className="mt-10 grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
-        {industries.map((ind, i) => {
-          const active = selected === i;
-          return (
-            <FadeIn key={ind.name} delay={i * 0.05}>
-              <button
-                onClick={() => setSelected(i)}
-                className={`w-full text-left rounded-xl border bg-card overflow-hidden transition-all duration-300 group cursor-pointer hover-shine ${
-                  active
-                    ? "border-foreground shadow-[0_0_0_1px_var(--foreground)]"
-                    : "border-border hover:border-foreground/40 hover:shadow-sm"
-                }`}
-              >
-                {/* Image */}
-                <div className="aspect-[16/10] overflow-hidden bg-muted relative">
-                  <Image
-                    src={ind.image}
-                    alt={ind.name}
-                    priority={i < 2}
-                    fill
-                    className={`object-cover transition-transform duration-700 ${
-                      active ? "scale-105" : "group-hover:scale-105"
-                    }`}
-                  />
-                  {/* Active overlay tint */}
-                  {active && (
-                    <div className="absolute inset-0 bg-foreground/10" />
-                  )}
-                </div>
-
-                {/* Card content */}
-                <div className="p-4">
-                  <div className="flex items-center justify-between">
-                    <h3 className="text-[14px] font-semibold text-foreground">{ind.name}</h3>
-                    <ArrowUpRight
-                      className={`w-3.5 h-3.5 transition-all duration-200 ${
-                        active
-                          ? "text-foreground rotate-0"
-                          : "text-muted-foreground group-hover:text-foreground group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
-                      }`}
-                    />
-                  </div>
-                  <p className="mt-1 text-[12.5px] text-muted-foreground leading-relaxed line-clamp-1">
-                    {ind.tag}
-                  </p>
-                </div>
-              </button>
-            </FadeIn>
-          );
-        })}
-      </div>
-
-      {/* Detail panel — animated on card click */}
-      {mounted && (
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={selected}
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -8 }}
-            transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-            className="mt-4 rounded-2xl border border-border bg-card grid md:grid-cols-[1.2fr_1fr] overflow-hidden"
+    <section id="industries" className="py-20 sm:py-24 px-6 bg-white border-t border-zinc-100 z-10 relative overflow-hidden">
+      <div className="max-w-6xl mx-auto">
+        
+        {/* Header (Lovable Style) */}
+        <div className="flex flex-row items-end justify-between gap-4 mb-10">
+          <div>
+            <h2 className="text-[34px] sm:text-[42px] font-black text-[#111827] tracking-[-0.03em] leading-tight font-sans">
+              Discover templates
+            </h2>
+            <p className="text-[15px] sm:text-[16px] text-zinc-500 mt-1 font-medium">
+              Start your next workflow with a pre-built Automation OS template
+            </p>
+          </div>
+          <button
+            type="button"
+            className="h-10 px-5.5 rounded-xl border border-zinc-200 hover:border-zinc-300 bg-white hover:bg-zinc-50 text-[13.5px] font-bold text-zinc-700 shadow-sm transition-all sm:self-center cursor-pointer shrink-0 active:scale-95"
           >
-            {/* Left: automations list */}
-            <div className="p-7 sm:p-9">
-              <span className="text-[11px] font-mono uppercase tracking-wider text-muted-foreground">
-                What ships for {current.name}
-              </span>
-              <ul className="mt-5 divide-y divide-border">
-                {current.automations.map((a, idx) => (
-                  <motion.li
-                    key={a}
-                    initial={{ opacity: 0, x: -8 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: idx * 0.06, duration: 0.3 }}
-                    className="py-3 flex items-baseline gap-4 text-[14px] text-foreground"
-                  >
-                    <span className="text-[11px] font-mono text-muted-foreground w-6 shrink-0">
-                      {String(idx + 1).padStart(2, "0")}
-                    </span>
-                    <span>{a}</span>
-                  </motion.li>
-                ))}
-              </ul>
-            </div>
+            View all
+          </button>
+        </div>
 
-            {/* Right: WhatsApp phone mockup */}
-            <div className="bg-muted/60 p-7 sm:p-9 flex items-center justify-center border-t md:border-t-0 md:border-l border-border">
-              <div className="w-full max-w-[260px] rounded-[28px] border border-border bg-card p-2.5 shadow-sm">
-                <div className="rounded-[22px] bg-muted/60 p-3 min-h-[260px] flex flex-col gap-2">
-                  <div className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground text-center pb-2 border-b border-border/80">
-                    WhatsApp · AnasNode
-                  </div>
-                  {current.chat.map((m, idx) => (
-                    <motion.div
-                      key={`${selected}-${idx}`}
-                      initial={{ opacity: 0, y: 6 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: idx * 0.12 }}
-                      className={`max-w-[82%] text-[12.5px] leading-snug px-3 py-2 rounded-2xl ${
-                        m.from === "bot"
-                          ? "bg-card text-foreground self-start rounded-bl-sm border border-border"
-                          : "bg-foreground text-background self-end rounded-br-sm"
-                      }`}
-                    >
-                      {m.text}
-                    </motion.div>
-                  ))}
-                </div>
-                {/* Industry image inside phone */}
-                <div className="mt-2 rounded-[18px] overflow-hidden aspect-[16/9]">
-                  <Image
-                    src={current.image}
-                    alt={current.name}
-                    className="w-full h-full object-cover"
-                    width={260}
-                    height={146}
-                  />
-                </div>
+        {/* Templates 4-Column Grid (Lovable Style) */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-10">
+          {TEMPLATES.map((tpl, i) => (
+            <div key={i} className="group relative flex flex-col">
+              
+              {/* Media Card (aspect ratio 1.6/1) */}
+              <div className="aspect-[1.6/1] rounded-2xl overflow-hidden bg-zinc-50 border border-zinc-200/60 shadow-[0_1px_3px_rgba(0,0,0,0.02)] relative transition-all duration-300 group-hover:shadow-md group-hover:border-zinc-300 flex items-center justify-center select-none">
+                {tpl.renderGraphic()}
               </div>
+
+              {/* Template Meta Information */}
+              <div className="mt-3.5 flex flex-col">
+                <h3 className="text-[14.5px] font-bold text-zinc-900 leading-snug group-hover:text-[#0A6BFF] transition-colors cursor-pointer">
+                  {tpl.name}
+                </h3>
+                <p className="text-[12.5px] text-zinc-500 leading-relaxed font-semibold mt-0.5">
+                  {tpl.tag}
+                </p>
+              </div>
+
             </div>
-          </motion.div>
-        </AnimatePresence>
-      )}
-    </Section>
+          ))}
+        </div>
+
+      </div>
+    </section>
   );
 }

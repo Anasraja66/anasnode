@@ -7,7 +7,7 @@ export function Footer() {
             <span className="w-5 h-5 rounded-[5px] bg-foreground flex items-center justify-center">
               <span className="w-1.5 h-1.5 rounded-[2px] bg-primary" />
             </span>
-            AnasNode
+            Anaos
           </div>
           <p className="mt-3 text-[12.5px] text-muted-foreground max-w-xs leading-relaxed">
             AI automation for the businesses that keep cities running.
@@ -33,7 +33,7 @@ export function Footer() {
       </div>
       <div className="border-t border-border">
         <div className="max-w-6xl mx-auto px-6 h-12 flex items-center justify-between text-[11.5px] text-muted-foreground font-mono">
-          <span>© 2025 AnasNode</span>
+          <span>© 2025 Anaos</span>
           <span>Made for operators.</span>
         </div>
       </div>

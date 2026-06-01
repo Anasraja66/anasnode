@@ -91,7 +91,7 @@ function generateWorkspaceFromPrompt(prompt: string) {
     ];
   } else {
     // General Business fallback
-    businessName = extractName(prompt) || "AnasNode Workspace";
+    businessName = extractName(prompt) || "Anaos Workspace";
     automations = [
       { id: "a-custom-1", name: "WhatsApp Support Responder", type: "whatsapp_flow", enabled: true, runs: 0, lastRun: "Never" },
       { id: "a-custom-2", name: "Meeting Scheduler", type: "calendar", enabled: true, runs: 0, lastRun: "Never" },
@@ -147,7 +147,87 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Prompt is required" }, { status: 400 });
     }
 
-    const workspace = generateWorkspaceFromPrompt(prompt);
+    let workspace = null;
+
+    if (process.env.GROQ_API_KEY) {
+      try {
+        const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+          method: "POST",
+          headers: {
+            "Authorization": `Bearer ${process.env.GROQ_API_KEY}`,
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            model: "llama-3.3-70b-versatile",
+            messages: [
+              {
+                role: "system",
+                content: `You are a professional system designer.
+Given a user's business description/prompt, design a custom WhatsApp Automation Workspace for their business.
+Your response MUST be a valid JSON object matching this TypeScript schema:
+
+{
+  "name": "string", // The estimated or extracted business name, e.g. "SmileCare", "Bistro Flow".
+  "industry": "string", // The industry category, e.g. "Real Estate", "Restaurant", "Clinic", "E-Commerce", "Fitness", "Salon & Beauty".
+  "automations": [
+    {
+      "id": "string", // E.g., "a-custom-1", "a-custom-2", etc.
+      "name": "string", // A highly creative and descriptive name of the automation, e.g. "WhatsApp Appointment Booker", "Abandoned Cart Recovery".
+      "type": "whatsapp_flow" | "calendar" | "campaign",
+      "enabled": true,
+      "runs": 0,
+      "lastRun": "Never"
+    }
+  ],
+  "variables": [
+    {
+      "key": "string", // A clean uppercase variable key that would be extracted from chats, e.g., "PATIENT_NAME", "BUDGET_LIMIT", "PREFERRED_STYLIST", "APPOINTMENT_TIME".
+      "value": "string", // An estimated typical value or specific value mentioned in the prompt, e.g., "AED 2.2M", "General Checkup", "John Doe".
+      "confidence": number, // An integer percentage between 80 and 100.
+      "ttl": "string" // E.g., "30 days", "7 days", "365 days".
+    }
+  ]
+}
+
+Design 3-4 highly specific automations and 3-4 specific variables tailored precisely to their specific business.
+Do not output markdown, HTML, backticks (e.g. \`\`\`json), or explanations. Just a raw JSON object.`
+              },
+              {
+                role: "user",
+                content: `Please generate a custom workspace for this business prompt: "${prompt}"`
+              }
+            ],
+            response_format: { type: "json_object" }
+          })
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          const content = data.choices?.[0]?.message?.content;
+          if (content) {
+            const parsed = JSON.parse(content);
+            workspace = {
+              id: `ws-custom-${Date.now()}`,
+              name: parsed.name || "Custom Workspace",
+              industry: parsed.industry || "General Business",
+              slug: (parsed.name || "Custom Workspace").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, ""),
+              status: "draft" as const,
+              version: 1,
+              automations: parsed.automations || [],
+              variables: parsed.variables || []
+            };
+          }
+        } else {
+          console.error("Groq API error status:", response.status);
+        }
+      } catch (err) {
+        console.error("Failed to generate using Groq API, falling back:", err);
+      }
+    }
+
+    if (!workspace) {
+      workspace = generateWorkspaceFromPrompt(prompt);
+    }
     
     return NextResponse.json({
       success: true,

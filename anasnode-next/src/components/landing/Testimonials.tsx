@@ -4,7 +4,7 @@ import { FadeIn, Section, SectionLabel } from "./Section";
 
 const items = [
   {
-    quote: "We used to chase every lead by hand. AnasNode replies, qualifies and books the viewing before I open my laptop.",
+    quote: "We used to chase every lead by hand. Anaos replies, qualifies and books the viewing before I open my laptop.",
     name: "Bilal Ahmed", role: "Principal Agent", company: "Marina Realty, Dubai",
   },
   {

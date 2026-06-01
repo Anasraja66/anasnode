@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
+import { auth } from "@/auth";
 
 export const dynamic = "force-dynamic";
 
@@ -9,10 +10,11 @@ export async function GET(
 ) {
   try {
     const { id } = await params;
-    const mockAccountId = "acc-default-user";
+    const session = await auth();
+    const accountId = session?.user?.accountId || "acc-default-user";
 
     const workflow = await prisma.workflow.findFirst({
-      where: { id, accountId: mockAccountId },
+      where: { id, accountId },
     });
 
     if (!workflow) {
@@ -43,12 +45,13 @@ export async function PUT(
 ) {
   try {
     const { id } = await params;
-    const mockAccountId = "acc-default-user";
+    const session = await auth();
+    const accountId = session?.user?.accountId || "acc-default-user";
     const body = await request.json();
     const { name, description, nodes, edges, variables } = body;
 
     const workflow = await prisma.workflow.findFirst({
-      where: { id, accountId: mockAccountId },
+      where: { id, accountId },
     });
 
     if (!workflow) {

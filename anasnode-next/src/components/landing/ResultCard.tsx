@@ -59,7 +59,7 @@ export function ResultCard({ workspace }: Props) {
   };
 
   const handleOpenDashboard = () => {
-    const saved = localStorage.getItem("anasnode_custom_workspaces");
+    const saved = localStorage.getItem("anaos_custom_workspaces");
     let workspacesList = saved ? JSON.parse(saved) : [];
 
     const updatedWorkspace = {
@@ -71,7 +71,7 @@ export function ResultCard({ workspace }: Props) {
     };
 
     workspacesList = [updatedWorkspace, ...workspacesList.filter((w: any) => w.id !== workspace.id)];
-    localStorage.setItem("anasnode_custom_workspaces", JSON.stringify(workspacesList));
+    localStorage.setItem("anaos_custom_workspaces", JSON.stringify(workspacesList));
 
     window.location.href = `/dashboard?ws=${updatedWorkspace.id}`;
   };

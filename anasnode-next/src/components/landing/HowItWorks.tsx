@@ -1,34 +1,78 @@
 "use client";
 
-import { FadeIn, Section, SectionLabel } from "./Section";
-
-const steps = [
-  { n: "01", title: "Describe", desc: "Write one sentence about what your business does. No jargon, no setup." },
-  { n: "02", title: "Generate", desc: "AnasNode drafts the agents, CRM and flows that fit your operation." },
-  { n: "03", title: "Go live", desc: "Connect WhatsApp, toggle the automations you want, start serving customers." },
-];
+import { Building2, Utensils, Stethoscope } from "lucide-react";
 
 export function HowItWorks() {
   return (
-    <Section id="how">
-      <FadeIn>
-        <SectionLabel number="01">How it works</SectionLabel>
-        <h2 className="mt-4 text-[28px] sm:text-[40px] font-semibold text-foreground tracking-tight leading-[1.1] max-w-2xl">
-          From a sentence to a live workspace in under a minute.
+    <section id="how" className="py-20 sm:py-28 px-6 bg-[#FAF8F5] border-t border-[#E5E5E0] z-10 relative overflow-hidden">
+      <div className="max-w-6xl mx-auto">
+        {/* Title */}
+        <h2 className="text-[34px] sm:text-[44px] font-extrabold text-[#111827] tracking-[-0.03em] mb-12">
+          Meet Anaos
         </h2>
-      </FadeIn>
 
-      <div className="mt-10 grid md:grid-cols-3 gap-px bg-border rounded-2xl overflow-hidden border border-border">
-        {steps.map((s, i) => (
-          <FadeIn key={s.n} delay={i * 0.08}>
-            <div className="bg-card p-7 h-full">
-              <span className="text-[11px] font-mono text-muted-foreground">{s.n}</span>
-              <h3 className="mt-5 text-[18px] font-semibold text-foreground tracking-tight">{s.title}</h3>
-              <p className="mt-2 text-[14px] text-muted-foreground leading-relaxed">{s.desc}</p>
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+          {/* Left Column: Custom Video Browser Mockup (7 Columns) */}
+          <div className="lg:col-span-7">
+            <div className="rounded-[32px] bg-[#F3EFE9] border border-[#E5E2DB] p-5 sm:p-7 flex items-center justify-center shadow-[0_4px_30px_rgba(0,0,0,0.015)]">
+              {/* High-Fidelity Browser Card */}
+              <div className="w-full bg-white rounded-2xl border border-zinc-200/80 shadow-md overflow-hidden flex flex-col">
+                
+                {/* Browser top navigation controls */}
+                <div className="bg-zinc-50 border-b border-zinc-200 px-4 py-3 flex items-center gap-1.5 shrink-0 select-none">
+                  <span className="w-2.5 h-2.5 rounded-full bg-zinc-200" />
+                  <span className="w-2.5 h-2.5 rounded-full bg-zinc-200" />
+                  <span className="w-2.5 h-2.5 rounded-full bg-zinc-200" />
+                  <div className="h-5 bg-white border border-zinc-200/80 rounded-md text-[10px] text-zinc-400 flex items-center px-4 w-48 mx-auto font-bold tracking-tight">
+                    anaos.ai/sandbox-active
+                  </div>
+                </div>
+
+                {/* Aspect-Ratio video container */}
+                <div className="relative aspect-video bg-zinc-950 overflow-hidden">
+                  <video
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                    className="w-full h-full object-cover"
+                  >
+                    <source src="/hero-video-25.mp4" type="video/mp4" />
+                    Your browser does not support the video tag.
+                  </video>
+                </div>
+              </div>
             </div>
-          </FadeIn>
-        ))}
+          </div>
+
+          {/* Right Column: 3 Steps Narrative list (5 Columns) */}
+          <div className="lg:col-span-5 space-y-10">
+            {/* Step 1 */}
+            <div className="space-y-2">
+              <h3 className="text-[22px] font-extrabold text-[#111827] tracking-tight">Start with an idea</h3>
+              <p className="text-[14.5px] sm:text-[15px] text-[#4B5563] leading-relaxed font-semibold">
+                Describe the WhatsApp operator or workflow you want to create or drop in templates and docs.
+              </p>
+            </div>
+
+            {/* Step 2 */}
+            <div className="space-y-2">
+              <h3 className="text-[22px] font-extrabold text-[#111827] tracking-tight">Watch it come to life</h3>
+              <p className="text-[14.5px] sm:text-[15px] text-[#4B5563] leading-relaxed font-semibold">
+                See your vision transform into active visual workspace nodes in real-time as AI builds it for you.
+              </p>
+            </div>
+
+            {/* Step 3 */}
+            <div className="space-y-2">
+              <h3 className="text-[22px] font-extrabold text-[#111827] tracking-tight">Refine and ship</h3>
+              <p className="text-[14.5px] sm:text-[15px] text-[#4B5563] leading-relaxed font-semibold">
+                Test your bot instantly inside the live WhatsApp sandbox, toggle connections, and deploy with one click.
+              </p>
+            </div>
+          </div>
+        </div>
       </div>
-    </Section>
+    </section>
   );
 }

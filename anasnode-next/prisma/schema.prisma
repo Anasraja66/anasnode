@@ -3,8 +3,8 @@ datasource db {
 }
 
 generator client {
-  provider = "prisma-client-js"
-  engineType = "library"
+  provider   = "prisma-client-js"
+  engineType = "binary"
 }
 
 model Account {
@@ -15,8 +15,23 @@ model Account {
   workspaces  Workspace[]
   workflows   Workflow[]
   credentials IntegrationCredential[]
+  users       User[]
 
   @@map("accounts")
+}
+
+model User {
+  id            String    @id @default(uuid())
+  email         String    @unique
+  password      String
+  name          String?
+  role          String    @default("owner")
+  accountId     String
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  account       Account   @relation(fields: [accountId], references: [id], onDelete: Cascade)
+
+  @@map("users")
 }
 
 model Workspace {

@@ -47,7 +47,7 @@ export function Navbar() {
             <span className="w-5 h-5 rounded-[5px] bg-foreground flex items-center justify-center">
               <span className="w-1.5 h-1.5 rounded-[2px] bg-primary" />
             </span>
-            AnasNode
+            Anaos
           </a>
 
           {/* Desktop nav */}

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { useRouter } from "next/navigation";
 import {
   LayoutDashboard,
   Users,
@@ -1241,18 +1242,63 @@ function AutomationsPage({ ws }: { ws: Workspace }) {
 // ─── Main Root Dashboard ──────────────────────────────────────────────────────
 
 export default function Dashboard() {
+  const router = useRouter();
   const [tab, setTab] = useState<Tab>("ai_agent");
   const [workspaces, setWorkspaces] = useState(WORKSPACES);
   const [ws, setWs] = useState(WORKSPACES[0]);
   const [contacts, setContacts] = useState(CONTACTS);
   const [mounted, setMounted] = useState(false);
+  const [loadingData, setLoadingData] = useState(true);
 
   // Webhook Sandbox State
   const [webhookActive, setWebhookActive] = useState(true);
 
   useEffect(() => {
     setMounted(true);
-  }, []);
+
+    async function loadDashboardData() {
+      try {
+        const res = await fetch("/api/dashboard/data");
+        const data = await res.json();
+        
+        if (data.success && data.workspaces && data.workspaces.length > 0) {
+          // If the workspace name is still default, redirect to onboarding
+          const hasDefaultWorkspace = data.workspaces.some(
+            (w: any) => w.name === "My First Workspace"
+          );
+          
+          if (hasDefaultWorkspace) {
+            router.push("/onboarding");
+            return;
+          }
+
+          // Map API workspaces to match local state types
+          const mapped = data.workspaces.map((w: any) => ({
+            id: w.id,
+            name: w.name,
+            industry: w.industry || "General Business",
+            slug: w.slug,
+            status: "live",
+            version: w.version || 1,
+            automations: w.automations || []
+          }));
+
+          setWorkspaces(mapped);
+          setWs(mapped[0]);
+          
+          if (data.contacts && data.contacts.length > 0) {
+            setContacts(data.contacts);
+          }
+        }
+      } catch (err) {
+        console.error("Error loading dashboard data:", err);
+      } finally {
+        setLoadingData(false);
+      }
+    }
+
+    loadDashboardData();
+  }, [router]);
 
   const toggleAutomation = (automationId: string) => {
     setWorkspaces(prev => prev.map(w => {
@@ -1283,10 +1329,10 @@ export default function Dashboard() {
     analytics:   "Analytics",
   };
 
-  if (!mounted) {
+  if (!mounted || loadingData) {
     return (
       <div className="flex h-screen bg-[#F5F5F5] items-center justify-center">
-        <div className="flex gap-1.5">
+        <div className="flex gap-1.5 animate-pulse">
           {[0,1,2].map(i => (
             <div key={i} className="w-2.5 h-2.5 rounded-full bg-[#0A6BFF] animate-bounce" style={{ animationDelay: `${i*150}ms` }} />
           ))}

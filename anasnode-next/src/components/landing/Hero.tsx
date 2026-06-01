@@ -16,13 +16,23 @@ export function Hero() {
         <div className="absolute top-[-15%] right-[-10%] w-[550px] h-[550px] rounded-full bg-[#00B0FF] opacity-35 blur-[120px] animate-pulse" style={{ animationDuration: '8s' }} />
         {/* Soft Blue Blob (Top Left) */}
         <div className="absolute top-[-25%] left-[-15%] w-[480px] h-[480px] rounded-full bg-[#3B82F6] opacity-30 blur-[100px]" />
-        {/* Bright Hot Magenta Blob (Bottom Left) */}
-        <div className="absolute bottom-[-20%] left-[-20%] w-[650px] h-[650px] rounded-full bg-[#FF007F] opacity-40 blur-[130px] animate-pulse" style={{ animationDuration: '10s' }} />
-        {/* Bright Pink Blob (Bottom Right) */}
-        <div className="absolute bottom-[-25%] right-[-10%] w-[550px] h-[550px] rounded-full bg-[#EC4899] opacity-30 blur-[110px]" />
+        {/* Bright Hot Magenta Blob (Bottom Left) -> Changed to Sky Blue */}
+        <div className="absolute bottom-[-20%] left-[-20%] w-[650px] h-[650px] rounded-full bg-[#0EA5E9] opacity-30 blur-[130px] animate-pulse" style={{ animationDuration: '10s' }} />
+        {/* Bright Pink Blob (Bottom Right) -> Changed to Light Ice Blue */}
+        <div className="absolute bottom-[-25%] right-[-10%] w-[550px] h-[550px] rounded-full bg-[#7DD3FC] opacity-25 blur-[110px]" />
       </div>
 
       <div className="max-w-4xl mx-auto text-center relative z-10">
+        {/* Top Label */}
+        <motion.p
+          initial={{ opacity: 0, y: 14 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.55 }}
+          className="text-[13px] sm:text-[14px] font-bold text-zinc-500 tracking-[0.2em] uppercase mb-4"
+        >
+          All-In-One Automation OS
+        </motion.p>
+
         {/* Heading (Lovable Style) */}
         <motion.h1
           initial={{ opacity: 0, y: 14 }}

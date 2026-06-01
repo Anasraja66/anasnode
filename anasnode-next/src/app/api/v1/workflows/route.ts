@@ -8,7 +8,7 @@ export const dynamic = "force-dynamic";
 export async function GET(request: Request) {
   try {
     const session = await auth();
-    const accountId = session?.user?.accountId || "acc-default-user";
+    const accountId = (session?.user as any)?.accountId || "acc-default-user";
     const { searchParams } = new URL(request.url);
     const workspaceId = searchParams.get("workspaceId");
 
@@ -52,7 +52,7 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
   try {
     const session = await auth();
-    const accountId = session?.user?.accountId || "acc-default-user";
+    const accountId = (session?.user as any)?.accountId || "acc-default-user";
     const body = await request.json();
     const { name, description, workspaceId, nodes = [], edges = [] } = body;
 

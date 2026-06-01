@@ -11,7 +11,7 @@ export async function GET(
   try {
     const { id } = await params;
     const session = await auth();
-    const accountId = session?.user?.accountId || "acc-default-user";
+    const accountId = (session?.user as any)?.accountId || "acc-default-user";
 
     const workflow = await prisma.workflow.findFirst({
       where: { id, accountId },
@@ -46,7 +46,7 @@ export async function PUT(
   try {
     const { id } = await params;
     const session = await auth();
-    const accountId = session?.user?.accountId || "acc-default-user";
+    const accountId = (session?.user as any)?.accountId || "acc-default-user";
     const body = await request.json();
     const { name, description, nodes, edges, variables } = body;
 

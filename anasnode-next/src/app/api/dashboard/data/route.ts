@@ -5,11 +5,12 @@ import { prisma } from "@/lib/db";
 export async function GET(request: Request) {
   try {
     const session = await auth();
-    if (!session?.user?.accountId) {
+    const user = session?.user as any;
+    if (!user?.accountId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const accountId = session.user.accountId;
+    const accountId = user.accountId;
 
     // Fetch workspaces with their workflows (automations) from database
     const dbWorkspaces = await prisma.workspace.findMany({
@@ -44,7 +45,7 @@ export async function GET(request: Request) {
           name: wf.name,
           description: wf.description || "",
           type: "whatsapp_flow" as const,
-          status: (wf.isActive ? "active" : "draft") as const,
+          status: wf.isActive ? ("active" as const) : ("draft" as const),
           runs: stats.runs || 0,
           ctr: "n/a",
           lastModified: new Date(wf.updatedAt).toLocaleDateString(),

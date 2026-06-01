@@ -1,6 +1,7 @@
 "use client";
 
 import { ArrowUpRight, ArrowDownRight, Database, Mail, Terminal, Calendar, Code, Shield } from "lucide-react";
+import { FadeIn } from "./Section";
 
 type Template = {
   name: string;
@@ -100,10 +101,8 @@ const TEMPLATES: Template[] = [
           <span className="text-[13px] sm:text-[14px] font-black text-zinc-800 uppercase leading-none mb-1">
             CART CONVERSION
           </span>
-          <p className="text-[5.8px] leading-[1.3] text-zinc-500 max-w-[95%] font-medium my-1 font-mono">
-            if (cart.status == "abandoned") {
-              dispatch.personalDiscount(10);
-            }
+          <p className="text-[5.8px] leading-[1.3] text-zinc-500 max-w-[95%] font-medium my-1 font-mono whitespace-pre-wrap">
+            {`if (cart.status == "abandoned") {\n  dispatch.personalDiscount(10);\n}`}
           </p>
           <span className="text-[5px] text-[#0A6BFF] font-mono tracking-widest uppercase font-bold mt-1">
             ➔ RECOVERED $12,480 THIS MONTH
@@ -247,44 +246,48 @@ export function Industries() {
       <div className="max-w-6xl mx-auto">
         
         {/* Header (Lovable Style) */}
-        <div className="flex flex-row items-end justify-between gap-4 mb-10">
-          <div>
-            <h2 className="text-[34px] sm:text-[42px] font-black text-[#111827] tracking-[-0.03em] leading-tight font-sans">
-              Discover templates
-            </h2>
-            <p className="text-[15px] sm:text-[16px] text-zinc-500 mt-1 font-medium">
-              Start your next workflow with a pre-built Automation OS template
-            </p>
+        <FadeIn delay={0.1}>
+          <div className="flex flex-row items-end justify-between gap-4 mb-10">
+            <div>
+              <h2 className="text-[34px] sm:text-[42px] font-black text-[#111827] tracking-[-0.03em] leading-tight font-sans">
+                Discover templates
+              </h2>
+              <p className="text-[15px] sm:text-[16px] text-zinc-500 mt-1 font-medium">
+                Start your next workflow with a pre-built Automation OS template
+              </p>
+            </div>
+            <button
+              type="button"
+              className="h-10 px-5.5 rounded-xl border border-zinc-200 hover:border-zinc-300 bg-white hover:bg-zinc-50 text-[13.5px] font-bold text-zinc-700 shadow-sm transition-all sm:self-center cursor-pointer shrink-0 active:scale-95"
+            >
+              View all
+            </button>
           </div>
-          <button
-            type="button"
-            className="h-10 px-5.5 rounded-xl border border-zinc-200 hover:border-zinc-300 bg-white hover:bg-zinc-50 text-[13.5px] font-bold text-zinc-700 shadow-sm transition-all sm:self-center cursor-pointer shrink-0 active:scale-95"
-          >
-            View all
-          </button>
-        </div>
+        </FadeIn>
 
         {/* Templates 4-Column Grid (Lovable Style) */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-10">
           {TEMPLATES.map((tpl, i) => (
-            <div key={i} className="group relative flex flex-col">
-              
-              {/* Media Card (aspect ratio 1.6/1) */}
-              <div className="aspect-[1.6/1] rounded-2xl overflow-hidden bg-zinc-50 border border-zinc-200/60 shadow-[0_1px_3px_rgba(0,0,0,0.02)] relative transition-all duration-300 group-hover:shadow-md group-hover:border-zinc-300 flex items-center justify-center select-none">
-                {tpl.renderGraphic()}
-              </div>
+            <FadeIn key={i} delay={0.15 + (i * 0.08)}>
+              <div className="group relative flex flex-col">
+                
+                {/* Media Card (aspect ratio 1.6/1) */}
+                <div className="aspect-[1.6/1] rounded-2xl overflow-hidden bg-zinc-50 border border-zinc-200/60 shadow-[0_1px_3px_rgba(0,0,0,0.02)] relative transition-all duration-300 group-hover:shadow-md group-hover:border-zinc-300 flex items-center justify-center select-none">
+                  {tpl.renderGraphic()}
+                </div>
 
-              {/* Template Meta Information */}
-              <div className="mt-3.5 flex flex-col">
-                <h3 className="text-[14.5px] font-bold text-zinc-900 leading-snug group-hover:text-[#0A6BFF] transition-colors cursor-pointer">
-                  {tpl.name}
-                </h3>
-                <p className="text-[12.5px] text-zinc-500 leading-relaxed font-semibold mt-0.5">
-                  {tpl.tag}
-                </p>
-              </div>
+                {/* Template Meta Information */}
+                <div className="mt-3.5 flex flex-col">
+                  <h3 className="text-[14.5px] font-bold text-zinc-900 leading-snug group-hover:text-[#0A6BFF] transition-colors cursor-pointer">
+                    {tpl.name}
+                  </h3>
+                  <p className="text-[12.5px] text-zinc-500 leading-relaxed font-semibold mt-0.5">
+                    {tpl.tag}
+                  </p>
+                </div>
 
-            </div>
+              </div>
+            </FadeIn>
           ))}
         </div>
 

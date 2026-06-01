@@ -22,9 +22,50 @@ export function PromptBox({ onGenerate, compact }: Props) {
   const [mounted, setMounted] = useState(false);
   const [selectedAction, setSelectedAction] = useState("Build");
 
+  // Typewriter effect state
+  const placeholders = [
+    "Ask Anaos to automate a WhatsApp operator that...",
+    "Build a real estate agent that qualifies leads...",
+    "Create an abandoned cart recovery flow for Shopify...",
+    "Set up a dental clinic appointment scheduler...",
+  ];
+  const [placeholderText, setPlaceholderText] = useState("");
+  const [placeholderIndex, setPlaceholderIndex] = useState(0);
+  const [isDeleting, setIsDeleting] = useState(false);
+
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  // Typewriter animation loop
+  useEffect(() => {
+    if (!mounted) return;
+    let timer: NodeJS.Timeout;
+    const currentText = placeholders[placeholderIndex];
+    
+    if (isDeleting) {
+      if (placeholderText === "") {
+        setIsDeleting(false);
+        setPlaceholderIndex((prev) => (prev + 1) % placeholders.length);
+        timer = setTimeout(() => {}, 400); 
+      } else {
+        timer = setTimeout(() => {
+          setPlaceholderText(currentText.substring(0, placeholderText.length - 1));
+        }, 30); // Faster erasing
+      }
+    } else {
+      if (placeholderText === currentText) {
+        timer = setTimeout(() => {
+          setIsDeleting(true);
+        }, 2500); // Pause when fully typed
+      } else {
+        timer = setTimeout(() => {
+          setPlaceholderText(currentText.substring(0, placeholderText.length + 1));
+        }, 65); // Typing speed
+      }
+    }
+    return () => clearTimeout(timer);
+  }, [placeholderText, isDeleting, placeholderIndex, mounted]);
 
   const stages = [
     "Reading requirements...",
@@ -78,7 +119,7 @@ export function PromptBox({ onGenerate, compact }: Props) {
         <textarea
           value={value}
           onChange={(e) => setValue(e.target.value)}
-          placeholder="Ask Anaos to automate a WhatsApp operator that..."
+          placeholder={mounted && !value ? placeholderText : "Ask Anaos to automate a WhatsApp operator that..."}
           rows={3}
           disabled={loading}
           className="w-full resize-none bg-transparent px-5 pt-4 pb-2 text-[15px] text-zinc-800 placeholder:text-zinc-400 focus:outline-none leading-relaxed"

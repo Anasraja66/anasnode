@@ -1,145 +1,135 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Building2, ShoppingBag, Heart, Shield, Sparkles, Coffee, Truck, ArrowRight } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 import { FadeIn } from "./Section";
 
 type IndustryItem = {
   name: string;
   desc: string;
-  icon: React.ReactNode;
+  image: string;
   metric: string;
   metricLabel: string;
-  automations: string[];
-  color: string;
+  link: string;
 };
 
 const INDUSTRIES: IndustryItem[] = [
   {
     name: "E-commerce & Retail",
-    desc: "Recover lost checkouts, automate customer support, and collect 5-star Google ratings post-purchase.",
-    icon: <ShoppingBag className="w-5 h-5 text-rose-500" />,
-    metric: "18%",
+    desc: "Recover lost carts over WhatsApp, automate receipt delivery, and boost Google reviews post-purchase.",
+    image: "https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=800&q=80",
+    metric: "18% Recovery",
     metricLabel: "Cart recovery rate",
-    automations: ["Abandoned cart reminders", "WhatsApp receipt delivery", "Post-visit review collectors"],
-    color: "from-rose-500/10 to-rose-600/5",
+    link: "#"
   },
   {
     name: "Real Estate & Agencies",
-    desc: "Route inbound property inquiries, qualify buyer budgets, and coordinate home tour bookings 24/7.",
-    icon: <Building2 className="w-5 h-5 text-amber-500" />,
-    metric: "10x",
-    metricLabel: "Faster lead qualification",
-    automations: ["Budget qualification bots", "PDF brochure delivery", "Calendar booking links"],
-    color: "from-amber-500/10 to-amber-600/5",
+    desc: "Qualify inbound property inquiries, share listing PDF brochures, and coordinate tours on your calendar.",
+    image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80",
+    metric: "10x Faster",
+    metricLabel: "Lead qualification",
+    link: "#"
   },
   {
     name: "Healthcare & Wellness",
-    desc: "Coordinate patient appointments, reduce no-shows with reminder alerts, and route inquiries securely.",
-    icon: <Heart className="w-5 h-5 text-emerald-500" />,
-    metric: "-85%",
-    metricLabel: "Reduction in no-shows",
-    automations: ["Auto-reminder notifications", "Treatment followup pings", "Feedback collections"],
-    color: "from-emerald-500/10 to-emerald-600/5",
+    desc: "Send automated booking reminders, followup instructions, and coordinate patient surveys securely.",
+    image: "https://images.unsplash.com/photo-1629909613654-28e377c37b09?auto=format&fit=crop&w=800&q=80",
+    metric: "-85% No-Shows",
+    metricLabel: "Fewer skipped bookings",
+    link: "#"
   },
   {
     name: "Restaurants & Hospitality",
-    desc: "Provide interactive chat menus, automate booking table reservations, and send live order updates.",
-    icon: <Coffee className="w-5 h-5 text-sky-500" />,
-    metric: "92%",
-    metricLabel: "Auto-order resolution",
-    automations: ["WhatsApp interactive menus", "Table reservation systems", "Delivery status alerts"],
-    color: "from-sky-500/10 to-sky-600/5",
+    desc: "Provide interactive WhatsApp menus, automate table bookings, and dispatch live order statuses.",
+    image: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=800&q=80",
+    metric: "92% Auto-Orders",
+    metricLabel: "Resolved via chat",
+    link: "#"
   },
   {
-    name: "Logistics & Operations",
-    desc: "Automate dispatch alerts, keep customers updated with shipping statuses, and sync deliveries to Stripe.",
-    icon: <Truck className="w-5 h-5 text-indigo-500" />,
-    metric: "99.9%",
-    metricLabel: "On-time delivery alerts",
-    automations: ["Auto-dispatch updates", "Stripe payment triggers", "Proof of delivery logs"],
-    color: "from-indigo-500/10 to-indigo-600/5",
+    name: "Logistics & Dispatch",
+    desc: "Send automated dispatch alerts, share real-time tracking links, and trigger invoices upon delivery.",
+    image: "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=800&q=80",
+    metric: "99.9% Uptime",
+    metricLabel: "On-time updates",
+    link: "#"
   },
   {
-    name: "SaaS & Tech Startups",
-    desc: "Automate client onboarding workflows, trigger billing invoices, and sync webhook databases instantly.",
-    icon: <Sparkles className="w-5 h-5 text-purple-500" />,
-    metric: "95%",
-    metricLabel: "Workflow auto-run",
-    automations: ["Client onboarding alerts", "Stripe billing integrations", "Internal database routers"],
-    color: "from-purple-500/10 to-purple-600/5",
-  },
+    name: "Agencies & Tech Startups",
+    desc: "Automate onboarding checklists, generate Stripe billing invoices, and sync databases instantly.",
+    image: "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?auto=format&fit=crop&w=800&q=80",
+    metric: "95% Auto-run",
+    metricLabel: "Zero manual touch",
+    link: "#"
+  }
 ];
 
 export function IndustrySection() {
   return (
-    <section id="industries" className="py-20 sm:py-28 px-6 bg-[#FDF8F4] border-t border-[#F0E6DC] relative overflow-hidden">
-      {/* Background ambient glow */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute top-[-100px] left-[5%] w-[400px] h-[400px] rounded-full bg-sky-500/[0.02] blur-[100px]" />
-        <div className="absolute bottom-[-100px] right-[5%] w-[400px] h-[400px] rounded-full bg-amber-500/[0.02] blur-[100px]" />
-      </div>
+    <section id="industries" className="py-24 sm:py-32 px-6 bg-white border-t border-[#F0E6DC] relative overflow-hidden">
+      {/* Soft warm background styling */}
+      <div className="absolute inset-0 bg-gradient-to-b from-[#FDF8F4]/50 to-white pointer-events-none" />
 
       <div className="max-w-6xl mx-auto relative z-10">
         
-        {/* Title Block */}
+        {/* Header Block */}
         <FadeIn delay={0.1}>
-          <div className="max-w-3xl mb-16">
-            <h2 className="text-[34px] sm:text-[46px] font-black text-[#111827] tracking-tight leading-tight">
+          <div className="text-center max-w-3xl mx-auto mb-16 sm:mb-20">
+            <h2 className="text-[36px] sm:text-[50px] font-black text-[#111827] tracking-tight leading-[1.08] font-sans">
               Built for every industry
             </h2>
-            <p className="text-[16px] sm:text-[18px] text-zinc-500 mt-3 font-medium leading-relaxed max-w-2xl">
-              From fast-growing retail brands to local service operators, Anaos scales workflow automations across any business vertical.
+            <p className="text-[17px] sm:text-[19px] text-[#4B5563] mt-4 font-semibold leading-relaxed max-w-2xl mx-auto">
+              Choose your vertical to explore real-world, high-performing automation workflows.
             </p>
           </div>
         </FadeIn>
 
-        {/* Industry Cards Grid */}
+        {/* Visually Immersive Cards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {INDUSTRIES.map((item, idx) => (
             <FadeIn key={item.name} delay={0.15 + idx * 0.06}>
-              <div className="bg-white rounded-2xl border border-[#F0E6DC] p-6 flex flex-col justify-between h-full hover:shadow-md hover:border-zinc-300 transition-all duration-300 group">
-                <div>
+              <a
+                href={item.link}
+                className="group relative h-[380px] rounded-2xl overflow-hidden border border-zinc-200/60 shadow-[0_1px_3px_rgba(0,0,0,0.02)] flex flex-col justify-end p-6 hover:shadow-lg hover:border-zinc-300 transition-all duration-300 active:scale-[0.99] select-none cursor-pointer"
+              >
+                {/* Background Image with Zoom on Hover */}
+                <img
+                  src={item.image}
+                  alt={item.name}
+                  className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                />
+                
+                {/* Gradient Overlay for Text Readability */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-black/10 group-hover:via-black/45 transition-colors duration-300" />
+
+                {/* Card Content Overlay */}
+                <div className="relative z-10 flex flex-col justify-between h-full w-full text-white">
                   
-                  {/* Top Icon & Metric */}
-                  <div className="flex items-center justify-between mb-5">
-                    <span className="p-2 rounded-xl bg-zinc-50 border border-zinc-200/50 flex items-center justify-center">
-                      {item.icon}
+                  {/* Top Metric Badge */}
+                  <div className="flex justify-between items-start">
+                    <span className="bg-white/15 backdrop-blur-[3px] border border-white/20 text-white text-[11px] px-2.5 py-1 rounded-full font-bold">
+                      {item.metric}
                     </span>
-                    <div className="text-right">
-                      <div className="text-[20px] font-extrabold text-[#111827]">{item.metric}</div>
-                      <div className="text-[9.5px] font-bold text-[#00B0FF] uppercase tracking-wider">{item.metricLabel}</div>
-                    </div>
+                    <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 w-7 h-7 rounded-full bg-white/20 backdrop-blur-[2px] flex items-center justify-center border border-white/20">
+                      <ArrowUpRight className="w-4 h-4 text-white" />
+                    </span>
                   </div>
 
-                  {/* Title & Desc */}
-                  <h3 className="text-[17px] font-extrabold text-[#111827] mb-2 group-hover:text-[#00B0FF] transition-colors cursor-pointer">
-                    {item.name}
-                  </h3>
-                  <p className="text-[13px] text-zinc-500 leading-relaxed mb-5">
-                    {item.desc}
-                  </p>
-
-                  {/* Automations list */}
-                  <div className="border-t border-[#F0E6DC]/40 pt-4 space-y-2">
-                    <div className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider mb-2">Example Workflows:</div>
-                    {item.automations.map((a) => (
-                      <div key={a} className="flex items-center gap-2 text-[12.5px] text-zinc-700">
-                        <span className="w-1.5 h-1.5 rounded-full bg-[#00B0FF]" />
-                        <span>{a}</span>
-                      </div>
-                    ))}
+                  {/* Text Details at the Bottom */}
+                  <div>
+                    <h3 className="text-[21px] sm:text-[23px] font-black text-white tracking-wide mb-2 leading-tight">
+                      {item.name}
+                    </h3>
+                    <p className="text-[13px] text-zinc-200 leading-relaxed font-medium mb-1">
+                      {item.desc}
+                    </p>
+                    <span className="text-[10px] text-zinc-400 font-bold uppercase tracking-widest">
+                      {item.metricLabel}
+                    </span>
                   </div>
 
                 </div>
-
-                {/* Footer Action link */}
-                <div className="mt-6 pt-4 border-t border-[#F0E6DC]/40 flex items-center justify-between text-[13px] font-bold text-zinc-400 group-hover:text-[#00B0FF] transition-colors cursor-pointer">
-                  <span>Explore workflows</span>
-                  <ArrowRight className="w-4 h-4 transform group-hover:translate-x-1 transition-transform duration-200" />
-                </div>
-
-              </div>
+              </a>
             </FadeIn>
           ))}
         </div>

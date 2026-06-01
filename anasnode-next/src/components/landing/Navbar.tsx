@@ -2,7 +2,27 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, ChevronDown, BookOpen, Terminal, HelpCircle, Layers, Database, ShoppingCart, Star, MessageSquare, FileText, Bell } from "lucide-react";
+import { 
+  Menu, 
+  X, 
+  ChevronDown, 
+  BookOpen, 
+  Terminal, 
+  HelpCircle, 
+  Layers, 
+  Database, 
+  ShoppingCart, 
+  Star, 
+  MessageSquare, 
+  FileText, 
+  Bell,
+  Building2,
+  ShoppingBag,
+  Heart,
+  Coffee,
+  Truck,
+  Sparkles
+} from "lucide-react";
 
 /* ─── Anaos SVG Logo (Recreated from image) ─── */
 export function AnaosLogo({ className = "w-7 h-7" }: { className?: string }) {
@@ -56,10 +76,11 @@ export function AnaosLogo({ className = "w-7 h-7" }: { className?: string }) {
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [activeDropdown, setActiveDropdown] = useState<"automations" | "resources" | null>(null);
+  const [activeDropdown, setActiveDropdown] = useState<"automations" | "industries" | "resources" | null>(null);
 
   // Mobile navigation expansion state
   const [mobileAutomationsOpen, setMobileAutomationsOpen] = useState(false);
+  const [mobileIndustriesOpen, setMobileIndustriesOpen] = useState(false);
   const [mobileResourcesOpen, setMobileResourcesOpen] = useState(false);
 
   useEffect(() => {
@@ -80,7 +101,7 @@ export function Navbar() {
     };
   }, [mobileOpen]);
 
-  // Automations data (Directly maps to the real templates in Industries.tsx)
+  // Automations data (Directly maps to the templates in Industries.tsx)
   const automations = [
     { label: "WhatsApp Lead Responder", desc: "Qualify leads & sync to Sheets/CRM", icon: <Database className="w-4 h-4 text-sky-500" /> },
     { label: "Abandoned Cart Recoverer", desc: "WhatsApp & SMS checkout reminders", icon: <ShoppingCart className="w-4 h-4 text-rose-500" /> },
@@ -88,6 +109,16 @@ export function Navbar() {
     { label: "AI Helpdesk Support Bot", desc: "24/7 automated FAQ response on WhatsApp", icon: <MessageSquare className="w-4 h-4 text-emerald-500" /> },
     { label: "Billing & Stripe Sync", desc: "Auto-send PDF invoices to paid clients", icon: <FileText className="w-4 h-4 text-indigo-500" /> },
     { label: "Appointment Reminders", desc: "Reduce no-shows with scheduling alerts", icon: <Bell className="w-4 h-4 text-pink-500" /> },
+  ];
+
+  // Industries data
+  const industries = [
+    { label: "E-commerce & Retail", desc: "Checkout drops & review boosters", icon: <ShoppingBag className="w-4 h-4 text-rose-500" /> },
+    { label: "Real Estate & Agencies", desc: "Buyer prequalification & touring schedules", icon: <Building2 className="w-4 h-4 text-amber-500" /> },
+    { label: "Healthcare & Wellness", desc: "Patient reminders & followup campaigns", icon: <Heart className="w-4 h-4 text-emerald-500" /> },
+    { label: "Restaurants & Food", desc: "Digital interactive menus & table bookings", icon: <Coffee className="w-4 h-4 text-sky-500" /> },
+    { label: "Logistics & Dispatch", desc: "Shipping alerts & instant invoice triggers", icon: <Truck className="w-4 h-4 text-indigo-500" /> },
+    { label: "SaaS & Tech Startups", desc: "Onboarding workflows & webhook routing", icon: <Sparkles className="w-4 h-4 text-purple-500" /> },
   ];
 
   // Resources data
@@ -161,6 +192,46 @@ export function Navbar() {
                 </AnimatePresence>
               </div>
 
+              {/* Industries Dropdown */}
+              <div 
+                className="relative py-4 cursor-pointer"
+                onMouseEnter={() => setActiveDropdown("industries")}
+                onMouseLeave={() => setActiveDropdown(null)}
+              >
+                <button className="flex items-center gap-1.5 hover:text-[#111827] transition-colors focus:outline-none">
+                  Industries
+                  <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${activeDropdown === "industries" ? "rotate-180" : ""}`} />
+                </button>
+
+                <AnimatePresence>
+                  {activeDropdown === "industries" && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 10 }}
+                      transition={{ duration: 0.15 }}
+                      className="absolute left-0 top-[44px] w-[560px] bg-white rounded-xl border border-zinc-200/80 shadow-lg p-3.5 z-50 grid grid-cols-2 gap-2"
+                    >
+                      {industries.map((item) => (
+                        <a
+                          key={item.label}
+                          href="#industries"
+                          className="flex items-start gap-3 p-2 rounded-lg hover:bg-zinc-50 transition-colors"
+                        >
+                          <span className="mt-0.5 p-1 rounded-md bg-zinc-50 border border-zinc-200/40">
+                            {item.icon}
+                          </span>
+                          <div>
+                            <div className="text-[13px] font-semibold text-[#111827]">{item.label}</div>
+                            <div className="text-[11px] text-zinc-500 leading-normal mt-0.5">{item.desc}</div>
+                          </div>
+                        </a>
+                      ))}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+
               {/* Resources Dropdown */}
               <div 
                 className="relative py-4 cursor-pointer"
@@ -206,9 +277,6 @@ export function Navbar() {
               </a>
               <a href="#" className="hover:text-[#111827] transition-colors">
                 Pricing
-              </a>
-              <a href="#" className="hover:text-[#111827] transition-colors">
-                Security
               </a>
             </nav>
           </div>
@@ -308,6 +376,39 @@ export function Navbar() {
                     </AnimatePresence>
                   </div>
 
+                  {/* Industries Mobile */}
+                  <div>
+                    <button
+                      onClick={() => setMobileIndustriesOpen(!mobileIndustriesOpen)}
+                      className="w-full py-3 flex items-center justify-between text-[14.5px] font-semibold text-zinc-800 border-b border-zinc-50"
+                    >
+                      Industries
+                      <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${mobileIndustriesOpen ? "rotate-180" : ""}`} />
+                    </button>
+                    <AnimatePresence>
+                      {mobileIndustriesOpen && (
+                        <motion.div
+                          initial={{ height: 0, opacity: 0 }}
+                          animate={{ height: "auto", opacity: 1 }}
+                          exit={{ height: 0, opacity: 0 }}
+                          className="overflow-hidden bg-zinc-50/50 rounded-lg px-2 py-1.5 mt-1 grid gap-1.5"
+                        >
+                          {industries.map((item) => (
+                            <a
+                              key={item.label}
+                              href="#industries"
+                              onClick={() => setMobileOpen(false)}
+                              className="flex items-center gap-2.5 py-1.5 px-2 text-[13px] text-zinc-600 font-medium"
+                            >
+                              {item.icon}
+                              {item.label}
+                            </a>
+                          ))}
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+
                   {/* Resources Mobile */}
                   <div>
                     <button
@@ -354,13 +455,6 @@ export function Navbar() {
                     className="py-3.5 text-[14.5px] font-semibold text-zinc-800 border-b border-zinc-50"
                   >
                     Pricing
-                  </a>
-                  <a
-                    href="#"
-                    onClick={() => setMobileOpen(false)}
-                    className="py-3.5 text-[14.5px] font-semibold text-zinc-800 border-b border-zinc-50"
-                  >
-                    Security
                   </a>
                 </nav>
               </div>

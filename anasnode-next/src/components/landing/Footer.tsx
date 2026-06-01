@@ -61,7 +61,7 @@ const footerColumns = [
 
 export function Footer() {
   return (
-    <footer className="bg-[#FDF8F4] border-t border-[#F0E6DC]">
+    <footer className="bg-[#FDF8F4] border-t border-[#F0E6DC]" suppressHydrationWarning>
       <div className="max-w-[1200px] mx-auto px-6 pt-14 pb-8">
 
         {/* ── Main grid: Logo left + columns right ── */}

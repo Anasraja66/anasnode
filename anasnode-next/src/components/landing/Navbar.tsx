@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, ChevronDown, Sparkles, Zap, BookOpen, Terminal, HelpCircle, Layers, MessageSquare, ShoppingCart, Activity, Home, Utensils, Truck } from "lucide-react";
+import { Menu, X, ChevronDown, BookOpen, Terminal, HelpCircle, Layers, Database, ShoppingCart, Star, MessageSquare, FileText, Bell } from "lucide-react";
 
 /* ─── Anaos SVG Logo (Recreated from image) ─── */
 export function AnaosLogo({ className = "w-7 h-7" }: { className?: string }) {
@@ -56,10 +56,10 @@ export function AnaosLogo({ className = "w-7 h-7" }: { className?: string }) {
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [activeDropdown, setActiveDropdown] = useState<"solutions" | "resources" | null>(null);
+  const [activeDropdown, setActiveDropdown] = useState<"automations" | "resources" | null>(null);
 
   // Mobile navigation expansion state
-  const [mobileSolutionsOpen, setMobileSolutionsOpen] = useState(false);
+  const [mobileAutomationsOpen, setMobileAutomationsOpen] = useState(false);
   const [mobileResourcesOpen, setMobileResourcesOpen] = useState(false);
 
   useEffect(() => {
@@ -80,13 +80,14 @@ export function Navbar() {
     };
   }, [mobileOpen]);
 
-  // Solutions data
-  const solutions = [
-    { label: "E-commerce", desc: "Automate checkout & WhatsApp discounts", icon: <ShoppingCart className="w-4 h-4 text-rose-500" /> },
-    { label: "Healthcare", desc: "Patient appointment & followup agents", icon: <Activity className="w-4 h-4 text-emerald-500" /> },
-    { label: "Real Estate", desc: "Leads qualification & automated listing", icon: <Home className="w-4 h-4 text-amber-500" /> },
-    { label: "Restaurants", desc: "Chat-based ordering & table reservation", icon: <Utensils className="w-4 h-4 text-sky-500" /> },
-    { label: "Logistics", desc: "Order tracking & live dispatch alerts", icon: <Truck className="w-4 h-4 text-indigo-500" /> },
+  // Automations data (Directly maps to the real templates in Industries.tsx)
+  const automations = [
+    { label: "WhatsApp Lead Responder", desc: "Qualify leads & sync to Sheets/CRM", icon: <Database className="w-4 h-4 text-sky-500" /> },
+    { label: "Abandoned Cart Recoverer", desc: "WhatsApp & SMS checkout reminders", icon: <ShoppingCart className="w-4 h-4 text-rose-500" /> },
+    { label: "Google Reviews Collector", desc: "Auto-request post-purchase 5-star ratings", icon: <Star className="w-4 h-4 text-amber-500" /> },
+    { label: "AI Helpdesk Support Bot", desc: "24/7 automated FAQ response on WhatsApp", icon: <MessageSquare className="w-4 h-4 text-emerald-500" /> },
+    { label: "Billing & Stripe Sync", desc: "Auto-send PDF invoices to paid clients", icon: <FileText className="w-4 h-4 text-indigo-500" /> },
+    { label: "Appointment Reminders", desc: "Reduce no-shows with scheduling alerts", icon: <Bell className="w-4 h-4 text-pink-500" /> },
   ];
 
   // Resources data
@@ -120,38 +121,38 @@ export function Navbar() {
             {/* Desktop Navigation Links */}
             <nav className="hidden md:flex items-center gap-6 text-[13.5px] text-[#4B5563] font-medium">
               
-              {/* Solutions Dropdown */}
+              {/* Automations Dropdown */}
               <div 
                 className="relative py-4 cursor-pointer"
-                onMouseEnter={() => setActiveDropdown("solutions")}
+                onMouseEnter={() => setActiveDropdown("automations")}
                 onMouseLeave={() => setActiveDropdown(null)}
               >
                 <button className="flex items-center gap-1.5 hover:text-[#111827] transition-colors focus:outline-none">
-                  Solutions
-                  <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${activeDropdown === "solutions" ? "rotate-180" : ""}`} />
+                  Automations
+                  <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${activeDropdown === "automations" ? "rotate-180" : ""}`} />
                 </button>
 
                 <AnimatePresence>
-                  {activeDropdown === "solutions" && (
+                  {activeDropdown === "automations" && (
                     <motion.div
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: 10 }}
                       transition={{ duration: 0.15 }}
-                      className="absolute left-0 top-[44px] w-[320px] bg-white rounded-xl border border-zinc-200/80 shadow-lg p-3 z-50 grid gap-1.5"
+                      className="absolute left-0 top-[44px] w-[560px] bg-white rounded-xl border border-zinc-200/80 shadow-lg p-3.5 z-50 grid grid-cols-2 gap-2"
                     >
-                      {solutions.map((item) => (
+                      {automations.map((item) => (
                         <a
                           key={item.label}
                           href="#"
-                          className="flex items-start gap-3 p-2.5 rounded-lg hover:bg-zinc-50 transition-colors"
+                          className="flex items-start gap-3 p-2 rounded-lg hover:bg-zinc-50 transition-colors"
                         >
                           <span className="mt-0.5 p-1 rounded-md bg-zinc-50 border border-zinc-200/40">
                             {item.icon}
                           </span>
                           <div>
                             <div className="text-[13px] font-semibold text-[#111827]">{item.label}</div>
-                            <div className="text-[11.5px] text-zinc-500 leading-normal mt-0.5">{item.desc}</div>
+                            <div className="text-[11px] text-zinc-500 leading-normal mt-0.5">{item.desc}</div>
                           </div>
                         </a>
                       ))}
@@ -191,7 +192,7 @@ export function Navbar() {
                           </span>
                           <div>
                             <div className="text-[13px] font-semibold text-[#111827]">{item.label}</div>
-                            <div className="text-[11.5px] text-zinc-500 mt-0.5 leading-normal">{item.desc}</div>
+                            <div className="text-[11px] text-zinc-500 mt-0.5 leading-normal">{item.desc}</div>
                           </div>
                         </a>
                       ))}
@@ -274,24 +275,24 @@ export function Navbar() {
                 </div>
 
                 <nav className="px-5 py-4 flex flex-col gap-0.5">
-                  {/* Solutions Mobile */}
+                  {/* Automations Mobile */}
                   <div>
                     <button
-                      onClick={() => setMobileSolutionsOpen(!mobileSolutionsOpen)}
+                      onClick={() => setMobileAutomationsOpen(!mobileAutomationsOpen)}
                       className="w-full py-3 flex items-center justify-between text-[14.5px] font-semibold text-zinc-800 border-b border-zinc-50"
                     >
-                      Solutions
-                      <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${mobileSolutionsOpen ? "rotate-180" : ""}`} />
+                      Automations
+                      <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${mobileAutomationsOpen ? "rotate-180" : ""}`} />
                     </button>
                     <AnimatePresence>
-                      {mobileSolutionsOpen && (
+                      {mobileAutomationsOpen && (
                         <motion.div
                           initial={{ height: 0, opacity: 0 }}
                           animate={{ height: "auto", opacity: 1 }}
                           exit={{ height: 0, opacity: 0 }}
                           className="overflow-hidden bg-zinc-50/50 rounded-lg px-2 py-1.5 mt-1 grid gap-1.5"
                         >
-                          {solutions.map((item) => (
+                          {automations.map((item) => (
                             <a
                               key={item.label}
                               href="#"

@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowUpRight, ArrowDownRight, Database, Mail, Terminal, Calendar, Code, Shield } from "lucide-react";
+import { ArrowUpRight, Database, Mail, Calendar, Star, MessageSquare, ShoppingCart, Shield, Sparkles, CheckCircle, FileText, Bell } from "lucide-react";
 import { FadeIn } from "./Section";
 
 type Template = {
@@ -11,228 +11,224 @@ type Template = {
 
 const TEMPLATES: Template[] = [
   {
-    name: "CRM & Lead Router",
-    tag: "Qualify leads, segment users & sync to HubSpot/Salesforce",
+    name: "WhatsApp Lead Responder",
+    tag: "Instantly capture, qualify, and sync inbound leads to Google Sheets or CRMs.",
     renderGraphic: () => (
-      <div className="relative w-full h-full bg-[#1C1F1A]">
-        <img
-          src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=600&q=80"
-          alt="CRM Router"
-          className="absolute inset-0 w-full h-full object-cover opacity-60 grayscale contrast-125 transition-transform duration-500 group-hover:scale-105"
-        />
-        {/* CRM Message Bubble Overlay */}
-        <div className="absolute inset-0 bg-black/45 flex flex-col justify-between p-4">
-          <div className="flex justify-between items-center">
-            <span className="text-white/60 text-[8px] font-mono tracking-widest uppercase">DATABASES</span>
-            <span className="bg-emerald-500 text-white text-[7px] px-1.5 py-0.5 rounded-full font-bold flex items-center gap-0.5"><Database className="w-1.5 h-1.5" /> CRM SYNC</span>
+      <div className="relative w-full h-full bg-[#EBF5FF] p-4 flex flex-col justify-between select-none">
+        <div className="flex justify-between items-center">
+          <span className="text-[#00B0FF] text-[8px] font-mono tracking-widest font-bold uppercase">LEAD ROUTER</span>
+          <span className="bg-emerald-500 text-white text-[7px] px-1.5 py-0.5 rounded-full font-bold flex items-center gap-0.5">
+            <Database className="w-1.5 h-1.5" /> SHEET SYNC
+          </span>
+        </div>
+        
+        {/* Chat simulation */}
+        <div className="my-2 space-y-1.5">
+          <div className="bg-white p-2 rounded-lg rounded-tl-none shadow-sm max-w-[85%] border border-zinc-100">
+            <p className="text-[7.5px] font-bold text-zinc-800">Hi! I want to quote a commercial property.</p>
           </div>
-          <div className="my-auto flex items-center justify-center">
-            <span className="text-white text-[13px] sm:text-[14px] tracking-[0.15em] font-serif uppercase text-center font-medium drop-shadow-md">
-              LEAD SEGMENTER
-            </span>
+          <div className="bg-[#00B0FF]/10 border border-[#00B0FF]/20 p-2 rounded-lg rounded-tr-none shadow-sm max-w-[85%] ml-auto text-right">
+            <p className="text-[7.5px] font-bold text-[#00B0FF] leading-snug">Got it. Lead scored: High Value. Added to Sheets! ✅</p>
           </div>
-          <div className="bg-white/95 backdrop-blur-[2px] p-2 rounded-lg shadow-sm border border-white/20 flex items-center justify-between">
-            <span className="text-[8px] font-bold text-zinc-800">Lead: Enterprise · $50k ARR</span>
-            <span className="text-[7px] font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded-full">Routed ➔ CRM</span>
-          </div>
+        </div>
+
+        <div className="bg-white/95 backdrop-blur-[2px] p-2 rounded-lg shadow-sm border border-zinc-200/50 flex items-center justify-between">
+          <span className="text-[8px] font-bold text-zinc-700">Lead: Enterprise · 50+ Users</span>
+          <span className="text-[7px] font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded-full">Routed ➔ Sheets</span>
         </div>
       </div>
     ),
   },
   {
-    name: "Multi-Channel Dispatcher",
-    tag: "Seamless broadcasts over WhatsApp, Email & SMS",
+    name: "Abandoned Cart Recoverer",
+    tag: "Send automated WhatsApp/SMS checkout reminders and recover lost sales.",
     renderGraphic: () => (
-      <div className="relative w-full h-full bg-gradient-to-tr from-[#0A6BFF] via-[#5200FF] to-[#FF007F] flex flex-col justify-between p-4 transition-transform duration-500 group-hover:scale-105">
-        <div className="flex justify-between items-center relative z-10">
-          <span className="text-white/70 text-[8px] font-mono tracking-widest uppercase">Omnichannel</span>
-          <span className="w-2 h-2 rounded-full bg-blue-300 animate-pulse" />
-        </div>
-        <div className="flex flex-col items-center justify-center text-center relative z-10 my-auto">
-          <span className="text-white font-extrabold text-[16px] sm:text-[18px] tracking-tight">Broadcaster</span>
-          <span className="text-[9px] text-blue-100/70 font-mono mt-1 font-semibold">anaos.ai/dispatch-core</span>
-        </div>
-        <div className="flex gap-1.5 justify-center relative z-10">
-          <span className="bg-white/10 text-white text-[7px] px-1.5 py-0.5 rounded font-mono">WhatsApp</span>
-          <span className="bg-white/10 text-white text-[7px] px-1.5 py-0.5 rounded font-mono">Email</span>
-          <span className="bg-white/10 text-white text-[7px] px-1.5 py-0.5 rounded font-mono">SMS</span>
-        </div>
-      </div>
-    ),
-  },
-  {
-    name: "AI Knowledge Brain",
-    tag: "Train custom neural agents on PDFs, docs & URLs",
-    renderGraphic: () => (
-      <div className="relative w-full h-full bg-[#1A1A1A]">
-        <img
-          src="https://images.unsplash.com/photo-1629909613654-28e377c37b09?auto=format&fit=crop&w=600&q=80"
-          alt="AI Brain"
-          className="absolute inset-0 w-full h-full object-cover opacity-60 grayscale transition-transform duration-500 group-hover:scale-105"
-        />
-        <div className="absolute inset-0 bg-black/35 flex flex-col justify-between p-4">
-          <div className="flex justify-between items-center">
-            <span className="text-white/60 text-[8px] font-mono tracking-widest uppercase">NEURAL NET</span>
-            <span className="w-1.5 h-1.5 rounded-full bg-blue-500" />
-          </div>
-          <div className="my-auto text-center">
-            <span className="text-white text-[12px] sm:text-[13px] font-bold tracking-[0.1em] font-sans uppercase border-y border-white/20 py-1.5 px-3 bg-black/10 backdrop-blur-[2px]">
-              KNOWLEDGE BASE
-            </span>
-          </div>
-          <div className="bg-blue-600/90 text-white text-[8px] font-semibold py-1 px-2 rounded-md flex items-center justify-between">
-            <span>Trained: Q1_Report.pdf</span>
-            <span className="text-[7.5px] bg-blue-500 px-1 py-0.2 rounded font-bold font-mono">100% READY</span>
-          </div>
-        </div>
-      </div>
-    ),
-  },
-  {
-    name: "Abandoned Cart Recovery",
-    tag: "Auto-trigger lost cart emails, messages & track revenue",
-    renderGraphic: () => (
-      <div className="relative w-full h-full bg-[#FAF7F2] p-4 flex flex-col justify-between overflow-hidden transition-transform duration-500 group-hover:scale-105 select-none">
+      <div className="relative w-full h-full bg-[#FAF7F2] p-4 flex flex-col justify-between select-none">
         <div className="flex justify-between items-center text-[7px] tracking-widest text-zinc-500 font-semibold">
-          <span>ABANDONED RECOVERY</span>
-          <span className="text-blue-600 font-bold">MONITORED</span>
+          <span>CART RECOVERY</span>
+          <span className="text-[#00B0FF] font-bold">MONITORED</span>
         </div>
         <div className="my-auto text-left flex flex-col justify-center">
           <span className="text-[13px] sm:text-[14px] font-black text-zinc-800 uppercase leading-none mb-1">
             CART CONVERSION
           </span>
           <p className="text-[5.8px] leading-[1.3] text-zinc-500 max-w-[95%] font-medium my-1 font-mono whitespace-pre-wrap">
-            {`if (cart.status == "abandoned") {\n  dispatch.personalDiscount(10);\n}`}
+            {`if (cart.status == "abandoned") {\n  whatsapp.sendOffer("10% OFF discount link");\n}`}
           </p>
-          <span className="text-[5px] text-[#0A6BFF] font-mono tracking-widest uppercase font-bold mt-1">
+          <span className="text-[5px] text-[#00B0FF] font-mono tracking-widest uppercase font-bold mt-1">
             ➔ RECOVERED $12,480 THIS MONTH
           </span>
         </div>
         <div className="h-1 bg-zinc-200/60 rounded-full w-full overflow-hidden">
-          <div className="bg-[#0A6BFF] h-full w-[75%]" />
+          <div className="bg-[#00B0FF] h-full w-[75%]" />
         </div>
       </div>
     ),
   },
   {
-    name: "Guest & RSVP Registrar",
-    tag: "Manage registers, send dynamic invites & check-ins",
+    name: "Google Reviews Collector",
+    tag: "Auto-trigger review requests post-delivery and filter out negative feedback.",
     renderGraphic: () => (
-      <div className="relative w-full h-full bg-[#FCF9F5] p-4 flex flex-col justify-between overflow-hidden transition-transform duration-500 group-hover:scale-105 select-none">
+      <div className="relative w-full h-full bg-[#FFF9E6] p-4 flex flex-col justify-between select-none">
         <div className="flex justify-between items-center">
-          <div className="flex gap-1">
-            <span className="w-1.5 h-1.5 rounded-full bg-zinc-200" />
-            <span className="w-1.5 h-1.5 rounded-full bg-zinc-200" />
-            <span className="w-1.5 h-1.5 rounded-full bg-zinc-200" />
-          </div>
-          <div className="w-5 h-5 rounded-full bg-blue-500/10 border border-blue-500/30 flex items-center justify-center shadow-sm">
-            <Calendar className="w-2.5 h-2.5 text-blue-600" />
+          <span className="text-[#FFB300] text-[8px] font-mono tracking-widest font-bold uppercase">REVIEWS BOOSTER</span>
+          <div className="flex gap-0.5">
+            {[1, 2, 3, 4, 5].map((s) => (
+              <Star key={s} className="w-2 h-2 fill-[#FFB300] stroke-[#FFB300]" />
+            ))}
           </div>
         </div>
-        
-        <div className="my-auto text-center flex flex-col items-center justify-center gap-1.5">
-          <div className="text-[12px] font-extrabold text-zinc-800 tracking-tight leading-tight flex flex-col items-center gap-1">
-            <div className="flex items-center gap-1">
-              <span>Automated</span>
-              <span className="bg-[#0A6BFF] text-white text-[9px] px-2 py-0.5 rounded-full font-bold">RSVPs</span>
-            </div>
-            <div className="flex items-center gap-1">
-              <span>over</span>
-              <span className="border border-zinc-950 text-zinc-950 text-[9px] px-2 py-0.5 rounded-full font-bold">Any API</span>
-            </div>
+
+        <div className="bg-white p-2.5 rounded-xl border border-amber-200/40 shadow-sm my-auto">
+          <div className="flex items-center gap-1.5">
+            <span className="w-2.5 h-2.5 bg-emerald-500 rounded-full flex items-center justify-center text-white text-[6px] font-bold">✓</span>
+            <span className="text-[8.5px] font-bold text-zinc-800">Job completed: AC Service</span>
           </div>
+          <p className="text-[7.5px] text-zinc-500 mt-1 leading-snug">"Trigger WhatsApp feedback request. If 5-star, link to Google Review page."</p>
+        </div>
+
+        <div className="flex items-center justify-between text-[7px] text-zinc-400 font-mono font-semibold">
+          <span>Reviews sent: +180</span>
+          <span className="text-emerald-600 font-bold bg-emerald-50 px-1 py-0.5 rounded">Rating: 4.9★</span>
+        </div>
+      </div>
+    ),
+  },
+  {
+    name: "AI Helpdesk Support Bot",
+    tag: "Resolve 90% of business FAQs 24/7 trained on your PDFs, docs & URLs.",
+    renderGraphic: () => (
+      <div className="relative w-full h-full bg-[#F4F4F9] p-4 flex flex-col justify-between select-none">
+        <div className="flex justify-between items-center">
+          <span className="text-[#00B0FF] text-[8px] font-mono tracking-widest font-bold uppercase">AI HELPDESK</span>
+          <span className="w-1.5 h-1.5 rounded-full bg-[#00B0FF] animate-pulse" />
         </div>
         
-        <div className="flex items-center justify-between text-[6px] text-zinc-400 font-mono font-semibold">
-          <span>Dispatched Invitation [Pass #28]</span>
-          <span className="w-2.5 h-2.5 rounded-full bg-emerald-500/20 flex items-center justify-center">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+        <div className="my-auto text-center flex flex-col items-center">
+          <div className="bg-white/80 border border-zinc-200/50 p-2 rounded-lg shadow-sm w-full">
+            <p className="text-[7px] font-bold text-zinc-500 uppercase tracking-widest text-left">TRAINED SOURCE</p>
+            <div className="flex items-center gap-1.5 mt-1">
+              <FileText className="w-3.5 h-3.5 text-rose-500 shrink-0" />
+              <span className="text-[8px] font-bold text-zinc-700 truncate">Store_Refund_Policy.pdf</span>
+            </div>
+          </div>
+          <span className="text-[7px] text-[#00B0FF] font-mono font-bold mt-2">✔ Responding instantly on WhatsApp</span>
+        </div>
+
+        <div className="bg-emerald-50 border border-emerald-100 px-2 py-1 rounded text-[7px] font-bold text-emerald-700 flex items-center justify-between">
+          <span>Tickets Resolved</span>
+          <span>92.4%</span>
+        </div>
+      </div>
+    ),
+  },
+  {
+    name: "WhatsApp Ordering & Booking",
+    tag: "Let users view menus, select services, and place orders directly in chat.",
+    renderGraphic: () => (
+      <div className="relative w-full h-full bg-[#FCF9F5] p-4 flex flex-col justify-between select-none">
+        <div className="flex justify-between items-center">
+          <span className="text-zinc-500 text-[8px] font-mono tracking-widest font-bold uppercase">DIGITAL MENU</span>
+          <ShoppingCart className="w-3.5 h-3.5 text-zinc-500" />
+        </div>
+        
+        <div className="my-auto space-y-1">
+          <div className="bg-white border border-zinc-200/40 rounded-lg p-2 flex items-center justify-between">
+            <div className="flex items-center gap-1.5">
+              <span className="text-[12px]">🍕</span>
+              <div className="text-left">
+                <p className="text-[8px] font-bold text-zinc-800 leading-none">Pepperoni Pizza</p>
+                <p className="text-[6.5px] text-zinc-400 mt-0.5">$14.99</p>
+              </div>
+            </div>
+            <span className="bg-[#00B0FF] text-white text-[7.5px] font-bold px-2 py-0.5 rounded-full">Add ＋</span>
+          </div>
+        </div>
+
+        <div className="flex items-center justify-between text-[7.5px] font-mono text-zinc-400 font-bold">
+          <span>Cart: 1 item ($14.99)</span>
+          <span className="text-[#00B0FF]">Checkout ➔</span>
+        </div>
+      </div>
+    ),
+  },
+  {
+    name: "Billing & Stripe Sync",
+    tag: "Automatically generate, send, and track PDF invoices upon payment/sale.",
+    renderGraphic: () => (
+      <div className="relative w-full h-full bg-[#F5F9F6] p-4 flex flex-col justify-between select-none">
+        <div className="flex justify-between items-center">
+          <span className="text-emerald-600 text-[8px] font-mono tracking-widest font-bold uppercase">STRIPE DISPATCH</span>
+          <span className="w-2 h-2 rounded-full bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center">
+            <span className="w-1 h-1 rounded-full bg-emerald-600" />
           </span>
         </div>
+        
+        <div className="my-auto bg-white p-2.5 rounded-xl border border-emerald-100 shadow-sm flex flex-col items-center justify-center text-center">
+          <span className="text-[#10B981] font-extrabold text-[15px]">$189.00</span>
+          <span className="text-[6.5px] text-zinc-400 font-mono mt-0.5 uppercase">Invoice #1042 Paid</span>
+          <span className="text-[6.5px] font-bold text-[#00B0FF] bg-[#00B0FF]/5 border border-[#00B0FF]/15 px-2 py-0.5 rounded-full mt-2">
+            PDF Invoice sent via WhatsApp
+          </span>
+        </div>
+
+        <div className="flex items-center justify-between text-[7px] text-zinc-400 font-mono font-semibold">
+          <span>Automated Billing</span>
+          <span className="text-emerald-600">Sync OK</span>
+        </div>
       </div>
     ),
   },
   {
-    name: "Task Scheduler & Cron OS",
-    tag: "Schedule triggers, recurrent healthchecks & database syncs",
+    name: "Appointment Reminders",
+    tag: "Reduce no-shows by automatically texting customers scheduling confirmations.",
     renderGraphic: () => (
-      <div className="relative w-full h-full bg-[#F4EFEB] p-3.5 flex flex-col justify-between overflow-hidden transition-transform duration-500 group-hover:scale-105 select-none">
-        <div className="flex items-center justify-between border-b border-zinc-200/40 pb-1.5">
-          <span className="text-[6.5px] font-bold text-zinc-400 font-mono tracking-wider">CRON SCHEDULER</span>
-          <span className="text-[6.5px] font-bold text-emerald-600">ONLINE</span>
+      <div className="relative w-full h-full bg-[#FAF5F7] p-3.5 flex flex-col justify-between select-none">
+        <div className="flex items-center justify-between border-b border-pink-100 pb-1.5">
+          <span className="text-[7.5px] font-bold text-pink-600 font-mono tracking-wider">APPOINTMENTS</span>
+          <span className="text-[7px] font-bold text-[#00B0FF]">REMINDER TRIGGERED</span>
         </div>
-        <div className="my-auto flex flex-col items-center text-center">
-          <div className="w-[80px] h-[50px] rounded overflow-hidden shadow-[0_2px_5px_rgba(0,0,0,0.04)] border border-zinc-200/40 mb-1.5 relative">
-            <img
-              src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=200&q=80"
-              className="w-full h-full object-cover"
-              alt="Cron Charts"
-            />
+
+        <div className="bg-white p-2 rounded-lg border border-pink-100 shadow-sm my-auto">
+          <div className="flex items-center gap-1.5">
+            <Calendar className="w-3.5 h-3.5 text-pink-500 shrink-0" />
+            <div className="text-left leading-none">
+              <span className="text-[8px] font-bold text-zinc-800">Booking: Haircut & Styling</span>
+              <p className="text-[6px] text-zinc-400 mt-0.5">Tomorrow at 2:00 PM</p>
+            </div>
           </div>
-          <p className="text-[9px] font-mono font-bold text-zinc-800 leading-tight">
-            cron_job: active 🟢
-          </p>
-          <p className="text-[5.5px] text-zinc-500 max-w-[90%] mt-0.5 leading-[1.3] font-semibold">
-            "Trigger database healthcheck every day at 00:00 UTC."
+          <p className="text-[5.5px] text-zinc-500 mt-1 leading-[1.3] font-semibold border-t border-zinc-50 pt-1">
+            "Your appointment is confirmed. Press 1 to reschedule, 2 to cancel."
           </p>
         </div>
-        <div className="h-1 bg-emerald-500/30 rounded-full w-full overflow-hidden">
-          <div className="bg-emerald-500 h-full w-[95%]" />
+
+        <div className="h-1 bg-pink-100 rounded-full w-full overflow-hidden">
+          <div className="bg-pink-500 h-full w-[95%]" />
         </div>
       </div>
     ),
   },
   {
-    name: "API & Webhook Gateway",
-    tag: "Dispatch custom webhooks & integrate REST APIs instantly",
+    name: "AI Outreach Agent",
+    tag: "Reactively nurture cold leads, request callbacks, and close deals via SMS.",
     renderGraphic: () => (
-      <div className="relative w-full h-full bg-[#ECE9E4]">
+      <div className="relative w-full h-full bg-[#EAE6DF]">
         <img
           src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=600&q=80"
-          alt="API Webhooks"
-          className="absolute inset-0 w-full h-full object-cover opacity-75 grayscale contrast-110 transition-transform duration-500 group-hover:scale-105"
+          alt="AI Outreach"
+          className="absolute inset-0 w-full h-full object-cover opacity-60 grayscale contrast-115 transition-transform duration-500 group-hover:scale-105"
         />
-        <div className="absolute inset-0 bg-black/20 flex items-end justify-center p-2.5">
+        <div className="absolute inset-0 bg-black/25 flex items-end justify-center p-2.5">
           <div className="w-full bg-white/95 backdrop-blur-[2px] p-2 rounded shadow-sm border border-black/5 flex items-center justify-between">
             <div className="flex flex-col text-left">
               <span className="text-[7.5px] font-bold text-zinc-800 tracking-tight leading-snug line-clamp-1">
-                Webhook trigger: Stripe ➔ Slack
+                Campaign: Inactive Leads
               </span>
               <span className="text-[6px] text-blue-600 font-semibold mt-0.5 uppercase tracking-wide">
-                API Handshake 200 OK
+                42 Followups sent today
               </span>
             </div>
             <ArrowUpRight className="w-2.5 h-2.5 text-zinc-700 shrink-0" />
-          </div>
-        </div>
-      </div>
-    ),
-  },
-  {
-    name: "Automated Helpdesk Core",
-    tag: "Resolve 90% of business FAQs with proprietary AI models",
-    renderGraphic: () => (
-      <div className="relative w-full h-full bg-[#EAE6DF] flex overflow-hidden transition-transform duration-500 group-hover:scale-105 select-none">
-        <div className="w-1/2 h-full relative overflow-hidden border-r border-white/20">
-          <img
-            src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=300&q=80"
-            className="w-full h-full object-cover contrast-105"
-            alt="Customer Support Workspace"
-          />
-        </div>
-        <div className="w-1/2 h-full relative overflow-hidden">
-          <img
-            src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=300&q=80"
-            className="w-full h-full object-cover contrast-105"
-            alt="AI Helpdesk"
-          />
-        </div>
-        <div className="absolute inset-0 bg-black/5 flex items-center justify-center p-4">
-          <div className="bg-white/95 backdrop-blur-[3px] border border-black/5 px-2.5 py-1.5 rounded-md shadow-md flex flex-col items-center justify-center">
-            <span className="text-[8px] font-mono font-extrabold tracking-[0.2em] text-zinc-950 uppercase leading-none">
-              HELPDESK ACTIVE
-            </span>
-            <span className="text-[5.5px] text-[#0A6BFF] font-bold mt-1">✔ Auto-resolved 88% tickets</span>
           </div>
         </div>
       </div>
@@ -245,27 +241,27 @@ export function Industries() {
     <section id="industries" className="py-20 sm:py-24 px-6 bg-white border-t border-zinc-100 z-10 relative overflow-hidden">
       <div className="max-w-6xl mx-auto">
         
-        {/* Header (Lovable Style) */}
+        {/* Header */}
         <FadeIn delay={0.1}>
-          <div className="flex flex-row items-end justify-between gap-4 mb-10">
+          <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between gap-4 mb-10">
             <div>
               <h2 className="text-[34px] sm:text-[42px] font-black text-[#111827] tracking-[-0.03em] leading-tight font-sans">
-                Discover templates
+                Real-World Automations
               </h2>
               <p className="text-[15px] sm:text-[16px] text-zinc-500 mt-1 font-medium">
-                Start your next workflow with a pre-built Automation OS template
+                Choose a pre-built template to automate your small business workflows instantly.
               </p>
             </div>
             <button
               type="button"
-              className="h-10 px-5.5 rounded-xl border border-zinc-200 hover:border-zinc-300 bg-white hover:bg-zinc-50 text-[13.5px] font-bold text-zinc-700 shadow-sm transition-all sm:self-center cursor-pointer shrink-0 active:scale-95"
+              className="h-10 px-5.5 rounded-xl border border-zinc-200 hover:border-[#111827] bg-white hover:bg-zinc-50 text-[13.5px] font-bold text-zinc-700 shadow-sm transition-all sm:self-center cursor-pointer shrink-0 active:scale-95 hover:text-[#111827]"
             >
-              View all
+              View all templates
             </button>
           </div>
         </FadeIn>
 
-        {/* Templates 4-Column Grid (Lovable Style) */}
+        {/* Templates 4-Column Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-10">
           {TEMPLATES.map((tpl, i) => (
             <FadeIn key={i} delay={0.15 + (i * 0.08)}>
@@ -278,7 +274,7 @@ export function Industries() {
 
                 {/* Template Meta Information */}
                 <div className="mt-3.5 flex flex-col">
-                  <h3 className="text-[14.5px] font-bold text-zinc-900 leading-snug group-hover:text-[#0A6BFF] transition-colors cursor-pointer">
+                  <h3 className="text-[14.5px] font-bold text-zinc-900 leading-snug group-hover:text-[#00B0FF] transition-colors cursor-pointer">
                     {tpl.name}
                   </h3>
                   <p className="text-[12.5px] text-zinc-500 leading-relaxed font-semibold mt-0.5">

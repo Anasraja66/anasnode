@@ -15,6 +15,38 @@ function formatRelativeTime(date: Date): string {
   return `${days}d ago`;
 }
 
+function getRequiredIntegrations(nodes: any[]): string[] {
+  const reqs = new Set<string>();
+  for (const n of nodes) {
+    const type = n.type;
+    if (
+      type === "trigger_whatsapp" ||
+      type === "send_whatsapp" ||
+      type === "send_whatsapp_buttons" ||
+      type === "send_whatsapp_list"
+    ) {
+      reqs.add("whatsapp");
+    }
+    if (type === "trigger_instagram" || type === "send_instagram_dm") {
+      reqs.add("instagram");
+    }
+    if (type === "trigger_shopify" || type === "shopify_order") {
+      reqs.add("shopify");
+    }
+    if (type === "google_calendar") {
+      reqs.add("google_calendar");
+    }
+    if (type === "send_email") {
+      reqs.add("smtp");
+    }
+  }
+  // Default fallback if no nodes match
+  if (reqs.size === 0) {
+    reqs.add("whatsapp");
+  }
+  return Array.from(reqs);
+}
+
 export async function GET(request: Request) {
   try {
     const session = await auth();
@@ -29,6 +61,16 @@ export async function GET(request: Request) {
     const fastApiStatus = FastApiClient.checkHealth()
       .then(res => res.status === "online")
       .catch(() => false);
+
+    // Fetch all active integration credentials for this account
+    const credentials = await prisma.integrationCredential.findMany({
+      where: { accountId, isActive: true },
+      select: { type: true },
+    });
+    const connectedTypes = new Set(credentials.map(c => c.type));
+    if (process.env.WHATSAPP_ACCESS_TOKEN) {
+      connectedTypes.add("whatsapp");
+    }
 
     // Fetch workspaces with their workflows (automations) from database
     const [dbWorkspaces, fastApiOnline] = await Promise.all([
@@ -73,19 +115,42 @@ export async function GET(request: Request) {
           ? formatRelativeTime(wf.lastRunAt)
           : "Never";
 
+        // Determine required integrations & check status
+        const reqs = getRequiredIntegrations(nodes);
+        const missing = reqs.filter(r => {
+          if (r === "whatsapp" || r === "instagram" || r === "facebook") {
+            return !connectedTypes.has("whatsapp");
+          }
+          if (r === "shopify") {
+            return !connectedTypes.has("shopify");
+          }
+          if (r === "smtp" || r === "google_calendar" || r === "google_drive" || r === "google_sheets") {
+            return !connectedTypes.has("smtp");
+          }
+          return !connectedTypes.has(r);
+        });
+
+        const isConnected = missing.length === 0;
+
         return {
           id: wf.id,
           name: wf.name,
           description: wf.description || "",
           type: "whatsapp_flow" as const,
-          enabled: wf.isActive,
-          status: wf.isActive ? ("active" as const) : ("draft" as const),
+          enabled: isConnected ? wf.isActive : false,
+          status: !isConnected 
+            ? ("needs_connection" as const) 
+            : wf.isActive 
+              ? ("active" as const) 
+              : ("draft" as const),
           runs: stats.runs || 0,
           lastRun: lastRunAt,
           ctr: "n/a",
           lastModified: new Date(wf.updatedAt).toLocaleDateString(),
           nodes,
           edges,
+          requiredIntegrations: reqs,
+          missingIntegrations: missing,
         };
       });
 
@@ -126,21 +191,14 @@ export async function GET(request: Request) {
       optedOut: c.optedOut,
     }));
 
-    const whatsappCred = await prisma.integrationCredential.findFirst({
-      where: { accountId, type: "whatsapp", isActive: true },
-    });
-
-    const shopifyCred = await prisma.integrationCredential.findFirst({
-      where: { accountId, type: "shopify", isActive: true },
-    });
-
     return NextResponse.json({
       success: true,
       workspaces: parsedWorkspaces,
       contacts,
       integrations: {
-        whatsapp: !!(whatsappCred || process.env.WHATSAPP_ACCESS_TOKEN),
-        shopify: !!shopifyCred,
+        whatsapp: connectedTypes.has("whatsapp"),
+        shopify: connectedTypes.has("shopify"),
+        smtp: connectedTypes.has("smtp"),
         fastapi: fastApiOnline,
       },
     });

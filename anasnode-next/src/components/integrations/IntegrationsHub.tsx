@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ArrowLeft, Plug, Search } from "lucide-react";
-import { PLUGIN_CATEGORIES, pluginsByCategory } from "@/lib/integrations/plugins";
+import { PROVIDERS, pluginsByProvider } from "@/lib/integrations/plugins";
 import { AnalyticsPromoCard, IntegrationCard, IntegrationStatus } from "./IntegrationCard";
 
 type ApiItem = {
@@ -33,9 +33,9 @@ export function IntegrationsHub() {
       .finally(() => setLoading(false));
   }, []);
 
-  const sections = PLUGIN_CATEGORIES.map((cat) => ({
-    ...cat,
-    plugins: pluginsByCategory(cat.id).filter(
+  const sections = PROVIDERS.map((prov) => ({
+    ...prov,
+    plugins: pluginsByProvider(prov.id).filter(
       (p) =>
         !filter ||
         p.name.toLowerCase().includes(filter.toLowerCase()) ||
@@ -106,10 +106,15 @@ export function IntegrationsHub() {
           </div>
         ) : (
           sections.map((section) => (
-            <section key={section.id}>
-              <h2 className="text-[12px] font-bold uppercase tracking-[0.2em] text-zinc-400 mb-4">
-                {section.label}
-              </h2>
+            <section key={section.id} className="space-y-4">
+              <div>
+                <h2 className="text-[13px] font-black uppercase tracking-[0.15em] text-zinc-800">
+                  {section.label}
+                </h2>
+                <p className="text-[12.5px] text-zinc-400 font-semibold mt-0.5">
+                  {section.description}
+                </p>
+              </div>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {section.plugins.map((p) => (
                   <IntegrationCard
@@ -123,7 +128,7 @@ export function IntegrationsHub() {
                     href={p.href}
                   />
                 ))}
-                {section.id === "messaging" && <AnalyticsPromoCard />}
+                {section.id === "meta" && <AnalyticsPromoCard />}
               </div>
             </section>
           ))

@@ -12,18 +12,28 @@ export type PluginCategory =
   | "ai"
   | "analytics";
 
+export type ProviderId = "meta" | "google" | "commerce" | "others";
+
 export type PluginStatus = "available" | "beta" | "coming_soon";
 
 export type AnaosPlugin = {
   id: string;
   name: string;
   category: PluginCategory;
+  providerId: ProviderId;
   description: string;
   status: PluginStatus;
   connectLabel: string;
   href?: string;
   ownerHint: string;
 };
+
+export const PROVIDERS: { id: ProviderId; label: string; description: string }[] = [
+  { id: "meta", label: "Meta Ecosystem", description: "WhatsApp, Instagram, and Facebook Messenger connections" },
+  { id: "google", label: "Google Workspace", description: "Gmail, Google Calendar, Sheets, and Drive automations" },
+  { id: "commerce", label: "Commerce & Payments", description: "Shopify, WooCommerce, and Stripe checkout automation" },
+  { id: "others", label: "Other Networks & APIs", description: "TikTok, LinkedIn, Twilio, and LLM providers" },
+];
 
 export const PLUGIN_CATEGORIES: { id: PluginCategory; label: string }[] = [
   { id: "messaging", label: "Messaging" },
@@ -40,6 +50,7 @@ export const ANAOS_PLUGINS: AnaosPlugin[] = [
     id: "whatsapp",
     name: "WhatsApp Business",
     category: "messaging",
+    providerId: "meta",
     description:
       "Your number + Meta account. AI replies to customers; you can still use WhatsApp on your phone.",
     status: "available",
@@ -51,6 +62,7 @@ export const ANAOS_PLUGINS: AnaosPlugin[] = [
     id: "instagram",
     name: "Instagram DM",
     category: "messaging",
+    providerId: "meta",
     description: "Auto-reply to Instagram direct messages from the same Anaos brain.",
     status: "coming_soon",
     connectLabel: "Coming soon",
@@ -60,6 +72,7 @@ export const ANAOS_PLUGINS: AnaosPlugin[] = [
     id: "facebook",
     name: "Facebook Messenger",
     category: "messaging",
+    providerId: "meta",
     description: "Messenger automations for your Facebook page.",
     status: "coming_soon",
     connectLabel: "Coming soon",
@@ -69,6 +82,7 @@ export const ANAOS_PLUGINS: AnaosPlugin[] = [
     id: "shopify",
     name: "Shopify",
     category: "commerce",
+    providerId: "commerce",
     description: "Abandoned cart, order confirm, shipping alerts — tied to your store.",
     status: "beta",
     connectLabel: "Connect store",
@@ -79,6 +93,7 @@ export const ANAOS_PLUGINS: AnaosPlugin[] = [
     id: "smtp",
     name: "Business Email",
     category: "email",
+    providerId: "google",
     description: "Gmail or SMTP — send order emails and follow-ups from automations.",
     status: "available",
     connectLabel: "Connect email",
@@ -89,6 +104,7 @@ export const ANAOS_PLUGINS: AnaosPlugin[] = [
     id: "google_calendar",
     name: "Google Calendar",
     category: "google",
+    providerId: "google",
     description: "Book appointments from WhatsApp chat automatically.",
     status: "coming_soon",
     connectLabel: "Coming soon",
@@ -98,6 +114,7 @@ export const ANAOS_PLUGINS: AnaosPlugin[] = [
     id: "google_sheets",
     name: "Google Sheets",
     category: "google",
+    providerId: "google",
     description: "Log leads and orders to a spreadsheet in real time.",
     status: "coming_soon",
     connectLabel: "Coming soon",
@@ -107,6 +124,7 @@ export const ANAOS_PLUGINS: AnaosPlugin[] = [
     id: "google_drive",
     name: "Google Drive",
     category: "google",
+    providerId: "google",
     description: "Store brochures, invoices, and AI training files in Drive.",
     status: "coming_soon",
     connectLabel: "Coming soon",
@@ -116,6 +134,7 @@ export const ANAOS_PLUGINS: AnaosPlugin[] = [
     id: "hubspot",
     name: "HubSpot CRM",
     category: "crm",
+    providerId: "others",
     description: "Create contacts and deals when customers chat.",
     status: "coming_soon",
     connectLabel: "Coming soon",
@@ -125,6 +144,7 @@ export const ANAOS_PLUGINS: AnaosPlugin[] = [
     id: "twilio",
     name: "Voice & SMS",
     category: "voice",
+    providerId: "others",
     description: "Calling agent and SMS — same business rules as WhatsApp.",
     status: "coming_soon",
     connectLabel: "Coming soon",
@@ -134,6 +154,7 @@ export const ANAOS_PLUGINS: AnaosPlugin[] = [
     id: "openai",
     name: "OpenAI",
     category: "ai",
+    providerId: "others",
     description: "Use your own OpenAI key for AI reply nodes.",
     status: "beta",
     connectLabel: "Add API key",
@@ -143,6 +164,7 @@ export const ANAOS_PLUGINS: AnaosPlugin[] = [
     id: "stripe",
     name: "Stripe",
     category: "commerce",
+    providerId: "commerce",
     description: "Payment received → WhatsApp invoice and thank-you flow.",
     status: "coming_soon",
     connectLabel: "Coming soon",
@@ -157,3 +179,8 @@ export function getPlugin(id: string): AnaosPlugin | undefined {
 export function pluginsByCategory(category: PluginCategory): AnaosPlugin[] {
   return ANAOS_PLUGINS.filter((p) => p.category === category);
 }
+
+export function pluginsByProvider(providerId: ProviderId): AnaosPlugin[] {
+  return ANAOS_PLUGINS.filter((p) => p.providerId === providerId);
+}
+

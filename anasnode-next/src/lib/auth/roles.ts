@@ -8,7 +8,7 @@ export async function getCurrentUser() {
   if (!session?.user) {
     throw new AuthenticationError();
   }
-  return session.user;
+  return session.user as any;
 }
 
 export async function checkRole(allowedRoles: Role[]) {

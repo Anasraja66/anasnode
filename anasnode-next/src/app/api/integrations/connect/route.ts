@@ -17,6 +17,8 @@ const ALLOWED_TYPES = [
   "hubspot",
   "smtp",
   "twilio",
+  "instagram",
+  "facebook",
 ] as const;
 
 /**

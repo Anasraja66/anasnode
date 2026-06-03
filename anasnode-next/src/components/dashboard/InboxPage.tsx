@@ -86,12 +86,176 @@ export function InboxPage({
   const [loadingThread, setLoadingThread] = useState(false);
   const [search, setSearch] = useState("");
   const [unreadOnly, setUnreadOnly] = useState(false);
+  const [channelFilter, setChannelFilter] = useState<"all" | "whatsapp" | "instagram" | "facebook">("all");
   const [replyText, setReplyText] = useState("");
   const [sending, setSending] = useState(false);
   const [tagEdit, setTagEdit] = useState("");
   const [waConnected, setWaConnected] = useState(false);
   const [waHints, setWaHints] = useState<string[]>([]);
   const threadEndRef = useRef<HTMLDivElement>(null);
+  const [mobileShowThread, setMobileShowThread] = useState(false);
+
+  // Figma Mock Data Fallbacks
+  const [mockConversations, setMockConversations] = useState<Conversation[]>([
+    {
+      id: "mock-1",
+      contactName: "Sarah Mitchell",
+      contactPhone: "+92 300 123 4567",
+      channel: "whatsapp",
+      lastMessage: "Yes, I'd like to schedule a demo for next week if possible.",
+      lastMessageAt: new Date(Date.now() - 2 * 60000).toISOString(),
+      unreadCount: 1,
+      tags: ["leads", "demo"],
+      optedOut: false,
+      aiEnabled: true,
+      timeLabel: "2m ago",
+      lastInboundAt: new Date(Date.now() - 6 * 60000).toISOString(),
+      email: "sarah.mitchell@gmail.com",
+      firstName: "Sarah",
+      lastName: "Mitchell",
+      gender: "Female",
+      customFields: { "Lead Stage": "Qualified", "Budget": "AED 2.5M" }
+    },
+    {
+      id: "mock-2",
+      contactName: "James Chen",
+      contactPhone: "+1 415 555 9876",
+      channel: "instagram",
+      lastMessage: "Thank you for the quick response!",
+      lastMessageAt: new Date(Date.now() - 15 * 60000).toISOString(),
+      unreadCount: 0,
+      tags: ["support"],
+      optedOut: false,
+      aiEnabled: true,
+      timeLabel: "15m ago",
+      lastInboundAt: new Date(Date.now() - 15 * 60000).toISOString(),
+      email: "james@chen.dev",
+      firstName: "James",
+      lastName: "Chen"
+    },
+    {
+      id: "mock-3",
+      contactName: "Emily Parker",
+      contactPhone: "+44 7911 888888",
+      channel: "facebook",
+      lastMessage: "The product looks amazing!",
+      lastMessageAt: new Date(Date.now() - 3 * 3600000).toISOString(),
+      unreadCount: 0,
+      tags: ["sales"],
+      optedOut: false,
+      aiEnabled: false,
+      timeLabel: "3h ago",
+      lastInboundAt: new Date(Date.now() - 3 * 3600000).toISOString(),
+      email: "emily@parker.co",
+      firstName: "Emily",
+      lastName: "Parker"
+    },
+    {
+      id: "mock-4",
+      contactName: "Michael Brown",
+      contactPhone: "+61 2 9382 0000",
+      channel: "whatsapp",
+      lastMessage: "I have a question about pricing.",
+      lastMessageAt: new Date(Date.now() - 5 * 3600000).toISOString(),
+      unreadCount: 0,
+      tags: ["pricing"],
+      optedOut: false,
+      aiEnabled: true,
+      timeLabel: "5h ago",
+      lastInboundAt: new Date(Date.now() - 5 * 3600000).toISOString(),
+      email: "michael.b@anderson.com",
+      firstName: "Michael",
+      lastName: "Brown"
+    }
+  ]);
+
+  const [mockMessages, setMockMessages] = useState<Record<string, Message[]>>({
+    "mock-1": [
+      {
+        id: "msg-1-1",
+        direction: "inbound",
+        body: "Hi! I'm interested in learning more about your services.",
+        source: "customer",
+        createdAt: new Date(Date.now() - 6 * 60000).toISOString()
+      },
+      {
+        id: "msg-1-2",
+        direction: "outbound",
+        body: "Hello! I'd be happy to help you. What specific area are you interested in?",
+        source: "ai",
+        createdAt: new Date(Date.now() - 5 * 60000).toISOString()
+      },
+      {
+        id: "msg-1-3",
+        direction: "inbound",
+        body: "Yes, I'd like to schedule a demo for next week if possible.",
+        source: "customer",
+        createdAt: new Date(Date.now() - 4 * 60000).toISOString()
+      },
+      {
+        id: "msg-1-4",
+        direction: "outbound",
+        body: "I can help you schedule that! What day works best for you?",
+        source: "ai",
+        createdAt: new Date(Date.now() - 2 * 60000).toISOString()
+      }
+    ],
+    "mock-2": [
+      {
+        id: "msg-2-1",
+        direction: "inbound",
+        body: "How do I connect Instagram to the workspace?",
+        source: "customer",
+        createdAt: new Date(Date.now() - 20 * 60000).toISOString()
+      },
+      {
+        id: "msg-2-2",
+        direction: "outbound",
+        body: "Hi James! You can connect Instagram by navigating to the Integrations tab in the sidebar and clicking Meta. Let me know if you run into any issues.",
+        source: "agent",
+        createdAt: new Date(Date.now() - 17 * 60000).toISOString()
+      },
+      {
+        id: "msg-2-3",
+        direction: "inbound",
+        body: "Thank you for the quick response!",
+        source: "customer",
+        createdAt: new Date(Date.now() - 15 * 60000).toISOString()
+      }
+    ],
+    "mock-3": [
+      {
+        id: "msg-3-1",
+        direction: "inbound",
+        body: "Hey there! Just checking out the demo.",
+        source: "customer",
+        createdAt: new Date(Date.now() - 4 * 3600000).toISOString()
+      },
+      {
+        id: "msg-3-2",
+        direction: "outbound",
+        body: "Welcome Emily! The product looks amazing! Feel free to ask any questions you have.",
+        source: "agent",
+        createdAt: new Date(Date.now() - 3.5 * 3600000).toISOString()
+      },
+      {
+        id: "msg-3-3",
+        direction: "inbound",
+        body: "The product looks amazing!",
+        source: "customer",
+        createdAt: new Date(Date.now() - 3 * 3600000).toISOString()
+      }
+    ],
+    "mock-4": [
+      {
+        id: "msg-4-1",
+        direction: "inbound",
+        body: "I have a question about pricing.",
+        source: "customer",
+        createdAt: new Date(Date.now() - 5 * 3600000).toISOString()
+      }
+    ]
+  });
 
   const loadList = useCallback(async () => {
     try {
@@ -101,23 +265,68 @@ export function InboxPage({
       const res = await fetch(`/api/inbox?${params}`);
       const data = await res.json();
       if (data.success) {
-        setConversations(data.conversations || []);
-        setSelectedId((prev) => {
-          const want = prev || initialConversationId;
-          if (want && data.conversations?.some((c: Conversation) => c.id === want)) {
-            return want;
-          }
-          return data.conversations?.[0]?.id ?? null;
-        });
+        const dbConvs = data.conversations || [];
+        if (dbConvs.length === 0) {
+          const filteredMocks = mockConversations.filter((c) => {
+            if (search.trim() && !c.contactName.toLowerCase().includes(search.toLowerCase()) && !c.lastMessage.toLowerCase().includes(search.toLowerCase())) return false;
+            if (unreadOnly && c.unreadCount === 0) return false;
+            return true;
+          });
+          setConversations(filteredMocks);
+          setSelectedId((prev) => {
+            const want = prev || initialConversationId;
+            if (want && filteredMocks.some((c) => c.id === want)) {
+              return want;
+            }
+            return filteredMocks[0]?.id ?? null;
+          });
+        } else {
+          setConversations(dbConvs);
+          setSelectedId((prev) => {
+            const want = prev || initialConversationId;
+            if (want && dbConvs.some((c: Conversation) => c.id === want)) {
+              return want;
+            }
+            return dbConvs[0]?.id ?? null;
+          });
+        }
       }
     } catch {
-      /* server offline/restarting */
+      // Offline fallback
+      const filteredMocks = mockConversations.filter((c) => {
+        if (search.trim() && !c.contactName.toLowerCase().includes(search.toLowerCase()) && !c.lastMessage.toLowerCase().includes(search.toLowerCase())) return false;
+        if (unreadOnly && c.unreadCount === 0) return false;
+        return true;
+      });
+      setConversations(filteredMocks);
+      setSelectedId((prev) => {
+        const want = prev || initialConversationId;
+        if (want && filteredMocks.some((c) => c.id === want)) return want;
+        return filteredMocks[0]?.id ?? null;
+      });
     } finally {
       setLoading(false);
     }
-  }, [search, unreadOnly, initialConversationId]);
+  }, [search, unreadOnly, initialConversationId, mockConversations]);
 
   const loadThread = useCallback(async (id: string) => {
+    if (id.startsWith("mock-")) {
+      setLoadingThread(true);
+      const conv = mockConversations.find((c) => c.id === id);
+      if (conv) {
+        setMessages(mockMessages[id] || []);
+        setDetail(conv);
+        setTagEdit((conv.tags || []).join(", "));
+        if (conv.unreadCount > 0) {
+          setMockConversations((prev) =>
+            prev.map((c) => (c.id === id ? { ...c, unreadCount: 0 } : c))
+          );
+        }
+      }
+      setLoadingThread(false);
+      return;
+    }
+
     setLoadingThread(true);
     try {
       const res = await fetch(`/api/inbox?conversationId=${id}`);
@@ -135,7 +344,7 @@ export function InboxPage({
     } finally {
       setLoadingThread(false);
     }
-  }, []);
+  }, [mockConversations, mockMessages]);
 
   useEffect(() => {
     fetch("/api/integrations/whatsapp/status")
@@ -161,7 +370,8 @@ export function InboxPage({
 
   useEffect(() => {
     if (selectedId) loadThread(selectedId);
-  }, [selectedId, loadThread]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedId]);
 
   useEffect(() => {
     threadEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -171,6 +381,26 @@ export function InboxPage({
 
   const patchConversation = async (patch: Record<string, unknown>) => {
     if (!selectedId) return;
+
+    if (selectedId.startsWith("mock-")) {
+      setMockConversations((prev) =>
+        prev.map((c) => {
+          if (c.id !== selectedId) return c;
+          const next = { ...c };
+          if (patch.aiEnabled !== undefined) next.aiEnabled = Boolean(patch.aiEnabled);
+          if (patch.optedOut !== undefined) next.optedOut = Boolean(patch.optedOut);
+          if (patch.tags !== undefined) {
+            next.tags = Array.isArray(patch.tags)
+              ? patch.tags.map(String)
+              : String(patch.tags).split(",").map((t: string) => t.trim());
+          }
+          setDetail(next);
+          return next;
+        })
+      );
+      return;
+    }
+
     const res = await fetch("/api/inbox", {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
@@ -185,6 +415,59 @@ export function InboxPage({
 
   const sendReply = async () => {
     if (!selectedId || !replyText.trim()) return;
+
+    if (selectedId.startsWith("mock-")) {
+      const newMsg: Message = {
+        id: `mock-msg-${Date.now()}`,
+        direction: "outbound",
+        body: replyText.trim(),
+        source: "agent",
+        createdAt: new Date().toISOString()
+      };
+
+      setMockMessages((prev) => ({
+        ...prev,
+        [selectedId]: [...(prev[selectedId] || []), newMsg]
+      }));
+      setMessages((prev) => [...prev, newMsg]);
+
+      setMockConversations((prev) =>
+        prev.map((c) =>
+          c.id === selectedId
+            ? { ...c, lastMessage: replyText.trim(), lastMessageAt: new Date().toISOString(), timeLabel: "Just now" }
+            : c
+        )
+      );
+
+      setReplyText("");
+
+      const currentConv = mockConversations.find(c => c.id === selectedId);
+      if (currentConv && currentConv.aiEnabled) {
+        setTimeout(() => {
+          const aiMsg: Message = {
+            id: `mock-ai-msg-${Date.now()}`,
+            direction: "outbound",
+            body: `Hello! Anaos AI has processed your message: "${newMsg.body}". Let me check the integration logic.`,
+            source: "ai",
+            createdAt: new Date().toISOString()
+          };
+          setMockMessages((prev) => ({
+            ...prev,
+            [selectedId]: [...(prev[selectedId] || []), aiMsg]
+          }));
+          setMessages((prev) => [...prev, aiMsg]);
+          setMockConversations((prev) =>
+            prev.map((c) =>
+              c.id === selectedId
+                ? { ...c, lastMessage: aiMsg.body, lastMessageAt: new Date().toISOString(), timeLabel: "Just now" }
+                : c
+            )
+          );
+        }, 1500);
+      }
+      return;
+    }
+
     setSending(true);
     const res = await fetch("/api/inbox", {
       method: "POST",
@@ -206,15 +489,15 @@ export function InboxPage({
   const unreadTotal = conversations.reduce((n, c) => n + (c.unreadCount || 0), 0);
 
   return (
-    <div className="flex h-full min-h-[550px] bg-white">
+    <div className="flex h-full min-h-[500px] md:min-h-[550px] bg-white relative">
       {/* 1. Conversation list */}
-      <div className="w-[320px] border-r border-zinc-100 flex flex-col shrink-0 bg-white">
+      <div className={`w-full md:w-[320px] border-r border-zinc-100 flex-col shrink-0 bg-white ${selectedId && mobileShowThread ? "hidden md:flex" : "flex"}`}>
         <div className="p-4 border-b border-zinc-100 bg-white space-y-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <h1 className="text-lg font-bold tracking-tight text-zinc-900">Inbox</h1>
               {unreadTotal > 0 && (
-                <span className="text-[11px] font-semibold bg-emerald-600 text-white px-2 py-0.5 rounded-full">
+                <span className="text-[11px] font-semibold bg-sky-500 text-white px-2 py-0.5 rounded-full">
                   {unreadTotal} new
                 </span>
               )}
@@ -243,24 +526,80 @@ export function InboxPage({
             <button
               type="button"
               onClick={() => setUnreadOnly(false)}
-              className={`flex-1 text-center py-1.5 rounded-md text-[12px] font-medium transition-all ${
+              className={`flex-1 text-center py-1 rounded-md text-[11px] font-bold uppercase tracking-wider transition-all ${
                 !unreadOnly
-                  ? "bg-white text-zinc-950 shadow-sm"
-                  : "text-zinc-500 hover:text-zinc-800"
+                  ? "bg-white text-zinc-900 shadow-sm"
+                  : "text-zinc-550 hover:text-zinc-800"
+              }`}
+            >
+              All Chats
+            </button>
+            <button
+              type="button"
+              onClick={() => setUnreadOnly(true)}
+              className={`flex-1 text-center py-1 rounded-md text-[11px] font-bold uppercase tracking-wider transition-all ${
+                unreadOnly
+                  ? "bg-white text-zinc-900 shadow-sm"
+                  : "text-zinc-550 hover:text-zinc-800"
+              }`}
+            >
+              Unread
+            </button>
+          </div>
+
+          <div className="flex gap-1 border-t border-zinc-100 pt-3 text-[10px] font-semibold text-zinc-500 overflow-x-auto pb-1 scrollbar-thin">
+            <button
+              type="button"
+              onClick={() => setChannelFilter("all")}
+              className={`px-2 py-1 rounded-md border transition-all shrink-0 ${
+                channelFilter === "all"
+                  ? "bg-zinc-900 border-zinc-900 text-white shadow-sm"
+                  : "bg-white border-zinc-200 text-zinc-650 hover:bg-zinc-50"
               }`}
             >
               All
             </button>
             <button
               type="button"
-              onClick={() => setUnreadOnly(true)}
-              className={`flex-1 text-center py-1.5 rounded-md text-[12px] font-medium transition-all ${
-                unreadOnly
-                  ? "bg-white text-zinc-950 shadow-sm"
-                  : "text-zinc-500 hover:text-zinc-800"
+              onClick={() => setChannelFilter("whatsapp")}
+              className={`px-2 py-1 rounded-md border transition-all flex items-center gap-1 shrink-0 ${
+                channelFilter === "whatsapp"
+                  ? "bg-[#0A6BFF] border-[#0A6BFF] text-white shadow-sm"
+                  : "bg-white border-zinc-200 text-zinc-650 hover:bg-zinc-50"
               }`}
             >
-              Unread
+              <MessageSquare className="w-3 h-3" />
+              WhatsApp
+            </button>
+            <button
+              type="button"
+              onClick={() => setChannelFilter("instagram")}
+              className={`px-2 py-1 rounded-md border transition-all flex items-center gap-1 shrink-0 ${
+                channelFilter === "instagram"
+                  ? "bg-[#0A6BFF] border-[#0A6BFF] text-white shadow-sm"
+                  : "bg-white border-zinc-200 text-zinc-650 hover:bg-zinc-50"
+              }`}
+            >
+              <svg viewBox="0 0 24 24" className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+                <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
+              </svg>
+              Instagram
+            </button>
+            <button
+              type="button"
+              onClick={() => setChannelFilter("facebook")}
+              className={`px-2 py-1 rounded-md border transition-all flex items-center gap-1 shrink-0 ${
+                channelFilter === "facebook"
+                  ? "bg-[#0A6BFF] border-[#0A6BFF] text-white shadow-sm"
+                  : "bg-white border-zinc-200 text-zinc-650 hover:bg-zinc-50"
+              }`}
+            >
+              <svg viewBox="0 0 24 24" className="w-3 h-3" fill="currentColor">
+                <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.469h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+              </svg>
+              Messenger
             </button>
           </div>
         </div>
@@ -299,25 +638,43 @@ export function InboxPage({
               ))}
             </div>
           ) : (
-            conversations.map((c) => {
+            conversations.filter(c => channelFilter === "all" || c.channel === channelFilter).map((c) => {
               const hue = avatarHue(c.contactPhone);
               const isSelected = selectedId === c.id;
               return (
                 <button
                   key={c.id}
                   type="button"
-                  onClick={() => setSelectedId(c.id)}
-                  className={`w-full text-left px-4 py-3.5 flex gap-3 transition-colors border-l-2 ${
+                  onClick={() => { setSelectedId(c.id); setMobileShowThread(true); }}
+                  className={`w-full text-left h-[72px] px-4 flex items-center gap-3 transition-colors border-l-2 shrink-0 ${
                     isSelected
                       ? "bg-zinc-50/80 border-zinc-950"
                       : "border-transparent hover:bg-zinc-50/40"
                   }`}
                 >
-                  <div
-                    className="w-10 h-10 rounded-full shrink-0 flex items-center justify-center text-[12px] font-bold text-white shadow-sm"
-                    style={{ backgroundColor: `hsl(${hue} 45% 42%)` }}
-                  >
-                    {initials(c.contactName)}
+                  <div className="relative shrink-0 flex items-center">
+                    <div
+                      className="w-11 h-11 rounded-full flex items-center justify-center text-[12px] font-bold text-white shadow-sm"
+                      style={{ backgroundColor: `hsl(${hue} 45% 42%)` }}
+                    >
+                      {initials(c.contactName)}
+                    </div>
+                    {/* Channel Indicator Badge */}
+                    <div className="absolute bottom-[-2px] right-[-2px] w-4.5 h-4.5 rounded-full border border-white flex items-center justify-center text-white bg-[#0A6BFF]">
+                      {c.channel === "whatsapp" ? (
+                        <MessageSquare className="w-2.5 h-2.5" />
+                      ) : c.channel === "instagram" ? (
+                        <svg viewBox="0 0 24 24" className="w-2.5 h-2.5" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                          <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+                          <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+                          <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
+                        </svg>
+                      ) : (
+                        <svg viewBox="0 0 24 24" className="w-2.5 h-2.5" fill="currentColor">
+                          <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.469h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                        </svg>
+                      )}
+                    </div>
                   </div>
                   <div className="min-w-0 flex-1 space-y-1">
                     <div className="flex justify-between items-baseline gap-1">
@@ -333,7 +690,7 @@ export function InboxPage({
                     </p>
                   </div>
                   {c.unreadCount > 0 && (
-                    <span className="shrink-0 self-center w-5 h-5 flex items-center justify-center rounded-full bg-emerald-600 text-white text-[10px] font-bold shadow-sm">
+                    <span className="shrink-0 self-center w-5 h-5 flex items-center justify-center rounded-full bg-sky-500 text-white text-[10px] font-bold shadow-sm">
                       {c.unreadCount}
                     </span>
                   )}
@@ -345,12 +702,19 @@ export function InboxPage({
       </div>
 
       {/* 2. Chat thread */}
-      <div className="flex-1 flex flex-col min-w-0 bg-white">
+      <div className={`flex-1 flex-col min-w-0 bg-white ${!selectedId || !mobileShowThread ? "hidden md:flex" : "flex"}`}>
         {selected ? (
           <>
             {/* Chat header */}
-            <div className="px-6 py-4 border-b border-zinc-100 flex items-center justify-between bg-white z-10">
-              <div className="flex items-center gap-3 min-w-0">
+            <div className="px-4 md:px-6 py-4 border-b border-zinc-100 flex items-center justify-between bg-white z-10">
+              <div className="flex items-center gap-2 md:gap-3 min-w-0">
+                <button
+                  type="button"
+                  onClick={() => setMobileShowThread(false)}
+                  className="md:hidden p-1.5 -ml-2 rounded-lg text-zinc-500 hover:bg-zinc-100 mr-1"
+                >
+                  <ChevronRight className="w-5 h-5 rotate-180" />
+                </button>
                 <div
                   className="w-10 h-10 rounded-full shrink-0 flex items-center justify-center text-[12px] font-bold text-white"
                   style={{
@@ -364,8 +728,8 @@ export function InboxPage({
                     {selected.contactName}
                   </p>
                   <p className="text-[11px] text-zinc-500 flex items-center gap-2">
-                    <span className="inline-flex items-center px-1.5 py-0.5 rounded-md bg-zinc-100 text-zinc-700 text-[10px] font-semibold border border-zinc-200">
-                      WhatsApp
+                    <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider border bg-sky-50 text-sky-700 border-sky-100">
+                      {selected.channel === "whatsapp" ? "WhatsApp" : selected.channel === "instagram" ? "Instagram" : "Messenger"}
                     </span>
                     <span className="font-mono">{selected.contactPhone}</span>
                   </p>
@@ -450,9 +814,9 @@ export function InboxPage({
                           className={`rounded-2xl px-4 py-2.5 transition-all ${
                             out
                               ? isAi
-                                ? "bg-blue-600 text-white rounded-tr-none"
-                                : "bg-zinc-900 text-white rounded-tr-none"
-                              : "bg-zinc-100 text-zinc-900 rounded-tl-none"
+                                ? "bg-[#E6F0FF] text-[#0A6BFF] font-medium rounded-tr-none"
+                                : "bg-[#0A6BFF] text-white rounded-tr-none font-medium"
+                              : "bg-[#F1F5F9] text-zinc-900 rounded-tl-none font-medium"
                           }`}
                         >
                           <p className="text-[13.5px] whitespace-pre-wrap leading-relaxed">
@@ -532,7 +896,7 @@ export function InboxPage({
 
       {/* 3. Profile sidebar */}
       {selected && detail && (
-        <div className="w-[300px] border-l border-zinc-100 bg-white flex flex-col shrink-0 p-6 space-y-8 overflow-y-auto">
+        <div className="w-[300px] border-l border-zinc-100 bg-white flex-col shrink-0 p-6 space-y-8 overflow-y-auto hidden lg:flex">
           {/* User profile identifier card */}
           <div className="text-center pb-6 border-b border-zinc-100">
             <div
@@ -607,7 +971,7 @@ export function InboxPage({
                 <span className="text-zinc-500">AI Assistant</span>
                 <span className={`px-2 py-0.5 rounded-full text-[10px] font-semibold ${
                   detail.aiEnabled 
-                    ? "bg-indigo-50 text-indigo-700 border border-indigo-100" 
+                    ? "bg-sky-50 text-sky-700 border border-sky-100" 
                     : "bg-zinc-100 text-zinc-600"
                 }`}>
                   {detail.aiEnabled ? "Active" : "Paused"}
@@ -618,7 +982,7 @@ export function InboxPage({
                 <span className={`px-2 py-0.5 rounded-full text-[10px] font-semibold ${
                   detail.optedOut 
                     ? "bg-red-50 text-red-700 border border-red-100" 
-                    : "bg-emerald-50 text-emerald-700 border border-emerald-100"
+                    : "bg-sky-50 text-sky-700 border border-sky-100"
                 }`}>
                   {detail.optedOut ? "Stopped" : "Subscribed"}
                 </span>

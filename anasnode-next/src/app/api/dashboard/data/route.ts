@@ -193,6 +193,12 @@ export async function GET(request: Request) {
 
     return NextResponse.json({
       success: true,
+      user: {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        role: user.role || "agent",
+      },
       workspaces: parsedWorkspaces,
       contacts,
       integrations: {

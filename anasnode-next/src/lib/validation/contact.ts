@@ -8,7 +8,7 @@ export const contactSchema = z.object({
   gender: z.string().max(40).optional().default(""),
   name: z.string().max(120).optional(),
   tags: z.array(z.string()).optional().default([]),
-  customFields: z.record(z.any()).optional().default({}),
+  customFields: z.record(z.string(), z.string()).optional().default({}),
 });
 
 export type ContactInput = z.infer<typeof contactSchema>;

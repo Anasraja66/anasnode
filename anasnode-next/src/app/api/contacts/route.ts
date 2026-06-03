@@ -6,6 +6,7 @@ import { normalizePhone } from "@/lib/contacts/phone";
 import {
   displayContactName,
   parseCustomFieldsJson,
+  type ContactCustomFields,
 } from "@/lib/contacts/profile";
 import { upsertImportedContact } from "@/lib/contacts/upsert";
 import { handleApiError, ValidationError } from "@/lib/errors";
@@ -90,7 +91,7 @@ export async function POST(request: Request) {
     // Proper Zod Validation
     const result = contactSchema.safeParse(json);
     if (!result.success) {
-      throw new ValidationError(result.error.errors[0].message);
+      throw new ValidationError(result.error.issues[0].message);
     }
 
     const body = result.data;
@@ -123,7 +124,7 @@ export async function POST(request: Request) {
         email: body.email || "",
         gender: body.gender,
         tags: body.tags,
-        customFields: body.customFields,
+        customFields: body.customFields as ContactCustomFields,
       },
       mergeTags: false,
     });

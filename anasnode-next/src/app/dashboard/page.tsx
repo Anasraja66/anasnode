@@ -57,10 +57,13 @@ import { IndustryWelcome } from "@/components/dashboard/IndustryWelcome";
 import { getIndustryPreset, type IndustryPreset } from "@/lib/industry/presets";
 import { AnaosAIHub } from "@/components/dashboard/AnaosAIHub";
 import { BroadcastsHub } from "@/components/dashboard/BroadcastsHub";
+import TeamSettingsPage from "@/components/dashboard/TeamSettingsPage";
+import TodayBookingsWidget from "@/components/dashboard/TodayBookingsWidget";
+import ChannelStatusWidget from "@/components/dashboard/ChannelStatusWidget";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
-type Tab = "ai_agent" | "overview" | "inbox" | "contacts" | "automations" | "broadcasts" | "analytics";
+type Tab = "ai_agent" | "overview" | "inbox" | "contacts" | "automations" | "broadcasts" | "analytics" | "team";
 
 type Workspace = {
   id: string;
@@ -238,9 +241,16 @@ function DashboardHome({ ws, preset }: { ws: Workspace; preset: IndustryPreset }
       opacity: 1,
       transition: {
         duration: 0.8,
-        ease: [0.16, 1, 0.3, 1]
+        ease: [0.16, 1, 0.3, 1] as const
       }
     }
+  };
+
+  const getGreeting = () => {
+    const hr = new Date().getHours();
+    if (hr < 12) return "Good morning";
+    if (hr < 17) return "Good afternoon";
+    return "Good evening";
   };
 
   return (
@@ -248,14 +258,14 @@ function DashboardHome({ ws, preset }: { ws: Workspace; preset: IndustryPreset }
       initial="hidden"
       animate="visible"
       variants={containerVariants}
-      className="flex-1 overflow-y-auto bg-white p-6 lg:p-14 space-y-14 relative"
+      className="space-y-[28px] relative z-10"
     >
       {/* High-Vibrancy Glowing Blur Blobs (Same as Landing Page) */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
         <motion.div 
           animate={{ 
             scale: [1, 1.2, 1],
-            opacity: [0.25, 0.35, 0.25],
+            opacity: [0.15, 0.25, 0.15],
             x: [0, 50, 0],
             y: [0, -30, 0]
           }}
@@ -265,149 +275,160 @@ function DashboardHome({ ws, preset }: { ws: Workspace; preset: IndustryPreset }
         <motion.div 
           animate={{ 
             scale: [1.2, 1, 1.2],
-            opacity: [0.2, 0.3, 0.2],
+            opacity: [0.1, 0.2, 0.1],
             x: [0, -40, 0],
             y: [0, 40, 0]
           }}
           transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
           className="absolute top-[-20%] left-[-15%] w-[480px] h-[480px] rounded-full bg-[#3B82F6] blur-[100px]" 
         />
-        <motion.div 
-          animate={{ 
-            scale: [1, 1.15, 1],
-            opacity: [0.2, 0.3, 0.2],
-          }}
-          transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute bottom-[-10%] left-[-10%] w-[600px] h-[600px] rounded-full bg-[#0EA5E9] blur-[130px]" 
-        />
       </div>
 
-      <div className="relative z-10 space-y-16 max-w-6xl mx-auto">
-        <div className="text-center">
-          {/* Top Label */}
-          <motion.p
-            variants={itemVariants}
-            className="text-[13px] sm:text-[14px] font-bold text-zinc-500 tracking-[0.2em] uppercase mb-4 font-sans"
-          >
-            All-In-One Automation OS
-          </motion.p>
-
-          {/* Same as Landing Hero Header - Refined Typography */}
-          <motion.div variants={itemVariants} className="space-y-6">
-            <h1 className="text-[44px] sm:text-[68px] lg:text-[76px] font-extrabold text-[#111827] tracking-[-0.04em] font-sans max-w-4xl mx-auto">
-              <Typewriter text="Build something Automated" />
+      <div className="relative z-10 space-y-[28px] max-w-6xl mx-auto font-sans">
+        {/* Welcome Row (SaaS Style) */}
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-zinc-150 pb-6">
+          <div>
+            <h1 className="text-[26px] font-black text-zinc-900 tracking-[-0.02em] leading-tight">
+              {getGreeting()}, Operator
             </h1>
-            <p className="text-[17px] sm:text-[19px] text-[#4B5563] mt-6 leading-relaxed max-w-[540px] mx-auto font-medium">
-              Create{" "}
-              <WordRotator 
-                words={[
-                  "WhatsApp", "Facebook", "Instagram", "Shopify", "TikTok", "Gmail", "Google Drive", "Calendar", "Voice Calling", "Twilio", "HubSpot", "WooCommerce", "WordPress", "Claude", "ChatGPT", "Gemini"
-                ]} 
-                className="text-blue-600 font-bold"
-              />{" "}
-              agents and operational workflows by chatting with AI
+            <p className="text-[13px] text-zinc-500 font-medium mt-1">
+              Workspace: <span className="font-bold text-zinc-700">{ws.name}</span> · {new Date().toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
             </p>
-          </motion.div>
-
-          {/* TOP: One Prompt Input (Landing Style) */}
-          <motion.div variants={itemVariants} className="max-w-2xl mx-auto mt-10 relative z-20">
-            <PromptBox />
-            
-            {/* Grok-style Connectors Banner (Same as Landing) */}
-            <AnimatePresence>
-              {showConnectors && (
-                <motion.div
-                  initial={{ opacity: 0, y: 10, scale: 0.98 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.95 }}
-                  className="mt-6 mx-auto w-full"
-                >
-                  <div className="bg-white/70 backdrop-blur-md border border-zinc-200/80 rounded-2xl p-4 flex flex-col sm:flex-row items-center gap-4 shadow-sm hover:shadow-md transition-shadow">
-                    {/* Icons Stack */}
-                    <div className="flex -space-x-3 shrink-0 ml-1">
-                      {businessConnectors.map((c, index) => (
-                        <div 
-                          key={c.name}
-                          className="w-9 h-9 rounded-full bg-white flex items-center justify-center shadow-sm border-2 border-white overflow-hidden relative"
-                          style={{ zIndex: 60 - index }}
-                        >
-                          {c.icon}
-                        </div>
-                      ))}
-                    </div>
-
-                    {/* Text Content */}
-                    <div className="flex-1 text-left">
-                      <h4 className="text-[14px] font-bold text-zinc-900 leading-tight font-sans">Connectors are now available.</h4>
-                      <p className="text-[13px] text-zinc-500 mt-0.5 font-medium font-sans">Connectors allow Anaos to interact with apps directly in conversations.</p>
-                    </div>
-
-                    {/* Actions */}
-                    <div className="flex items-center gap-3 shrink-0">
-                      <button 
-                        onClick={() => setShowConnectors(false)}
-                        className="text-[13px] font-bold text-zinc-400 hover:text-zinc-600 transition-colors font-sans"
-                      >
-                        Dismiss
-                      </button>
-                      <button 
-                        className="bg-zinc-900 text-white text-[13px] font-bold px-5 py-2 rounded-full hover:bg-black transition-all active:scale-95 shadow-sm font-sans"
-                      >
-                        Connect
-                      </button>
-                    </div>
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </motion.div>
+          </div>
+          <div className="flex items-center gap-3">
+            <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-sky-50 text-[#0A6BFF] border border-sky-100 text-[11px] font-semibold uppercase tracking-wider">
+              <span className="w-1.5 h-1.5 rounded-full bg-sky-500 animate-pulse" />
+              Production Workspace
+            </span>
+            <button
+              onClick={() => window.location.reload()}
+              className="flex items-center gap-1.5 h-9 px-4 rounded-xl bg-white border border-zinc-200 text-zinc-700 text-[12.5px] font-bold hover:bg-zinc-50 transition-colors shadow-sm cursor-pointer"
+            >
+              <RefreshCw className="w-3.5 h-3.5" />
+              <span>Refresh</span>
+            </button>
+          </div>
         </div>
 
+        {/* 3-Column Analytics Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-7">
+          <div className="bg-white border border-zinc-200/80 rounded-[24px] p-[28px] shadow-sm hover:shadow-xl transition-all duration-300">
+            <p className="text-[11px] text-zinc-400 font-bold uppercase tracking-[0.2em]">Total Conversations</p>
+            <div className="flex items-baseline gap-2 mt-2">
+              <span className="text-[42px] font-black text-zinc-900 leading-none">1,482</span>
+              <span className="text-[12px] text-sky-600 font-semibold font-sans ml-1">+12.5% from last week</span>
+            </div>
+            <p className="text-[12px] text-zinc-500 mt-2">Active threads across Meta & WhatsApp</p>
+          </div>
+          <div className="bg-white border border-zinc-200/80 rounded-[24px] p-[28px] shadow-sm hover:shadow-xl transition-all duration-300">
+            <p className="text-[11px] text-zinc-400 font-bold uppercase tracking-[0.2em]">AI Resolution Rate</p>
+            <div className="flex items-baseline gap-2 mt-2">
+              <span className="text-[42px] font-black text-zinc-900 leading-none">84.2%</span>
+              <span className="text-[12px] text-sky-600 font-semibold font-sans ml-1">resolved by AI operator</span>
+            </div>
+            <p className="text-[12px] text-zinc-500 mt-2">Resolved automatically by Anaos AI</p>
+          </div>
+          <div className="bg-white border border-zinc-200/80 rounded-[24px] p-[28px] shadow-sm hover:shadow-xl transition-all duration-300">
+            <p className="text-[11px] text-zinc-400 font-bold uppercase tracking-[0.2em]">Pending Bookings</p>
+            <div className="flex items-baseline gap-2 mt-2">
+              <span className="text-[42px] font-black text-zinc-900 leading-none">12</span>
+              <span className="text-[12px] text-sky-600 font-semibold font-sans ml-1">scheduled for today</span>
+            </div>
+            <p className="text-[12px] text-zinc-500 mt-2">Google Calendar synced slot bookings</p>
+          </div>
+        </div>
+
+        {/* Compact Prompt Input Card */}
+        <motion.div variants={itemVariants} className="bg-white border border-zinc-200/80 rounded-[24px] p-[28px] shadow-sm relative z-20">
+          <h2 className="text-[18px] font-semibold text-zinc-900 mb-3 font-sans">Ask Anaos AI to build or edit automations</h2>
+          <PromptBox />
+          
+          {/* Grok-style Connectors Banner (Clean Sky Blue Theme) */}
+          <AnimatePresence>
+            {showConnectors && (
+              <motion.div
+                initial={{ opacity: 0, y: 10, scale: 0.98 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                className="mt-4 w-full"
+              >
+                <div className="bg-sky-50/50 border border-sky-100 rounded-xl p-3 flex flex-col sm:flex-row items-center gap-4 hover:shadow-sm transition-shadow">
+                  {/* Single Clean Sky Blue Icon instead of multi-colored overlapping icons */}
+                  <div className="w-10 h-10 rounded-xl bg-white border border-sky-100 flex items-center justify-center shrink-0 shadow-sm text-[#0A6BFF]">
+                    <Plug className="w-5 h-5" />
+                  </div>
+
+                  {/* Text Content */}
+                  <div className="flex-1 text-left">
+                    <h4 className="text-[13.5px] font-bold text-zinc-900 leading-tight font-sans">Connectors are now available.</h4>
+                    <p className="text-[12px] text-zinc-500 mt-0.5 font-medium font-sans">Connectors allow Anaos to interact with apps directly in conversations.</p>
+                  </div>
+
+                  {/* Actions */}
+                  <div className="flex items-center gap-3 shrink-0">
+                    <button 
+                      onClick={() => setShowConnectors(false)}
+                      className="text-[12px] font-bold text-zinc-400 hover:text-zinc-650 transition-colors font-sans"
+                    >
+                      Dismiss
+                    </button>
+                    <button 
+                      className="bg-[#0A6BFF] hover:bg-blue-600 text-white text-[12px] font-bold px-4 py-1.5 rounded-full transition-all active:scale-95 shadow-sm font-sans"
+                    >
+                      Connect
+                    </button>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </motion.div>
+
         {/* THE CORE VISUALIZER (4-Way Architecture) - Keep below */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 pt-10 items-stretch">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-[28px] items-stretch">
           
           {/* LEFT: Messaging Channels */}
           <motion.div 
             variants={itemVariants}
-            className="bg-white border border-zinc-100/80 rounded-[48px] p-12 space-y-10 shadow-sm hover:shadow-2xl hover:shadow-zinc-200/30 transition-all duration-700 flex flex-col group"
+            className="bg-white border border-zinc-150 rounded-[24px] p-[28px] space-y-6 shadow-sm hover:shadow-xl hover:shadow-zinc-200/20 transition-all duration-300 flex flex-col group"
           >
-            <div className="flex items-center gap-5">
-              <div className="w-14 h-14 rounded-[22px] bg-zinc-100 flex items-center justify-center text-zinc-900 shadow-sm group-hover:scale-105 transition-transform duration-500">
-                <MessageSquare className="w-7 h-7" />
+            <div className="flex items-center gap-4">
+              <div className="w-11 h-11 rounded-xl bg-sky-50 text-[#0A6BFF] flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform duration-500">
+                <MessageSquare className="w-5 h-5" />
               </div>
-              <h3 className="text-[14px] font-black text-zinc-500 uppercase tracking-[0.25em]">Messaging</h3>
+              <h3 className="text-[15px] font-semibold text-zinc-800">Messaging</h3>
             </div>
             <div className="space-y-4 flex-1">
               {["WhatsApp Business", "Instagram DM", "Facebook Messenger", "Email & SMS"].map((c) => (
-                <div key={c} className="bg-zinc-50/30 border border-zinc-100/50 px-7 py-5 rounded-[24px] text-[15px] font-black text-zinc-800 shadow-sm flex items-center justify-between hover:bg-white hover:border-zinc-200 transition-all cursor-pointer">
-                  {c} <div className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.4)]" />
+                <div key={c} className="bg-zinc-50/30 border border-zinc-100/50 px-5 py-4 rounded-xl text-[14px] font-medium text-zinc-700 shadow-sm flex items-center justify-between hover:bg-white hover:border-zinc-200 transition-all cursor-pointer">
+                  {c} <div className="w-2 h-2 rounded-full bg-sky-500 shadow-[0_0_10px_rgba(14,165,233,0.4)]" />
                 </div>
               ))}
             </div>
           </motion.div>
 
           {/* CENTER: Anaos Engine (The Brain) - Refined Lite Theme */}
-          <div className="flex flex-col gap-12">
+          <div className="flex flex-col gap-[28px]">
             <motion.div 
               variants={itemVariants}
-              className="bg-white border border-zinc-200 rounded-[56px] p-14 shadow-2xl shadow-zinc-200/40 flex flex-col items-center text-center relative overflow-hidden group"
+              className="bg-white border border-zinc-150 rounded-[24px] p-[28px] shadow-sm flex flex-col items-center text-center relative overflow-hidden group"
             >
               <motion.div 
                 animate={{ 
-                  opacity: [0.05, 0.15, 0.05],
-                  scale: [1, 1.05, 1]
+                  opacity: [0.03, 0.08, 0.03],
+                  scale: [1, 1.02, 1]
                 }}
                 transition={{ duration: 4, repeat: Infinity }}
-                className="absolute inset-0 bg-blue-500/10 pointer-events-none" 
+                className="absolute inset-0 bg-sky-500/5 pointer-events-none" 
               />
               
-              <div className="w-28 h-28 rounded-full bg-zinc-100 flex items-center justify-center text-zinc-900 shadow-xl mb-10 transform group-hover:scale-105 transition-transform duration-700 z-10 relative">
-                 <div className="absolute inset-0 bg-blue-500/10 rounded-full animate-ping" />
-                 <Zap className="w-14 h-14 fill-current text-blue-500" />
+              <div className="w-16 h-16 rounded-full bg-sky-50 flex items-center justify-center text-sky-500 shadow-md mb-6 transform group-hover:scale-105 transition-transform duration-500 z-10 relative border border-sky-100">
+                 <div className="absolute inset-0 bg-sky-500/10 rounded-full animate-ping" />
+                 <Zap className="w-7 h-7 fill-current text-[#0A6BFF]" />
               </div>
-              <div className="space-y-4 z-10">
-                <h3 className="text-[22px] font-black text-zinc-900 uppercase tracking-[0.25em]">Anaos Engine</h3>
-                <p className="text-[12px] font-black text-zinc-400 uppercase tracking-[0.3em]">
+              <div className="space-y-1.5 z-10">
+                <h3 className="text-[18px] font-semibold text-zinc-900 tracking-tight">Anaos Engine</h3>
+                <p className="text-[11px] font-medium text-zinc-400 uppercase tracking-widest">
                   ANASMIND MEMORY
                 </p>
               </div>
@@ -416,17 +437,17 @@ function DashboardHome({ ws, preset }: { ws: Workspace; preset: IndustryPreset }
             {/* BOTTOM: Content & Growth */}
             <motion.div 
               variants={itemVariants}
-              className="bg-white border border-zinc-100/80 rounded-[48px] p-12 space-y-10 shadow-sm hover:shadow-2xl hover:shadow-zinc-200/30 transition-all duration-700 flex-1 group"
+              className="bg-white border border-zinc-150 rounded-[24px] p-[28px] space-y-6 shadow-sm hover:shadow-xl hover:shadow-zinc-200/20 transition-all duration-300 flex-1 group"
             >
-              <div className="flex items-center gap-5">
-                <div className="w-14 h-14 rounded-[22px] bg-zinc-100 flex items-center justify-center text-zinc-900 shadow-sm group-hover:scale-105 transition-transform duration-500">
-                  <TrendingUp className="w-7 h-7" />
+              <div className="flex items-center gap-4">
+                <div className="w-11 h-11 rounded-xl bg-sky-50 text-[#0A6BFF] flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
+                  <TrendingUp className="w-5 h-5" />
                 </div>
-                <h3 className="text-[14px] font-black text-zinc-500 uppercase tracking-[0.25em]">Growth AI</h3>
+                <h3 className="text-[15px] font-semibold text-zinc-800">Growth AI</h3>
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-3">
                 {["TikTok Ads", "YouTube", "LinkedIn", "Blog Posts"].map((c) => (
-                  <div key={c} className="bg-zinc-50/30 border border-zinc-100/50 px-5 py-4 rounded-[24px] text-[13px] font-black text-zinc-800 shadow-sm text-center hover:bg-white hover:border-zinc-200 transition-all cursor-pointer">
+                  <div key={c} className="bg-zinc-50/30 border border-zinc-100/50 px-4 py-3 rounded-xl text-[13px] font-semibold text-zinc-700 shadow-sm text-center hover:bg-white hover:border-zinc-200 transition-all cursor-pointer">
                     {c}
                   </div>
                 ))}
@@ -437,18 +458,18 @@ function DashboardHome({ ws, preset }: { ws: Workspace; preset: IndustryPreset }
           {/* RIGHT: Business Integrations */}
           <motion.div 
             variants={itemVariants}
-            className="bg-white border border-zinc-100/80 rounded-[48px] p-12 space-y-10 shadow-sm hover:shadow-2xl hover:shadow-zinc-200/30 transition-all duration-700 flex flex-col group"
+            className="bg-white border border-zinc-150 rounded-[24px] p-[28px] space-y-6 shadow-sm hover:shadow-xl hover:shadow-zinc-200/20 transition-all duration-300 flex flex-col group"
           >
-            <div className="flex items-center gap-5">
-              <div className="w-14 h-14 rounded-[22px] bg-zinc-100 flex items-center justify-center text-zinc-900 shadow-sm group-hover:scale-105 transition-transform duration-500">
-                <Layers className="w-7 h-7" />
+            <div className="flex items-center gap-4">
+              <div className="w-11 h-11 rounded-xl bg-sky-50 text-[#0A6BFF] flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
+                <Layers className="w-5 h-5" />
               </div>
-              <h3 className="text-[14px] font-black text-zinc-500 uppercase tracking-[0.25em]">Integrations</h3>
+              <h3 className="text-[15px] font-semibold text-zinc-800">Integrations</h3>
             </div>
-            <div className="space-y-4 flex-1">
+            <div className="space-y-3 flex-1">
               {["Shopify Store", "Google Calendar", "HubSpot CRM", "Stripe Payments"].map((c) => (
-                <div key={c} className="bg-zinc-50/30 border border-zinc-100/50 px-7 py-5 rounded-[24px] text-[15px] font-black text-zinc-800 shadow-sm flex items-center justify-between hover:bg-white hover:border-zinc-200 transition-all cursor-pointer">
-                  {c} <ArrowUpRight className="w-5 h-5 text-zinc-300" />
+                <div key={c} className="bg-zinc-50/30 border border-zinc-100/50 px-5 py-3 rounded-xl text-[14px] font-medium text-zinc-700 shadow-sm flex items-center justify-between hover:bg-white hover:border-zinc-200 transition-all cursor-pointer">
+                  {c} <ArrowUpRight className="w-4 h-4 text-sky-500" />
                 </div>
               ))}
             </div>
@@ -456,16 +477,22 @@ function DashboardHome({ ws, preset }: { ws: Workspace; preset: IndustryPreset }
 
         </div>
 
+        {/* Bookings & Operational Activity */}
+        <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-2 gap-[28px] pt-6">
+          <TodayBookingsWidget />
+          <ChannelStatusWidget />
+        </motion.div>
+
         {/* Minimal Channel Switcher - Refined */}
-        <motion.div variants={itemVariants} className="pt-14 flex justify-center">
-          <div className="inline-flex items-center gap-20 border-b border-zinc-100 pb-px px-14">
+        <motion.div variants={itemVariants} className="pt-10 flex justify-center">
+          <div className="inline-flex items-center gap-14 border-b border-zinc-150 pb-px px-10">
             {["OVERVIEW", "WHATSAPP", "INSTAGRAM", "VOICE"].map((tab) => (
               <button
                 key={tab}
-                className={`pb-6 text-[13px] font-black transition-all relative tracking-[0.2em] ${
+                className={`pb-4 text-[12px] font-semibold transition-all relative tracking-[0.2em] ${
                   tab === "OVERVIEW" 
-                    ? "text-zinc-900 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[3px] after:bg-zinc-900" 
-                    : "text-zinc-400 hover:text-zinc-600"
+                    ? "text-[#0A6BFF] after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[2px] after:bg-[#0A6BFF]" 
+                    : "text-zinc-400 hover:text-zinc-650"
                 }`}
               >
                 {tab}
@@ -480,36 +507,54 @@ function DashboardHome({ ws, preset }: { ws: Workspace; preset: IndustryPreset }
 
 // ─── Left Sidebar Component ──────────────────────────────────────────────────
 
-function Sidebar({ active, onChange, ws, onWsChange, workspaces, preset }: {
+function Sidebar({ active, onChange, ws, onWsChange, workspaces, preset, user, open, setOpen }: {
   active: Tab;
   onChange: (t: Tab) => void;
   ws: Workspace;
   onWsChange: (w: Workspace) => void;
   workspaces: Workspace[];
   preset: IndustryPreset;
+  user: { name: string | null; email: string; role: string } | null;
+  open: boolean;
+  setOpen: (o: boolean) => void;
 }) {
   const [wsOpen, setWsOpen] = useState(false);
+
+  const isAgent = user?.role === "agent";
 
   const NAV_ITEMS: { id: Tab; label: string; icon: React.ElementType }[] = [
     { id: "overview",    label: "Home",           icon: Home },
     { id: "inbox",       label: "Inbox",          icon: Inbox },
     { id: "contacts",    label: "Contacts",       icon: Users },
-    { id: "automations", label: "Workflows",      icon: GitBranch },
-    { id: "broadcasts",  label: "Broadcasts",     icon: Megaphone },
-    { id: "ai_agent",    label: "AI Training",    icon: Zap },
   ];
 
+  if (!isAgent) {
+    NAV_ITEMS.push({ id: "automations", label: "Workflows", icon: GitBranch });
+    NAV_ITEMS.push({ id: "broadcasts",  label: "Broadcasts", icon: Megaphone });
+  }
+
+  NAV_ITEMS.push({ id: "ai_agent",    label: "AI Training",    icon: Zap });
+
   return (
-    <aside className="dashboard-sidebar w-[260px] shrink-0 border-r border-zinc-100 bg-white/40 backdrop-blur-xl flex flex-col h-full z-10">
+    <aside className={`dashboard-sidebar w-[240px] shrink-0 border-r border-zinc-100 bg-white/40 backdrop-blur-xl flex flex-col h-full z-40 transition-transform duration-300 md:translate-x-0 md:static fixed inset-y-0 left-0 ${open ? "translate-x-0" : "-translate-x-full"}`}>
       {/* Professional Branding Logo */}
-      <div className="h-14 px-6 flex items-center gap-3 border-b border-zinc-100">
-        <div className="w-8 h-8 rounded-lg bg-zinc-800 flex items-center justify-center text-white shadow-sm ring-1 ring-white/10">
-          <Zap className="w-4.5 h-4.5 fill-current text-blue-400" />
+      <div className="h-14 px-6 flex items-center justify-between border-b border-zinc-100 relative">
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 rounded-lg bg-zinc-800 flex items-center justify-center text-white shadow-sm ring-1 ring-white/10">
+            <Zap className="w-4.5 h-4.5 fill-current text-blue-400" />
+          </div>
+          <div className="flex flex-col">
+            <span className="text-[15px] font-black text-zinc-800 tracking-tighter leading-none">ANASNODE</span>
+            <span className="text-[9px] font-bold text-zinc-400 tracking-[0.2em] uppercase mt-0.5">Business OS</span>
+          </div>
         </div>
-        <div className="flex flex-col">
-          <span className="text-[15px] font-black text-zinc-800 tracking-tighter leading-none">ANASNODE</span>
-          <span className="text-[9px] font-bold text-zinc-400 tracking-[0.2em] uppercase mt-0.5">Business OS</span>
-        </div>
+        <button
+          type="button"
+          onClick={() => setOpen(false)}
+          className="md:hidden p-1 rounded-lg hover:bg-zinc-100 text-zinc-500 transition-colors cursor-pointer"
+        >
+          <X className="w-5 h-5" />
+        </button>
       </div>
 
       {/* Workspace switcher */}
@@ -566,15 +611,15 @@ function Sidebar({ active, onChange, ws, onWsChange, workspaces, preset }: {
               key={id}
               type="button"
               onClick={() => onChange(id)}
-              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-[14px] transition-all cursor-pointer group ${
+              className={`w-full flex items-center gap-3 h-11 px-3 rounded-xl text-[14px] transition-all cursor-pointer group border-l-4 ${
                 isActive
-                  ? "bg-white text-zinc-800 font-bold border border-zinc-200 shadow-sm"
-                  : "text-zinc-500 font-medium hover:bg-zinc-100 hover:text-zinc-800"
+                  ? "bg-[#E6F0FF] text-[#0A6BFF] font-bold border-[#0A6BFF] rounded-l-none pl-2 shadow-sm"
+                  : "text-zinc-550 font-medium hover:bg-zinc-100 hover:text-zinc-855 border-transparent pl-2"
               }`}
             >
               <Icon
                 className={`w-[20px] h-[20px] shrink-0 transition-colors ${
-                  isActive ? "text-zinc-800 stroke-[2.5]" : "text-zinc-300 group-hover:text-zinc-500 stroke-[2]"
+                  isActive ? "text-[#0A6BFF] stroke-[2.5]" : "text-zinc-400 group-hover:text-zinc-600 stroke-[2]"
                 }`}
               />
               {label}
@@ -582,49 +627,71 @@ function Sidebar({ active, onChange, ws, onWsChange, workspaces, preset }: {
           );
         })}
 
-        <div className="pt-6 pb-2 px-3">
-          <span className="text-[9px] font-black tracking-[0.25em] text-zinc-400 uppercase">Insights</span>
-        </div>
-        
-        <button
-          type="button"
-          onClick={() => onChange("analytics")}
-          className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-[14px] transition-all cursor-pointer group ${
-            active === "analytics"
-              ? "bg-white text-zinc-800 font-bold border border-zinc-200 shadow-sm"
-              : "text-zinc-500 font-medium hover:bg-zinc-100 hover:text-zinc-800"
-          }`}
-        >
-          <BarChart2
-            className={`w-[20px] h-[20px] shrink-0 transition-colors ${
-              active === "analytics" ? "text-zinc-800 stroke-[2.5]" : "text-zinc-300 group-hover:text-zinc-500 stroke-[2]"
-            }`}
-          />
-          Analytics
-        </button>
+        {!isAgent && (
+          <>
+            <div className="pt-6 pb-2 px-3">
+              <span className="text-[9px] font-black tracking-[0.25em] text-zinc-400 uppercase">Insights</span>
+            </div>
+            
+            <button
+              type="button"
+              onClick={() => onChange("analytics")}
+              className={`w-full flex items-center gap-3 h-11 px-3 rounded-xl text-[14px] transition-all cursor-pointer group border-l-4 ${
+                active === "analytics"
+                  ? "bg-[#E6F0FF] text-[#0A6BFF] font-bold border-[#0A6BFF] rounded-l-none pl-2 shadow-sm"
+                  : "text-zinc-550 font-medium hover:bg-zinc-100 hover:text-zinc-855 border-transparent pl-2"
+              }`}
+            >
+              <BarChart2
+                className={`w-[20px] h-[20px] shrink-0 transition-colors ${
+                  active === "analytics" ? "text-[#0A6BFF] stroke-[2.5]" : "text-zinc-400 group-hover:text-zinc-600 stroke-[2]"
+                }`}
+              />
+              Analytics
+            </button>
+          </>
+        )}
       </nav>
 
       {/* Sidebar Footer */}
       <div className="px-3 py-4 border-t border-zinc-100 space-y-1 bg-transparent">
+        {!isAgent && (
+          <button
+            type="button"
+            onClick={() => onChange("team")}
+            className={`w-full flex items-center gap-3 h-11 px-3 rounded-xl text-[13.5px] font-medium transition-all group cursor-pointer border-l-4 ${
+              active === "team"
+                ? "bg-[#E6F0FF] text-[#0A6BFF] font-bold border-[#0A6BFF] rounded-l-none pl-2 shadow-sm"
+                : "text-zinc-450 hover:bg-zinc-100 hover:text-zinc-700 border-transparent pl-2"
+            }`}
+          >
+            <Users className={`w-[18px] h-[18px] group-hover:text-zinc-500 stroke-[2] ${active === "team" ? "text-[#0A6BFF]" : "text-zinc-300"}`} />
+            Team Settings
+          </button>
+        )}
         <a
           href="/dashboard/integrations"
-          className="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-[13.5px] font-medium text-zinc-400 hover:bg-zinc-100 hover:text-zinc-700 transition-all group"
+          className="w-full flex items-center gap-3 h-11 px-3 rounded-xl text-[13.5px] font-medium text-zinc-450 hover:bg-zinc-100 hover:text-zinc-700 transition-all group border-l-4 border-transparent pl-2"
         >
           <Plug className="w-[18px] h-[18px] text-zinc-300 group-hover:text-zinc-500 stroke-[2]" />
           Integrations
         </a>
-        <button className="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-[13.5px] font-medium text-zinc-400 hover:bg-zinc-100 hover:text-zinc-700 transition-all group cursor-pointer">
+        <button className="w-full flex items-center gap-3 h-11 px-3 rounded-xl text-[13.5px] font-medium text-zinc-450 hover:bg-zinc-100 hover:text-zinc-700 transition-all group border-l-4 border-transparent pl-2 cursor-pointer">
           <LogOut className="w-[18px] h-[18px] text-zinc-300 group-hover:text-zinc-500 stroke-[2]" />
           Log out
         </button>
         
         <div className="flex items-center gap-3 px-3 pt-4 mt-3 border-t border-zinc-100">
           <div className="w-9 h-9 rounded-lg bg-zinc-800 flex items-center justify-center shrink-0 shadow-lg ring-2 ring-white/10">
-            <span className="text-[13px] font-bold text-white uppercase">AR</span>
+            <span className="text-[13px] font-bold text-white uppercase text-center w-full">
+              {user?.name ? user.name.slice(0, 2) : (user?.email ? user.email.slice(0, 2) : "UN")}
+            </span>
           </div>
           <div className="min-w-0 flex-1">
-            <p className="text-[13px] font-black text-zinc-800 truncate tracking-tight">Anasraka</p>
-            <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">Admin OS</p>
+            <p className="text-[13px] font-black text-zinc-800 truncate tracking-tight">{user?.name || "User"}</p>
+            <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">
+              {user?.role ? `${user.role} OS` : "Agent OS"}
+            </p>
           </div>
         </div>
       </div>
@@ -643,12 +710,13 @@ type WAStatus = {
   hints?: string[];
 };
 
-function Topbar({ title, ws, preset, waStatus, integrations }: { 
+function Topbar({ title, ws, preset, waStatus, integrations, onMenuClick }: { 
   title: string; 
   ws: Workspace; 
   preset: IndustryPreset;
   waStatus: WAStatus;
   integrations: { whatsapp: boolean; shopify: boolean; fastapi: boolean };
+  onMenuClick: () => void;
 }) {
   const [isAutoReply, setIsAutoReply] = useState(true);
 
@@ -692,15 +760,26 @@ function Topbar({ title, ws, preset, waStatus, integrations }: {
         </div>
       )}
 
-      <header className="h-14 border-b border-zinc-100 bg-white px-6 flex items-center justify-between shrink-0">
-        <div className="flex items-center gap-2 text-[13.5px]">
-          <span className="text-zinc-400 font-medium">{ws.name}</span>
-          <ChevronRight className="w-4 h-4 text-zinc-200" />
+      <header className="h-14 border-b border-zinc-100 bg-white px-4 md:px-6 flex items-center justify-between shrink-0">
+        <div className="flex items-center gap-3 text-[13.5px]">
+          <button 
+            type="button" 
+            onClick={onMenuClick}
+            className="md:hidden p-1 rounded-lg hover:bg-zinc-100 text-zinc-500 transition-colors"
+          >
+            <svg viewBox="0 0 24 24" className="w-5 h-5 fill-none stroke-current stroke-2">
+              <line x1="4" y1="12" x2="20" y2="12" strokeLinecap="round" />
+              <line x1="4" y1="6" x2="20" y2="6" strokeLinecap="round" />
+              <line x1="4" y1="18" x2="20" y2="18" strokeLinecap="round" />
+            </svg>
+          </button>
+          <span className="text-zinc-400 font-medium hidden sm:inline">{ws.name}</span>
+          <ChevronRight className="w-4 h-4 text-zinc-200 hidden sm:inline" />
           <span className="font-bold text-zinc-700 tracking-tight">{title}</span>
         </div>
         
         <div className="flex items-center gap-4">
-          <div className="relative group">
+          <div className="relative group hidden md:block">
             <Search className="w-4 h-4 text-zinc-300 absolute left-3 top-2.5 transition-colors group-focus-within:text-zinc-500" />
             <input
               type="text"
@@ -727,9 +806,9 @@ function Topbar({ title, ws, preset, waStatus, integrations }: {
 
 function StatusBadge({ status }: { status: Workspace["status"] }) {
   const config = {
-    live: { bg: "bg-emerald-50", text: "text-emerald-700", border: "border-emerald-100", label: "Live" },
+    live: { bg: "bg-sky-50", text: "text-sky-700", border: "border-sky-100", label: "Live" },
     draft: { bg: "bg-zinc-100", text: "text-zinc-600", border: "border-zinc-200", label: "Draft" },
-    paused: { bg: "bg-amber-50", text: "text-amber-700", border: "border-amber-100", label: "Paused" },
+    paused: { bg: "bg-zinc-100", text: "text-zinc-500", border: "border-zinc-200", label: "Paused" },
   };
   const { bg, text, border, label } = config[status] || config.draft;
   return (
@@ -924,13 +1003,13 @@ function ChannelBadge({ channelId, connected }: { channelId: string; connected: 
 
 function AutomationStateBadge({ state }: { state: AutomationChannelState }) {
   const cfg = {
-    live:             { label: "Live",             bg: "bg-emerald-50",  text: "text-emerald-700",  border: "border-emerald-100", dot: "bg-emerald-500" },
+    live:             { label: "Live",             bg: "bg-sky-50",      text: "text-sky-700",      border: "border-sky-100",     dot: "bg-sky-500" },
     draft:            { label: "Draft",            bg: "bg-zinc-100",    text: "text-zinc-500",     border: "border-zinc-200",    dot: "bg-zinc-400" },
-    needs_connection: { label: "Needs Connection", bg: "bg-amber-50",    text: "text-amber-700",    border: "border-amber-100",   dot: "bg-amber-500" },
+    needs_connection: { label: "Needs Connection", bg: "bg-sky-50/50",   text: "text-sky-600/90",   border: "border-sky-100/70",  dot: "bg-sky-400" },
   };
   const { label, bg, text, border, dot } = cfg[state];
   return (
-    <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10.5px] font-black uppercase tracking-wider border ${bg} ${text} ${border}`}>
+    <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10.5px] font-semibold uppercase tracking-wider border ${bg} ${text} ${border}`}>
       <span className={`w-1.5 h-1.5 rounded-full ${dot} ${state === "live" ? "animate-pulse" : ""}`} />
       {label}
     </span>
@@ -949,7 +1028,8 @@ interface GeneratedAutomation {
   enabled: boolean;
 }
 
-function AutomationsPage({ ws, integrations }: { ws: Workspace; integrations: { whatsapp: boolean; shopify: boolean; fastapi: boolean } }) {
+function AutomationsPage({ ws, integrations, toggleAutomation, toggleLoading }: { ws: Workspace; integrations: { whatsapp: boolean; shopify: boolean; fastapi: boolean }; toggleAutomation: (id: string) => Promise<void>; toggleLoading: string | null }) {
+  const router = useRouter();
   const [prompt, setPrompt] = useState("");
   const [building, setBuilding] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -1068,18 +1148,18 @@ function AutomationsPage({ ws, integrations }: { ws: Workspace; integrations: { 
         </div>
         <div className="flex items-center gap-2 shrink-0 flex-wrap justify-end">
           {liveCount > 0 && (
-            <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-50 border border-emerald-100 text-[11px] font-black text-emerald-700 uppercase tracking-wider">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />{liveCount} Live
+            <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-sky-50 border border-sky-100 text-[11px] font-semibold text-sky-700 uppercase tracking-wider">
+              <span className="w-1.5 h-1.5 rounded-full bg-sky-500 animate-pulse" />{liveCount} Live
             </span>
           )}
           {draftCount > 0 && (
-            <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-zinc-100 border border-zinc-200 text-[11px] font-black text-zinc-500 uppercase tracking-wider">
+            <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-zinc-100 border border-zinc-200 text-[11px] font-semibold text-zinc-500 uppercase tracking-wider">
               {draftCount} Draft
             </span>
           )}
           {needsCount > 0 && (
-            <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-50 border border-amber-100 text-[11px] font-black text-amber-700 uppercase tracking-wider">
-              <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />{needsCount} Needs Connection
+            <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-sky-50/50 border border-sky-100/70 text-[11px] font-semibold text-sky-600/90 uppercase tracking-wider">
+              <span className="w-1.5 h-1.5 rounded-full bg-sky-400" />{needsCount} Needs Connection
             </span>
           )}
         </div>
@@ -1088,12 +1168,12 @@ function AutomationsPage({ ws, integrations }: { ws: Workspace; integrations: { 
       {/* Prompt Builder */}
       <div className="rounded-2xl border border-zinc-200 bg-white overflow-hidden shadow-sm">
         <div className="px-5 py-4 border-b border-zinc-100 flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-zinc-900 flex items-center justify-center">
-            <Zap className="w-4 h-4 text-blue-400" />
+          <div className="w-8 h-8 rounded-lg bg-sky-50 flex items-center justify-center border border-sky-100">
+            <Zap className="w-4 h-4 text-[#0A6BFF]" />
           </div>
           <div>
-            <p className="text-[13.5px] font-black text-zinc-900 tracking-tight">Build with prompt</p>
-            <p className="text-[11.5px] text-zinc-400 font-medium">Describe your flow — Anaos detects the channel automatically</p>
+            <p className="text-[15px] font-semibold text-zinc-900 tracking-tight">Build with prompt</p>
+            <p className="text-[13px] text-zinc-400 font-medium">Describe your flow — Anaos detects the channel automatically</p>
           </div>
         </div>
 
@@ -1103,12 +1183,12 @@ function AutomationsPage({ ws, integrations }: { ws: Workspace; integrations: { 
             onChange={(e) => setPrompt(e.target.value)}
             placeholder={`e.g. "When a lead messages on WhatsApp asking about prices, qualify their budget and if over AED 2M send a viewing link, otherwise add to newsletter."`}
             rows={3}
-            className="w-full bg-transparent px-5 py-4 text-[14px] text-zinc-800 placeholder:text-zinc-400 focus:outline-none resize-none leading-relaxed border-b border-zinc-100"
+            className="w-full bg-transparent px-5 py-4 text-[14px] text-zinc-800 placeholder:text-zinc-400 focus:outline-none resize-none leading-relaxed border-b border-zinc-100 font-medium"
           />
 
           {detectedChannels.length > 0 && (
             <div className="px-5 py-3 bg-zinc-50/50 border-b border-zinc-100 flex items-center gap-3 flex-wrap">
-              <span className="text-[11.5px] font-bold text-zinc-400 uppercase tracking-wider">Detected:</span>
+              <span className="text-[11px] font-medium text-zinc-400 uppercase tracking-wider">Detected:</span>
               {detectedChannels.map((c) => (
                 <ChannelBadge key={c} channelId={c} connected={isConnected(c)} />
               ))}
@@ -1116,25 +1196,25 @@ function AutomationsPage({ ws, integrations }: { ws: Workspace; integrations: { 
           )}
 
           {showConnectPrompt && (
-            <div className="px-5 py-3 bg-amber-50 border-b border-amber-100 flex items-center justify-between gap-4">
+            <div className="px-5 py-3 bg-sky-50 border-b border-sky-100 flex items-center justify-between gap-4">
               <div className="flex items-center gap-2.5">
-                <AlertCircle className="w-4 h-4 text-amber-600 shrink-0" />
-                <p className="text-[12.5px] font-bold text-amber-800">
+                <AlertCircle className="w-4 h-4 text-sky-600 shrink-0" />
+                <p className="text-[13px] font-medium text-sky-800">
                   Some channels aren&apos;t connected — automation will be saved as <span className="italic">Needs Connection</span>.
                 </p>
               </div>
-              <a href="/dashboard/integrations" className="shrink-0 text-[11.5px] font-black text-amber-800 bg-amber-100 border border-amber-200 px-3 py-1.5 rounded-lg hover:bg-amber-200 transition-colors">
+              <a href="/dashboard/integrations" className="shrink-0 text-[11.5px] font-semibold text-sky-800 bg-sky-100 border border-sky-200 px-3 py-1.5 rounded-lg hover:bg-sky-200 transition-colors">
                 Connect now →
               </a>
             </div>
           )}
 
           <div className="px-5 py-3.5 flex items-center justify-between">
-            <span className="text-[12px] text-zinc-400 font-medium">Workspace: <strong className="text-zinc-600">{ws.name}</strong></span>
+            <span className="text-[13px] text-zinc-450 font-medium">Workspace: <strong className="text-zinc-700 font-semibold">{ws.name}</strong></span>
             <button
               type="submit"
               disabled={building || !prompt.trim()}
-              className="flex items-center gap-1.5 h-9 px-5 rounded-xl bg-zinc-900 text-white text-[12.5px] font-bold hover:bg-zinc-800 transition-all disabled:opacity-40 cursor-pointer shadow-sm"
+              className="flex items-center gap-1.5 h-9 px-5 rounded-xl bg-[#0A6BFF] hover:bg-blue-600 text-white text-[13px] font-semibold transition-all disabled:opacity-40 cursor-pointer shadow-sm"
             >
               {building ? (<><RefreshCw className="w-3.5 h-3.5 animate-spin" /> Building…</>) : (<><Zap className="w-3.5 h-3.5" /> Generate automation</>)}
             </button>
@@ -1173,37 +1253,50 @@ function AutomationsPage({ ws, integrations }: { ws: Workspace; integrations: { 
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 className={`rounded-2xl border bg-white shadow-sm hover:shadow-md transition-all ${
-                  a.state === "needs_connection" ? "border-amber-100" : a.state === "live" ? "border-emerald-100" : "border-zinc-100"
+                  a.state === "needs_connection" ? "border-sky-100/50" : a.state === "live" ? "border-sky-100" : "border-zinc-100"
                 }`}
               >
                 <div className="px-5 py-4 flex items-start justify-between gap-4">
                   <div className="flex items-start gap-3 min-w-0">
-                    <div className={`w-1 rounded-full self-stretch shrink-0 mt-1 ${a.state === "live" ? "bg-emerald-400" : a.state === "needs_connection" ? "bg-amber-400" : "bg-zinc-200"}`} />
+                    <div className={`w-1 rounded-full self-stretch shrink-0 mt-1 ${a.state === "live" ? "bg-sky-500" : a.state === "needs_connection" ? "bg-sky-400" : "bg-zinc-200"}`} />
                     <div className="min-w-0">
                       <div className="flex items-center gap-2.5 flex-wrap">
-                        <p className="text-[14px] font-black text-zinc-900 tracking-tight">{a.name}</p>
+                        <p className="text-[15px] font-semibold text-zinc-900 tracking-tight">{a.name}</p>
                         <AutomationStateBadge state={a.state} />
                       </div>
-                      <p className="text-[12.5px] text-zinc-400 font-medium mt-1 leading-relaxed line-clamp-2">{a.description}</p>
+                      <p className="text-[14px] text-zinc-500 font-medium mt-1 leading-relaxed line-clamp-2">{a.description}</p>
                       <div className="flex items-center gap-2 mt-3 flex-wrap">
                         {a.channels.map((c) => <ChannelBadge key={c} channelId={c} connected={isConnected(c)} />)}
                         <span className="text-[11.5px] text-zinc-300 font-bold">·</span>
-                        <span className="text-[11.5px] text-zinc-400 font-medium">{a.runs} runs · {a.lastRun}</span>
+                        <span className="text-[12px] text-zinc-450 font-normal">{a.runs} runs · {a.lastRun}</span>
                       </div>
                     </div>
                   </div>
-                  <div className="flex items-center gap-2 shrink-0 pt-0.5">
+                  <div className="flex items-center gap-3 shrink-0 pt-0.5">
+                    <button
+                      onClick={() => router.push(`/dashboard/workflows/${a.id}`)}
+                      className="flex items-center gap-1.5 text-[12px] font-semibold text-zinc-650 bg-white border border-zinc-200 px-3 py-1.5 rounded-xl hover:bg-zinc-100 transition-all cursor-pointer"
+                    >
+                      <span>Edit Visually</span>
+                      <PenTool className="w-3.5 h-3.5 text-zinc-500" />
+                    </button>
+
                     {a.state === "needs_connection" ? (
                       <a
                         href={CHANNEL_META[a.channels[0]]?.connectHref ?? "/dashboard/integrations"}
-                        className="flex items-center gap-1.5 text-[11.5px] font-black text-amber-700 bg-amber-50 border border-amber-100 px-3 py-1.5 rounded-xl hover:bg-amber-100 transition-colors"
+                        className="flex items-center gap-1.5 text-[12px] font-semibold text-sky-700 bg-sky-50 border border-sky-100 px-3 py-1.5 rounded-xl hover:bg-sky-100 transition-colors"
                       >
                         Connect <ExternalLink className="w-3 h-3" />
                       </a>
                     ) : (
-                      <div className={`w-10 h-5 rounded-full transition-colors cursor-pointer relative ${a.enabled ? "bg-emerald-500" : "bg-zinc-200"}`}>
+                      <button
+                        type="button"
+                        onClick={() => toggleAutomation(a.id)}
+                        disabled={toggleLoading === a.id}
+                        className={`w-10 h-5 rounded-full transition-colors cursor-pointer relative ${a.enabled ? "bg-sky-500" : "bg-zinc-200"} disabled:opacity-50 outline-none border-none`}
+                      >
                         <div className={`absolute top-0.5 w-4 h-4 rounded-full bg-white shadow-sm transition-all ${a.enabled ? "left-5" : "left-0.5"}`} />
-                      </div>
+                      </button>
                     )}
                   </div>
                 </div>
@@ -1246,6 +1339,8 @@ function AutomationsPage({ ws, integrations }: { ws: Workspace; integrations: { 
 export default function Dashboard() {
   const router = useRouter();
   const [tab, setTab] = useState<Tab>("overview");
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [user, setUser] = useState<{ id: string; name: string | null; email: string; role: string } | null>(null);
   const [workspaces, setWorkspaces] = useState<Workspace[]>([]);
   const [ws, setWs] = useState<Workspace | null>(null);
   const [contacts, setContacts] = useState<Contact[]>([]);
@@ -1255,6 +1350,11 @@ export default function Dashboard() {
   const [loadError, setLoadError] = useState<string | null>(null);
   const [integrations, setIntegrations] = useState({ whatsapp: false, shopify: false, fastapi: false });
   const [toggleLoading, setToggleLoading] = useState<string | null>(null);
+
+  const handleTabChange = (t: Tab) => {
+    setTab(t);
+    setSidebarOpen(false);
+  };
 
   const [webhookActive, setWebhookActive] = useState(false);
   const [fastApiOnline, setFastApiOnline] = useState(false);
@@ -1280,7 +1380,8 @@ export default function Dashboard() {
       q === "contacts" ||
       q === "automations" ||
       q === "broadcasts" ||
-      q === "ai_agent"
+      q === "ai_agent" ||
+      q === "team"
     ) {
       setTab(q as Tab);
     }
@@ -1299,6 +1400,10 @@ export default function Dashboard() {
           return;
         }
         const data = await res.json();
+        
+        if (data.user) {
+          setUser(data.user);
+        }
         
         if (data.integrations) {
           setIntegrations(data.integrations);
@@ -1442,6 +1547,7 @@ export default function Dashboard() {
     automations: "Workflows",
     broadcasts:  "Broadcasts",
     analytics:   "Analytics",
+    team:        "Team Settings",
   };
 
   if (!mounted || loadingData) {
@@ -1517,29 +1623,47 @@ export default function Dashboard() {
 
       <Sidebar
         active={tab}
-        onChange={setTab}
+        onChange={handleTabChange}
         ws={ws}
-        onWsChange={(w) => { setWs(w); setTab("overview"); }}
+        onWsChange={(w) => { setWs(w); handleTabChange("overview"); }}
         workspaces={workspaces}
         preset={industryPreset}
+        user={user}
+        open={sidebarOpen}
+        setOpen={setSidebarOpen}
       />
 
+      {sidebarOpen && (
+        <div 
+          className="fixed inset-0 bg-black/20 backdrop-blur-xs z-30 md:hidden animate-in fade-in duration-200"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+
       <div className="dashboard-shell flex-1 flex flex-col overflow-hidden min-w-0 bg-transparent relative z-10">
-        <Topbar title={tabLabel[tab]} ws={ws} preset={industryPreset} waStatus={waStatus} integrations={integrations} />
+        <Topbar 
+          title={tabLabel[tab]} 
+          ws={ws} 
+          preset={industryPreset} 
+          waStatus={waStatus} 
+          integrations={integrations} 
+          onMenuClick={() => setSidebarOpen(true)} 
+        />
           
           <main
             className={`flex-1 overflow-y-auto ${
-              tab === "inbox" ? "overflow-hidden p-0" : "bg-transparent"
+              tab === "inbox" ? "overflow-hidden p-0" : "bg-[#F8F9FA]"
             }`}
           >
-            <div className={tab === "inbox" || tab === "ai_agent" || tab === "contacts" ? "" : "p-8"}>
+            <div className={tab === "inbox" || tab === "ai_agent" || tab === "contacts" ? "" : "px-4 py-6 md:px-10 md:pt-8 md:pb-8"}>
               {tab === "ai_agent"    && <AIAgentPage     ws={ws} />}
               {tab === "overview"    && <DashboardHome ws={ws} preset={industryPreset} />}
               {tab === "inbox"       && <InboxPage initialConversationId={inboxChatId} preset={industryPreset} />}
               {tab === "contacts"    && <ContactsHub />}
-              {tab === "automations" && <AutomationsPage ws={ws} integrations={integrations} />}
+              {tab === "automations" && <AutomationsPage ws={ws} integrations={integrations} toggleAutomation={toggleAutomation} toggleLoading={toggleLoading} />}
               {tab === "broadcasts"  && <BroadcastsPage ws={ws} />}
               {tab === "analytics"   && <AnalyticsPage />}
+              {tab === "team"        && <TeamSettingsPage />}
             </div>
           </main>
       </div>

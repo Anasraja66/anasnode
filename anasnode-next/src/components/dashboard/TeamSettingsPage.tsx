@@ -159,7 +159,7 @@ export default function TeamSettingsPage() {
               setShowInviteModal(true);
               setGeneratedUrl(null);
             }}
-            className="px-4 py-2.5 bg-zinc-900 hover:bg-zinc-850 text-white rounded-xl text-[13px] font-bold shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all flex items-center gap-2 cursor-pointer"
+            className="px-4 py-2.5 bg-[#0A6BFF] hover:bg-blue-600 text-white rounded-xl text-[13px] font-bold shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all flex items-center gap-2 cursor-pointer"
           >
             <UserPlus className="w-4 h-4" />
             Invite Teammate
@@ -400,8 +400,8 @@ export default function TeamSettingsPage() {
 
                   <button
                     type="submit"
-                    disabled={inviting}
-                    className="w-full h-11 bg-zinc-900 hover:bg-zinc-850 disabled:bg-zinc-350 text-white rounded-xl text-[13.5px] font-bold shadow-md transition-all flex items-center justify-center cursor-pointer mt-6"
+                    disabled={inviting || !inviteEmail.trim()}
+                    className="w-full h-11 bg-[#0A6BFF] hover:bg-blue-600 text-white rounded-xl font-bold text-[14px] flex items-center justify-center gap-2 transition-all disabled:opacity-50 mt-6"
                   >
                     {inviting ? "Creating Invitation..." : "Generate Invitation Link"}
                   </button>

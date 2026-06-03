@@ -266,30 +266,7 @@ function DashboardHome({ ws, preset }: { ws: Workspace; preset: IndustryPreset }
       variants={containerVariants}
       className="space-y-[28px] relative z-10"
     >
-      {/* High-Vibrancy Glowing Blur Blobs (Same as Landing Page) */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
-        <motion.div 
-          animate={{ 
-            scale: [1, 1.2, 1],
-            opacity: [0.15, 0.25, 0.15],
-            x: [0, 50, 0],
-            y: [0, -30, 0]
-          }}
-          transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute top-[-10%] right-[-10%] w-[550px] h-[550px] rounded-full bg-[#00B0FF] blur-[120px]" 
-        />
-        <motion.div 
-          animate={{ 
-            scale: [1.2, 1, 1.2],
-            opacity: [0.1, 0.2, 0.1],
-            x: [0, -40, 0],
-            y: [0, 40, 0]
-          }}
-          transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute top-[-20%] left-[-15%] w-[480px] h-[480px] rounded-full bg-[#3B82F6] blur-[100px]" 
-        />
-      </div>
-
+      {/* Background foundation removed for cleaner look */}
       <div className="relative z-10 space-y-[28px] max-w-6xl mx-auto font-sans">
         {/* Welcome Row (SaaS Style) */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-zinc-150 pb-6">
@@ -317,39 +294,39 @@ function DashboardHome({ ws, preset }: { ws: Workspace; preset: IndustryPreset }
         </div>
 
         {/* 3-Column Analytics Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-7">
-          <div className="bg-white border border-zinc-200/80 rounded-[24px] p-[28px] shadow-sm hover:shadow-xl transition-all duration-300">
-            <p className="text-[11px] text-zinc-400 font-bold uppercase tracking-[0.2em]">Total Conversations</p>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="bg-white border border-zinc-200 rounded-[16px] p-6 shadow-sm hover:border-zinc-300 transition-all duration-300">
+            <p className="text-[11px] text-zinc-500 font-bold uppercase tracking-[0.1em]">Total Conversations</p>
             <div className="flex items-baseline gap-2 mt-2">
-              <span className="text-[42px] font-black text-zinc-900 leading-none">1,482</span>
-              <span className="text-[12px] text-sky-600 font-semibold font-sans ml-1">+12.5% from last week</span>
+              <span className="text-[36px] font-black text-zinc-900 leading-none">1,482</span>
+              <span className="text-[12px] text-sky-600 font-medium ml-1 bg-sky-50 px-2 py-0.5 rounded-full">+12.5%</span>
             </div>
             <p className="text-[12px] text-zinc-500 mt-2">Active threads across Meta & WhatsApp</p>
           </div>
-          <div className="bg-white border border-zinc-200/80 rounded-[24px] p-[28px] shadow-sm hover:shadow-xl transition-all duration-300">
-            <p className="text-[11px] text-zinc-400 font-bold uppercase tracking-[0.2em]">AI Resolution Rate</p>
+          <div className="bg-white border border-zinc-200 rounded-[16px] p-6 shadow-sm hover:border-zinc-300 transition-all duration-300">
+            <p className="text-[11px] text-zinc-500 font-bold uppercase tracking-[0.1em]">AI Resolution Rate</p>
             <div className="flex items-baseline gap-2 mt-2">
-              <span className="text-[42px] font-black text-zinc-900 leading-none">84.2%</span>
-              <span className="text-[12px] text-sky-600 font-semibold font-sans ml-1">resolved by AI operator</span>
+              <span className="text-[36px] font-black text-zinc-900 leading-none">84.2%</span>
+              <span className="text-[12px] text-emerald-600 font-medium ml-1 bg-emerald-50 px-2 py-0.5 rounded-full">Optimal</span>
             </div>
             <p className="text-[12px] text-zinc-500 mt-2">Resolved automatically by Anaos AI</p>
           </div>
-          <div className="bg-white border border-zinc-200/80 rounded-[24px] p-[28px] shadow-sm hover:shadow-xl transition-all duration-300">
-            <p className="text-[11px] text-zinc-400 font-bold uppercase tracking-[0.2em]">Pending Bookings</p>
+          <div className="bg-white border border-zinc-200 rounded-[16px] p-6 shadow-sm hover:border-zinc-300 transition-all duration-300">
+            <p className="text-[11px] text-zinc-500 font-bold uppercase tracking-[0.1em]">Pending Bookings</p>
             <div className="flex items-baseline gap-2 mt-2">
-              <span className="text-[42px] font-black text-zinc-900 leading-none">12</span>
-              <span className="text-[12px] text-sky-600 font-semibold font-sans ml-1">scheduled for today</span>
+              <span className="text-[36px] font-black text-zinc-900 leading-none">12</span>
+              <span className="text-[12px] text-sky-600 font-medium ml-1 bg-sky-50 px-2 py-0.5 rounded-full">Today</span>
             </div>
             <p className="text-[12px] text-zinc-500 mt-2">Google Calendar synced slot bookings</p>
           </div>
         </div>
 
         {/* Compact Prompt Input Card */}
-        <motion.div variants={itemVariants} className="bg-white border border-zinc-200/80 rounded-[24px] p-[28px] shadow-sm relative z-20">
-          <h2 className="text-[18px] font-semibold text-zinc-900 mb-3 font-sans">Ask Anaos AI to build or edit automations</h2>
+        <motion.div variants={itemVariants} className="bg-white border border-zinc-200 rounded-[16px] p-6 shadow-sm relative z-20">
+          <h2 className="text-[16px] font-bold text-zinc-900 mb-3 font-sans">Ask Anaos AI to build or edit automations</h2>
           <PromptBox />
           
-          {/* Grok-style Connectors Banner (Clean Sky Blue Theme) */}
+          {/* Connectors Banner */}
           <AnimatePresence>
             {showConnectors && (
               <motion.div
@@ -358,28 +335,23 @@ function DashboardHome({ ws, preset }: { ws: Workspace; preset: IndustryPreset }
                 exit={{ opacity: 0, scale: 0.95 }}
                 className="mt-4 w-full"
               >
-                <div className="bg-sky-50/50 border border-sky-100 rounded-xl p-3 flex flex-col sm:flex-row items-center gap-4 hover:shadow-sm transition-shadow">
-                  {/* Single Clean Sky Blue Icon instead of multi-colored overlapping icons */}
-                  <div className="w-10 h-10 rounded-xl bg-white border border-sky-100 flex items-center justify-center shrink-0 shadow-sm text-[#0A6BFF]">
+                <div className="bg-[#FAFAFA] border border-zinc-200 rounded-xl p-3 flex flex-col sm:flex-row items-center gap-4 hover:border-zinc-300 transition-colors">
+                  <div className="w-10 h-10 rounded-xl bg-white border border-zinc-200 flex items-center justify-center shrink-0 shadow-sm text-sky-500">
                     <Plug className="w-5 h-5" />
                   </div>
-
-                  {/* Text Content */}
                   <div className="flex-1 text-left">
-                    <h4 className="text-[13.5px] font-bold text-zinc-900 leading-tight font-sans">Connectors are now available.</h4>
+                    <h4 className="text-[13px] font-bold text-zinc-900 leading-tight font-sans">Connectors are now available.</h4>
                     <p className="text-[12px] text-zinc-500 mt-0.5 font-medium font-sans">Connectors allow Anaos to interact with apps directly in conversations.</p>
                   </div>
-
-                  {/* Actions */}
                   <div className="flex items-center gap-3 shrink-0">
                     <button 
                       onClick={() => setShowConnectors(false)}
-                      className="text-[12px] font-bold text-zinc-400 hover:text-zinc-650 transition-colors font-sans"
+                      className="text-[12px] font-medium text-zinc-500 hover:text-zinc-800 transition-colors font-sans"
                     >
                       Dismiss
                     </button>
                     <button 
-                      className="bg-[#0A6BFF] hover:bg-blue-600 text-white text-[12px] font-bold px-4 py-1.5 rounded-full transition-all active:scale-95 shadow-sm font-sans"
+                      className="bg-zinc-900 hover:bg-zinc-800 text-white text-[12px] font-semibold px-4 py-1.5 rounded-lg transition-all shadow-sm font-sans"
                     >
                       Connect
                     </button>
@@ -391,50 +363,41 @@ function DashboardHome({ ws, preset }: { ws: Workspace; preset: IndustryPreset }
         </motion.div>
 
         {/* THE CORE VISUALIZER (4-Way Architecture) - Keep below */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-[28px] items-stretch">
+        {/* THE CORE VISUALIZER (4-Way Architecture) */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
           
           {/* LEFT: Messaging Channels */}
           <motion.div 
             variants={itemVariants}
-            className="bg-white border border-zinc-150 rounded-[24px] p-[28px] space-y-6 shadow-sm hover:shadow-xl hover:shadow-zinc-200/20 transition-all duration-300 flex flex-col group"
+            className="bg-white border border-zinc-200 rounded-[16px] p-6 space-y-6 shadow-sm hover:border-zinc-300 transition-all duration-300 flex flex-col group"
           >
-            <div className="flex items-center gap-4">
-              <div className="w-11 h-11 rounded-xl bg-sky-50 text-[#0A6BFF] flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform duration-500">
-                <MessageSquare className="w-5 h-5" />
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-lg bg-[#FAFAFA] border border-zinc-200 text-zinc-700 flex items-center justify-center shadow-sm">
+                <MessageSquare className="w-4.5 h-4.5" />
               </div>
-              <h3 className="text-[15px] font-semibold text-zinc-800">Messaging</h3>
+              <h3 className="text-[14px] font-semibold text-zinc-900">Messaging</h3>
             </div>
-            <div className="space-y-4 flex-1">
+            <div className="space-y-3 flex-1">
               {["WhatsApp Business", "Instagram DM", "Facebook Messenger", "Email & SMS"].map((c) => (
-                <div key={c} className="bg-zinc-50/30 border border-zinc-100/50 px-5 py-4 rounded-xl text-[14px] font-medium text-zinc-700 shadow-sm flex items-center justify-between hover:bg-white hover:border-zinc-200 transition-all cursor-pointer">
-                  {c} <div className="w-2 h-2 rounded-full bg-sky-500 shadow-[0_0_10px_rgba(14,165,233,0.4)]" />
+                <div key={c} className="bg-white border border-zinc-200 px-4 py-3 rounded-lg text-[13px] font-medium text-zinc-700 shadow-sm flex items-center justify-between hover:border-sky-300 transition-colors cursor-pointer">
+                  {c} <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
                 </div>
               ))}
             </div>
           </motion.div>
 
-          {/* CENTER: Anaos Engine (The Brain) - Refined Lite Theme */}
-          <div className="flex flex-col gap-[28px]">
+          {/* CENTER: Anaos Engine (The Brain) */}
+          <div className="flex flex-col gap-6">
             <motion.div 
               variants={itemVariants}
-              className="bg-white border border-zinc-150 rounded-[24px] p-[28px] shadow-sm flex flex-col items-center text-center relative overflow-hidden group"
+              className="bg-white border border-zinc-200 rounded-[16px] p-6 shadow-sm flex flex-col items-center text-center relative overflow-hidden group hover:border-zinc-300 transition-colors"
             >
-              <motion.div 
-                animate={{ 
-                  opacity: [0.03, 0.08, 0.03],
-                  scale: [1, 1.02, 1]
-                }}
-                transition={{ duration: 4, repeat: Infinity }}
-                className="absolute inset-0 bg-sky-500/5 pointer-events-none" 
-              />
-              
-              <div className="w-16 h-16 rounded-full bg-sky-50 flex items-center justify-center text-sky-500 shadow-md mb-6 transform group-hover:scale-105 transition-transform duration-500 z-10 relative border border-sky-100">
-                 <div className="absolute inset-0 bg-sky-500/10 rounded-full animate-ping" />
-                 <Zap className="w-7 h-7 fill-current text-[#0A6BFF]" />
+              <div className="w-14 h-14 rounded-full bg-sky-50 flex items-center justify-center text-sky-500 mb-4 relative border border-sky-100">
+                 <Zap className="w-6 h-6 fill-current" />
               </div>
-              <div className="space-y-1.5 z-10">
-                <h3 className="text-[18px] font-semibold text-zinc-900 tracking-tight">Anaos Engine</h3>
-                <p className="text-[11px] font-medium text-zinc-400 uppercase tracking-widest">
+              <div className="space-y-1">
+                <h3 className="text-[16px] font-semibold text-zinc-900">Anaos Engine</h3>
+                <p className="text-[11px] font-medium text-zinc-500 uppercase tracking-wider">
                   ANASMIND MEMORY
                 </p>
               </div>
@@ -443,17 +406,17 @@ function DashboardHome({ ws, preset }: { ws: Workspace; preset: IndustryPreset }
             {/* BOTTOM: Content & Growth */}
             <motion.div 
               variants={itemVariants}
-              className="bg-white border border-zinc-150 rounded-[24px] p-[28px] space-y-6 shadow-sm hover:shadow-xl hover:shadow-zinc-200/20 transition-all duration-300 flex-1 group"
+              className="bg-white border border-zinc-200 rounded-[16px] p-6 space-y-6 shadow-sm hover:border-zinc-300 transition-all duration-300 flex-1 group"
             >
-              <div className="flex items-center gap-4">
-                <div className="w-11 h-11 rounded-xl bg-sky-50 text-[#0A6BFF] flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
-                  <TrendingUp className="w-5 h-5" />
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-lg bg-[#FAFAFA] border border-zinc-200 text-zinc-700 flex items-center justify-center shadow-sm">
+                  <TrendingUp className="w-4.5 h-4.5" />
                 </div>
-                <h3 className="text-[15px] font-semibold text-zinc-800">Growth AI</h3>
+                <h3 className="text-[14px] font-semibold text-zinc-900">Growth AI</h3>
               </div>
               <div className="grid grid-cols-2 gap-3">
                 {["TikTok Ads", "YouTube", "LinkedIn", "Blog Posts"].map((c) => (
-                  <div key={c} className="bg-zinc-50/30 border border-zinc-100/50 px-4 py-3 rounded-xl text-[13px] font-semibold text-zinc-700 shadow-sm text-center hover:bg-white hover:border-zinc-200 transition-all cursor-pointer">
+                  <div key={c} className="bg-white border border-zinc-200 px-3 py-2.5 rounded-lg text-[12px] font-medium text-zinc-700 shadow-sm text-center hover:border-sky-300 transition-colors cursor-pointer">
                     {c}
                   </div>
                 ))}
@@ -464,18 +427,18 @@ function DashboardHome({ ws, preset }: { ws: Workspace; preset: IndustryPreset }
           {/* RIGHT: Business Integrations */}
           <motion.div 
             variants={itemVariants}
-            className="bg-white border border-zinc-150 rounded-[24px] p-[28px] space-y-6 shadow-sm hover:shadow-xl hover:shadow-zinc-200/20 transition-all duration-300 flex flex-col group"
+            className="bg-white border border-zinc-200 rounded-[16px] p-6 space-y-6 shadow-sm hover:border-zinc-300 transition-all duration-300 flex flex-col group"
           >
-            <div className="flex items-center gap-4">
-              <div className="w-11 h-11 rounded-xl bg-sky-50 text-[#0A6BFF] flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
-                <Layers className="w-5 h-5" />
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-lg bg-[#FAFAFA] border border-zinc-200 text-zinc-700 flex items-center justify-center shadow-sm">
+                <Layers className="w-4.5 h-4.5" />
               </div>
-              <h3 className="text-[15px] font-semibold text-zinc-800">Integrations</h3>
+              <h3 className="text-[14px] font-semibold text-zinc-900">Integrations</h3>
             </div>
             <div className="space-y-3 flex-1">
               {["Shopify Store", "Google Calendar", "HubSpot CRM", "Stripe Payments"].map((c) => (
-                <div key={c} className="bg-zinc-50/30 border border-zinc-100/50 px-5 py-3 rounded-xl text-[14px] font-medium text-zinc-700 shadow-sm flex items-center justify-between hover:bg-white hover:border-zinc-200 transition-all cursor-pointer">
-                  {c} <ArrowUpRight className="w-4 h-4 text-sky-500" />
+                <div key={c} className="bg-white border border-zinc-200 px-4 py-3 rounded-lg text-[13px] font-medium text-zinc-700 shadow-sm flex items-center justify-between hover:border-sky-300 transition-colors cursor-pointer">
+                  {c} <ArrowUpRight className="w-4 h-4 text-zinc-400" />
                 </div>
               ))}
             </div>
@@ -542,7 +505,7 @@ function Sidebar({ active, onChange, ws, onWsChange, workspaces, preset, user, o
   NAV_ITEMS.push({ id: "ai_agent",    label: "AI Training",    icon: Zap });
 
   return (
-    <aside className={`dashboard-sidebar w-[240px] shrink-0 border-r border-zinc-100 bg-white/40 backdrop-blur-xl flex flex-col h-full z-40 transition-transform duration-300 md:translate-x-0 md:static fixed inset-y-0 left-0 ${open ? "translate-x-0" : "-translate-x-full"}`}>
+    <aside className={`dashboard-sidebar w-[240px] shrink-0 border-r border-zinc-200 bg-white flex flex-col h-full z-40 transition-transform duration-300 md:translate-x-0 md:static fixed inset-y-0 left-0 ${open ? "translate-x-0" : "-translate-x-full"}`}>
       {/* Professional Branding Logo */}
       <div className="h-14 px-6 flex items-center justify-between border-b border-zinc-100 relative">
         <div className="flex items-center gap-3">
@@ -766,7 +729,7 @@ function Topbar({ title, ws, preset, waStatus, integrations, onMenuClick }: {
         </div>
       )}
 
-      <header className="h-14 border-b border-zinc-100 bg-white px-4 md:px-6 flex items-center justify-between shrink-0">
+      <header className="h-14 border-b border-zinc-200 bg-white px-4 md:px-6 flex items-center justify-between shrink-0">
         <div className="flex items-center gap-3 text-[13.5px]">
           <button 
             type="button" 

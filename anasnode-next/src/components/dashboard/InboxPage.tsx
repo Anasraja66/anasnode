@@ -871,7 +871,7 @@ export function InboxPage({
                   type="button"
                   onClick={sendReply}
                   disabled={sending || !replyText.trim() || !waConnected}
-                  className="h-9 px-4 flex items-center justify-center gap-1.5 rounded-lg bg-zinc-950 text-white font-bold text-[13px] disabled:opacity-40 disabled:hover:bg-zinc-950 hover:bg-zinc-800 transition-colors"
+                  className="h-9 px-4 flex items-center justify-center gap-1.5 rounded-lg bg-[#0A6BFF] text-white font-bold text-[13px] disabled:opacity-40 hover:bg-blue-600 transition-colors"
                 >
                   {sending ? (
                     <Loader2 className="w-4 h-4 animate-spin" />

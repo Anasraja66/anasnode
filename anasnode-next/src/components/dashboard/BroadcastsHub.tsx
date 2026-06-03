@@ -62,7 +62,7 @@ export function BroadcastsHub({ workspaceName }: { workspaceName: string }) {
         </div>
         <Link
           href="/dashboard/broadcasts/new"
-          className="inline-flex items-center gap-2 h-11 px-6 rounded-2xl bg-zinc-950 text-white text-[14px] font-black hover:bg-black transition-all shadow-xl shadow-zinc-200 active:scale-95"
+          className="inline-flex items-center gap-2 h-11 px-6 rounded-2xl bg-[#0A6BFF] text-white text-[14px] font-black hover:bg-blue-600 transition-all shadow-sm active:scale-95"
         >
           <Plus className="w-5 h-5" />
           Create Draft
@@ -96,7 +96,7 @@ export function BroadcastsHub({ workspaceName }: { workspaceName: string }) {
             type="button"
             disabled={creating || !prompt.trim()}
             onClick={createFromPrompt}
-            className="inline-flex items-center gap-3 h-11 px-8 rounded-xl bg-zinc-950 text-white text-[14px] font-black hover:bg-black transition-all shadow-xl shadow-zinc-200 disabled:opacity-30 active:scale-95 cursor-pointer"
+            className="inline-flex items-center gap-3 h-11 px-8 rounded-xl bg-[#0A6BFF] text-white text-[14px] font-black hover:bg-blue-600 transition-all shadow-sm disabled:opacity-30 active:scale-95 cursor-pointer"
           >
             {creating ? <Loader2 className="w-5 h-5 animate-spin" /> : <Megaphone className="w-5 h-5" />}
             {creating ? "GENERATING..." : "GENERATE CAMPAIGN"}

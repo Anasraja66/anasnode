@@ -217,7 +217,7 @@ export function ContactsHub() {
           <button
             type="button"
             onClick={() => setShowAdd(true)}
-            className="inline-flex items-center gap-2 h-10 px-5 rounded-xl bg-zinc-950 text-white text-[13.5px] font-black hover:bg-zinc-800 transition-all shadow-lg active:scale-95"
+            className="inline-flex items-center gap-2 h-10 px-5 rounded-xl bg-[#0A6BFF] text-white text-[13.5px] font-black hover:bg-blue-600 transition-all shadow-sm active:scale-95"
           >
             <Plus className="w-4.5 h-4.5" />
             Add Contact
@@ -252,7 +252,7 @@ export function ContactsHub() {
           placeholder="Search leads by name, phone or email..."
           value={q}
           onChange={(e) => setQ(e.target.value)}
-          className="h-11 pl-10 pr-4 rounded-2xl border border-zinc-200 text-[14px] bg-white focus:outline-none focus:border-zinc-950 focus:ring-4 focus:ring-zinc-100 transition-all w-full shadow-sm"
+          className="h-11 pl-10 pr-4 rounded-2xl border border-zinc-200 text-[14px] bg-white focus:outline-none focus:border-sky-300 focus:ring-4 focus:ring-sky-50 transition-all w-full shadow-sm"
         />
       </div>
 
@@ -308,7 +308,7 @@ export function ContactsHub() {
             <button
               type="button"
               onClick={addContact}
-              className="h-9 px-4 rounded-md bg-zinc-900 text-white text-[13px] font-medium"
+              className="h-9 px-4 rounded-md bg-[#0A6BFF] text-white hover:bg-blue-600 text-[13px] font-medium transition-colors"
             >
               Create
             </button>
@@ -381,7 +381,7 @@ export function ContactsHub() {
               type="button"
               disabled={importing || (!uploadFile && !csvText.trim())}
               onClick={runImport}
-              className="h-9 px-4 rounded-md bg-zinc-900 text-white text-[13px] font-medium disabled:opacity-40"
+              className="h-9 px-4 rounded-md bg-[#0A6BFF] hover:bg-blue-600 text-white text-[13px] font-medium disabled:opacity-40 transition-colors"
             >
               {importing ? "Importing…" : "Import all"}
             </button>

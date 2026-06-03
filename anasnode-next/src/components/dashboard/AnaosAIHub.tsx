@@ -205,7 +205,7 @@ export function AnaosAIHub({ ws }: { ws: Workspace }) {
                 type="button"
                 disabled={building || !prompt.trim()}
                 onClick={() => runBuild(true)}
-                className="h-11 px-6 rounded-xl bg-zinc-900 hover:bg-black text-white text-[14px] font-black transition-all shadow-lg shadow-zinc-200 active:scale-95 disabled:opacity-40 cursor-pointer"
+                className="h-11 px-6 rounded-xl bg-[#0A6BFF] hover:bg-blue-600 text-white text-[14px] font-black transition-all shadow-sm active:scale-95 disabled:opacity-40 cursor-pointer"
               >
                 {building ? "Saving…" : "Deploy AI Agent"}
               </button>
@@ -297,7 +297,7 @@ export function AnaosAIHub({ ws }: { ws: Workspace }) {
               <button
                 type="submit"
                 aria-label="Send"
-                className="w-11 h-11 rounded-2xl bg-zinc-950 text-white flex items-center justify-center cursor-pointer hover:scale-105 active:scale-95 transition-all shadow-lg"
+                className="w-11 h-11 rounded-2xl bg-[#0A6BFF] text-white flex items-center justify-center cursor-pointer hover:scale-105 active:scale-95 transition-all shadow-sm"
               >
                 <Send className="w-4.5 h-4.5" />
               </button>

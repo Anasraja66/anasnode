@@ -178,6 +178,17 @@ import { WordRotator } from "@/components/landing/WordRotator";
 function DashboardHome({ ws, preset }: { ws: Workspace; preset: IndustryPreset }) {
   const Icon = preset.icon;
   const [showConnectors, setShowConnectors] = useState(true);
+  const [greeting, setGreeting] = useState("");
+  const [dateStr, setDateStr] = useState("");
+
+  // Client-only: avoids SSR/client hydration mismatch
+  useEffect(() => {
+    const hr = new Date().getHours();
+    if (hr < 12) setGreeting("Good morning");
+    else if (hr < 17) setGreeting("Good afternoon");
+    else setGreeting("Good evening");
+    setDateStr(new Date().toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }));
+  }, []);
 
   const businessConnectors = [
     { 
@@ -246,12 +257,7 @@ function DashboardHome({ ws, preset }: { ws: Workspace; preset: IndustryPreset }
     }
   };
 
-  const getGreeting = () => {
-    const hr = new Date().getHours();
-    if (hr < 12) return "Good morning";
-    if (hr < 17) return "Good afternoon";
-    return "Good evening";
-  };
+
 
   return (
     <motion.div 
@@ -288,11 +294,11 @@ function DashboardHome({ ws, preset }: { ws: Workspace; preset: IndustryPreset }
         {/* Welcome Row (SaaS Style) */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-zinc-150 pb-6">
           <div>
-            <h1 className="text-[26px] font-black text-zinc-900 tracking-[-0.02em] leading-tight">
-              {getGreeting()}, Operator
+            <h1 className="text-[26px] font-black text-zinc-900 tracking-[-0.02em] leading-tight" suppressHydrationWarning>
+              {greeting ? `${greeting}, Operator` : "Welcome, Operator"}
             </h1>
-            <p className="text-[13px] text-zinc-500 font-medium mt-1">
-              Workspace: <span className="font-bold text-zinc-700">{ws.name}</span> · {new Date().toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+            <p className="text-[13px] text-zinc-500 font-medium mt-1" suppressHydrationWarning>
+              Workspace: <span className="font-bold text-zinc-700">{ws.name}</span>{dateStr ? ` · ${dateStr}` : ""}
             </p>
           </div>
           <div className="flex items-center gap-3">
@@ -1045,7 +1051,6 @@ function AutomationsPage({ ws, integrations, toggleAutomation, toggleLoading }: 
     return false;
   };
 
-  // Load existing workflows
   useEffect(() => {
     fetch("/api/v1/workflows")
       .then((r) => r.json())
@@ -1072,7 +1077,6 @@ function AutomationsPage({ ws, integrations, toggleAutomation, toggleLoading }: 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ws.id, integrations.whatsapp, integrations.shopify]);
 
-  // Channel detection on prompt change
   useEffect(() => {
     if (!prompt.trim()) { setDetectedChannels([]); setShowConnectPrompt(false); return; }
     const channels = detectChannels(prompt);
@@ -1115,13 +1119,12 @@ function AutomationsPage({ ws, integrations, toggleAutomation, toggleLoading }: 
     }
   };
 
-  // Merge workspace automations
   const wsAutomations: GeneratedAutomation[] = ws.automations.map((a) => {
     const channels = detectChannels(a.name + " " + a.type);
     const allConn = channels.every((c) => isConnected(c));
     return {
       id: a.id, name: a.name,
-      description: `${a.runs} executions · ${a.lastRun}`,
+      description: `Compiled from prompt for ${ws.name} (${ws.industry})`,
       channels,
       state: !allConn ? "needs_connection" : a.enabled ? "live" : "draft",
       prompt: "", runs: a.runs, lastRun: a.lastRun, enabled: a.enabled,
@@ -1133,47 +1136,46 @@ function AutomationsPage({ ws, integrations, toggleAutomation, toggleLoading }: 
   );
 
   const liveCount  = finalList.filter((a) => a.state === "live").length;
-  const draftCount = finalList.filter((a) => a.state === "draft").length;
   const needsCount = finalList.filter((a) => a.state === "needs_connection").length;
 
   return (
-    <div className="space-y-8 max-w-4xl pb-10">
-      {/* Header */}
+    <div className="space-y-6 max-w-3xl pb-10">
+
+      {/* ── Header ── */}
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h1 className="text-[24px] font-black text-zinc-900 tracking-tight">Automations</h1>
-          <p className="text-[14px] text-zinc-500 font-medium mt-1">
+          <h1 className="text-[26px] font-black text-zinc-900 tracking-tight leading-none">Automations</h1>
+          <p className="text-[13.5px] text-zinc-400 font-medium mt-1.5 leading-snug">
             Describe a flow in plain language — Anaos builds it. Connect the channel to go live.
           </p>
         </div>
-        <div className="flex items-center gap-2 shrink-0 flex-wrap justify-end">
+        <div className="flex items-center gap-2 shrink-0 flex-wrap justify-end pt-1">
           {liveCount > 0 && (
-            <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-sky-50 border border-sky-100 text-[11px] font-semibold text-sky-700 uppercase tracking-wider">
-              <span className="w-1.5 h-1.5 rounded-full bg-sky-500 animate-pulse" />{liveCount} Live
-            </span>
-          )}
-          {draftCount > 0 && (
-            <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-zinc-100 border border-zinc-200 text-[11px] font-semibold text-zinc-500 uppercase tracking-wider">
-              {draftCount} Draft
+            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-50 border border-emerald-100 text-[11px] font-bold text-emerald-700 uppercase tracking-wider">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+              {liveCount} Live
             </span>
           )}
           {needsCount > 0 && (
-            <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-sky-50/50 border border-sky-100/70 text-[11px] font-semibold text-sky-600/90 uppercase tracking-wider">
-              <span className="w-1.5 h-1.5 rounded-full bg-sky-400" />{needsCount} Needs Connection
+            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-sky-50 border border-sky-100 text-[11px] font-bold text-sky-600 uppercase tracking-wider">
+              <span className="w-1.5 h-1.5 rounded-full bg-sky-400" />
+              {needsCount} Needs Connection
             </span>
           )}
         </div>
       </div>
 
-      {/* Prompt Builder */}
-      <div className="rounded-2xl border border-zinc-200 bg-white overflow-hidden shadow-sm">
-        <div className="px-5 py-4 border-b border-zinc-100 flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-sky-50 flex items-center justify-center border border-sky-100">
+      {/* ── Build with Prompt Card ── */}
+      <div className="rounded-2xl border border-zinc-200 bg-white shadow-sm overflow-hidden">
+        <div className="px-5 pt-5 pb-4 flex items-start gap-3 border-b border-zinc-100">
+          <div className="w-9 h-9 rounded-xl bg-[#EBF2FF] flex items-center justify-center shrink-0 mt-0.5">
             <Zap className="w-4 h-4 text-[#0A6BFF]" />
           </div>
           <div>
-            <p className="text-[15px] font-semibold text-zinc-900 tracking-tight">Build with prompt</p>
-            <p className="text-[13px] text-zinc-400 font-medium">Describe your flow — Anaos detects the channel automatically</p>
+            <p className="text-[15px] font-semibold text-zinc-900 leading-snug">Build with prompt</p>
+            <p className="text-[13px] text-zinc-400 font-medium mt-0.5">
+              Describe your flow — Anaos detects the channel automatically
+            </p>
           </div>
         </div>
 
@@ -1182,13 +1184,13 @@ function AutomationsPage({ ws, integrations, toggleAutomation, toggleLoading }: 
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
             placeholder={`e.g. "When a lead messages on WhatsApp asking about prices, qualify their budget and if over AED 2M send a viewing link, otherwise add to newsletter."`}
-            rows={3}
-            className="w-full bg-transparent px-5 py-4 text-[14px] text-zinc-800 placeholder:text-zinc-400 focus:outline-none resize-none leading-relaxed border-b border-zinc-100 font-medium"
+            rows={4}
+            className="w-full bg-transparent px-5 py-4 text-[14px] text-zinc-700 placeholder:text-zinc-300 focus:outline-none resize-none leading-relaxed font-medium"
           />
 
           {detectedChannels.length > 0 && (
-            <div className="px-5 py-3 bg-zinc-50/50 border-b border-zinc-100 flex items-center gap-3 flex-wrap">
-              <span className="text-[11px] font-medium text-zinc-400 uppercase tracking-wider">Detected:</span>
+            <div className="px-5 py-2.5 bg-zinc-50 border-y border-zinc-100 flex items-center gap-2 flex-wrap">
+              <span className="text-[11px] font-semibold text-zinc-400 uppercase tracking-wider mr-1">Detected:</span>
               {detectedChannels.map((c) => (
                 <ChannelBadge key={c} channelId={c} connected={isConnected(c)} />
               ))}
@@ -1196,27 +1198,32 @@ function AutomationsPage({ ws, integrations, toggleAutomation, toggleLoading }: 
           )}
 
           {showConnectPrompt && (
-            <div className="px-5 py-3 bg-sky-50 border-b border-sky-100 flex items-center justify-between gap-4">
+            <div className="px-5 py-3 bg-amber-50 border-b border-amber-100 flex items-center justify-between gap-4">
               <div className="flex items-center gap-2.5">
-                <AlertCircle className="w-4 h-4 text-sky-600 shrink-0" />
-                <p className="text-[13px] font-medium text-sky-800">
-                  Some channels aren&apos;t connected — automation will be saved as <span className="italic">Needs Connection</span>.
+                <AlertCircle className="w-4 h-4 text-amber-500 shrink-0" />
+                <p className="text-[12.5px] font-medium text-amber-800">
+                  Some channels aren&apos;t connected — automation will be saved as <span className="italic font-bold">Needs Connection</span>.
                 </p>
               </div>
-              <a href="/dashboard/integrations" className="shrink-0 text-[11.5px] font-semibold text-sky-800 bg-sky-100 border border-sky-200 px-3 py-1.5 rounded-lg hover:bg-sky-200 transition-colors">
+              <a href="/dashboard/integrations" className="shrink-0 text-[11.5px] font-bold text-amber-700 bg-amber-100 border border-amber-200 px-3 py-1.5 rounded-lg hover:bg-amber-200 transition-colors whitespace-nowrap">
                 Connect now →
               </a>
             </div>
           )}
 
-          <div className="px-5 py-3.5 flex items-center justify-between">
-            <span className="text-[13px] text-zinc-450 font-medium">Workspace: <strong className="text-zinc-700 font-semibold">{ws.name}</strong></span>
+          <div className="px-5 py-3.5 flex items-center justify-between border-t border-zinc-100">
+            <span className="text-[13px] text-zinc-400 font-medium">
+              Workspace: <strong className="text-zinc-600 font-semibold">{ws.name}</strong>
+            </span>
             <button
               type="submit"
               disabled={building || !prompt.trim()}
-              className="flex items-center gap-1.5 h-9 px-5 rounded-xl bg-[#0A6BFF] hover:bg-blue-600 text-white text-[13px] font-semibold transition-all disabled:opacity-40 cursor-pointer shadow-sm"
+              className="inline-flex items-center gap-1.5 h-9 px-5 rounded-xl bg-[#0A6BFF] hover:bg-blue-600 text-white text-[13px] font-semibold transition-all disabled:opacity-40 shadow-sm disabled:cursor-not-allowed cursor-pointer"
             >
-              {building ? (<><RefreshCw className="w-3.5 h-3.5 animate-spin" /> Building…</>) : (<><Zap className="w-3.5 h-3.5" /> Generate automation</>)}
+              {building
+                ? <><RefreshCw className="w-3.5 h-3.5 animate-spin" /> Building…</>
+                : <><Zap className="w-3.5 h-3.5" /> Generate automation</>
+              }
             </button>
           </div>
         </form>
@@ -1228,76 +1235,124 @@ function AutomationsPage({ ws, integrations, toggleAutomation, toggleLoading }: 
         )}
       </div>
 
-      {/* Automation List */}
+      {/* ── All Automations List ── */}
       <div className="space-y-3">
-        <div className="flex items-center justify-between">
-          <h2 className="text-[13px] font-black text-zinc-700 uppercase tracking-[0.15em]">All Automations</h2>
-          <span className="text-[12px] text-zinc-400 font-bold">{finalList.length} total</span>
+        <div className="flex items-center justify-between px-1">
+          <h2 className="text-[11px] font-black text-zinc-400 uppercase tracking-[0.18em]">All Automations</h2>
+          <span className="text-[12px] text-zinc-400 font-semibold">{finalList.length} total</span>
         </div>
 
         {loadingList && finalList.length === 0 ? (
-          <div className="space-y-3">
-            {[1, 2, 3].map((i) => <div key={i} className="h-24 rounded-2xl bg-white border border-zinc-100 animate-pulse" />)}
+          <div className="space-y-2.5">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="h-[88px] rounded-2xl bg-white border border-zinc-100 animate-pulse" />
+            ))}
           </div>
         ) : finalList.length === 0 ? (
           <div className="rounded-2xl border border-dashed border-zinc-200 bg-white p-10 text-center">
-            <Zap className="w-8 h-8 text-zinc-200 mx-auto mb-3" />
-            <p className="text-[14px] font-bold text-zinc-600">No automations yet</p>
-            <p className="text-[13px] text-zinc-400 mt-1">Use the prompt above to create your first flow — takes 30 seconds.</p>
+            <div className="w-12 h-12 rounded-2xl bg-zinc-50 border border-zinc-100 flex items-center justify-center mx-auto mb-4">
+              <Zap className="w-5 h-5 text-zinc-300" />
+            </div>
+            <p className="text-[14px] font-bold text-zinc-700">No automations yet</p>
+            <p className="text-[13px] text-zinc-400 mt-1">
+              Use the prompt above to create your first flow — takes 30 seconds.
+            </p>
           </div>
         ) : (
-          <div className="space-y-3">
+          <div className="space-y-2.5">
             {finalList.map((a) => (
               <motion.div
                 key={a.id}
-                initial={{ opacity: 0, y: 8 }}
+                initial={{ opacity: 0, y: 6 }}
                 animate={{ opacity: 1, y: 0 }}
-                className={`rounded-2xl border bg-white shadow-sm hover:shadow-md transition-all ${
-                  a.state === "needs_connection" ? "border-sky-100/50" : a.state === "live" ? "border-sky-100" : "border-zinc-100"
-                }`}
+                className="rounded-2xl border border-zinc-200 bg-white shadow-sm hover:shadow-md transition-all overflow-hidden"
               >
-                <div className="px-5 py-4 flex items-start justify-between gap-4">
-                  <div className="flex items-start gap-3 min-w-0">
-                    <div className={`w-1 rounded-full self-stretch shrink-0 mt-1 ${a.state === "live" ? "bg-sky-500" : a.state === "needs_connection" ? "bg-sky-400" : "bg-zinc-200"}`} />
-                    <div className="min-w-0">
+                <div className="flex items-stretch">
+                  {/* Left accent bar */}
+                  <div
+                    className="w-[3px] shrink-0"
+                    style={{
+                      backgroundColor:
+                        a.state === "live" ? "#10B981"
+                        : a.state === "needs_connection" ? "#0A6BFF"
+                        : "#E5E7EB",
+                    }}
+                  />
+
+                  {/* Content */}
+                  <div className="flex-1 px-5 py-4 flex items-center justify-between gap-4 min-w-0">
+                    <div className="min-w-0 flex-1">
+                      {/* Name + badge */}
                       <div className="flex items-center gap-2.5 flex-wrap">
                         <p className="text-[15px] font-semibold text-zinc-900 tracking-tight">{a.name}</p>
-                        <AutomationStateBadge state={a.state} />
+                        {a.state === "needs_connection" && (
+                          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-sky-50 border border-sky-200 text-[10.5px] font-bold text-sky-600 uppercase tracking-wider">
+                            <span className="w-1.5 h-1.5 rounded-full bg-sky-400 animate-pulse" />
+                            Needs Connection
+                          </span>
+                        )}
+                        {a.state === "live" && (
+                          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-[10.5px] font-bold text-emerald-700 uppercase tracking-wider">
+                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                            Live
+                          </span>
+                        )}
+                        {a.state === "draft" && (
+                          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-zinc-100 border border-zinc-200 text-[10.5px] font-bold text-zinc-500 uppercase tracking-wider">
+                            Draft
+                          </span>
+                        )}
                       </div>
-                      <p className="text-[14px] text-zinc-500 font-medium mt-1 leading-relaxed line-clamp-2">{a.description}</p>
-                      <div className="flex items-center gap-2 mt-3 flex-wrap">
-                        {a.channels.map((c) => <ChannelBadge key={c} channelId={c} connected={isConnected(c)} />)}
-                        <span className="text-[11.5px] text-zinc-300 font-bold">·</span>
-                        <span className="text-[12px] text-zinc-450 font-normal">{a.runs} runs · {a.lastRun}</span>
+
+                      {/* Description */}
+                      <p className="text-[13px] text-zinc-500 font-medium mt-1 line-clamp-1">{a.description}</p>
+
+                      {/* Meta */}
+                      <div className="flex items-center gap-2 mt-2 flex-wrap">
+                        {a.channels.map((c) => (
+                          <ChannelBadge key={c} channelId={c} connected={isConnected(c)} />
+                        ))}
+                        <span className="text-[11.5px] text-zinc-300">·</span>
+                        <span className="text-[12px] text-zinc-400">{a.runs} runs · {a.lastRun}</span>
                       </div>
                     </div>
-                  </div>
-                  <div className="flex items-center gap-3 shrink-0 pt-0.5">
-                    <button
-                      onClick={() => router.push(`/dashboard/workflows/${a.id}`)}
-                      className="flex items-center gap-1.5 text-[12px] font-semibold text-zinc-650 bg-white border border-zinc-200 px-3 py-1.5 rounded-xl hover:bg-zinc-100 transition-all cursor-pointer"
-                    >
-                      <span>Edit Visually</span>
-                      <PenTool className="w-3.5 h-3.5 text-zinc-500" />
-                    </button>
 
-                    {a.state === "needs_connection" ? (
-                      <a
-                        href={CHANNEL_META[a.channels[0]]?.connectHref ?? "/dashboard/integrations"}
-                        className="flex items-center gap-1.5 text-[12px] font-semibold text-sky-700 bg-sky-50 border border-sky-100 px-3 py-1.5 rounded-xl hover:bg-sky-100 transition-colors"
-                      >
-                        Connect <ExternalLink className="w-3 h-3" />
-                      </a>
-                    ) : (
+                    {/* Buttons */}
+                    <div className="flex items-center gap-2 shrink-0">
                       <button
-                        type="button"
-                        onClick={() => toggleAutomation(a.id)}
-                        disabled={toggleLoading === a.id}
-                        className={`w-10 h-5 rounded-full transition-colors cursor-pointer relative ${a.enabled ? "bg-sky-500" : "bg-zinc-200"} disabled:opacity-50 outline-none border-none`}
+                        onClick={() => router.push(`/dashboard/workflows/${a.id}`)}
+                        className="inline-flex items-center gap-1.5 text-[12.5px] font-semibold text-zinc-700 bg-white border border-zinc-200 px-3.5 py-2 rounded-xl hover:bg-zinc-50 hover:border-zinc-300 transition-all cursor-pointer shadow-sm whitespace-nowrap"
                       >
-                        <div className={`absolute top-0.5 w-4 h-4 rounded-full bg-white shadow-sm transition-all ${a.enabled ? "left-5" : "left-0.5"}`} />
+                        Edit Visually
+                        <PenTool className="w-3.5 h-3.5 text-zinc-400" />
                       </button>
-                    )}
+
+                      {a.state === "needs_connection" ? (
+                        <a
+                          href={CHANNEL_META[a.channels[0]]?.connectHref ?? "/dashboard/integrations"}
+                          className="inline-flex items-center gap-1.5 text-[12.5px] font-semibold text-[#0A6BFF] bg-[#EBF2FF] border border-sky-200 px-3.5 py-2 rounded-xl hover:bg-sky-100 transition-colors shadow-sm whitespace-nowrap"
+                        >
+                          Connect
+                          <ExternalLink className="w-3.5 h-3.5" />
+                        </a>
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={() => toggleAutomation(a.id)}
+                          disabled={toggleLoading === a.id}
+                          className={`w-11 h-6 rounded-full transition-all cursor-pointer relative shrink-0 ${
+                            a.enabled ? "bg-emerald-500 shadow-sm shadow-emerald-200" : "bg-zinc-200"
+                          } disabled:opacity-50`}
+                          title={a.enabled ? "Pause automation" : "Activate automation"}
+                        >
+                          <div
+                            className={`absolute top-1 w-4 h-4 rounded-full bg-white shadow transition-all ${
+                              a.enabled ? "left-6" : "left-1"
+                            }`}
+                          />
+                        </button>
+                      )}
+                    </div>
                   </div>
                 </div>
               </motion.div>
@@ -1306,25 +1361,25 @@ function AutomationsPage({ ws, integrations, toggleAutomation, toggleLoading }: 
         )}
       </div>
 
-      {/* Bottom CTA when channels need connecting */}
+      {/* ── Bottom CTA ── */}
       {needsCount > 0 && (
-        <div className="rounded-2xl border border-amber-200 bg-amber-50 p-6 flex items-center justify-between gap-6">
-          <div className="flex items-start gap-4">
-            <div className="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center shrink-0">
-              <Plug className="w-5 h-5 text-amber-700" />
+        <div className="rounded-2xl border border-sky-200 bg-sky-50/60 p-5 flex items-center justify-between gap-6">
+          <div className="flex items-start gap-3.5">
+            <div className="w-10 h-10 rounded-xl bg-sky-100 flex items-center justify-center shrink-0">
+              <Plug className="w-5 h-5 text-sky-600" />
             </div>
             <div>
-              <p className="text-[14px] font-black text-amber-900 tracking-tight">
+              <p className="text-[14px] font-bold text-sky-900">
                 {needsCount} automation{needsCount > 1 ? "s" : ""} waiting for connection
               </p>
-              <p className="text-[12.5px] text-amber-700/80 font-medium mt-0.5">
+              <p className="text-[12.5px] text-sky-600 font-medium mt-0.5">
                 Connect your channels once — automations go live instantly.
               </p>
             </div>
           </div>
           <a
             href="/dashboard/integrations"
-            className="shrink-0 flex items-center gap-2 px-5 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-[13px] font-black transition-colors shadow-sm"
+            className="shrink-0 inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#0A6BFF] hover:bg-blue-600 text-white text-[13px] font-bold transition-colors shadow-sm whitespace-nowrap"
           >
             Connect now <ArrowRight className="w-4 h-4" />
           </a>

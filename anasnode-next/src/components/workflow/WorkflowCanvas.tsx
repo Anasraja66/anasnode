@@ -153,7 +153,33 @@ const NODE_TYPES: Record<NodeType, {
   },
 };
 
-// ─── Node Palette ─────────────────────────────────────────────────────────────
+// ─── Type normaliser (maps API names → NodeType) ─────────────────────────────
+
+const TYPE_ALIASES: Record<string, NodeType> = {
+  // Common API variants
+  ai:               "ai_reply",
+  ai_response:      "ai_reply",
+  ai_reply:         "ai_reply",
+  message:          "send_message",
+  send_message:     "send_message",
+  http:             "http_request",
+  http_call:        "http_request",
+  http_request:     "http_request",
+  trigger:          "trigger",
+  condition:        "condition",
+  condition_branch: "condition",
+  wait:             "wait",
+  delay:            "wait",
+  add_tag:          "add_tag",
+  tag:              "add_tag",
+  end:              "end",
+  stop:             "end",
+};
+
+function normaliseType(raw: string): NodeType {
+  return TYPE_ALIASES[raw] ?? "trigger";
+}
+
 
 function NodePalette({ onDragStart }: { onDragStart: (type: NodeType) => void }) {
   return (
@@ -214,7 +240,8 @@ function CanvasNode({
   onDragStart: (e: React.MouseEvent) => void;
   onDragEnd: () => void;
 }) {
-  const cfg = NODE_TYPES[node.type];
+  const type = normaliseType(node.type);
+  const cfg = NODE_TYPES[type] ?? NODE_TYPES["trigger"];
   const Icon = cfg.icon;
 
   return (
@@ -773,19 +800,13 @@ export default function WorkflowCanvas({ workflowId, initialData, workflowName =
 
         {/* Right: Properties Panel (Inspector) */}
         <div
-          className="w-[300px] shrink-0 border-l flex flex-col p-5 space-y-5 overflow-y-auto animate-in slide-in-from-right duration-300"
-          style={{ borderColor: "rgba(255,255,255,0.06)", background: "rgba(15,23,42,0.85)", backdropFilter: "blur(20px)" }}
+          className="w-[280px] shrink-0 border-l flex flex-col p-5 space-y-5 overflow-y-auto"
+          style={{ borderColor: "rgba(255,255,255,0.06)", background: "rgba(15,23,42,0.9)" }}
         >
-          {/* Node Inspector Heading */}
+          {/* NODE INSPECTOR section */}
           <div>
-            <h3 className="text-[14px] font-black text-white tracking-tight">NODE INSPECTOR</h3>
-            <p className="text-[10.5px] text-white/40 font-medium mt-0.5">
-              Select a node to edit its properties
-            </p>
-          </div>
+            <h3 className="text-[11px] font-black text-white/50 tracking-[0.18em] uppercase mb-3">Node Inspector</h3>
 
-          {/* Node Inspector Content Card */}
-          <div className="flex flex-col min-h-[200px]">
             {selectedNodeData ? (
               <PropertiesPanel
                 node={selectedNodeData}
@@ -794,42 +815,82 @@ export default function WorkflowCanvas({ workflowId, initialData, workflowName =
                 onClose={() => setSelectedNode(null)}
               />
             ) : (
-              <div className="flex-1 flex flex-col items-center justify-center p-6 text-center text-white/30 border border-white/5 rounded-2xl bg-white/[0.02] space-y-3.5 select-none min-h-[160px]">
-                <div className="w-10 h-10 rounded-full bg-white/5 border border-white/5 flex items-center justify-center text-white/20">
-                  <Sliders size={18} />
+              <div
+                className="flex flex-col items-center justify-center py-8 text-center rounded-2xl"
+                style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.05)" }}
+              >
+                <div
+                  className="w-14 h-14 rounded-2xl flex items-center justify-center mb-3"
+                  style={{ background: "rgba(255,255,255,0.05)" }}
+                >
+                  <Sliders size={24} className="text-white/20" />
                 </div>
-                <span className="text-[12px] font-semibold text-white/50">No node selected</span>
+                <p className="text-[12px] text-white/35 font-medium">No node selected</p>
               </div>
             )}
           </div>
 
-          {/* Performance Card */}
-          <div className="border border-white/5 rounded-2xl bg-white/[0.02] p-5 space-y-4">
-            <h4 className="text-[12px] font-black text-white/80 tracking-wider uppercase">Performance</h4>
-            
-            <div className="space-y-3">
+          {/* PERFORMANCE section */}
+          <div>
+            <h3 className="text-[11px] font-black text-white/50 tracking-[0.18em] uppercase mb-3">Performance</h3>
+            <div
+              className="rounded-2xl p-4 space-y-4"
+              style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.05)" }}
+            >
+              {/* Total Triggers */}
               <div>
-                <div className="flex justify-between text-[12px] font-bold text-white/60 mb-1.5">
-                  <span>Total Triggers</span>
-                  <span className="text-white font-mono">1247</span>
+                <div className="flex justify-between items-center mb-2">
+                  <span className="text-[12.5px] text-white/60 font-medium">Total Triggers</span>
+                  <span className="text-[13px] text-white font-bold font-mono">1247</span>
                 </div>
-                <div className="w-full h-1.5 bg-white/5 rounded-full overflow-hidden">
-                  <div className="h-full bg-blue-500 rounded-full" style={{ width: "70%" }} />
+                <div className="h-2 rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.06)" }}>
+                  <div className="h-full rounded-full bg-[#0A6BFF]" style={{ width: "70%" }} />
                 </div>
               </div>
 
+              {/* Success Rate */}
               <div>
-                <div className="flex justify-between text-[12px] font-bold text-white/60 mb-1.5">
-                  <span>Success Rate</span>
-                  <span className="text-emerald-400 font-mono">94%</span>
+                <div className="flex justify-between items-center mb-2">
+                  <span className="text-[12.5px] text-white/60 font-medium">Success Rate</span>
+                  <span className="text-[13px] text-emerald-400 font-bold font-mono">94%</span>
                 </div>
-                <div className="w-full h-1.5 bg-white/5 rounded-full overflow-hidden">
-                  <div className="h-full bg-emerald-500 rounded-full" style={{ width: "94%" }} />
+                <div className="h-2 rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.06)" }}>
+                  <div className="h-full rounded-full bg-emerald-500" style={{ width: "94%" }} />
+                </div>
+              </div>
+
+              {/* Avg Response Time */}
+              <div>
+                <div className="flex justify-between items-center mb-2">
+                  <span className="text-[12.5px] text-white/60 font-medium">Avg Response</span>
+                  <span className="text-[13px] text-orange-400 font-bold font-mono">1.2s</span>
+                </div>
+                <div className="h-2 rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.06)" }}>
+                  <div className="h-full rounded-full bg-orange-500" style={{ width: "55%" }} />
                 </div>
               </div>
             </div>
           </div>
+
+          {/* Nodes count / quick stats */}
+          {nodes.length > 0 && (
+            <div
+              className="rounded-2xl p-4 space-y-2"
+              style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.05)" }}
+            >
+              <h3 className="text-[11px] font-black text-white/50 tracking-[0.18em] uppercase mb-3">Canvas</h3>
+              <div className="flex justify-between">
+                <span className="text-[12px] text-white/50">Nodes</span>
+                <span className="text-[12px] text-white font-bold">{nodes.length}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-[12px] text-white/50">Connections</span>
+                <span className="text-[12px] text-white font-bold">{edges.length}</span>
+              </div>
+            </div>
+          )}
         </div>
+
       </div>
     </div>
   );

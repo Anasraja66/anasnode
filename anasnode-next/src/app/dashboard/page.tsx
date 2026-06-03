@@ -871,20 +871,140 @@ function AnalyticsPage() {
   );
 }
 
-// ─── Page: Automations (Prompt Flow Creator) ──────────────────────────────────
+// ─── Page: Automations (Channel-Aware State Machine) ──────────────────────────
 
-function AutomationsPage({ ws }: { ws: Workspace }) {
+type AutomationChannelState = "live" | "draft" | "needs_connection";
+
+const CHANNEL_KEYWORDS: { channel: string; keywords: string[] }[] = [
+  { channel: "whatsapp", keywords: ["whatsapp", "whats app", "wa ", "wp ", "message", "chat", "lead", "reply", "inbox"] },
+  { channel: "instagram", keywords: ["instagram", "ig ", "dm", "reel", "story", "follower"] },
+  { channel: "facebook", keywords: ["facebook", "fb ", "messenger", "page", "fanpage"] },
+  { channel: "shopify", keywords: ["shopify", "order", "cart", "abandoned", "store", "product", "checkout"] },
+  { channel: "smtp", keywords: ["email", "gmail", "smtp", "mail", "newsletter"] },
+  { channel: "google_calendar", keywords: ["calendar", "appointment", "booking", "schedule", "slot", "viewing"] },
+];
+
+function detectChannels(text: string): string[] {
+  const lower = text.toLowerCase();
+  const found: string[] = [];
+  for (const { channel, keywords } of CHANNEL_KEYWORDS) {
+    if (keywords.some((k) => lower.includes(k))) found.push(channel);
+  }
+  return found.length > 0 ? [...new Set(found)] : ["whatsapp"];
+}
+
+const CHANNEL_META: Record<string, { label: string; color: string; connectHref: string }> = {
+  whatsapp:        { label: "WhatsApp",        color: "#25D366", connectHref: "/dashboard/integrations/whatsapp" },
+  instagram:       { label: "Instagram",       color: "#E4405F", connectHref: "/dashboard/integrations" },
+  facebook:        { label: "Facebook",        color: "#1877F2", connectHref: "/dashboard/integrations" },
+  shopify:         { label: "Shopify",         color: "#96bf48", connectHref: "/dashboard/integrations/shopify" },
+  smtp:            { label: "Email",           color: "#6366F1", connectHref: "/dashboard/integrations/email" },
+  google_calendar: { label: "Google Calendar", color: "#EA4335", connectHref: "/dashboard/integrations" },
+};
+
+function ChannelBadge({ channelId, connected }: { channelId: string; connected: boolean }) {
+  const meta = CHANNEL_META[channelId] ?? { label: channelId, color: "#6B7280", connectHref: "/dashboard/integrations" };
+  return (
+    <span
+      className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold border"
+      style={{
+        backgroundColor: connected ? `${meta.color}15` : "#F9FAFB",
+        color: connected ? meta.color : "#9CA3AF",
+        borderColor: connected ? `${meta.color}30` : "#E5E7EB",
+      }}
+    >
+      <span
+        className={`w-1.5 h-1.5 rounded-full ${connected ? "animate-pulse" : ""}`}
+        style={{ backgroundColor: connected ? meta.color : "#D1D5DB" }}
+      />
+      {meta.label}
+    </span>
+  );
+}
+
+function AutomationStateBadge({ state }: { state: AutomationChannelState }) {
+  const cfg = {
+    live:             { label: "Live",             bg: "bg-emerald-50",  text: "text-emerald-700",  border: "border-emerald-100", dot: "bg-emerald-500" },
+    draft:            { label: "Draft",            bg: "bg-zinc-100",    text: "text-zinc-500",     border: "border-zinc-200",    dot: "bg-zinc-400" },
+    needs_connection: { label: "Needs Connection", bg: "bg-amber-50",    text: "text-amber-700",    border: "border-amber-100",   dot: "bg-amber-500" },
+  };
+  const { label, bg, text, border, dot } = cfg[state];
+  return (
+    <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10.5px] font-black uppercase tracking-wider border ${bg} ${text} ${border}`}>
+      <span className={`w-1.5 h-1.5 rounded-full ${dot} ${state === "live" ? "animate-pulse" : ""}`} />
+      {label}
+    </span>
+  );
+}
+
+interface GeneratedAutomation {
+  id: string;
+  name: string;
+  description: string;
+  channels: string[];
+  state: AutomationChannelState;
+  prompt: string;
+  runs: number;
+  lastRun: string;
+  enabled: boolean;
+}
+
+function AutomationsPage({ ws, integrations }: { ws: Workspace; integrations: { whatsapp: boolean; shopify: boolean; fastapi: boolean } }) {
   const [prompt, setPrompt] = useState("");
   const [building, setBuilding] = useState(false);
-  const [done, setDone] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [workflowName, setWorkflowName] = useState<string | null>(null);
+  const [generated, setGenerated] = useState<GeneratedAutomation[]>([]);
+  const [detectedChannels, setDetectedChannels] = useState<string[]>([]);
+  const [showConnectPrompt, setShowConnectPrompt] = useState(false);
+  const [apiAutomations, setApiAutomations] = useState<GeneratedAutomation[]>([]);
+  const [loadingList, setLoadingList] = useState(true);
+
+  const isConnected = (channelId: string): boolean => {
+    if (channelId === "whatsapp") return integrations.whatsapp;
+    if (channelId === "shopify") return integrations.shopify;
+    return false;
+  };
+
+  // Load existing workflows
+  useEffect(() => {
+    fetch("/api/v1/workflows")
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.success && Array.isArray(data.workflows)) {
+          const mapped: GeneratedAutomation[] = data.workflows.map((w: {
+            id: string; name: string; description?: string;
+            isActive?: boolean; stats?: { runs?: number };
+            lastRunAt?: string | null;
+          }) => {
+            const channels = detectChannels(w.name + " " + (w.description || ""));
+            const allConn = channels.every((c) => isConnected(c));
+            const isEnabled = w.isActive ?? false;
+            const state: AutomationChannelState = !allConn ? "needs_connection" : isEnabled ? "live" : "draft";
+            const runs = w.stats?.runs ?? 0;
+            const lastRun = w.lastRunAt ? new Date(w.lastRunAt).toLocaleDateString() : "Never";
+            return { id: w.id, name: w.name, description: w.description || `Automation for ${ws.name}`, channels, state, prompt: "", runs, lastRun, enabled: isEnabled };
+          });
+          setApiAutomations(mapped);
+        }
+      })
+      .catch(() => {})
+      .finally(() => setLoadingList(false));
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ws.id, integrations.whatsapp, integrations.shopify]);
+
+  // Channel detection on prompt change
+  useEffect(() => {
+    if (!prompt.trim()) { setDetectedChannels([]); setShowConnectPrompt(false); return; }
+    const channels = detectChannels(prompt);
+    setDetectedChannels(channels);
+    setShowConnectPrompt(channels.some((c) => !isConnected(c)));
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [prompt, integrations.whatsapp, integrations.shopify]);
 
   const handleBuild = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!prompt.trim() || building) return;
     setBuilding(true);
-    setDone(false);
     setError(null);
     try {
       const res = await fetch("/api/v1/workflows/from-prompt", {
@@ -893,102 +1013,230 @@ function AutomationsPage({ ws }: { ws: Workspace }) {
         body: JSON.stringify({ prompt, activate: true, save: true }),
       });
       const data = await res.json();
-      if (!res.ok) {
-        setError(data.error || "Build failed");
-        return;
-      }
-      setWorkflowName(data.workflow?.name || "Automation");
-      setDone(true);
+      if (!res.ok) { setError(data.error || "Build failed"); return; }
+      const channels = detectChannels(prompt);
+      const allConn = channels.every((c) => isConnected(c));
+      setGenerated((prev) => [{
+        id: data.workflow?.id || `local-${Date.now()}`,
+        name: data.workflow?.name || "New Automation",
+        description: prompt.slice(0, 90) + (prompt.length > 90 ? "…" : ""),
+        channels,
+        state: allConn ? "live" : "needs_connection",
+        prompt,
+        runs: 0,
+        lastRun: "Just now",
+        enabled: allConn,
+      }, ...prev]);
+      setPrompt("");
     } catch {
-      setError("Network error");
+      setError("Network error — check your connection and try again.");
     } finally {
       setBuilding(false);
     }
   };
 
+  // Merge workspace automations
+  const wsAutomations: GeneratedAutomation[] = ws.automations.map((a) => {
+    const channels = detectChannels(a.name + " " + a.type);
+    const allConn = channels.every((c) => isConnected(c));
+    return {
+      id: a.id, name: a.name,
+      description: `${a.runs} executions · ${a.lastRun}`,
+      channels,
+      state: !allConn ? "needs_connection" : a.enabled ? "live" : "draft",
+      prompt: "", runs: a.runs, lastRun: a.lastRun, enabled: a.enabled,
+    };
+  });
+
+  const finalList = [...generated, ...apiAutomations, ...wsAutomations].filter(
+    (a, idx, arr) => arr.findIndex((b) => b.id === a.id) === idx
+  );
+
+  const liveCount  = finalList.filter((a) => a.state === "live").length;
+  const draftCount = finalList.filter((a) => a.state === "draft").length;
+  const needsCount = finalList.filter((a) => a.state === "needs_connection").length;
+
   return (
-    <div className="space-y-6 max-w-3xl">
-      <div>
-        <h1 className="dashboard-title text-[20px] font-semibold text-zinc-900">Automation</h1>
-        <p className="dashboard-subtitle text-[14px] text-zinc-500 mt-0.5">
-          Same as Automate tab — describe flows in plain language. Developers can edit JSON under Automate → Developer.
-        </p>
+    <div className="space-y-8 max-w-4xl pb-10">
+      {/* Header */}
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <h1 className="text-[24px] font-black text-zinc-900 tracking-tight">Automations</h1>
+          <p className="text-[14px] text-zinc-500 font-medium mt-1">
+            Describe a flow in plain language — Anaos builds it. Connect the channel to go live.
+          </p>
+        </div>
+        <div className="flex items-center gap-2 shrink-0 flex-wrap justify-end">
+          {liveCount > 0 && (
+            <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-50 border border-emerald-100 text-[11px] font-black text-emerald-700 uppercase tracking-wider">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />{liveCount} Live
+            </span>
+          )}
+          {draftCount > 0 && (
+            <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-zinc-100 border border-zinc-200 text-[11px] font-black text-zinc-500 uppercase tracking-wider">
+              {draftCount} Draft
+            </span>
+          )}
+          {needsCount > 0 && (
+            <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-50 border border-amber-100 text-[11px] font-black text-amber-700 uppercase tracking-wider">
+              <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />{needsCount} Needs Connection
+            </span>
+          )}
+        </div>
       </div>
 
-      <form onSubmit={handleBuild} className="space-y-4">
-        <div className="rounded-xl border border-[#E5E7EB] bg-white overflow-hidden focus-within:border-zinc-400 transition-colors shadow-sm">
+      {/* Prompt Builder */}
+      <div className="rounded-2xl border border-zinc-200 bg-white overflow-hidden shadow-sm">
+        <div className="px-5 py-4 border-b border-zinc-100 flex items-center gap-3">
+          <div className="w-8 h-8 rounded-lg bg-zinc-900 flex items-center justify-center">
+            <Zap className="w-4 h-4 text-blue-400" />
+          </div>
+          <div>
+            <p className="text-[13.5px] font-black text-zinc-900 tracking-tight">Build with prompt</p>
+            <p className="text-[11.5px] text-zinc-400 font-medium">Describe your flow — Anaos detects the channel automatically</p>
+          </div>
+        </div>
+
+        <form onSubmit={handleBuild}>
           <textarea
             value={prompt}
-            onChange={e => setPrompt(e.target.value)}
-            placeholder="e.g. When a user asks about apartment rates, check their budget threshold. If over AED 2M, offer an exclusive viewing scheduler node, otherwise place them on the general newsletter queue."
-            rows={4}
-            className="w-full bg-transparent px-4 py-3.5 text-[14px] text-zinc-800 placeholder:text-zinc-400 focus:outline-none resize-none leading-relaxed"
+            onChange={(e) => setPrompt(e.target.value)}
+            placeholder={`e.g. "When a lead messages on WhatsApp asking about prices, qualify their budget and if over AED 2M send a viewing link, otherwise add to newsletter."`}
+            rows={3}
+            className="w-full bg-transparent px-5 py-4 text-[14px] text-zinc-800 placeholder:text-zinc-400 focus:outline-none resize-none leading-relaxed border-b border-zinc-100"
           />
-          <div className="px-4 py-3 border-t border-zinc-100 flex items-center justify-between bg-zinc-50/50">
-            <span className="text-[12px] text-zinc-400 font-semibold">Workspace: {ws.name}</span>
+
+          {detectedChannels.length > 0 && (
+            <div className="px-5 py-3 bg-zinc-50/50 border-b border-zinc-100 flex items-center gap-3 flex-wrap">
+              <span className="text-[11.5px] font-bold text-zinc-400 uppercase tracking-wider">Detected:</span>
+              {detectedChannels.map((c) => (
+                <ChannelBadge key={c} channelId={c} connected={isConnected(c)} />
+              ))}
+            </div>
+          )}
+
+          {showConnectPrompt && (
+            <div className="px-5 py-3 bg-amber-50 border-b border-amber-100 flex items-center justify-between gap-4">
+              <div className="flex items-center gap-2.5">
+                <AlertCircle className="w-4 h-4 text-amber-600 shrink-0" />
+                <p className="text-[12.5px] font-bold text-amber-800">
+                  Some channels aren&apos;t connected — automation will be saved as <span className="italic">Needs Connection</span>.
+                </p>
+              </div>
+              <a href="/dashboard/integrations" className="shrink-0 text-[11.5px] font-black text-amber-800 bg-amber-100 border border-amber-200 px-3 py-1.5 rounded-lg hover:bg-amber-200 transition-colors">
+                Connect now →
+              </a>
+            </div>
+          )}
+
+          <div className="px-5 py-3.5 flex items-center justify-between">
+            <span className="text-[12px] text-zinc-400 font-medium">Workspace: <strong className="text-zinc-600">{ws.name}</strong></span>
             <button
               type="submit"
               disabled={building || !prompt.trim()}
-              className="flex items-center gap-1.5 h-9 px-4 rounded-lg bg-zinc-900 text-white text-[12.5px] font-bold hover:bg-zinc-800 transition-colors disabled:opacity-40 cursor-pointer"
+              className="flex items-center gap-1.5 h-9 px-5 rounded-xl bg-zinc-900 text-white text-[12.5px] font-bold hover:bg-zinc-800 transition-all disabled:opacity-40 cursor-pointer shadow-sm"
             >
-              {building ? (
-                <>
-                  <RefreshCw className="w-3.5 h-3.5 animate-spin" />
-                  Building…
-                </>
-              ) : (
-                <><Zap className="w-3.5 h-3.5" /> Create automation</>
-              )}
+              {building ? (<><RefreshCw className="w-3.5 h-3.5 animate-spin" /> Building…</>) : (<><Zap className="w-3.5 h-3.5" /> Generate automation</>)}
             </button>
           </div>
-        </div>
+        </form>
 
         {error && (
-          <p className="text-[13px] text-red-700 bg-red-50 border border-red-200 rounded-lg px-4 py-3">{error}</p>
-        )}
-
-        {building && (
-          <div className="rounded-xl border border-[#E5E7EB] bg-white p-5 shadow-sm flex items-center gap-3 text-[13px] text-zinc-600">
-            <RefreshCw className="w-4 h-4 text-[#0084FF] animate-spin shrink-0" />
-            Creating your workflow for {ws.name}…
+          <div className="px-5 pb-4">
+            <p className="text-[13px] text-red-700 bg-red-50 border border-red-200 rounded-xl px-4 py-3">{error}</p>
           </div>
         )}
-
-        {done && (
-          <div className="rounded-xl border border-emerald-200 bg-emerald-50 p-5 flex items-start gap-3">
-            <Check className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
-            <div>
-              <p className="text-[14px] font-semibold text-emerald-900">
-                {workflowName} is live
-              </p>
-              <p className="text-[13px] text-emerald-800/90 mt-0.5">
-                WhatsApp will follow this flow when customers message you.
-              </p>
-            </div>
-          </div>
-        )}
-      </form>
-
-      {/* Existing automations list */}
-      <div className="rounded-xl border border-[#E5E7EB] bg-white overflow-hidden shadow-sm">
-        <div className="px-5 py-4 border-b border-zinc-100">
-          <h2 className="text-[14px] font-bold text-zinc-900">Current Live Workflows</h2>
-        </div>
-        <div className="divide-y divide-zinc-100">
-          {ws.automations.map(a => (
-            <div key={a.id} className="px-5 py-4 flex items-center justify-between hover:bg-zinc-50/40 transition-colors">
-              <div className="flex items-center gap-3">
-                <Zap className={`w-4 h-4 ${a.enabled ? "text-[#0A6BFF]" : "text-zinc-300"}`} />
-                <div>
-                  <p className="text-[13.5px] font-bold text-zinc-800">{a.name}</p>
-                  <p className="text-[12px] text-zinc-400 mt-0.5 font-medium">{a.runs} executions · {a.lastRun}</p>
-                </div>
-              </div>
-              <span className="text-[11px] font-mono font-bold px-2 py-0.5 rounded bg-zinc-100 text-zinc-500 border border-zinc-200">{a.type}</span>
-            </div>
-          ))}
-        </div>
       </div>
+
+      {/* Automation List */}
+      <div className="space-y-3">
+        <div className="flex items-center justify-between">
+          <h2 className="text-[13px] font-black text-zinc-700 uppercase tracking-[0.15em]">All Automations</h2>
+          <span className="text-[12px] text-zinc-400 font-bold">{finalList.length} total</span>
+        </div>
+
+        {loadingList && finalList.length === 0 ? (
+          <div className="space-y-3">
+            {[1, 2, 3].map((i) => <div key={i} className="h-24 rounded-2xl bg-white border border-zinc-100 animate-pulse" />)}
+          </div>
+        ) : finalList.length === 0 ? (
+          <div className="rounded-2xl border border-dashed border-zinc-200 bg-white p-10 text-center">
+            <Zap className="w-8 h-8 text-zinc-200 mx-auto mb-3" />
+            <p className="text-[14px] font-bold text-zinc-600">No automations yet</p>
+            <p className="text-[13px] text-zinc-400 mt-1">Use the prompt above to create your first flow — takes 30 seconds.</p>
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {finalList.map((a) => (
+              <motion.div
+                key={a.id}
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                className={`rounded-2xl border bg-white shadow-sm hover:shadow-md transition-all ${
+                  a.state === "needs_connection" ? "border-amber-100" : a.state === "live" ? "border-emerald-100" : "border-zinc-100"
+                }`}
+              >
+                <div className="px-5 py-4 flex items-start justify-between gap-4">
+                  <div className="flex items-start gap-3 min-w-0">
+                    <div className={`w-1 rounded-full self-stretch shrink-0 mt-1 ${a.state === "live" ? "bg-emerald-400" : a.state === "needs_connection" ? "bg-amber-400" : "bg-zinc-200"}`} />
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-2.5 flex-wrap">
+                        <p className="text-[14px] font-black text-zinc-900 tracking-tight">{a.name}</p>
+                        <AutomationStateBadge state={a.state} />
+                      </div>
+                      <p className="text-[12.5px] text-zinc-400 font-medium mt-1 leading-relaxed line-clamp-2">{a.description}</p>
+                      <div className="flex items-center gap-2 mt-3 flex-wrap">
+                        {a.channels.map((c) => <ChannelBadge key={c} channelId={c} connected={isConnected(c)} />)}
+                        <span className="text-[11.5px] text-zinc-300 font-bold">·</span>
+                        <span className="text-[11.5px] text-zinc-400 font-medium">{a.runs} runs · {a.lastRun}</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 shrink-0 pt-0.5">
+                    {a.state === "needs_connection" ? (
+                      <a
+                        href={CHANNEL_META[a.channels[0]]?.connectHref ?? "/dashboard/integrations"}
+                        className="flex items-center gap-1.5 text-[11.5px] font-black text-amber-700 bg-amber-50 border border-amber-100 px-3 py-1.5 rounded-xl hover:bg-amber-100 transition-colors"
+                      >
+                        Connect <ExternalLink className="w-3 h-3" />
+                      </a>
+                    ) : (
+                      <div className={`w-10 h-5 rounded-full transition-colors cursor-pointer relative ${a.enabled ? "bg-emerald-500" : "bg-zinc-200"}`}>
+                        <div className={`absolute top-0.5 w-4 h-4 rounded-full bg-white shadow-sm transition-all ${a.enabled ? "left-5" : "left-0.5"}`} />
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Bottom CTA when channels need connecting */}
+      {needsCount > 0 && (
+        <div className="rounded-2xl border border-amber-200 bg-amber-50 p-6 flex items-center justify-between gap-6">
+          <div className="flex items-start gap-4">
+            <div className="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center shrink-0">
+              <Plug className="w-5 h-5 text-amber-700" />
+            </div>
+            <div>
+              <p className="text-[14px] font-black text-amber-900 tracking-tight">
+                {needsCount} automation{needsCount > 1 ? "s" : ""} waiting for connection
+              </p>
+              <p className="text-[12.5px] text-amber-700/80 font-medium mt-0.5">
+                Connect your channels once — automations go live instantly.
+              </p>
+            </div>
+          </div>
+          <a
+            href="/dashboard/integrations"
+            className="shrink-0 flex items-center gap-2 px-5 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-[13px] font-black transition-colors shadow-sm"
+          >
+            Connect now <ArrowRight className="w-4 h-4" />
+          </a>
+        </div>
+      )}
     </div>
   );
 }
@@ -1284,13 +1532,15 @@ export default function Dashboard() {
               tab === "inbox" ? "overflow-hidden p-0" : "bg-transparent"
             }`}
           >
-            {tab === "ai_agent"    && <AIAgentPage     ws={ws} />}
-            {tab === "overview"    && <DashboardHome ws={ws} preset={industryPreset} />}
-            {tab === "inbox"       && <InboxPage initialConversationId={inboxChatId} preset={industryPreset} />}
-            {tab === "contacts"    && <ContactsHub />}
-            {tab === "automations" && <AutomationsPage ws={ws} />}
-            {tab === "broadcasts"  && <BroadcastsPage ws={ws} />}
-            {tab === "analytics"   && <AnalyticsPage />}
+            <div className={tab === "inbox" || tab === "ai_agent" || tab === "contacts" ? "" : "p-8"}>
+              {tab === "ai_agent"    && <AIAgentPage     ws={ws} />}
+              {tab === "overview"    && <DashboardHome ws={ws} preset={industryPreset} />}
+              {tab === "inbox"       && <InboxPage initialConversationId={inboxChatId} preset={industryPreset} />}
+              {tab === "contacts"    && <ContactsHub />}
+              {tab === "automations" && <AutomationsPage ws={ws} integrations={integrations} />}
+              {tab === "broadcasts"  && <BroadcastsPage ws={ws} />}
+              {tab === "analytics"   && <AnalyticsPage />}
+            </div>
           </main>
       </div>
     </div>

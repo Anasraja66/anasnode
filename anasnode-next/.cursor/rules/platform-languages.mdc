@@ -1,0 +1,14 @@
+---
+description: Multilingual WhatsApp is platform-wide for all industries and countries
+globs: src/**/*.{ts,tsx}
+alwaysApply: true
+---
+
+# Platform languages (WhatsApp)
+
+- Multilingual replies are a **platform feature**, not per-industry. Real estate, clinic, restaurant, shop, etc. all use the same `languageSettings` on `Workspace`.
+- Defaults: `mode: auto`, full `LANGUAGE_CATALOG` enabled (`src/lib/i18n/platform.ts`).
+- WhatsApp inbound uses `parseLanguageSettings` + `generateConversationReply` — industry only changes playbook/tone, **not** which languages work.
+- New workspaces (register, onboarding, workflow compiler) must set `languageSettings` via `defaultPlatformLanguageSettingsJson()`.
+- UI entry points: onboarding step 5, sidebar **Languages**, WhatsApp setup card → `/dashboard/settings/languages`.
+- Do not limit languages by country or industry preset without explicit product request.

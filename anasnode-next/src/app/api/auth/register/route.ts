@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import bcrypt from "bcryptjs";
+import { defaultPlatformLanguageSettingsJson } from "@/lib/i18n/platform";
 
 export async function POST(request: Request) {
   try {
@@ -48,7 +49,8 @@ export async function POST(request: Request) {
         name: "My First Workspace",
         industry: "General Business",
         slug: "my-first-workspace",
-        status: "draft"
+        status: "draft",
+        languageSettings: defaultPlatformLanguageSettingsJson(),
       }
     });
 

@@ -1,28 +1,19 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { encrypt } from "@/lib/crypto";
+import { getAccountId } from "@/lib/auth/session";
 
 export const dynamic = "force-dynamic";
 
-// GET /api/v1/credentials - List masked credentials
 export async function GET() {
   try {
-    // Standard mock account ID in development
-    const mockAccountId = "acc-default-user";
-    
-    // Auto-create standard mock account if it doesn't exist
-    await prisma.account.upsert({
-      where: { email: "anas@anaos.io" },
-      update: {},
-      create: {
-        id: mockAccountId,
-        email: "anas@anaos.io",
-        name: "Anas User",
-      }
-    });
+    const accountId = await getAccountId();
+    if (!accountId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
 
     const credentialsList = await prisma.integrationCredential.findMany({
-      where: { accountId: mockAccountId },
+      where: { accountId },
       select: {
         id: true,
         type: true,
@@ -30,7 +21,7 @@ export async function GET() {
         isActive: true,
         createdAt: true,
       },
-      orderBy: { createdAt: "desc" }
+      orderBy: { createdAt: "desc" },
     });
 
     return NextResponse.json({
@@ -43,24 +34,28 @@ export async function GET() {
   }
 }
 
-// POST /api/v1/credentials - Save and encrypt credentials
 export async function POST(request: Request) {
   try {
-    const mockAccountId = "acc-default-user";
+    const accountId = await getAccountId();
+    if (!accountId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const body = await request.json();
     const { type, name, credentials } = body;
 
     if (!type || !name || !credentials) {
-      return NextResponse.json({ error: "Missing required fields: type, name, or credentials" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Missing required fields: type, name, or credentials" },
+        { status: 400 }
+      );
     }
 
-    // Encrypt raw credential object (API keys/secrets)
     const encryptedData = encrypt(JSON.stringify(credentials));
 
-    // Save to SQLite
     const savedCredential = await prisma.integrationCredential.create({
       data: {
-        accountId: mockAccountId,
+        accountId,
         type,
         name,
         credentials: encryptedData,
@@ -72,7 +67,7 @@ export async function POST(request: Request) {
         name: true,
         isActive: true,
         createdAt: true,
-      }
+      },
     });
 
     return NextResponse.json({

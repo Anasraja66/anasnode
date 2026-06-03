@@ -1,14 +1,16 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
-import { auth } from "@/auth";
+import { getAccountId } from "@/lib/auth/session";
 
 export const dynamic = "force-dynamic";
 
 // GET /api/v1/workflows - List workflows for accounts
 export async function GET(request: Request) {
   try {
-    const session = await auth();
-    const accountId = (session?.user as any)?.accountId || "acc-default-user";
+    const accountId = await getAccountId();
+    if (!accountId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
     const { searchParams } = new URL(request.url);
     const workspaceId = searchParams.get("workspaceId");
 
@@ -51,8 +53,10 @@ export async function GET(request: Request) {
 // POST /api/v1/workflows - Create new workflow
 export async function POST(request: Request) {
   try {
-    const session = await auth();
-    const accountId = (session?.user as any)?.accountId || "acc-default-user";
+    const accountId = await getAccountId();
+    if (!accountId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
     const body = await request.json();
     const { name, description, workspaceId, nodes = [], edges = [] } = body;
 

@@ -37,8 +37,9 @@ export async function GET() {
     // 3. Load and instantiate "Clinic Appointment Booker" template
     console.log("[INTEGRATION TEST] Loading clinic blueprint from templates...");
     const templateResult = await createWorkflowFromTemplate(
-      "clinic-appointment", 
+      "clinic-appointment",
       workspace.id,
+      account.id,
       { name: "Live Clinic Booker", description: "Automated dental checkup scheduler" }
     );
 

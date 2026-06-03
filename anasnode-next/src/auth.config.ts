@@ -1,6 +1,9 @@
 import type { NextAuthConfig } from "next-auth";
 
 export const authConfig = {
+  trustHost: true,
+  secret: process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET,
+  session: { strategy: "jwt" },
   providers: [], // Providers are added in auth.ts to prevent Edge Runtime database import errors
   callbacks: {
     async jwt({ token, user }: any) {

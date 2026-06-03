@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
-import { auth } from "@/auth";
+import { getAccountId } from "@/lib/auth/session";
 
 export const dynamic = "force-dynamic";
 
@@ -10,8 +10,10 @@ export async function GET(
 ) {
   try {
     const { id } = await params;
-    const session = await auth();
-    const accountId = (session?.user as any)?.accountId || "acc-default-user";
+    const accountId = await getAccountId();
+    if (!accountId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
 
     const workflow = await prisma.workflow.findFirst({
       where: { id, accountId },
@@ -45,8 +47,10 @@ export async function PUT(
 ) {
   try {
     const { id } = await params;
-    const session = await auth();
-    const accountId = (session?.user as any)?.accountId || "acc-default-user";
+    const accountId = await getAccountId();
+    if (!accountId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
     const body = await request.json();
     const { name, description, nodes, edges, variables } = body;
 

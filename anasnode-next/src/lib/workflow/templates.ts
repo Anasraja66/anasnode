@@ -406,6 +406,7 @@ export const TEMPLATES: WorkflowTemplate[] = [
 export async function createWorkflowFromTemplate(
   templateId: string,
   workspaceId: string,
+  accountId: string,
   customizations?: { name?: string; description?: string }
 ) {
   const template = TEMPLATES.find(t => t.id === templateId);
@@ -413,11 +414,9 @@ export async function createWorkflowFromTemplate(
     throw new Error(`Template not found: ${templateId}`);
   }
 
-  const mockAccountId = "acc-default-user";
-
   const workflow = await prisma.workflow.create({
     data: {
-      accountId: mockAccountId,
+      accountId,
       workspaceId,
       name: customizations?.name || template.name,
       description: customizations?.description || template.description,

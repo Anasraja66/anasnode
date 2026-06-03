@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { TEMPLATES, createWorkflowFromTemplate } from "@/lib/workflow/templates";
+import { getAccountId } from "@/lib/auth/session";
 
 export const dynamic = "force-dynamic";
 
@@ -34,7 +35,15 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Missing required parameters: templateId or workspaceId" }, { status: 400 });
     }
 
-    const result = await createWorkflowFromTemplate(templateId, workspaceId, { name, description });
+    const accountId = await getAccountId();
+    if (!accountId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const result = await createWorkflowFromTemplate(templateId, workspaceId, accountId, {
+      name,
+      description,
+    });
 
     return NextResponse.json(result);
   } catch (error: any) {

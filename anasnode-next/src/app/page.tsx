@@ -1,6 +1,7 @@
 import { Navbar } from "@/components/landing/Navbar";
 import { Hero } from "@/components/landing/Hero";
 import { HowItWorks } from "@/components/landing/HowItWorks";
+import { IntegrationsSection } from "@/components/landing/IntegrationsSection";
 import { Industries } from "@/components/landing/Industries";
 import { IndustrySection } from "@/components/landing/IndustrySection";
 import { Testimonials } from "@/components/landing/Testimonials";

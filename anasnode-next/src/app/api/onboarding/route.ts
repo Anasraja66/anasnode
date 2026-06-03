@@ -1,6 +1,13 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/db";
+import { saveCompiledAutomation } from "@/lib/workflow/compiler";
+import { getIndustryPreset } from "@/lib/industry/presets";
+import {
+  serializeLanguageSettings,
+  type WorkspaceLanguageSettings,
+} from "@/lib/i18n/settings";
+import { defaultPlatformLanguageSettings } from "@/lib/i18n/platform";
 
 export async function POST(request: Request) {
   try {
@@ -9,64 +16,100 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { name, role, workspaceName, style } = await request.json();
+    const { name, industry, industryId, ownerRole, workspaceName, languageSettings } =
+      await request.json();
 
-    if (!name || !role || !workspaceName) {
+    const preset = getIndustryPreset(industryId || industry);
+    const role = ownerRole || "owner";
+
+    if (!name || !workspaceName || (!industry && !industryId)) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
     }
 
     const email = session.user.email;
 
-    // Find the user to get user id and accountId
     const user = await prisma.user.findUnique({
-      where: { email }
+      where: { email },
     });
 
     if (!user) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    // 1. Update the user details
     await prisma.user.update({
       where: { id: user.id },
       data: {
         name,
-        role: role.toLowerCase()
-      }
+        role: String(role).toLowerCase(),
+      },
     });
 
-    // 2. Find their default workspace or any workspace to update
-    const firstWorkspace = await prisma.workspace.findFirst({
+    const slug = workspaceName
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/(^-|-$)/g, "");
+
+    const langJson = languageSettings
+      ? serializeLanguageSettings(
+          languageSettings as WorkspaceLanguageSettings
+        )
+      : serializeLanguageSettings(defaultPlatformLanguageSettings());
+
+    let workspace = await prisma.workspace.findFirst({
       where: { accountId: user.accountId },
-      orderBy: { createdAt: "asc" }
+      orderBy: { createdAt: "asc" },
     });
 
-    const slug = workspaceName.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
-
-    if (firstWorkspace) {
-      // Update existing workspace
-      await prisma.workspace.update({
-        where: { id: firstWorkspace.id },
+    if (workspace) {
+      workspace = await prisma.workspace.update({
+        where: { id: workspace.id },
         data: {
           name: workspaceName,
           slug,
-          industry: role // Use role as a starting industry context
-        }
+          industry: preset.label,
+          status: "live",
+          languageSettings: langJson,
+        },
       });
     } else {
-      // Create a new one if it doesn't exist
-      await prisma.workspace.create({
+      workspace = await prisma.workspace.create({
         data: {
           accountId: user.accountId,
           name: workspaceName,
           slug,
-          industry: role,
-          status: "draft"
-        }
+          industry: preset.label,
+          status: "live",
+          languageSettings: langJson,
+        },
       });
     }
 
-    return NextResponse.json({ success: true });
+    const existingWorkflow = await prisma.workflow.findFirst({
+      where: { workspaceId: workspace.id },
+    });
+
+    let workflowId = existingWorkflow?.id;
+
+    if (!existingWorkflow) {
+      const prompt = `I run ${workspaceName} (${preset.label}). Automate WhatsApp: ${preset.automationHint}. Keep replies natural for customers.`;
+      const result = await saveCompiledAutomation(user.accountId, prompt, {
+        activate: true,
+        workspaceId: workspace.id,
+      });
+      workflowId = result.workflow.id;
+    } else if (!existingWorkflow.isActive) {
+      await prisma.workflow.update({
+        where: { id: existingWorkflow.id },
+        data: { isActive: true },
+      });
+      workflowId = existingWorkflow.id;
+    }
+
+    return NextResponse.json({
+      success: true,
+      workspaceId: workspace.id,
+      workflowId,
+    });
   } catch (error) {
     console.error("Onboarding API error:", error);
     return NextResponse.json({ error: "Failed to complete onboarding" }, { status: 500 });

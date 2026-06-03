@@ -5,13 +5,13 @@ import { ArrowUp, Plus, Mic, ChevronDown, RefreshCw } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const EXAMPLES = [
-  { label: "Real estate", text: "I run a real estate agency in Dubai. Qualify inbound leads, match listings to budget, and book viewings automatically." },
-  { label: "Restaurant", text: "I own a busy restaurant. Handle WhatsApp ordering, reservation slot qualification, and review follow-ups." },
-  { label: "Dental Clinic", text: "I manage a clinic. Schedule patient visits, check AXA insurance coverage, and send dentist appointment reminders." },
+  { label: "Real estate", text: "Create a WhatsApp AI for my real estate agency. It should qualify leads, show available listings based on their budget, and book viewings on my calendar." },
+  { label: "Restaurant", text: "Build an automated WhatsApp assistant for my restaurant. It should handle table bookings, show the menu, and collect customer reviews after they dine." },
+  { label: "Dental Clinic", text: "Set up a patient coordinator for my dental clinic. It needs to handle appointment scheduling, send reminders, and answer common questions about services." },
 ];
 
 interface Props {
-  onGenerate?: (workspace: any) => void;
+  onGenerate?: (workspace: any, prompt: string) => void;
   compact?: boolean;
 }
 
@@ -24,10 +24,11 @@ export function PromptBox({ onGenerate, compact }: Props) {
 
   // Typewriter effect state
   const placeholders = [
-    "Ask Anaos to automate a WhatsApp operator that...",
-    "Build a real estate agent that qualifies leads...",
-    "Create an abandoned cart recovery flow for Shopify...",
-    "Set up a dental clinic appointment scheduler...",
+    "Create a WhatsApp AI that handles my car rental bookings...",
+    "Build a lead qualification agent for my solar business...",
+    "Set up an automated support bot for my Shopify store...",
+    "Automate my clinic's patient scheduling and reminders...",
+    "Build a CRM-integrated agent for my real estate agency...",
   ];
   const [placeholderText, setPlaceholderText] = useState("");
   const [placeholderIndex, setPlaceholderIndex] = useState(0);
@@ -103,7 +104,7 @@ export function PromptBox({ onGenerate, compact }: Props) {
       setTimeout(() => {
         setLoading(false);
         if (data.success && data.workspace) {
-          onGenerate?.(data.workspace);
+          onGenerate?.(data.workspace, value.trim());
         }
       }, 500);
     } catch (e) {
@@ -115,37 +116,36 @@ export function PromptBox({ onGenerate, compact }: Props) {
 
   return (
     <div className={`w-full ${compact ? "max-w-xl" : "max-w-3xl"} mx-auto text-left relative z-10`}>
-      <div className="rounded-[32px] border border-[#E5E5E0] bg-[#FBF9F6] p-2 hover:border-[#CCCCCC] transition-all shadow-[0_4px_20px_rgba(0,0,0,0.02)] relative">
+      <div className="rounded-[32px] border border-zinc-200 bg-[#F9F9F7] p-2 hover:border-zinc-300 transition-all shadow-[0_8px_30px_rgb(0,0,0,0.04)] relative group/box">
         <textarea
           value={value}
           onChange={(e) => setValue(e.target.value)}
-          placeholder={mounted && !value ? placeholderText : "Ask Anaos to automate a WhatsApp operator that..."}
+          placeholder={mounted && !value ? placeholderText : "Describe your business automation..."}
           rows={3}
           disabled={loading}
-          className="w-full resize-none bg-transparent px-5 pt-4 pb-2 text-[15px] text-zinc-800 placeholder:text-zinc-400 focus:outline-none leading-relaxed"
+          className="w-full resize-none bg-transparent px-6 pt-5 pb-2 text-[16px] text-zinc-800 placeholder:text-zinc-400 focus:outline-none leading-relaxed"
         />
         
         {mounted && (
-          <div className="flex items-center justify-between px-4 pb-2.5 pt-2">
-            {/* Left circular plus button */}
-            <div className="flex items-center gap-2">
+          <div className="flex items-center justify-between px-3 pb-2.5 pt-1">
+            {/* Left circular plus button & Presets */}
+            <div className="flex items-center gap-3">
               <button
                 type="button"
-                className="w-8.5 h-8.5 rounded-full border border-zinc-200 hover:border-zinc-300 hover:bg-white flex items-center justify-center text-zinc-500 hover:text-zinc-800 transition-all cursor-pointer shadow-sm"
+                className="w-10 h-10 rounded-full border border-zinc-200 bg-white hover:border-zinc-300 hover:shadow-sm flex items-center justify-center text-zinc-400 hover:text-zinc-800 transition-all cursor-pointer"
               >
-                <Plus className="w-4 h-4" />
+                <Plus className="w-5 h-5" />
               </button>
               
-              {/* Examples suggestions overlay (hidden during loading) */}
               {!loading && (
-                <div className="hidden md:flex items-center gap-1.5 ml-2">
-                  <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">Try Presets:</span>
+                <div className="hidden lg:flex items-center gap-2 ml-1">
+                  <span className="text-[11px] font-bold text-zinc-400 uppercase tracking-widest mr-1">Try Presets:</span>
                   {EXAMPLES.map((chip) => (
                     <button
                       key={chip.label}
                       type="button"
                       onClick={() => setValue(chip.text)}
-                      className="text-[11px] font-bold px-3 py-1 rounded-full bg-white hover:bg-zinc-100 text-zinc-600 border border-zinc-200 transition-all cursor-pointer shadow-sm"
+                      className="text-[12px] font-bold px-4 py-1.5 rounded-full bg-white hover:bg-zinc-50 text-zinc-700 border border-zinc-200 transition-all cursor-pointer shadow-sm active:scale-95"
                     >
                       {chip.label}
                     </button>
@@ -155,36 +155,37 @@ export function PromptBox({ onGenerate, compact }: Props) {
             </div>
 
             {/* Right-aligned action controls */}
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-4">
               {/* Dropdown Action Selector */}
-              <div className="relative group">
+              <div className="relative">
                 <button
                   type="button"
-                  className="flex items-center gap-1 text-[13px] font-bold text-zinc-500 hover:text-zinc-800 transition-all px-2 py-1 rounded-lg hover:bg-zinc-100 cursor-pointer"
+                  className="flex items-center gap-1.5 text-[14px] font-bold text-zinc-600 hover:text-zinc-900 transition-all px-3 py-1.5 rounded-xl hover:bg-zinc-200/50 cursor-pointer"
                 >
                   <span>{selectedAction}</span>
-                  <ChevronDown className="w-3.5 h-3.5" />
+                  <ChevronDown className="w-4 h-4 opacity-60" />
                 </button>
               </div>
 
               {/* Voice icon */}
               <button
                 type="button"
-                className="w-8.5 h-8.5 flex items-center justify-center text-zinc-400 hover:text-zinc-700 transition-all cursor-pointer"
+                className="w-10 h-10 flex items-center justify-center text-zinc-400 hover:text-zinc-900 transition-all cursor-pointer hover:bg-zinc-200/40 rounded-full"
               >
-                <Mic className="w-4 h-4" />
+                <Mic className="w-5 h-5" />
               </button>
 
               {/* Send Button */}
               <button
                 onClick={handleGenerate}
                 disabled={loading || !value.trim()}
-                className="w-8.5 h-8.5 rounded-full bg-zinc-800 hover:bg-zinc-950 text-white flex items-center justify-center shadow-md transition-all disabled:opacity-30 disabled:scale-100 disabled:cursor-not-allowed hover:scale-105 active:scale-95 cursor-pointer shrink-0"
+                className="w-11 h-11 rounded-full bg-zinc-400/80 hover:bg-zinc-900 text-white flex items-center justify-center shadow-lg transition-all disabled:opacity-40 disabled:hover:bg-zinc-400/80 disabled:cursor-not-allowed hover:scale-105 active:scale-95 cursor-pointer shrink-0"
+                style={{ backgroundColor: value.trim() ? '#18181b' : undefined }}
               >
                 {loading ? (
-                  <RefreshCw className="w-4 h-4 animate-spin text-white" />
+                  <RefreshCw className="w-5 h-5 animate-spin text-white" />
                 ) : (
-                  <ArrowUp className="w-4.5 h-4.5 stroke-[2.5]" />
+                  <ArrowUp className="w-5.5 h-5.5 stroke-[3]" />
                 )}
               </button>
             </div>

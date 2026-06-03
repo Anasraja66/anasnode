@@ -1,10 +1,12 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { MessageCircle, CalendarCheck, Megaphone, ArrowRight, Check } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { ArrowRight, Check, Zap, Sparkles, Loader2 } from "lucide-react";
 import { useState, useEffect } from "react";
+import { getIndustryPreset, resolveIndustryId, type IndustryId } from "@/lib/industry/presets";
 
 interface Props {
+  prompt?: string;
   workspace: {
     id: string;
     name: string;
@@ -29,20 +31,63 @@ interface Props {
   };
 }
 
-const getAutomationDetails = (type: string) => {
+const INDUSTRY_COPY: Partial<
+  Record<IndustryId, { whatsapp_flow: string; calendar: string; campaign: string }>
+> = {
+  health: {
+    whatsapp_flow: "Patient triage & appointment booking via WhatsApp AI.",
+    calendar: "Autonomous appointment management & reminders.",
+    campaign: "AI-driven follow-ups & wellness check-ins.",
+  },
+  "real-estate": {
+    whatsapp_flow: "Lead qualification & property inquiries on autopilot.",
+    calendar: "AI-coordinated viewing schedules & calendar sync.",
+    campaign: "Automated nurture flows for potential buyers.",
+  },
+  restaurant: {
+    whatsapp_flow: "Digital ordering & reservation management.",
+    calendar: "Real-time table booking & confirmations.",
+    campaign: "AI marketing to re-engage past customers.",
+  },
+  salon: {
+    whatsapp_flow: "Styling consultations & booking assistant.",
+    calendar: "Smart slot management & visit reminders.",
+    campaign: "Personalized loyalty offers & re-booking AI.",
+  },
+  ecommerce: {
+    whatsapp_flow: "Shopify support & product discovery bot.",
+    calendar: "Shipping updates & scheduled delivery support.",
+    campaign: "Abandoned cart recovery & smart promotions.",
+  },
+};
+
+const getAutomationDetails = (type: string, industry: string) => {
+  const id = resolveIndustryId(industry);
+  const copy = INDUSTRY_COPY[id];
   switch (type) {
     case "whatsapp_flow":
-      return { icon: MessageCircle, desc: "Interactive automated conversations on WhatsApp." };
+      return {
+        label: "AI WhatsApp Agent",
+        desc: copy?.whatsapp_flow || "Intelligent customer interactions on WhatsApp.",
+      };
     case "calendar":
-      return { icon: CalendarCheck, desc: "Schedule bookings, viewings, or appointments." };
+      return {
+        label: "Autonomous Scheduler",
+        desc: copy?.calendar || "Smart booking and scheduling on autopilot.",
+      };
     default:
-      return { icon: Megaphone, desc: "Broadcast campaigns and follow-up templates." };
+      return {
+        label: "Workflow Automator",
+        desc: copy?.campaign || "Automated multi-channel marketing campaigns.",
+      };
   }
 };
 
-export function ResultCard({ workspace }: Props) {
+export function ResultCard({ workspace, prompt = "" }: Props) {
   const [states, setStates] = useState<boolean[]>([]);
   const [mounted, setMounted] = useState(false);
+  const [deploying, setDeploying] = useState(false);
+  const [deployError, setDeployError] = useState<string | null>(null);
 
   useEffect(() => {
     setMounted(true);
@@ -58,9 +103,9 @@ export function ResultCard({ workspace }: Props) {
     setStates((s) => s.map((v, i) => (i === idx ? !v : v)));
   };
 
-  const handleOpenDashboard = () => {
-    const saved = localStorage.getItem("anaos_custom_workspaces");
-    let workspacesList = saved ? JSON.parse(saved) : [];
+  const handleOpenDashboard = async () => {
+    setDeploying(true);
+    setDeployError(null);
 
     const updatedWorkspace = {
       ...workspace,
@@ -70,81 +115,169 @@ export function ResultCard({ workspace }: Props) {
       })),
     };
 
-    workspacesList = [updatedWorkspace, ...workspacesList.filter((w: any) => w.id !== workspace.id)];
-    localStorage.setItem("anaos_custom_workspaces", JSON.stringify(workspacesList));
+    const whatsappOn = updatedWorkspace.automations.some(
+      (a) => a.type === "whatsapp_flow" && a.enabled
+    );
 
-    window.location.href = `/dashboard?ws=${updatedWorkspace.id}`;
+    try {
+      const res = await fetch("/api/v1/workflows/from-prompt", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          prompt: prompt || `Automation for ${workspace.name}`,
+          workspace: updatedWorkspace,
+          save: true,
+          activate: whatsappOn,
+        }),
+      });
+      const data = await res.json();
+
+      if (data.saved && data.workspace?.id) {
+        window.location.href = `/dashboard?ws=${data.workspace.id}`;
+        return;
+      }
+
+      if (data.requiresAuth) {
+        const saved = localStorage.getItem("anaos_custom_workspaces");
+        let workspacesList = saved ? JSON.parse(saved) : [];
+        workspacesList = [
+          updatedWorkspace,
+          ...workspacesList.filter((w: { id: string }) => w.id !== workspace.id),
+        ];
+        localStorage.setItem("anaos_custom_workspaces", JSON.stringify(workspacesList));
+        window.location.href = `/signup?next=/dashboard`;
+        return;
+      }
+
+      setDeployError(data.error || "Could not deploy automation.");
+    } catch {
+      setDeployError("Network error. Try again or sign in first.");
+    } finally {
+      setDeploying(false);
+    }
   };
 
   if (!mounted || !workspace) {
     return null;
   }
 
+  const industryPreset = getIndustryPreset(workspace.industry);
+
   return (
     <motion.div
-      initial={{ opacity: 0, y: 18 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
-      className="max-w-2xl mx-auto mt-6 rounded-xl border border-border bg-card overflow-hidden text-left shadow-sm"
+      initial={{ opacity: 0, y: 30, scale: 0.95 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+      className="max-w-3xl mx-auto mt-12 rounded-[2.5rem] border border-zinc-200/60 bg-white shadow-[0_20px_50px_rgba(0,0,0,0.04)] overflow-hidden text-left relative"
     >
-      <div className="px-5 py-3.5 border-b border-border flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <span className="w-1.5 h-1.5 rounded-full bg-success animate-pulse" />
-          <span className="text-[11.5px] font-mono uppercase tracking-wider text-success font-semibold">Workspace ready</span>
+      {/* AI Glow Decorative Element */}
+      <div className="absolute top-0 right-0 w-[300px] h-[300px] bg-blue-50/50 blur-[100px] -z-10 pointer-events-none rounded-full" />
+      
+      {/* Top Status Bar */}
+      <div className="px-8 py-5 border-b border-zinc-100 flex items-center justify-between bg-zinc-50/30">
+        <div className="flex items-center gap-2.5">
+          <div className="relative flex items-center justify-center">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+            <span className="absolute w-4 h-4 rounded-full bg-emerald-500/20 animate-ping" />
+          </div>
+          <span className="text-[12px] font-bold uppercase tracking-[0.15em] text-emerald-600/80">Workspace Ready</span>
         </div>
-        <span className="text-[10.5px] font-mono text-muted-foreground">/{workspace.slug}</span>
+        <div className="flex items-center gap-2 px-3 py-1 bg-white border border-zinc-200/60 rounded-full shadow-sm">
+          <Sparkles className="w-3.5 h-3.5 text-blue-500" />
+          <span className="text-[11px] font-bold text-zinc-500">v{workspace.version}.0 AI Model</span>
+        </div>
       </div>
 
-      <div className="px-5 pt-4 pb-2">
-        <h3 className="text-[16px] font-semibold text-foreground tracking-tight">{workspace.name}</h3>
-        <p className="text-[12.5px] text-muted-foreground mt-0.5">
-          {workspace.industry} · {workspace.automations.length} custom automations configured
+      {/* Main Header */}
+      <div className="px-10 pt-8 pb-4">
+        <div className="flex items-baseline gap-3 mb-2">
+          <h3 className="text-[28px] font-extrabold text-zinc-900 tracking-[-0.03em]">{workspace.name}</h3>
+          <span className="text-zinc-300 text-[20px] font-light">/</span>
+          <span className="text-[14px] font-bold text-zinc-400 font-mono tracking-tight">{workspace.slug}</span>
+        </div>
+        <p className="text-[16px] text-zinc-500 font-medium leading-relaxed">
+          {industryPreset.label} Engine • {workspace.automations.length} AI-Powered workflows generated.
         </p>
       </div>
 
-      <div className="px-3 pb-3 grid sm:grid-cols-2 gap-2">
+      {/* Automation Grid */}
+      <div className="px-8 pb-8 pt-4 grid sm:grid-cols-2 gap-4">
         {workspace.automations.map((a, i) => {
-          const details = getAutomationDetails(a.type);
-          const Icon = details.icon;
+          const details = getAutomationDetails(a.type, workspace.industry);
           const isEnabled = states[i] ?? a.enabled;
 
           return (
-            <div key={a.id} className="rounded-lg p-3 flex items-start gap-3 hover:bg-muted/45 transition-colors border border-transparent hover:border-border/30">
-              <div className="w-7 h-7 rounded-md bg-muted text-foreground flex items-center justify-center shrink-0">
-                <Icon className="w-3.5 h-3.5" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-[12.5px] font-medium text-foreground truncate">{a.name}</p>
-                <p className="text-[11.5px] text-muted-foreground mt-0.5 leading-snug">{details.desc}</p>
-              </div>
-              <button
-                onClick={() => toggleState(i)}
-                className={`relative w-7.5 h-[16px] rounded-full transition-colors shrink-0 mt-1 cursor-pointer ${
-                  isEnabled ? "bg-emerald-500" : "bg-border"
-                }`}
-              >
-                <span
-                  className={`absolute top-0.5 w-3 h-3 bg-card rounded-full transition-all ${
-                    isEnabled ? "left-[14px]" : "left-0.5"
+            <motion.div 
+              key={a.id}
+              initial={{ opacity: 0, x: -10 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: i * 0.1 + 0.3 }}
+              className={`group rounded-[1.5rem] p-5 flex flex-col justify-between border transition-all duration-300 ${
+                isEnabled 
+                ? "bg-white border-zinc-200 shadow-[0_4px_15px_rgba(0,0,0,0.03)]" 
+                : "bg-zinc-50/50 border-transparent opacity-60"
+              }`}
+            >
+              <div className="flex justify-between items-start mb-3">
+                <div className="flex flex-col gap-1">
+                  <span className="text-[11px] font-extrabold text-blue-500 uppercase tracking-widest">{details.label}</span>
+                  <p className="text-[15px] font-bold text-zinc-800">{a.name}</p>
+                </div>
+                
+                {/* Modern Toggle */}
+                <button
+                  onClick={() => toggleState(i)}
+                  className={`relative w-11 h-6 rounded-full transition-all duration-300 shrink-0 cursor-pointer ${
+                    isEnabled ? "bg-zinc-900 shadow-inner" : "bg-zinc-200"
                   }`}
-                />
-              </button>
-            </div>
+                >
+                  <span
+                    className={`absolute top-1 w-4 h-4 bg-white rounded-full shadow-sm transition-all duration-300 ${
+                      isEnabled ? "left-[22px]" : "left-1"
+                    }`}
+                  />
+                </button>
+              </div>
+              
+              <p className="text-[13px] text-zinc-500 leading-relaxed font-medium">
+                {details.desc}
+              </p>
+            </motion.div>
           );
         })}
       </div>
 
-      <div className="px-5 py-3.5 border-t border-border flex items-center justify-between bg-muted/20">
-        <div className="flex items-center gap-1.5 text-[11.5px] text-muted-foreground font-mono">
-          <Check className="w-3.5 h-3.5 text-success" /> Setup complete
+      {/* Footer CTA */}
+      <div className="px-10 py-6 border-t border-zinc-100 flex items-center justify-between bg-zinc-50/20">
+        <div className="flex items-center gap-2.5">
+          <div className="w-8 h-8 rounded-full bg-emerald-50 flex items-center justify-center border border-emerald-100 shadow-sm">
+            <Check className="w-4 h-4 text-emerald-500" />
+          </div>
+          <span className="text-[14px] font-bold text-zinc-500">Agent Setup Complete</span>
         </div>
-        <button
-          onClick={handleOpenDashboard}
-          className="h-8 px-3.5 rounded-lg bg-foreground text-background text-[12.5px] font-medium flex items-center gap-1 hover:opacity-90 transition-opacity cursor-pointer"
-        >
-          <span>Open dashboard</span>
-          <ArrowRight className="w-3 h-3" />
-        </button>
+        
+        <div className="flex flex-col items-end gap-2">
+          {deployError && (
+            <span className="text-[11px] font-bold text-red-500 animate-bounce">{deployError}</span>
+          )}
+          <button
+            onClick={handleOpenDashboard}
+            disabled={deploying}
+            className="group relative h-12 px-8 rounded-full bg-zinc-900 text-white text-[15px] font-bold flex items-center gap-2 hover:bg-black transition-all duration-300 shadow-[0_10px_25px_rgba(0,0,0,0.15)] active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed overflow-hidden"
+          >
+            {deploying ? (
+              <>
+                <Loader2 className="w-4 h-4 animate-spin" />
+                <span>Deploying Agent...</span>
+              </>
+            ) : (
+              <>
+                <span>Deploy Automation</span>
+                <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+              </>
+            )}
+          </button>
+        </div>
       </div>
     </motion.div>
   );

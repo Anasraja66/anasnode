@@ -6,6 +6,7 @@ import {
   NodeResult 
 } from "./types";
 import { executeLLMCompletion, resolveTemplate } from "./ai-client";
+import { sendMetaTextMessage } from "@/lib/whatsapp/meta";
 
 // CRITICAL LOOP PROTECTION CONSTANTS
 const MAX_NODES_PER_EXECUTION = 100;
@@ -242,6 +243,31 @@ export class WorkflowExecutor {
           break;
         }
 
+        case NodeType.AI_GENERATE_CONTENT: {
+          const systemPrompt = resolveTemplate(node.config.systemPrompt, ctx);
+          const userMessage = resolveTemplate(
+            node.config.userMessage || "{{message}}",
+            ctx
+          );
+
+          const completion = await executeLLMCompletion({
+            provider: node.config.provider || "openai",
+            model: node.config.model,
+            systemPrompt,
+            userMessage,
+            maxTokens: node.config.maxTokens,
+            temperature: node.config.temperature,
+            credentialId: node.config.credentialId,
+            accountId: ctx.accountId,
+          });
+
+          result = {
+            output: { AI_RESPONSE: completion },
+            nextNodeIds: node.outputs,
+          };
+          break;
+        }
+
         case NodeType.AI_EXTRACT: {
           const userMessage = resolveTemplate(node.config.userMessage, ctx);
           const schema = node.config.schema || ["name", "email"];
@@ -278,12 +304,35 @@ export class WorkflowExecutor {
           break;
         }
 
-        case NodeType.SEND_WHATSAPP:
+        case NodeType.SEND_WHATSAPP: {
+          const template = resolveTemplate(
+            node.config.template || "{{AI_RESPONSE}}",
+            ctx
+          );
+          const to =
+            ctx.triggerData.phone ||
+            ctx.triggerData.contactPhone ||
+            ctx.contactId ||
+            "";
+
+          let status: "sent" | "skipped" | "failed" = "skipped";
+          if (to && template) {
+            const ok = await sendMetaTextMessage(String(to), template, ctx.accountId);
+            status = ok ? "sent" : "failed";
+          }
+
+          result = {
+            output: { MESSAGE_SENT: template, status },
+            nextNodeIds: node.outputs,
+          };
+          break;
+        }
+
         case NodeType.SEND_INSTAGRAM_DM:
         case NodeType.SEND_EMAIL: {
           const template = resolveTemplate(node.config.template || "Hello!", ctx);
           console.log(`[ACTION] [${node.type}] Sent message: "${template}"`);
-          
+
           result = {
             output: { MESSAGE_SENT: template, status: "sent" },
             nextNodeIds: node.outputs,
@@ -294,10 +343,22 @@ export class WorkflowExecutor {
         case NodeType.SEND_WHATSAPP_BUTTONS: {
           const content = resolveTemplate(node.config.content || "Select an option:", ctx);
           const buttons = node.config.buttons || ["Yes", "No"];
-          console.log(`[ACTION] [SEND BUTTONS] Sent: "${content}" Options: ${buttons.join(", ")}`);
-          
+          const to =
+            ctx.triggerData.phone ||
+            ctx.triggerData.contactPhone ||
+            ctx.contactId ||
+            "";
+          const body = `${content}\n\n${buttons.map((b: string, i: number) => `${i + 1}. ${b}`).join("\n")}`;
+
+          let status: "sent" | "skipped" | "failed" = "skipped";
+          if (to && body) {
+            const ok = await sendMetaTextMessage(String(to), body, ctx.accountId);
+            status = ok ? "sent" : "failed";
+          }
+          console.log(`[ACTION] [SEND BUTTONS] ${status}: "${content}"`);
+
           result = {
-            output: { BUTTONS_SENT: content, options: buttons },
+            output: { MESSAGE_SENT: body, BUTTONS_SENT: content, options: buttons, status },
             nextNodeIds: node.outputs,
           };
           break;

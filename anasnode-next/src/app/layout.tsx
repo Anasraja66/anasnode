@@ -1,12 +1,10 @@
 import type { Metadata } from "next";
-import { Inter, JetBrains_Mono } from "next/font/google";
+import { Inter, JetBrains_Mono, Geist } from "next/font/google";
 import "./globals.css";
-import { SessionProvider } from "next-auth/react";
+import { AuthProvider } from "@/components/providers/AuthProvider";
+import { cn } from "@/lib/utils";
 
-const inter = Inter({
-  variable: "--font-sans",
-  subsets: ["latin"],
-});
+const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
 const jetbrainsMono = JetBrains_Mono({
   variable: "--font-mono",
@@ -26,13 +24,11 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${inter.variable} ${jetbrainsMono.variable} h-full antialiased`}
+      className={cn("h-full", "antialiased", jetbrainsMono.variable, "font-sans", geist.variable)}
       suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col" suppressHydrationWarning>
-        <SessionProvider>
-          {children}
-        </SessionProvider>
+        <AuthProvider>{children}</AuthProvider>
       </body>
     </html>
   );

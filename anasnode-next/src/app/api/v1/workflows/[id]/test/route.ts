@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { WorkflowExecutor } from "@/lib/workflow/executor";
+import { getAccountId } from "@/lib/auth/session";
 
 export const dynamic = "force-dynamic";
 
@@ -10,12 +11,15 @@ export async function POST(
 ) {
   try {
     const { id } = await params;
-    const mockAccountId = "acc-default-user";
+    const accountId = await getAccountId();
+    if (!accountId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
     const body = await request.json();
     const { testInput = {} } = body;
 
     const workflow = await prisma.workflow.findFirst({
-      where: { id, accountId: mockAccountId },
+      where: { id, accountId },
     });
 
     if (!workflow) {

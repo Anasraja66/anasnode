@@ -1,62 +1,62 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { decrypt } from "@/lib/crypto";
+import { getAccountId } from "@/lib/auth/session";
 
 export const dynamic = "force-dynamic";
 
 export async function POST(
-  request: Request,
+  _request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const { id } = await params;
-    const mockAccountId = "acc-default-user";
+    const accountId = await getAccountId();
+    if (!accountId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
 
     const cred = await prisma.integrationCredential.findFirst({
-      where: { id, accountId: mockAccountId },
+      where: { id, accountId },
     });
 
     if (!cred) {
       return NextResponse.json({ error: "Credential not found" }, { status: 404 });
     }
 
-    // Try decrypting keys to verify integrity
     const decryptedKeys = decrypt(cred.credentials);
     const parsed = JSON.parse(decryptedKeys);
 
     if (!parsed.apiKey && !parsed.accessToken && !parsed.password) {
       return NextResponse.json({
         success: false,
-        message: "Validation failed: Missing active private key or token inside credential object.",
+        message: "Validation failed: Missing active private key or token.",
       });
     }
 
-    // Simulate third party model checks (OpenAI / Claude list models)
-    console.log(`[TEST CREDENTIAL] Validated credentials for type: ${cred.type}, name: ${cred.name}`);
-
     return NextResponse.json({
       success: true,
-      message: `Connection successfully established with ${cred.type.toUpperCase()}!`,
+      message: `Credential validated for ${cred.type}.`,
     });
-  } catch (error: any) {
-    console.error("Test credentials error:", error);
-    return NextResponse.json({
-      success: false,
-      message: `Test failed: ${error.message}`,
-    });
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : "Test failed";
+    return NextResponse.json({ success: false, message }, { status: 500 });
   }
 }
 
 export async function DELETE(
-  request: Request,
+  _request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const { id } = await params;
-    const mockAccountId = "acc-default-user";
+    const accountId = await getAccountId();
+    if (!accountId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
 
     const deleted = await prisma.integrationCredential.deleteMany({
-      where: { id, accountId: mockAccountId },
+      where: { id, accountId },
     });
 
     if (deleted.count === 0) {

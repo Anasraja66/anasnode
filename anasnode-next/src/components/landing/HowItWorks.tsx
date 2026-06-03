@@ -1,14 +1,21 @@
 "use client";
 
 import { Building2, Utensils, Stethoscope } from "lucide-react";
+import { Typewriter } from "./Typewriter";
 
 export function HowItWorks() {
   return (
-    <section id="how" className="py-20 sm:py-28 px-6 bg-[#FAF8F5] border-t border-[#E5E5E0] z-10 relative overflow-hidden">
-      <div className="max-w-6xl mx-auto">
+    <section id="how-it-works" className="py-20 sm:py-28 px-6 bg-white border-t border-[#E5E5E0] z-10 relative overflow-hidden">
+      {/* Background Glow Blobs to match Hero */}
+      <div className="absolute top-0 left-0 right-0 h-full pointer-events-none z-0">
+        <div className="absolute top-[10%] left-[-10%] w-[40%] h-[50%] bg-[#0A6BFF] blur-[120px] rounded-full opacity-5 mix-blend-multiply animate-blob" />
+        <div className="absolute top-[30%] right-[-10%] w-[45%] h-[60%] bg-[#38BDF8] blur-[130px] rounded-full opacity-5 mix-blend-multiply animate-blob animation-delay-2000" />
+      </div>
+
+      <div className="max-w-6xl mx-auto relative z-10">
         {/* Title */}
         <h2 className="text-[34px] sm:text-[44px] font-extrabold text-[#111827] tracking-[-0.03em] mb-12">
-          Meet Anaos
+          <Typewriter text="Meet Anaos" />
         </h2>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">

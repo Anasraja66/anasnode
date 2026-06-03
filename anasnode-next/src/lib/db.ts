@@ -1,40 +1,27 @@
 import { PrismaClient } from "@prisma/client";
 import { PrismaBetterSqlite3 } from "@prisma/adapter-better-sqlite3";
+import Database from "better-sqlite3";
+import path from "path";
 
 const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;
 };
 
-let prismaInstance: PrismaClient | undefined;
+function createPrismaClient() {
+  const rawUrl = process.env.DATABASE_URL || "file:./dev.db";
+  const relativePath = rawUrl.startsWith("file:") ? rawUrl.substring(5) : rawUrl;
+  const dbPath = path.resolve(process.cwd(), relativePath);
+  
+  const db = new Database(dbPath);
+  const adapter = new PrismaBetterSqlite3(db);
 
-function getPrisma() {
-  const dbUrl = process.env.DATABASE_URL || "file:./dev.db";
-  const adapter = new PrismaBetterSqlite3({ url: dbUrl });
-
-  if (process.env.NODE_ENV === "production") {
-    if (!prismaInstance) {
-      prismaInstance = new PrismaClient({ adapter });
-    }
-    return prismaInstance;
-  }
-
-  if (!globalForPrisma.prisma) {
-    globalForPrisma.prisma = new PrismaClient({
-      adapter,
-      log: ["error"],
-    });
-  }
-  return globalForPrisma.prisma;
+  return new PrismaClient({
+    adapter,
+  });
 }
 
-// Use a Proxy to lazily initialize PrismaClient only when a property is accessed
-export const prisma = new Proxy({} as PrismaClient, {
-  get(target, prop, receiver) {
-    const client = getPrisma();
-    const value = Reflect.get(client, prop, receiver);
-    if (typeof value === "function") {
-      return value.bind(client);
-    }
-    return value;
-  },
-});
+export const prisma = globalForPrisma.prisma || createPrismaClient();
+
+if (process.env.NODE_ENV !== "production") {
+  globalForPrisma.prisma = prisma;
+}

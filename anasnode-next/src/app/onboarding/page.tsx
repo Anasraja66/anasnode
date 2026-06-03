@@ -11,40 +11,48 @@ import {
   Users,
   Check,
   ArrowRight,
-  Sun,
-  Moon,
-  Laptop,
   Briefcase,
-  Code,
-  Sliders,
   MessageSquare,
   TrendingUp,
   Activity,
-  Globe
+  Globe,
 } from "lucide-react";
+import {
+  INDUSTRY_OPTIONS,
+  type IndustryId,
+  getIndustryPreset,
+} from "@/lib/industry/presets";
+import {
+  LANGUAGE_CATALOG,
+  type LanguageCode,
+} from "@/lib/i18n/languages";
 
 export default function OnboardingPage() {
   const { data: session, update: updateSession } = useSession();
   const router = useRouter();
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
-  const [loadingText, setLoadingText] = useState("Configuring your Automation OS...");
+  const [loadingText, setLoadingText] = useState("Setting up your business desk...");
 
-  // Form states
-  const [style, setStyle] = useState<"light" | "dark">("light");
   const [fullName, setFullName] = useState("");
   const [companyName, setCompanyName] = useState("");
-  const [role, setRole] = useState("");
+  const [industryId, setIndustryId] = useState<IndustryId | "">("");
+  const [ownerRole, setOwnerRole] = useState("");
   const [companySize, setCompanySize] = useState("");
+  const [enabledLanguages, setEnabledLanguages] = useState<LanguageCode[]>(
+    () => LANGUAGE_CATALOG.map((l) => l.code)
+  );
 
   useEffect(() => {
     if (session?.user?.name && !fullName) {
       setFullName(session.user.name);
     }
-  }, [session]);
+  }, [session, fullName]);
+
+  const selectedPreset = industryId ? getIndustryPreset(industryId) : null;
 
   const handleNext = () => {
-    if (step < 4) {
+    if (step < 5) {
       setStep(step + 1);
     } else {
       handleSubmit();
@@ -52,21 +60,18 @@ export default function OnboardingPage() {
   };
 
   const handleBack = () => {
-    if (step > 1) {
-      setStep(step - 1);
-    }
+    if (step > 1) setStep(step - 1);
   };
 
   const handleSubmit = async () => {
+    if (!selectedPreset) return;
     setLoading(true);
-    
-    // Simulate steps of workspace generation
+
     const stages = [
-      "Configuring your custom Automation OS...",
-      "Generating visual workflow canvas...",
-      "Setting up sandbox environment...",
-      "Deploying AI Operator agent grid...",
-      "Finalizing workspace variables..."
+      `Preparing your ${selectedPreset.label} dashboard...`,
+      "Connecting WhatsApp-ready automations...",
+      "Training your AI assistant tone...",
+      "Almost ready — opening your desk...",
     ];
 
     let currentStage = 0;
@@ -83,23 +88,26 @@ export default function OnboardingPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           name: fullName,
-          role,
+          industry: selectedPreset.label,
+          industryId: selectedPreset.id,
+          ownerRole,
           workspaceName: companyName || `${fullName}'s Business`,
-          style
-        })
+          languageSettings: {
+            mode: "auto" as const,
+            enabled: enabledLanguages,
+          },
+        }),
       });
 
       if (response.ok) {
-        // Trigger a session refresh so the name and dashboard update correctly
         await updateSession();
-        
         clearInterval(interval);
         setTimeout(() => {
-          router.push("/dashboard");
+          router.push("/dashboard?tab=overview");
           router.refresh();
         }, 800);
       } else {
-        alert("Something went wrong setting up your workspace. Please try again.");
+        alert("Something went wrong. Please try again.");
         setLoading(false);
         clearInterval(interval);
       }
@@ -111,56 +119,78 @@ export default function OnboardingPage() {
     }
   };
 
-  const roles = [
-    { id: "founder", label: "Founder / Owner", icon: Briefcase, desc: "Building core automation for my own business" },
-    { id: "developer", label: "Software Engineer / Dev", icon: Code, desc: "Writing integrations & custom node scripts" },
-    { id: "operations", label: "Operations Manager", icon: Sliders, desc: "Streamlining data flows & team pipelines" },
-    { id: "product", label: "Product Manager", icon: Laptop, desc: "Designing automation logic & customer journeys" },
-    { id: "support", label: "Support Lead", icon: MessageSquare, desc: "Deploying conversational support agents" },
-    { id: "marketing", label: "Sales / Marketing Lead", icon: TrendingUp, desc: "Automating campaigns & lead captures" },
-    { id: "consultant", label: "Consultant / Agency", icon: Globe, desc: "Delivering custom workflow setups for clients" },
-    { id: "other", label: "Other / Tech Enthusiast", icon: Activity, desc: "Exploring visual webhook integrations" }
+  const ownerRoles = [
+    {
+      id: "owner",
+      label: "Business Owner",
+      icon: Briefcase,
+      desc: "I run the business and want simple automation",
+    },
+    {
+      id: "manager",
+      label: "Manager",
+      icon: Activity,
+      desc: "I manage daily operations and customer replies",
+    },
+    {
+      id: "sales",
+      label: "Sales / Marketing",
+      icon: TrendingUp,
+      desc: "I handle leads, campaigns, and follow-ups",
+    },
+    {
+      id: "support",
+      label: "Customer Support",
+      icon: MessageSquare,
+      desc: "I answer customer messages every day",
+    },
   ];
 
   const companySizes = [
-    { id: "solo", label: "Solo Operator", desc: "Just me building automation systems", icon: User },
-    { id: "small", label: "2 - 20 people", desc: "Small team with growing workflow needs", icon: Users },
-    { id: "medium", label: "21 - 200 people", desc: "Established company scaling operations", icon: Building2 },
-    { id: "large", label: "200+ people", desc: "Enterprise scale data & API demands", icon: Building2 }
+    { id: "solo", label: "Just me", desc: "Solo business or freelancer", icon: User },
+    { id: "small", label: "2 – 20 people", desc: "Small team", icon: Users },
+    { id: "medium", label: "21 – 200 people", desc: "Growing company", icon: Building2 },
+    { id: "large", label: "200+ people", desc: "Larger organization", icon: Building2 },
   ];
 
-  // Motion page animations
   const slideVariants = {
     initial: { opacity: 0, x: 20 },
     animate: { opacity: 1, x: 0, transition: { duration: 0.35, ease: "easeOut" as const } },
-    exit: { opacity: 0, x: -20, transition: { duration: 0.25, ease: "easeIn" as const } }
+    exit: { opacity: 0, x: -20, transition: { duration: 0.25, ease: "easeIn" as const } },
   };
+
+  const accent = selectedPreset?.primary ?? "#0A6BFF";
 
   return (
     <div className="min-h-screen bg-white text-zinc-900 flex flex-col justify-between items-center p-6 relative overflow-hidden font-sans">
-      
-      {/* Premium Sky Blue & Ice Blue Glow mesh backgrounds */}
-      <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[50%] rounded-full bg-[#0A6BFF]/10 blur-[140px] pointer-events-none" />
+      <div
+        className="absolute top-[-10%] left-[-10%] w-[60%] h-[50%] rounded-full blur-[140px] pointer-events-none"
+        style={{ backgroundColor: `${accent}18` }}
+      />
       <div className="absolute bottom-[-15%] right-[-10%] w-[60%] h-[50%] rounded-full bg-[#38BDF8]/10 blur-[140px] pointer-events-none" />
-      
-      {/* Top Bar Logo */}
+
       <header className="w-full max-w-6xl mx-auto flex items-center justify-between z-10 pt-4">
         <div className="flex items-center gap-2">
-          <div className="w-7 h-7 rounded-[8px] bg-[#0A6BFF] flex items-center justify-center shadow-[0_2px_8px_rgba(10,107,255,0.2)]">
-            <Zap className="w-4 h-4 text-white fill-current animate-pulse" />
+          <div
+            className="w-7 h-7 rounded-[8px] flex items-center justify-center shadow-sm"
+            style={{ backgroundColor: accent }}
+          >
+            <Zap className="w-4 h-4 text-white fill-current" />
           </div>
           <span className="text-[17px] font-extrabold text-zinc-950 tracking-tight">Anaos</span>
-          <span className="text-[10px] bg-[#0A6BFF]/10 text-[#0A6BFF] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
-            OS Setup
+          <span
+            className="text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider"
+            style={{ backgroundColor: `${accent}15`, color: accent }}
+          >
+            Business setup
           </span>
         </div>
-        <div className="text-[13px] text-zinc-400 font-semibold font-mono uppercase tracking-widest">
-          Step {step} of 4
+        <div className="text-[13px] text-zinc-400 font-semibold uppercase tracking-widest">
+          Step {step} of 5
         </div>
       </header>
 
-      {/* Main card wizard container */}
-      <main className="w-full max-w-[540px] my-auto relative z-10 py-10">
+      <main className="w-full max-w-[560px] my-auto relative z-10 py-10">
         <AnimatePresence mode="wait">
           {loading ? (
             <motion.div
@@ -171,10 +201,18 @@ export default function OnboardingPage() {
             >
               <div className="relative w-16 h-16 mb-6">
                 <div className="absolute inset-0 rounded-full border-4 border-zinc-100" />
-                <div className="absolute inset-0 rounded-full border-4 border-[#0A6BFF] border-t-transparent animate-spin" />
+                <div
+                  className="absolute inset-0 rounded-full border-4 border-t-transparent animate-spin"
+                  style={{ borderColor: accent, borderTopColor: "transparent" }}
+                />
               </div>
-              <h3 className="text-[18px] font-bold text-zinc-950 mb-2 animate-pulse">{loadingText}</h3>
-              <p className="text-[13.5px] text-zinc-500 font-medium">Please wait while we customize your operational canvas.</p>
+              <h3 className="text-[18px] font-bold text-zinc-950 mb-2 animate-pulse">
+                {loadingText}
+              </h3>
+              <p className="text-[13.5px] text-zinc-500 font-medium">
+                Your dashboard will open with a {selectedPreset?.label ?? "business"} layout — easy
+                for owners, no coding.
+              </p>
             </motion.div>
           ) : (
             <motion.div
@@ -185,161 +223,46 @@ export default function OnboardingPage() {
               exit="exit"
               className="bg-white/85 border border-zinc-200/60 shadow-[0_20px_50px_rgba(10,107,255,0.05)] rounded-3xl backdrop-blur-2xl p-8 sm:p-10 relative"
             >
-              {/* Step 1: Style / Mode Selector */}
               {step === 1 && (
                 <div className="flex flex-col">
                   <h2 className="text-[26px] font-extrabold text-zinc-900 tracking-tight text-center leading-tight mb-2">
-                    Pick your workspace style
-                  </h2>
-                  <p className="text-[14px] text-zinc-500 text-center font-medium mb-8">
-                    Choose the design layout that fits your workflow environment.
-                  </p>
-
-                  <div className="grid grid-cols-2 gap-4.5 mb-8">
-                    {/* Light option */}
-                    <button
-                      onClick={() => setStyle("light")}
-                      className={`flex flex-col items-center p-4.5 rounded-2xl border text-left transition-all relative overflow-hidden select-none cursor-pointer ${
-                        style === "light"
-                          ? "border-[#0A6BFF] bg-[#0A6BFF]/5 ring-2 ring-[#0A6BFF]/20 shadow-md"
-                          : "border-zinc-200 bg-white hover:bg-zinc-50 hover:border-zinc-300"
-                      }`}
-                    >
-                      <div className="w-full aspect-[1.4/1] rounded-lg bg-zinc-100 border border-zinc-200/60 flex mb-4 relative overflow-hidden p-1">
-                        <div className="w-[30%] h-full bg-zinc-200/70 rounded-l flex flex-col gap-1 p-1">
-                          <div className="w-6 h-1 bg-zinc-400 rounded-full" />
-                          <div className="w-8 h-1 bg-zinc-300 rounded-full" />
-                          <div className="w-5 h-1 bg-zinc-300 rounded-full" />
-                        </div>
-                        <div className="flex-1 h-full bg-white rounded-r p-1 flex flex-col gap-1 justify-center items-center">
-                          <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center">
-                            <Sun className="w-4 h-4 text-amber-500" />
-                          </div>
-                        </div>
-                      </div>
-                      <span className="text-[14.5px] font-bold text-zinc-900">Light Mode</span>
-                      <span className="text-[11.5px] text-zinc-400 mt-0.5 font-medium">Ice Blue minimal canvas</span>
-                      {style === "light" && (
-                        <div className="absolute top-3 right-3 bg-[#0A6BFF] text-white p-1 rounded-full">
-                          <Check className="w-3.5 h-3.5" />
-                        </div>
-                      )}
-                    </button>
-
-                    {/* Dark option */}
-                    <button
-                      onClick={() => setStyle("dark")}
-                      className={`flex flex-col items-center p-4.5 rounded-2xl border text-left transition-all relative overflow-hidden select-none cursor-pointer ${
-                        style === "dark"
-                          ? "border-[#0A6BFF] bg-[#0A6BFF]/5 ring-2 ring-[#0A6BFF]/20 shadow-md"
-                          : "border-zinc-200 bg-white hover:bg-zinc-50 hover:border-zinc-300"
-                      }`}
-                    >
-                      <div className="w-full aspect-[1.4/1] rounded-lg bg-zinc-900 border border-zinc-800 flex mb-4 relative overflow-hidden p-1 text-white">
-                        <div className="w-[30%] h-full bg-zinc-850 rounded-l flex flex-col gap-1 p-1">
-                          <div className="w-6 h-1 bg-zinc-700 rounded-full" />
-                          <div className="w-8 h-1 bg-zinc-650 rounded-full" />
-                          <div className="w-5 h-1 bg-zinc-650 rounded-full" />
-                        </div>
-                        <div className="flex-1 h-full bg-zinc-950 rounded-r p-1 flex flex-col gap-1 justify-center items-center">
-                          <div className="w-10 h-10 rounded-full bg-zinc-900 flex items-center justify-center">
-                            <Moon className="w-4 h-4 text-cyan-400" />
-                          </div>
-                        </div>
-                      </div>
-                      <span className="text-[14.5px] font-bold text-zinc-900">Dark Mode</span>
-                      <span className="text-[11.5px] text-zinc-400 mt-0.5 font-medium">Deep Space Neon accents</span>
-                      {style === "dark" && (
-                        <div className="absolute top-3 right-3 bg-[#0A6BFF] text-white p-1 rounded-full">
-                          <Check className="w-3.5 h-3.5" />
-                        </div>
-                      )}
-                    </button>
-                  </div>
-                </div>
-              )}
-
-              {/* Step 2: Name and Company */}
-              {step === 2 && (
-                <div className="flex flex-col">
-                  <h2 className="text-[26px] font-extrabold text-zinc-900 tracking-tight text-center leading-tight mb-2">
-                    Let's personalize your setup
-                  </h2>
-                  <p className="text-[14px] text-zinc-500 text-center font-medium mb-8">
-                    We will configure your name and brand workspaces under the hood.
-                  </p>
-
-                  <div className="space-y-5.5 mb-8">
-                    <div>
-                      <label className="block text-[11px] font-bold font-mono text-zinc-500 uppercase tracking-widest mb-1.5">
-                        Your Full Name
-                      </label>
-                      <div className="relative">
-                        <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-400">
-                          <User className="w-4 h-4" />
-                        </span>
-                        <input
-                          type="text"
-                          value={fullName}
-                          onChange={(e) => setFullName(e.target.value)}
-                          placeholder="e.g. Muhammad Qasim"
-                          className="w-full h-12 bg-zinc-50/50 border border-zinc-200 rounded-xl pl-10.5 pr-4 text-[14px] text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:border-[#0A6BFF] focus:ring-2 focus:ring-[#0A6BFF]/10 transition-all font-semibold"
-                        />
-                      </div>
-                    </div>
-
-                    <div>
-                      <label className="block text-[11px] font-bold font-mono text-zinc-500 uppercase tracking-widest mb-1.5">
-                        Company or Project Name
-                      </label>
-                      <div className="relative">
-                        <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-400">
-                          <Building2 className="w-4 h-4" />
-                        </span>
-                        <input
-                          type="text"
-                          value={companyName}
-                          onChange={(e) => setCompanyName(e.target.value)}
-                          placeholder="e.g. Marina Realty or Olive & Oak"
-                          className="w-full h-12 bg-zinc-50/50 border border-zinc-200 rounded-xl pl-10.5 pr-4 text-[14px] text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:border-[#0A6BFF] focus:ring-2 focus:ring-[#0A6BFF]/10 transition-all font-semibold"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* Step 3: Role Selector */}
-              {step === 3 && (
-                <div className="flex flex-col">
-                  <h2 className="text-[26px] font-extrabold text-zinc-900 tracking-tight text-center leading-tight mb-2">
-                    Which role fits you best?
+                    What type of business do you run?
                   </h2>
                   <p className="text-[14px] text-zinc-500 text-center font-medium mb-6">
-                    Anaos adapts templates and node parameters based on your business role.
+                    Your dashboard will look and feel built for this industry.
                   </p>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-[300px] overflow-y-auto pr-1 mb-8">
-                    {roles.map((r) => {
-                      const Icon = r.icon;
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-[340px] overflow-y-auto pr-1 mb-8">
+                    {INDUSTRY_OPTIONS.map((opt) => {
+                      const Icon = opt.icon;
+                      const selected = industryId === opt.id;
                       return (
                         <button
-                          key={r.id}
-                          onClick={() => setRole(r.label)}
-                          className={`flex items-start gap-3.5 p-3 rounded-xl border text-left transition-all select-none cursor-pointer ${
-                            role === r.label
-                              ? "border-[#0A6BFF] bg-[#0A6BFF]/5 ring-2 ring-[#0A6BFF]/10"
-                              : "border-zinc-200 bg-white hover:bg-zinc-50 hover:border-zinc-300"
+                          key={opt.id}
+                          type="button"
+                          onClick={() => setIndustryId(opt.id)}
+                          className={`flex items-start gap-3 p-3.5 rounded-xl border text-left transition-all cursor-pointer ${
+                            selected ? "ring-2" : "border-zinc-200 bg-white hover:bg-zinc-50"
                           }`}
+                          style={
+                            selected
+                              ? {
+                                  borderColor: opt.primary,
+                                  backgroundColor: opt.softBg,
+                                  boxShadow: `0 0 0 1px ${opt.softBorder}`,
+                                }
+                              : undefined
+                          }
                         >
-                          <div className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${
-                            role === r.label ? "bg-[#0A6BFF] text-white" : "bg-zinc-100 text-zinc-500"
-                          }`}>
-                            <Icon className="w-4.5 h-4.5" />
+                          <div
+                            className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0 text-white"
+                            style={{ backgroundColor: selected ? opt.primary : "#e4e4e7" }}
+                          >
+                            <Icon className={`w-5 h-5 ${selected ? "" : "text-zinc-500"}`} />
                           </div>
                           <div>
-                            <p className="text-[13.5px] font-bold text-zinc-900 leading-snug">{r.label}</p>
-                            <p className="text-[11px] text-zinc-400 leading-normal mt-0.5 font-medium">{r.desc}</p>
+                            <p className="text-[14px] font-bold text-zinc-900">{opt.label}</p>
+                            <p className="text-[11px] text-zinc-500 mt-0.5">{opt.tagline}</p>
                           </div>
                         </button>
                       );
@@ -348,42 +271,147 @@ export default function OnboardingPage() {
                 </div>
               )}
 
-              {/* Step 4: Company Size */}
+              {step === 2 && (
+                <div className="flex flex-col">
+                  <h2 className="text-[26px] font-extrabold text-zinc-900 tracking-tight text-center leading-tight mb-2">
+                    Your business details
+                  </h2>
+                  <p className="text-[14px] text-zinc-500 text-center font-medium mb-8">
+                    {selectedPreset
+                      ? `Setting up ${selectedPreset.label} for you.`
+                      : "Tell us your name and brand."}
+                  </p>
+
+                  <div className="space-y-5 mb-8">
+                    <div>
+                      <label className="block text-[11px] font-bold text-zinc-500 uppercase tracking-widest mb-1.5">
+                        Your name
+                      </label>
+                      <input
+                        type="text"
+                        value={fullName}
+                        onChange={(e) => setFullName(e.target.value)}
+                        placeholder="e.g. Muhammad Qasim"
+                        className="w-full h-12 bg-zinc-50/50 border border-zinc-200 rounded-xl px-4 text-[14px] font-semibold focus:outline-none focus:ring-2"
+                        style={{ outlineColor: accent }}
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[11px] font-bold text-zinc-500 uppercase tracking-widest mb-1.5">
+                        Business name
+                      </label>
+                      <input
+                        type="text"
+                        value={companyName}
+                        onChange={(e) => setCompanyName(e.target.value)}
+                        placeholder={
+                          industryId === "real-estate"
+                            ? "e.g. Marina Realty"
+                            : industryId === "restaurant"
+                              ? "e.g. Olive & Oak"
+                              : "e.g. Your clinic or shop name"
+                        }
+                        className="w-full h-12 bg-zinc-50/50 border border-zinc-200 rounded-xl px-4 text-[14px] font-semibold focus:outline-none focus:ring-2"
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {step === 3 && (
+                <div className="flex flex-col">
+                  <h2 className="text-[26px] font-extrabold text-zinc-900 tracking-tight text-center leading-tight mb-2">
+                    What is your role?
+                  </h2>
+                  <p className="text-[14px] text-zinc-500 text-center font-medium mb-6">
+                    We keep the dashboard simple — no developer jargon.
+                  </p>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-8">
+                    {ownerRoles.map((r) => {
+                      const Icon = r.icon;
+                      const selected = ownerRole === r.id;
+                      return (
+                        <button
+                          key={r.id}
+                          type="button"
+                          onClick={() => setOwnerRole(r.id)}
+                          className={`flex items-start gap-3 p-3 rounded-xl border text-left cursor-pointer ${
+                            selected ? "ring-2" : "border-zinc-200 hover:bg-zinc-50"
+                          }`}
+                          style={
+                            selected
+                              ? { borderColor: accent, backgroundColor: `${accent}08` }
+                              : undefined
+                          }
+                        >
+                          <div
+                            className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${
+                              selected ? "text-white" : "bg-zinc-100 text-zinc-500"
+                            }`}
+                            style={selected ? { backgroundColor: accent } : undefined}
+                          >
+                            <Icon className="w-4.5 h-4.5" />
+                          </div>
+                          <div>
+                            <p className="text-[13.5px] font-bold text-zinc-900">{r.label}</p>
+                            <p className="text-[11px] text-zinc-400 mt-0.5">{r.desc}</p>
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
               {step === 4 && (
                 <div className="flex flex-col">
                   <h2 className="text-[26px] font-extrabold text-zinc-900 tracking-tight text-center leading-tight mb-2">
-                    How many people work at your company?
+                    How big is your team?
                   </h2>
                   <p className="text-[14px] text-zinc-500 text-center font-medium mb-8">
-                    Help us understand your team size to customize webhook capacities.
+                    Optional — helps us suggest the right plan later.
                   </p>
 
                   <div className="space-y-3 mb-8">
                     {companySizes.map((size) => {
                       const Icon = size.icon;
+                      const selected = companySize === size.id;
                       return (
                         <button
                           key={size.id}
-                          onClick={() => setCompanySize(size.label)}
-                          className={`w-full flex items-center justify-between p-4.5 rounded-xl border text-left transition-all select-none cursor-pointer ${
-                            companySize === size.label
-                              ? "border-[#0A6BFF] bg-[#0A6BFF]/5 ring-2 ring-[#0A6BFF]/10"
-                              : "border-zinc-200 bg-white hover:bg-zinc-50 hover:border-zinc-300"
+                          type="button"
+                          onClick={() => setCompanySize(size.id)}
+                          className={`w-full flex items-center justify-between p-4 rounded-xl border text-left cursor-pointer ${
+                            selected ? "ring-2" : "border-zinc-200 hover:bg-zinc-50"
                           }`}
+                          style={
+                            selected
+                              ? { borderColor: accent, backgroundColor: `${accent}08` }
+                              : undefined
+                          }
                         >
                           <div className="flex items-center gap-4">
-                            <div className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 ${
-                              companySize === size.label ? "bg-[#0A6BFF] text-white" : "bg-zinc-100 text-zinc-500"
-                            }`}>
+                            <div
+                              className={`w-10 h-10 rounded-lg flex items-center justify-center ${
+                                selected ? "text-white" : "bg-zinc-100 text-zinc-500"
+                              }`}
+                              style={selected ? { backgroundColor: accent } : undefined}
+                            >
                               <Icon className="w-5 h-5" />
                             </div>
                             <div>
-                              <p className="text-[14.5px] font-bold text-zinc-900">{size.label}</p>
-                              <p className="text-[12px] text-zinc-400 font-medium">{size.desc}</p>
+                              <p className="text-[14.5px] font-bold text-zinc-900">
+                                {size.label}
+                              </p>
+                              <p className="text-[12px] text-zinc-400">{size.desc}</p>
                             </div>
                           </div>
-                          {companySize === size.label && (
-                            <div className="w-5 h-5 rounded-full bg-[#0A6BFF] flex items-center justify-center text-white shrink-0">
+                          {selected && (
+                            <div
+                              className="w-5 h-5 rounded-full flex items-center justify-center text-white"
+                              style={{ backgroundColor: accent }}
+                            >
                               <Check className="w-3.5 h-3.5" />
                             </div>
                           )}
@@ -394,28 +422,78 @@ export default function OnboardingPage() {
                 </div>
               )}
 
-              {/* Navigation Action Buttons */}
+              {step === 5 && (
+                <div className="flex flex-col">
+                  <h2 className="text-[26px] font-extrabold text-zinc-900 tracking-tight text-center leading-tight mb-2">
+                    Customer languages
+                  </h2>
+                  <p className="text-[14px] text-zinc-500 text-center font-medium mb-4">
+                    Every industry, every country — on WhatsApp Anaos auto-detects and replies in
+                    the customer&apos;s language (same for any normal business).
+                  </p>
+                  <div className="flex items-center justify-center gap-2 mb-4 text-[#0A6BFF]">
+                    <Globe className="w-5 h-5" />
+                    <span className="text-[13px] font-bold">45+ languages supported</span>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2 max-h-[240px] overflow-y-auto mb-4 pr-1">
+                    {LANGUAGE_CATALOG.map((l) => {
+                      const on = enabledLanguages.includes(l.code);
+                      return (
+                        <button
+                          key={l.code}
+                          type="button"
+                          onClick={() =>
+                            setEnabledLanguages((prev) =>
+                              on
+                                ? prev.filter((c) => c !== l.code)
+                                : [...prev, l.code]
+                            )
+                          }
+                          className={`flex items-center gap-2 p-2 rounded-lg border text-[12px] ${
+                            on ? "border-[#0A6BFF] bg-[#0A6BFF]/5 font-semibold" : "border-zinc-200"
+                          }`}
+                        >
+                          <span>{l.flag}</span>
+                          <span className="truncate">{l.label}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setEnabledLanguages(LANGUAGE_CATALOG.map((l) => l.code))
+                    }
+                    className="text-[12px] font-bold text-[#0A6BFF] mx-auto"
+                  >
+                    Select all languages
+                  </button>
+                </div>
+              )}
+
               <div className="flex items-center justify-between pt-4 border-t border-zinc-100">
                 <button
                   type="button"
                   onClick={handleBack}
                   disabled={step === 1}
-                  className="px-5 py-2.5 rounded-xl border border-zinc-200 text-zinc-600 font-bold hover:bg-zinc-50 transition-all text-[13.5px] disabled:opacity-30 disabled:pointer-events-none cursor-pointer active:scale-98"
+                  className="px-5 py-2.5 rounded-xl border border-zinc-200 text-zinc-600 font-bold text-[13.5px] disabled:opacity-30 cursor-pointer"
                 >
                   Back
                 </button>
-
                 <button
                   type="button"
                   onClick={handleNext}
                   disabled={
+                    (step === 1 && !industryId) ||
                     (step === 2 && (!fullName.trim() || !companyName.trim())) ||
-                    (step === 3 && !role) ||
-                    (step === 4 && !companySize)
+                    (step === 3 && !ownerRole) ||
+                    (step === 4 && !companySize) ||
+                    (step === 5 && enabledLanguages.length === 0)
                   }
-                  className="h-11 px-6 rounded-xl bg-zinc-950 text-white font-bold hover:bg-zinc-900 disabled:opacity-40 transition-all flex items-center gap-1.5 text-[13.5px] cursor-pointer active:scale-98"
+                  className="h-11 px-6 rounded-xl text-white font-bold disabled:opacity-40 flex items-center gap-1.5 text-[13.5px] cursor-pointer"
+                  style={{ backgroundColor: accent }}
                 >
-                  <span>{step === 4 ? "Launch Workspace" : "Continue"}</span>
+                  <span>{step === 5 ? "Open my dashboard" : "Continue"}</span>
                   <ArrowRight className="w-4 h-4" />
                 </button>
               </div>
@@ -424,21 +502,19 @@ export default function OnboardingPage() {
         </AnimatePresence>
       </main>
 
-      {/* Footer Step Dots */}
       <footer className="w-full max-w-6xl mx-auto flex justify-center items-center gap-1.5 pb-6 z-10">
-        {[1, 2, 3, 4].map((i) => (
+        {[1, 2, 3, 4, 5].map((i) => (
           <button
             key={i}
+            type="button"
             onClick={() => {
-              // Only allow moving backward or forward if we completed the step requirement
               if (i < step) setStep(i);
             }}
             disabled={i > step}
             className={`h-2 rounded-full transition-all duration-300 ${
-              i === step 
-                ? "w-7 bg-[#0A6BFF]" 
-                : "w-2 bg-zinc-200 hover:bg-zinc-300 disabled:opacity-50 disabled:hover:bg-zinc-200"
+              i === step ? "w-7" : "w-2 bg-zinc-200"
             }`}
+            style={i === step ? { backgroundColor: accent } : undefined}
           />
         ))}
       </footer>

@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
 import { FadeIn } from "./Section";
+import { Typewriter } from "./Typewriter";
 
 type IndustryItem = {
   name: string;
@@ -66,9 +67,12 @@ const INDUSTRIES: IndustryItem[] = [
 
 export function IndustrySection() {
   return (
-    <section id="industries" className="py-24 sm:py-32 px-6 bg-white border-t border-[#F0E6DC] relative overflow-hidden">
-      {/* Soft warm background styling */}
-      <div className="absolute inset-0 bg-gradient-to-b from-[#FDF8F4]/50 to-white pointer-events-none" />
+    <section id="industries" className="py-24 sm:py-32 px-6 bg-white border-t border-zinc-100 relative overflow-hidden">
+      {/* Background Glow Blobs to match Hero */}
+      <div className="absolute top-0 left-0 right-0 h-full pointer-events-none z-0">
+        <div className="absolute top-[20%] left-[-10%] w-[40%] h-[50%] bg-[#0A6BFF] blur-[120px] rounded-full opacity-5 mix-blend-multiply animate-blob" />
+        <div className="absolute bottom-[20%] right-[-10%] w-[45%] h-[60%] bg-[#38BDF8] blur-[130px] rounded-full opacity-5 mix-blend-multiply animate-blob animation-delay-2000" />
+      </div>
 
       <div className="max-w-6xl mx-auto relative z-10">
         
@@ -76,7 +80,7 @@ export function IndustrySection() {
         <FadeIn delay={0.1}>
           <div className="text-center max-w-3xl mx-auto mb-16 sm:mb-20">
             <h2 className="text-[36px] sm:text-[50px] font-black text-[#111827] tracking-tight leading-[1.08] font-sans">
-              Built for every industry
+              <Typewriter text="Built for every industry" />
             </h2>
             <p className="text-[17px] sm:text-[19px] text-[#4B5563] mt-4 font-semibold leading-relaxed max-w-2xl mx-auto">
               Choose your vertical to explore real-world, high-performing automation workflows.

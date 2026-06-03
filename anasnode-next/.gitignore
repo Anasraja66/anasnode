@@ -41,3 +41,7 @@ yarn-error.log*
 next-env.d.ts
 
 /src/generated/prisma
+
+# SQLite WAL-mode lock files (created at runtime, should never be committed)
+*.db-shm
+*.db-wal

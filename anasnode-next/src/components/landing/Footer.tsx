@@ -62,10 +62,14 @@ const footerColumns = [
 export function Footer() {
   return (
     <footer className="relative bg-white border-t border-zinc-100 overflow-hidden" suppressHydrationWarning>
-      {/* Background Glow Blobs - Hero Theme */}
-      <div className="absolute top-0 left-0 right-0 h-full pointer-events-none z-0">
-        <div className="absolute top-[-20%] left-[10%] w-[40%] h-[60%] bg-[#0A6BFF] blur-[120px] rounded-full opacity-[0.02] mix-blend-multiply" />
-        <div className="absolute bottom-[-20%] right-[10%] w-[40%] h-[60%] bg-[#38BDF8] blur-[120px] rounded-full opacity-[0.02] mix-blend-multiply" />
+      {/* Gemini-style Sky Blue & White background (Bottom) */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
+        <div 
+          className="absolute bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[1400px] h-[800px] opacity-80"
+          style={{
+            background: 'radial-gradient(ellipse at 50% 100%, #d6ebfc 0%, #ffffff 70%)'
+          }}
+        />
       </div>
 
       <div className="max-w-[1200px] mx-auto px-6 pt-14 pb-8 relative z-10">

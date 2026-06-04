@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
+import { signOut } from "next-auth/react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   LayoutDashboard,
@@ -624,7 +625,10 @@ function Sidebar({ active, onChange, ws, onWsChange, workspaces, preset, user, o
           <Plug className="w-[18px] h-[18px] text-zinc-300 group-hover:text-zinc-500 stroke-[2]" />
           Integrations
         </a>
-        <button className="w-full flex items-center gap-3 h-11 px-3 rounded-xl text-[13px] font-medium text-zinc-450 hover:bg-zinc-100 hover:text-zinc-700 transition-all group border-l-4 border-transparent pl-2 cursor-pointer">
+        <button 
+          onClick={() => signOut({ callbackUrl: "/" })}
+          className="w-full flex items-center gap-3 h-11 px-3 rounded-xl text-[13px] font-medium text-zinc-450 hover:bg-zinc-100 hover:text-zinc-700 transition-all group border-l-4 border-transparent pl-2 cursor-pointer"
+        >
           <LogOut className="w-[18px] h-[18px] text-zinc-300 group-hover:text-zinc-500 stroke-[2]" />
           Log out
         </button>

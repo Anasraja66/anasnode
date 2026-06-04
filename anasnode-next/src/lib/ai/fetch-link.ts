@@ -106,5 +106,5 @@ export async function enrichMessageWithLinks(text: string): Promise<string> {
 
   if (!previews.length) return text;
 
-  return `${text}\n\n[Link info for you — use this to help the customer, do NOT say "link nahi khul raha"]:\n${previews.join("\n")}`;
+  return `${text}\n\n[Link info for you — use this to help the customer, do NOT say "cannot open the link"]:\n${previews.join("\n")}`;
 }

@@ -89,15 +89,15 @@ export default function TodayBookingsWidget() {
   };
 
   return (
-    <div className="bg-white border border-zinc-150 rounded-[24px] p-[28px] shadow-sm hover:shadow-lg transition-all flex flex-col h-full font-sans group">
-      <div className="flex items-center justify-between pb-6 border-b border-zinc-100">
-        <div className="flex items-center gap-4">
-          <div className="w-11 h-11 rounded-xl bg-sky-50 text-[#0A6BFF] flex items-center justify-center shadow-sm">
+    <div className="bg-white border border-zinc-200 rounded-xl p-6 shadow-sm hover:border-zinc-350 transition-all flex flex-col h-full font-sans group">
+      <div className="flex items-center justify-between pb-4 border-b border-zinc-100">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-lg bg-sky-50 text-[#0A6BFF] flex items-center justify-center shadow-sm">
             <Calendar className="w-5 h-5" />
           </div>
           <div>
-            <h3 className="text-[18px] font-semibold text-zinc-900">Today&apos;s Bookings</h3>
-            <p className="text-[11px] font-medium text-zinc-400 uppercase tracking-widest mt-0.5">Google Calendar Sync</p>
+            <h3 className="text-[15px] font-bold text-zinc-900 leading-none">Today&apos;s Bookings</h3>
+            <p className="text-[10px] font-semibold text-zinc-400 uppercase tracking-wider mt-1">Google Calendar Sync</p>
           </div>
         </div>
         <button
@@ -129,17 +129,17 @@ export default function TodayBookingsWidget() {
             {bookings.map((booking) => (
               <div 
                 key={booking.id}
-                className="flex items-center justify-between p-4 bg-zinc-50/50 hover:bg-zinc-50 border border-zinc-100 rounded-2xl transition-all hover:scale-[1.01]"
+                className="flex items-center justify-between p-3.5 bg-zinc-50/50 hover:bg-zinc-50 border border-zinc-150 rounded-xl transition-all hover:scale-[1.01]"
               >
-                <div className="flex items-center gap-3.5 min-w-0">
-                  <div className="w-9 h-9 rounded-xl bg-white border border-zinc-150 flex items-center justify-center shrink-0">
-                    <span className="text-[11px] font-extrabold text-zinc-700 uppercase">
+                <div className="flex items-center gap-3 min-w-0">
+                  <div className="w-9 h-9 rounded-lg bg-white border border-zinc-200 flex items-center justify-center shrink-0">
+                    <span className="text-[11px] font-bold text-zinc-700 uppercase">
                       {booking.contactName.slice(0, 2)}
                     </span>
                   </div>
                   <div className="min-w-0">
-                    <p className="text-[15px] font-semibold text-zinc-850 truncate">{booking.contactName}</p>
-                    <p className="text-[13px] text-zinc-400 font-medium truncate flex items-center gap-1.5 mt-0.5">
+                    <p className="text-[13px] font-semibold text-zinc-900 truncate">{booking.contactName}</p>
+                    <p className="text-[11.5px] text-zinc-400 font-medium truncate flex items-center gap-1.5 mt-0.5">
                       {getChannelIcon(booking.channel)}
                       <span>{booking.title}</span>
                     </p>

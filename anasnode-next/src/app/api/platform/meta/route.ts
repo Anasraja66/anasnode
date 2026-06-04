@@ -50,7 +50,7 @@ export async function POST(request: Request) {
 
     if (!appId?.trim() || !appSecret?.trim() || !configId?.trim()) {
       return NextResponse.json(
-        { error: "Teen cheezein chahiye: App ID, App Secret, Config ID" },
+        { error: "Three parameters are required: App ID, App Secret, and Config ID" },
         { status: 400 }
       );
     }
@@ -63,7 +63,7 @@ export async function POST(request: Request) {
 
     return NextResponse.json({
       success: true,
-      message: "Meta save ho gaya! Ab WhatsApp par Connect with Meta dabao.",
+      message: "Meta configurations saved successfully! Now go to WhatsApp integration and click Connect with Meta.",
     });
   } catch (error: unknown) {
     if (error instanceof Error && error.message === "UNAUTHORIZED") {
@@ -73,7 +73,7 @@ export async function POST(request: Request) {
     const detail =
       error instanceof Error ? error.message : "Save failed";
     const hint = detail.includes("platform_meta")
-      ? "Database update chahiye — dev server restart karo (npm run dev)"
+      ? "Database update required. Please restart your dev server (npm run dev)."
       : detail;
     return NextResponse.json({ error: hint }, { status: 500 });
   }

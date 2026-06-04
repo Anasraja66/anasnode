@@ -73,9 +73,9 @@ export function IntegrationsHub() {
                   </p>
                   <Link
                     href="/dashboard/setup"
-                    className="text-[12px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-lg hover:bg-emerald-100"
+                    className="text-[12px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-lg hover:bg-emerald-100 transition-colors"
                   >
-                    Pehli dafa? Setup Help
+                    First time? Setup Help
                   </Link>
                 </div>
               </div>
@@ -134,16 +134,16 @@ export function IntegrationsHub() {
           ))
         )}
 
-        <div className="rounded-2xl border border-dashed border-zinc-300 bg-white/60 p-8 text-center">
-          <p className="text-[15px] font-bold text-zinc-800">
-            Prompt: &quot;Mera WhatsApp number +92 300… hai — lead qualify karo&quot;
+        <div className="rounded-xl border border-dashed border-zinc-300 bg-white/60 p-8 text-center">
+          <p className="text-[14px] font-bold text-zinc-800">
+            Prompt: &quot;My WhatsApp number is +1 300... — help qualify leads&quot;
           </p>
           <p className="text-[13px] text-zinc-500 mt-2 max-w-lg mx-auto">
-            Pehle Anaos plan banata hai, phir yahan connect karte ho — 5 minute setup.
+            First Anaos generates your workflow plan, then you connect here — setup takes 5 minutes.
           </p>
           <Link
             href="/"
-            className="inline-block mt-4 px-5 py-2.5 rounded-xl bg-[#0A6BFF] text-white text-[13px] font-bold"
+            className="inline-block mt-4 px-5 py-2.5 rounded-xl bg-[#3B82F6] hover:bg-blue-600 text-white text-[13px] font-bold transition-all"
           >
             Try prompt on home
           </Link>

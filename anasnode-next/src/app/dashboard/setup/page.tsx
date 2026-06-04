@@ -39,7 +39,7 @@ export default function SetupHelpPage() {
 
   const saveMeta = async () => {
     if (!appSecret.trim() || appSecret.includes("•")) {
-      setError("App Secret dubara likho — khali ya galat lag raha hai.");
+      setError("Please re-enter your App Secret — it appears empty or invalid.");
       return;
     }
     setSaving(true);
@@ -61,23 +61,23 @@ export default function SetupHelpPage() {
       } catch {
         setError(
           res.status === 401
-            ? "Pehle login karo — /login"
-            : `Server error (${res.status}). npm run dev restart karo.`
+            ? "Please log in first — /login"
+            : `Server error (${res.status}). Please restart your dev server.`
         );
         return;
       }
       if (!res.ok) {
-        setError(data.error || "Save nahi hua");
+        setError(data.error || "Save failed");
         return;
       }
-      setMessage(data.message || "Meta save ho gaya!");
+      setMessage(data.message || "Meta settings saved successfully!");
       setAlreadySaved(true);
       setStep(4);
     } catch (e) {
       if (e instanceof Error && e.name === "AbortError") {
-        setError("Bahut der — server chal raha hai? npm run dev restart karo.");
+        setError("Request timed out. Is the dev server running? Try restarting the server.");
       } else {
-        setError("Internet / server error — login + dev server check karo.");
+        setError("Network or server error. Please check your login session and dev server.");
       }
     } finally {
       clearTimeout(timeout);
@@ -90,7 +90,7 @@ export default function SetupHelpPage() {
       type="button"
       onClick={() => setStep(n)}
       className={`flex items-center gap-2 text-left text-[13px] font-bold ${
-        step === n ? "text-[#0A6BFF]" : "text-zinc-500"
+        step === n ? "text-[#3B82F6]" : "text-zinc-500"
       }`}
     >
       {step > n || (n === 4 && alreadySaved) ? (
@@ -103,151 +103,152 @@ export default function SetupHelpPage() {
   );
 
   return (
-    <div className="min-h-screen bg-[#F0F2F5] py-10 px-6">
+    <div className="min-h-screen bg-[#F8FAFC] py-10 px-6 font-sans">
       <div className="max-w-lg mx-auto">
         <Link
           href="/dashboard"
-          className="inline-flex items-center gap-2 text-[13px] font-semibold text-zinc-500 mb-6"
+          className="inline-flex items-center gap-2 text-[13px] font-semibold text-zinc-500 mb-6 hover:text-zinc-800 transition-colors"
         >
           <ArrowLeft className="w-4 h-4" /> Dashboard
         </Link>
 
-        <h1 className="text-[28px] font-extrabold text-zinc-900">Setup Help</h1>
-        <p className="text-[15px] text-zinc-600 mt-2 font-medium">
-          Sirf <strong>ek dafa</strong> — phir har client sirf Connect dabayega. Koi .env
-          file nahi.
+        <h1 className="text-[28px] font-extrabold text-zinc-950 tracking-tight">Setup Help</h1>
+        <p className="text-[14px] text-zinc-500 mt-2 font-medium">
+          Only <strong>one-time setup</strong> — then every client simply clicks Connect. No .env files needed.
         </p>
 
         <div className="grid gap-2 mt-8 mb-6">
-          <StepDot n={1} label="1. Meta site kholo" />
-          <StepDot n={2} label="2. Teen cheezein copy karo" />
-          <StepDot n={3} label="3. Yahan paste + Save" />
-          <StepDot n={4} label="4. WhatsApp Connect" />
+          <StepDot n={1} label="1. Open Meta Developers portal" />
+          <StepDot n={2} label="2. Copy three parameters" />
+          <StepDot n={3} label="3. Paste & save here" />
+          <StepDot n={4} label="4. Connect WhatsApp" />
         </div>
 
-        <div className="bg-white rounded-2xl border border-zinc-200 p-6 shadow-sm space-y-4">
+        <div className="bg-white rounded-xl border border-zinc-200 p-6 shadow-sm space-y-4">
           {message && (
-            <p className="text-emerald-800 bg-emerald-50 border border-emerald-200 rounded-xl px-4 py-3 text-[14px] font-medium">
+            <p className="text-emerald-800 bg-emerald-50 border border-emerald-200 rounded-xl px-4 py-3 text-[14px] font-medium animate-in fade-in">
               {message}
             </p>
           )}
           {error && (
-            <p className="text-red-800 bg-red-50 border border-red-200 rounded-xl px-4 py-3 text-[14px]">
+            <p className="text-red-800 bg-red-50 border border-red-200 rounded-xl px-4 py-3 text-[14px] font-medium animate-in fade-in">
               {error}
             </p>
           )}
 
           {step === 1 && (
             <>
-              <p className="text-[15px] text-zinc-700">
-                Facebook / Meta par jao — wahan app banegi (Anaos ke liye, client ke liye
-                nahi).
+              <p className="text-[14px] text-zinc-600 leading-relaxed">
+                Go to the Facebook / Meta Developers portal. You will create a Meta app here for your workspace platform (not for the individual client).
               </p>
               <a
                 href="https://developers.facebook.com/apps/"
                 target="_blank"
                 rel="noreferrer"
-                className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-[#1877F2] text-white font-bold"
+                className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl bg-[#3B82F6] hover:bg-blue-600 text-white font-bold text-[14px] transition-all"
               >
-                Meta kholo <ExternalLink className="w-4 h-4" />
+                Open Meta Developers <ExternalLink className="w-4 h-4" />
               </a>
-              <ol className="text-[14px] text-zinc-600 space-y-2 list-decimal list-inside">
-                <li>Create App → type <strong>Business</strong></li>
+              <ol className="text-[13px] text-zinc-500 space-y-1 list-decimal list-inside leading-relaxed">
+                <li>Create App → Select type <strong>Business</strong></li>
                 <li>Add product → <strong>WhatsApp</strong></li>
               </ol>
               <button
                 type="button"
                 onClick={() => setStep(2)}
-                className="w-full py-3 rounded-xl bg-[#0A6BFF] text-white font-bold flex items-center justify-center gap-2"
+                className="w-full py-2.5 rounded-xl bg-[#3B82F6] hover:bg-blue-600 text-white font-bold text-[14px] flex items-center justify-center gap-2 transition-all cursor-pointer"
               >
-                Ho gaya, agla <ArrowRight className="w-4 h-4" />
+                Done, next step <ArrowRight className="w-4 h-4" />
               </button>
             </>
           )}
 
           {step === 2 && (
             <>
-              <p className="text-[14px] font-bold text-zinc-800">Yeh 3 copy karo:</p>
-              <div className="space-y-3 text-[14px]">
-                <div className="bg-zinc-50 rounded-xl p-3 border">
-                  <p className="font-bold text-zinc-800">① App ID</p>
+              <p className="text-[14px] font-bold text-zinc-800">Copy these 3 parameters:</p>
+              <div className="space-y-3 text-[13px] leading-normal">
+                <div className="bg-zinc-50 rounded-xl p-3 border border-zinc-200">
+                  <p className="font-bold text-zinc-950">① App ID</p>
                   <p className="text-zinc-500 mt-1">
-                    App → Settings → Basic → top par <strong>App ID</strong>
+                    App → App settings → Basic → find the <strong>App ID</strong> at the top
                   </p>
                 </div>
-                <div className="bg-zinc-50 rounded-xl p-3 border">
-                  <p className="font-bold text-zinc-800">② App Secret</p>
+                <div className="bg-zinc-50 rounded-xl p-3 border border-zinc-200">
+                  <p className="font-bold text-zinc-950">② App Secret</p>
                   <p className="text-zinc-500 mt-1">
-                    Same page → Show → <strong>App secret</strong>
+                    Same page → Click Show → <strong>App secret</strong>
                   </p>
                 </div>
-                <div className="bg-zinc-50 rounded-xl p-3 border">
-                  <p className="font-bold text-zinc-800">③ Configuration ID</p>
+                <div className="bg-zinc-50 rounded-xl p-3 border border-zinc-200">
+                  <p className="font-bold text-zinc-950">③ Configuration ID</p>
                   <p className="text-zinc-500 mt-1">
-                    Facebook Login for Business → Configurations → WhatsApp Embedded
-                    template → ID copy
+                    Facebook Login for Business → Configurations → WhatsApp Embedded template → copy the Configuration ID
                   </p>
                 </div>
               </div>
               <button
                 type="button"
                 onClick={() => setStep(3)}
-                className="w-full py-3 rounded-xl bg-[#0A6BFF] text-white font-bold"
+                className="w-full py-2.5 rounded-xl bg-[#3B82F6] hover:bg-blue-600 text-white font-bold text-[14px] transition-all cursor-pointer"
               >
-                Teen copy ho gaye — paste karta hoon
+                All three copied — proceed to paste
               </button>
             </>
           )}
 
           {step === 3 && (
             <>
-              <p className="text-[14px] text-zinc-600">Neeche paste karo — Save dabao.</p>
-              <label className="block text-[12px] font-bold text-zinc-500">App ID</label>
-              <input
-                className="w-full border rounded-xl px-4 py-2.5 mb-3"
-                value={appId}
-                onChange={(e) => setAppId(e.target.value)}
-                placeholder="123456789012345"
-              />
-              <label className="block text-[12px] font-bold text-zinc-500">App Secret</label>
-              <input
-                type="password"
-                className="w-full border rounded-xl px-4 py-2.5 mb-3"
-                value={appSecret}
-                onChange={(e) => setAppSecret(e.target.value)}
-                placeholder="Secret from Meta"
-              />
-              <label className="block text-[12px] font-bold text-zinc-500">
-                Configuration ID
-              </label>
-              <input
-                className="w-full border rounded-xl px-4 py-2.5 mb-4"
-                value={configId}
-                onChange={(e) => setConfigId(e.target.value)}
-                placeholder="Config ID"
-              />
+              <p className="text-[14px] text-zinc-600">Paste them below and click Save.</p>
+              <div className="space-y-1">
+                <label className="block text-[11px] font-bold text-zinc-400 uppercase tracking-wider">App ID</label>
+                <input
+                  className="w-full border border-zinc-200 rounded-xl px-4 py-2 text-[14px] focus:outline-none focus:border-[#3B82F6]"
+                  value={appId}
+                  onChange={(e) => setAppId(e.target.value)}
+                  placeholder="123456789012345"
+                />
+              </div>
+              <div className="space-y-1 mt-3">
+                <label className="block text-[11px] font-bold text-zinc-400 uppercase tracking-wider">App Secret</label>
+                <input
+                  type="password"
+                  className="w-full border border-zinc-200 rounded-xl px-4 py-2 text-[14px] focus:outline-none focus:border-[#3B82F6]"
+                  value={appSecret}
+                  onChange={(e) => setAppSecret(e.target.value)}
+                  placeholder="Secret from Meta"
+                />
+              </div>
+              <div className="space-y-1 mt-3">
+                <label className="block text-[11px] font-bold text-zinc-400 uppercase tracking-wider">Configuration ID</label>
+                <input
+                  className="w-full border border-zinc-200 rounded-xl px-4 py-2 text-[14px] focus:outline-none focus:border-[#3B82F6]"
+                  value={configId}
+                  onChange={(e) => setConfigId(e.target.value)}
+                  placeholder="Config ID"
+                />
+              </div>
               <button
                 type="button"
                 disabled={saving || !appId || !appSecret || !configId}
                 onClick={saveMeta}
-                className="w-full py-3 rounded-xl bg-emerald-600 text-white font-bold flex items-center justify-center gap-2 disabled:opacity-50"
+                className="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold flex items-center justify-center gap-2 disabled:opacity-50 mt-4 transition-all cursor-pointer"
               >
                 {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-                Save — Anaos mein
+                Save in Anaos
               </button>
             </>
           )}
 
           {step === 4 && (
             <>
-              <p className="text-[15px] text-zinc-700">
-                Ab WhatsApp connect karo — neela button <strong>Connect with Meta</strong>.
+              <p className="text-[14px] text-zinc-600">
+                Now connect your WhatsApp — click the <strong>Connect with Meta</strong> button inside integrations.
               </p>
               <Link
                 href="/dashboard/integrations/whatsapp"
-                className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-emerald-600 text-white font-bold"
+                className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-[14px] transition-all"
               >
-                WhatsApp Connect <ArrowRight className="w-4 h-4" />
+                Go to WhatsApp Integration <ArrowRight className="w-4 h-4" />
               </Link>
             </>
           )}

@@ -801,15 +801,15 @@ export function InboxPage({
                     >
                       <div className="max-w-[85%] space-y-1">
                         <div
-                          className={`rounded-2xl px-4 py-2.5 transition-all ${
+                          className={`rounded-xl px-4 py-2.5 transition-all ${
                             out
                               ? isAi
-                                ? "bg-[#E6F0FF] text-[#0A6BFF] font-medium rounded-tr-none"
-                                : "bg-[#0A6BFF] text-white rounded-tr-none font-medium"
-                              : "bg-[#F1F5F9] text-zinc-900 rounded-tl-none font-medium"
+                                ? "bg-[#E6F0FF] text-[#0A6BFF] font-medium"
+                                : "bg-[#0A6BFF] text-white font-medium"
+                              : "bg-[#F1F5F9] text-zinc-900 font-medium"
                           }`}
                         >
-                          <p className="text-[13.5px] whitespace-pre-wrap leading-relaxed">
+                          <p className="text-[13px] whitespace-pre-wrap leading-relaxed">
                             {cleanBody}
                           </p>
                         </div>
@@ -855,7 +855,7 @@ export function InboxPage({
                     waConnected ? "Type a message..." : "Connect WhatsApp to reply"
                   }
                   disabled={!waConnected}
-                  className="flex-1 bg-transparent px-3 py-2 text-[13.5px] focus:outline-none disabled:cursor-not-allowed text-zinc-950 placeholder:text-zinc-400"
+                  className="flex-1 bg-transparent px-3 py-2 text-[13px] focus:outline-none disabled:cursor-not-allowed text-zinc-950 placeholder:text-zinc-400"
                 />
                 <button
                   type="button"

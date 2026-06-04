@@ -22,6 +22,6 @@ export async function GET() {
     graphVersion,
     setupHint: configured
       ? null
-      : "Dashboard → Setup Help — wahan 3 values paste karo (App ID, Secret, Config ID)",
+      : "Dashboard → Setup Help — paste the 3 required Meta parameters there (App ID, Secret, Config ID)",
   });
 }

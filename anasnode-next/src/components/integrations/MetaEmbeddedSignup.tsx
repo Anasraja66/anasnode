@@ -227,16 +227,16 @@ export function MetaEmbeddedSignup({
 
   if (!config.configured) {
     return (
-      <div className="rounded-xl border border-amber-200 bg-amber-50 p-4 text-[13px] text-amber-900">
-        <p className="font-bold">Pehle Meta save karo (sirf ek dafa)</p>
+      <div className="rounded-xl border border-amber-200 bg-amber-50/50 p-4 text-[13px] text-amber-900 font-sans">
+        <p className="font-bold">Please configure Meta settings first (one-time setup)</p>
         <p className="mt-1 text-amber-800">
-          {config.setupHint || "Dashboard → Setup Help — 3 values paste karo"}
+          {config.setupHint || "Dashboard → Setup Help — paste the 3 required Meta parameters."}
         </p>
         <a
           href="/dashboard/setup"
-          className="inline-block mt-3 px-4 py-2 rounded-lg bg-amber-700 text-white text-[13px] font-bold"
+          className="inline-block mt-3 px-4 py-2 rounded-lg bg-amber-700 hover:bg-amber-800 text-white text-[13px] font-bold transition-colors"
         >
-          Setup Help kholo
+          Open Setup Help
         </a>
       </div>
     );

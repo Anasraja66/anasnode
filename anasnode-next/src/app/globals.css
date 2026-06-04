@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
@@ -5,13 +6,13 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
-  --radius-2xl: calc(var(--radius) + 8px);
-  --radius-3xl: calc(var(--radius) + 12px);
-  --radius-4xl: calc(var(--radius) + 16px);
+  --radius-sm: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 0.75rem;
+  --radius-2xl: 0.75rem;
+  --radius-3xl: 0.75rem;
+  --radius-4xl: 0.75rem;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -48,49 +49,49 @@
   --color-primary-soft: var(--primary-soft);
   --color-success: var(--success);
   --color-success-foreground: var(--success-foreground);
-  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
   --font-heading: var(--font-sans);
 }
 
 :root {
-  --radius: 0.625rem; /* Clean 12px card border radius */
-  --radius-btn: 0.5rem; /* Clean 8px button & input border radius */ /* Pure white background #FFFFFF */ /* ManyChat deep dark grey text #1F2937 */
-  --card: oklch(1 0 0); /* Pure white cards #FFFFFF */
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0); /* Premium custom sky blue */
-  --primary-foreground: oklch(0.985 0 0);
-  --primary-soft: oklch(0.95 0.02 230); /* Light sky blue soft tint */
-  --secondary: oklch(0.97 0 0); /* Slate tint #F3F4F6 */
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0); /* Muted slate text #6B7280 */
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --success: oklch(0.70 0.15 145);
-  --success-foreground: oklch(1 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --destructive-foreground: oklch(0.98 0.01 29);
-  --border: oklch(0.922 0 0); /* ManyChat standard border #E5E7EB */
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --sidebar: oklch(0.985 0 0); /* ManyChat sidebar background #F7F7F8 */
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
+  --radius: 0.75rem; /* Clean 12px card border radius */
+  --radius-btn: 0.5rem; /* Clean 8px button & input border radius */
+  --card: #FFFFFF; /* Pure white cards */
+  --card-foreground: #111827;
+  --popover: #FFFFFF;
+  --popover-foreground: #111827;
+  --primary: #3B82F6; /* Modern Blue */
+  --primary-foreground: #FFFFFF;
+  --primary-soft: #EFF6FF; /* Light blue soft tint */
+  --secondary: #F1F5F9; /* Slate tint */
+  --secondary-foreground: #111827;
+  --muted: #F1F5F9;
+  --muted-foreground: #6B7280; /* Muted slate text */
+  --accent: #F1F5F9;
+  --accent-foreground: #111827;
+  --success: #10B981;
+  --success-foreground: #FFFFFF;
+  --destructive: #EF4444;
+  --destructive-foreground: #FFFFFF;
+  --border: #E5E7EB; /* Clean border #E5E7EB */
+  --input: #E5E7EB;
+  --ring: #3B82F6;
+  --chart-1: #3B82F6;
+  --chart-2: #6B7280;
+  --chart-3: #10B981;
+  --chart-4: #F59E0B;
+  --chart-5: #EF4444;
+  --sidebar: #FFFFFF; /* Pure white sidebar background */
+  --sidebar-foreground: #111827;
+  --sidebar-primary: #3B82F6;
+  --sidebar-primary-foreground: #FFFFFF;
+  --sidebar-accent: #F1F5F9;
+  --sidebar-accent-foreground: #111827;
+  --sidebar-border: #E5E7EB;
+  --sidebar-ring: #3B82F6;
+  --background: #F8FAFC; /* Clean light background #F8FAFC */
+  --foreground: #111827;
 }
 
 .dark {
@@ -146,7 +147,7 @@
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground text-sm;
   }
 }
 

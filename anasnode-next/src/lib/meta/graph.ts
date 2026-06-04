@@ -35,7 +35,7 @@ export async function exchangeEmbeddedSignupCode(
   const appId = platform.appId;
   const appSecret = platform.appSecret;
   if (!appId || !appSecret) {
-    throw new Error("Meta app not configured — Setup Help page par 3 values save karo");
+    throw new Error("Meta app not configured — Please save the 3 required Meta parameters on the Setup Help page first.");
   }
 
   const params = new URLSearchParams({

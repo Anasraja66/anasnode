@@ -70,15 +70,15 @@ export default function ChannelStatusWidget() {
   };
 
   return (
-    <div className="bg-white border border-zinc-150 rounded-[24px] p-[28px] shadow-sm hover:shadow-lg transition-all flex flex-col h-full font-sans group">
-      <div className="flex items-center justify-between pb-6 border-b border-zinc-100">
-        <div className="flex items-center gap-4">
-          <div className="w-11 h-11 rounded-xl bg-sky-50 text-[#0A6BFF] flex items-center justify-center shadow-sm">
+    <div className="bg-white border border-zinc-200 rounded-xl p-6 shadow-sm hover:border-zinc-350 transition-all flex flex-col h-full font-sans group">
+      <div className="flex items-center justify-between pb-4 border-b border-zinc-100">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-lg bg-sky-50 text-[#0A6BFF] flex items-center justify-center shadow-sm">
             <CheckCircle2 className="w-5 h-5" />
           </div>
           <div>
-            <h3 className="text-[18px] font-semibold text-zinc-900">Channel Status</h3>
-            <p className="text-[11px] font-medium text-zinc-400 uppercase tracking-widest mt-0.5">Integrations Health</p>
+            <h3 className="text-[15px] font-bold text-zinc-900 leading-none">Channel Status</h3>
+            <p className="text-[10px] font-semibold text-zinc-400 uppercase tracking-wider mt-1">Integrations Health</p>
           </div>
         </div>
         <button
@@ -106,13 +106,13 @@ export default function ChannelStatusWidget() {
                 key={channel.id}
                 className="flex items-center justify-between py-1.5"
               >
-                <div className="flex items-center gap-3.5 min-w-0">
-                  <div className="w-10 h-10 rounded-xl bg-zinc-50 border border-zinc-100 flex items-center justify-center shrink-0">
+                <div className="flex items-center gap-3 min-w-0">
+                  <div className="w-9 h-9 rounded-lg bg-zinc-50 border border-zinc-200 flex items-center justify-center shrink-0">
                     {getChannelIcon(channel.id)}
                   </div>
                   <div className="min-w-0">
-                    <p className="text-[15px] font-semibold text-zinc-800 truncate">{channel.name}</p>
-                    <p className="text-[11px] text-zinc-400 truncate mt-0.5">
+                    <p className="text-[13px] font-semibold text-zinc-850 truncate">{channel.name}</p>
+                    <p className="text-[11.5px] text-zinc-450 truncate mt-0.5">
                       {channel.providerId === "meta" ? "Meta Cloud" : "Google Cloud API"}
                     </p>
                   </div>

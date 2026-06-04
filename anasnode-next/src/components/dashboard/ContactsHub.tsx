@@ -252,7 +252,7 @@ export function ContactsHub() {
           placeholder="Search leads by name, phone or email..."
           value={q}
           onChange={(e) => setQ(e.target.value)}
-          className="h-11 pl-10 pr-4 rounded-2xl border border-zinc-200 text-[14px] bg-white focus:outline-none focus:border-sky-300 focus:ring-4 focus:ring-sky-50 transition-all w-full shadow-sm"
+          className="h-11 pl-10 pr-4 rounded-xl border border-zinc-200 text-sm bg-white focus:outline-none focus:border-sky-300 focus:ring-4 focus:ring-sky-50 transition-all w-full shadow-sm"
         />
       </div>
 
@@ -422,13 +422,13 @@ export function ContactsHub() {
         </div>
       )}
 
-      <div className="rounded-2xl border border-zinc-200 bg-white overflow-hidden shadow-sm">
+      <div className="rounded-xl border border-zinc-200 bg-white overflow-hidden shadow-sm">
         <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
+          <table className="w-full text-left border-collapse text-[13px]">
             <thead>
               <tr className="border-b border-zinc-100 bg-zinc-50/50">
                 {["Contact", "Communication", "Tags", "AI Status", ""].map((h) => (
-                  <th key={h} className="px-6 py-4 text-[11px] font-black text-zinc-400 uppercase tracking-widest">
+                  <th key={h} className="px-6 py-3.5 text-[11px] font-semibold text-zinc-400 uppercase tracking-wider">
                     {h}
                   </th>
                 ))}
@@ -461,15 +461,15 @@ export function ContactsHub() {
                           {c.name ? c.name[0].toUpperCase() : "?"}
                         </div>
                         <div className="min-w-0">
-                          <p className="text-[14px] font-black text-zinc-900 truncate tracking-tight">{c.name || "Unknown"}</p>
+                          <p className="text-[13.5px] font-semibold text-zinc-900 truncate tracking-tight">{c.name || "Unknown"}</p>
                           <p className="text-[12px] text-zinc-500 font-mono tracking-tighter">{c.phone}</p>
                         </div>
                       </div>
                     </td>
                     <td className="px-6 py-5">
                       <div className="space-y-0.5">
-                        <p className="text-[13px] font-medium text-zinc-600 truncate max-w-[200px]">{c.lastMessage || "No messages yet"}</p>
-                        {c.email && <p className="text-[11px] text-zinc-400">{c.email}</p>}
+                        <p className="text-[13px] text-zinc-650 truncate max-w-[200px]">{c.lastMessage || "No messages yet"}</p>
+                        {c.email && <p className="text-[11.5px] text-zinc-400">{c.email}</p>}
                       </div>
                     </td>
                     <td className="px-6 py-5">

@@ -296,26 +296,26 @@ function DashboardHome({ ws, preset }: { ws: Workspace; preset: IndustryPreset }
 
         {/* 3-Column Analytics Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          <div className="bg-white border border-zinc-200 rounded-[16px] p-6 shadow-sm hover:border-zinc-300 transition-all duration-300">
+          <div className="bg-white border border-zinc-200 rounded-xl p-6 shadow-sm hover:border-zinc-300 transition-all duration-300">
             <p className="text-[11px] text-zinc-500 font-bold uppercase tracking-[0.1em]">Total Conversations</p>
             <div className="flex items-baseline gap-2 mt-2">
-              <span className="text-[36px] font-black text-zinc-900 leading-none">1,482</span>
+              <span className="text-[26px] font-bold text-zinc-900 leading-none">1,482</span>
               <span className="text-[12px] text-sky-600 font-medium ml-1 bg-sky-50 px-2 py-0.5 rounded-full">+12.5%</span>
             </div>
             <p className="text-[12px] text-zinc-500 mt-2">Active threads across Meta & WhatsApp</p>
           </div>
-          <div className="bg-white border border-zinc-200 rounded-[16px] p-6 shadow-sm hover:border-zinc-300 transition-all duration-300">
+          <div className="bg-white border border-zinc-200 rounded-xl p-6 shadow-sm hover:border-zinc-300 transition-all duration-300">
             <p className="text-[11px] text-zinc-500 font-bold uppercase tracking-[0.1em]">AI Resolution Rate</p>
             <div className="flex items-baseline gap-2 mt-2">
-              <span className="text-[36px] font-black text-zinc-900 leading-none">84.2%</span>
+              <span className="text-[26px] font-bold text-zinc-900 leading-none">84.2%</span>
               <span className="text-[12px] text-emerald-600 font-medium ml-1 bg-emerald-50 px-2 py-0.5 rounded-full">Optimal</span>
             </div>
             <p className="text-[12px] text-zinc-500 mt-2">Resolved automatically by Anaos AI</p>
           </div>
-          <div className="bg-white border border-zinc-200 rounded-[16px] p-6 shadow-sm hover:border-zinc-300 transition-all duration-300">
+          <div className="bg-white border border-zinc-200 rounded-xl p-6 shadow-sm hover:border-zinc-300 transition-all duration-300">
             <p className="text-[11px] text-zinc-500 font-bold uppercase tracking-[0.1em]">Pending Bookings</p>
             <div className="flex items-baseline gap-2 mt-2">
-              <span className="text-[36px] font-black text-zinc-900 leading-none">12</span>
+              <span className="text-[26px] font-bold text-zinc-900 leading-none">12</span>
               <span className="text-[12px] text-sky-600 font-medium ml-1 bg-sky-50 px-2 py-0.5 rounded-full">Today</span>
             </div>
             <p className="text-[12px] text-zinc-500 mt-2">Google Calendar synced slot bookings</p>
@@ -323,7 +323,7 @@ function DashboardHome({ ws, preset }: { ws: Workspace; preset: IndustryPreset }
         </div>
 
         {/* Compact Prompt Input Card */}
-        <motion.div variants={itemVariants} className="bg-white border border-zinc-200 rounded-[16px] p-6 shadow-sm relative z-20">
+        <motion.div variants={itemVariants} className="bg-white border border-zinc-200 rounded-xl p-6 shadow-sm relative z-20">
           <h2 className="text-[16px] font-bold text-zinc-900 mb-3 font-sans">Ask Anaos AI to build or edit automations</h2>
           <PromptBox />
           
@@ -370,7 +370,7 @@ function DashboardHome({ ws, preset }: { ws: Workspace; preset: IndustryPreset }
           {/* LEFT: Messaging Channels */}
           <motion.div 
             variants={itemVariants}
-            className="bg-white border border-zinc-200 rounded-[16px] p-6 space-y-6 shadow-sm hover:border-zinc-300 transition-all duration-300 flex flex-col group"
+            className="bg-white border border-zinc-200 rounded-xl p-6 space-y-6 shadow-sm hover:border-zinc-300 transition-all duration-300 flex flex-col group"
           >
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-lg bg-[#FAFAFA] border border-zinc-200 text-zinc-700 flex items-center justify-center shadow-sm">
@@ -400,7 +400,7 @@ function DashboardHome({ ws, preset }: { ws: Workspace; preset: IndustryPreset }
           <div className="flex flex-col gap-6">
             <motion.div 
               variants={itemVariants}
-              className="bg-white border border-zinc-200 rounded-[16px] p-6 shadow-sm flex flex-col items-center text-center relative overflow-hidden group hover:border-zinc-300 transition-colors"
+              className="bg-white border border-zinc-200 rounded-xl p-6 shadow-sm flex flex-col items-center text-center relative overflow-hidden group hover:border-zinc-300 transition-colors"
             >
               <div className="w-14 h-14 rounded-full bg-sky-50 flex items-center justify-center text-sky-500 mb-4 relative border border-sky-100">
                  <Zap className="w-6 h-6 fill-current" />
@@ -416,7 +416,7 @@ function DashboardHome({ ws, preset }: { ws: Workspace; preset: IndustryPreset }
             {/* BOTTOM: Content & Growth */}
             <motion.div 
               variants={itemVariants}
-              className="bg-white border border-zinc-200 rounded-[16px] p-6 space-y-6 shadow-sm hover:border-zinc-300 transition-all duration-300 flex-1 group"
+              className="bg-white border border-zinc-200 rounded-xl p-6 space-y-6 shadow-sm hover:border-zinc-300 transition-all duration-300 flex-1 group"
             >
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-lg bg-[#FAFAFA] border border-zinc-200 text-zinc-700 flex items-center justify-center shadow-sm">
@@ -443,7 +443,7 @@ function DashboardHome({ ws, preset }: { ws: Workspace; preset: IndustryPreset }
           {/* RIGHT: Business Integrations */}
           <motion.div 
             variants={itemVariants}
-            className="bg-white border border-zinc-200 rounded-[16px] p-6 space-y-6 shadow-sm hover:border-zinc-300 transition-all duration-300 flex flex-col group"
+            className="bg-white border border-zinc-200 rounded-xl p-6 space-y-6 shadow-sm hover:border-zinc-300 transition-all duration-300 flex flex-col group"
           >
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-lg bg-[#FAFAFA] border border-zinc-200 text-zinc-700 flex items-center justify-center shadow-sm">
@@ -530,9 +530,9 @@ function Sidebar({ active, onChange, ws, onWsChange, workspaces, preset, user, o
   NAV_ITEMS.push({ id: "ai_agent",    label: "AI Training",    icon: Zap });
 
   return (
-    <aside className={`dashboard-sidebar w-[240px] shrink-0 border-r border-zinc-200 bg-white flex flex-col h-full z-40 transition-transform duration-300 md:translate-x-0 md:static fixed inset-y-0 left-0 ${open ? "translate-x-0" : "-translate-x-full"}`}>
+    <aside className={`dashboard-sidebar w-[260px] shrink-0 border-r border-zinc-200 bg-white flex flex-col h-full z-40 transition-transform duration-300 md:translate-x-0 md:static fixed inset-y-0 left-0 ${open ? "translate-x-0" : "-translate-x-full"}`}>
       {/* Professional Branding Logo */}
-      <div className="h-14 px-6 flex items-center justify-between border-b border-zinc-100 relative">
+      <div className="h-16 px-6 flex items-center justify-between border-b border-zinc-100 relative">
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 rounded-lg bg-zinc-800 flex items-center justify-center text-white shadow-sm ring-1 ring-white/10">
             <Zap className="w-4.5 h-4.5 fill-current text-blue-400" />
@@ -605,7 +605,7 @@ function Sidebar({ active, onChange, ws, onWsChange, workspaces, preset, user, o
               key={id}
               type="button"
               onClick={() => onChange(id)}
-              className={`w-full flex items-center gap-3 h-11 px-3 rounded-xl text-[14px] transition-all cursor-pointer group border-l-4 ${
+              className={`w-full flex items-center gap-3 h-11 px-3 rounded-xl text-[13px] transition-all cursor-pointer group border-l-4 ${
                 isActive
                   ? "bg-[#E6F0FF] text-[#0A6BFF] font-bold border-[#0A6BFF] rounded-l-none pl-2 shadow-sm"
                   : "text-zinc-550 font-medium hover:bg-zinc-100 hover:text-zinc-855 border-transparent pl-2"
@@ -630,7 +630,7 @@ function Sidebar({ active, onChange, ws, onWsChange, workspaces, preset, user, o
             <button
               type="button"
               onClick={() => onChange("analytics")}
-              className={`w-full flex items-center gap-3 h-11 px-3 rounded-xl text-[14px] transition-all cursor-pointer group border-l-4 ${
+              className={`w-full flex items-center gap-3 h-11 px-3 rounded-xl text-[13px] transition-all cursor-pointer group border-l-4 ${
                 active === "analytics"
                   ? "bg-[#E6F0FF] text-[#0A6BFF] font-bold border-[#0A6BFF] rounded-l-none pl-2 shadow-sm"
                   : "text-zinc-550 font-medium hover:bg-zinc-100 hover:text-zinc-855 border-transparent pl-2"
@@ -653,7 +653,7 @@ function Sidebar({ active, onChange, ws, onWsChange, workspaces, preset, user, o
           <button
             type="button"
             onClick={() => onChange("team")}
-            className={`w-full flex items-center gap-3 h-11 px-3 rounded-xl text-[13.5px] font-medium transition-all group cursor-pointer border-l-4 ${
+            className={`w-full flex items-center gap-3 h-11 px-3 rounded-xl text-[13px] font-medium transition-all group cursor-pointer border-l-4 ${
               active === "team"
                 ? "bg-[#E6F0FF] text-[#0A6BFF] font-bold border-[#0A6BFF] rounded-l-none pl-2 shadow-sm"
                 : "text-zinc-450 hover:bg-zinc-100 hover:text-zinc-700 border-transparent pl-2"
@@ -665,12 +665,12 @@ function Sidebar({ active, onChange, ws, onWsChange, workspaces, preset, user, o
         )}
         <a
           href="/dashboard/integrations"
-          className="w-full flex items-center gap-3 h-11 px-3 rounded-xl text-[13.5px] font-medium text-zinc-450 hover:bg-zinc-100 hover:text-zinc-700 transition-all group border-l-4 border-transparent pl-2"
+          className="w-full flex items-center gap-3 h-11 px-3 rounded-xl text-[13px] font-medium text-zinc-450 hover:bg-zinc-100 hover:text-zinc-700 transition-all group border-l-4 border-transparent pl-2"
         >
           <Plug className="w-[18px] h-[18px] text-zinc-300 group-hover:text-zinc-500 stroke-[2]" />
           Integrations
         </a>
-        <button className="w-full flex items-center gap-3 h-11 px-3 rounded-xl text-[13.5px] font-medium text-zinc-450 hover:bg-zinc-100 hover:text-zinc-700 transition-all group border-l-4 border-transparent pl-2 cursor-pointer">
+        <button className="w-full flex items-center gap-3 h-11 px-3 rounded-xl text-[13px] font-medium text-zinc-450 hover:bg-zinc-100 hover:text-zinc-700 transition-all group border-l-4 border-transparent pl-2 cursor-pointer">
           <LogOut className="w-[18px] h-[18px] text-zinc-300 group-hover:text-zinc-500 stroke-[2]" />
           Log out
         </button>
@@ -754,7 +754,7 @@ function Topbar({ title, ws, preset, waStatus, integrations, onMenuClick }: {
         </div>
       )}
 
-      <header className="h-14 border-b border-zinc-200 bg-white px-4 md:px-6 flex items-center justify-between shrink-0">
+      <header className="h-16 border-b border-zinc-200 bg-white px-4 md:px-6 flex items-center justify-between shrink-0">
         <div className="flex items-center gap-3 text-[13.5px]">
           <button 
             type="button" 
@@ -867,7 +867,7 @@ function AnalyticsPage() {
       {loading ? (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
           {[1, 2, 3, 4].map((i) => (
-            <div key={i} className="h-32 rounded-[24px] bg-white/50 border border-zinc-100 animate-pulse" />
+            <div key={i} className="h-32 rounded-xl bg-white border border-zinc-100 animate-pulse" />
           ))}
         </div>
       ) : (
@@ -876,19 +876,19 @@ function AnalyticsPage() {
             {cards.map((s) => (
               <div
                 key={s.label}
-                className="rounded-[24px] border border-zinc-100 bg-white/50 backdrop-blur-md p-7 shadow-sm hover:shadow-md transition-shadow"
+                className="rounded-xl border border-zinc-200 bg-white p-6 shadow-sm hover:border-zinc-300 transition-all duration-300"
               >
-                <p className="text-[11px] text-zinc-400 font-black uppercase tracking-[0.2em]">
+                <p className="text-[11px] text-zinc-400 font-bold uppercase tracking-[0.1em]">
                   {s.label}
                 </p>
-                <span className="text-3xl font-black text-zinc-800 tabular-nums mt-3 block tracking-tight">
+                <span className="text-[26px] font-bold text-zinc-900 tabular-nums mt-3 block tracking-tight leading-none">
                   {s.value}
                 </span>
               </div>
             ))}
           </div>
 
-          <div className="rounded-[32px] border border-zinc-100 bg-white/50 backdrop-blur-md overflow-hidden shadow-sm">
+          <div className="rounded-xl border border-zinc-200 bg-white overflow-hidden shadow-sm">
             <div className="px-8 py-6 border-b border-zinc-100 flex items-center justify-between bg-zinc-50/30">
               <div>
                 <h2 className="text-[17px] font-black text-zinc-800 tracking-tight">Workflow activity</h2>

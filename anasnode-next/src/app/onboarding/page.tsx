@@ -16,7 +16,11 @@ import {
   TrendingUp,
   Activity,
   Globe,
+  Facebook,
+  Instagram,
+  MessageCircle,
 } from "lucide-react";
+import { MetaOAuthConnect } from "@/components/dashboard/MetaOAuthConnect";
 import {
   INDUSTRY_OPTIONS,
   type IndustryId,
@@ -43,6 +47,14 @@ export default function OnboardingPage() {
     () => LANGUAGE_CATALOG.map((l) => l.code)
   );
 
+  // --- Meta Auth State ---
+  const [selectedChannels, setSelectedChannels] = useState<("whatsapp"|"instagram"|"facebook")[]>([]);
+  const toggleChannel = (c: "whatsapp"|"instagram"|"facebook") => {
+    setSelectedChannels((prev) => 
+      prev.includes(c) ? prev.filter((x) => x !== c) : [...prev, c]
+    );
+  };
+
   useEffect(() => {
     if (session?.user?.name && !fullName) {
       setFullName(session.user.name);
@@ -52,7 +64,7 @@ export default function OnboardingPage() {
   const selectedPreset = industryId ? getIndustryPreset(industryId) : null;
 
   const handleNext = () => {
-    if (step < 5) {
+    if (step < 7) {
       setStep(step + 1);
     } else {
       handleSubmit();
@@ -212,7 +224,7 @@ export default function OnboardingPage() {
           </span>
         </div>
         <div className="text-[13px] text-zinc-400 font-semibold uppercase tracking-widest font-mono">
-          Step {step} of 5
+          Step {step} of 7
         </div>
       </header>
 
@@ -557,7 +569,80 @@ export default function OnboardingPage() {
                 </div>
               )}
 
-              <div className="flex items-center justify-between pt-4 border-t border-zinc-100">
+              {step === 6 && (
+                <div className="flex flex-col items-center text-center">
+                  <motion.h2 
+                    variants={itemVariants}
+                    className="text-[26px] font-extrabold text-zinc-900 tracking-tight leading-tight mb-2"
+                  >
+                    Connect your channels
+                  </motion.h2>
+                  <motion.p 
+                    variants={itemVariants}
+                    className="text-[14px] text-zinc-500 font-medium mb-8 max-w-sm mx-auto"
+                  >
+                    Select the business channels you want Anaos AI to manage for you.
+                  </motion.p>
+
+                  <motion.div variants={itemVariants} className="grid grid-cols-1 gap-3 w-full max-w-md mx-auto mb-8">
+                    {[
+                      { id: "whatsapp" as const, name: "WhatsApp Business", icon: MessageCircle, color: "text-[#25D366]", bg: "bg-[#25D366]/10", border: "border-[#25D366]" },
+                      { id: "instagram" as const, name: "Instagram DM", icon: Instagram, color: "text-[#E4405F]", bg: "bg-[#E4405F]/10", border: "border-[#E4405F]" },
+                      { id: "facebook" as const, name: "Facebook Messenger", icon: Facebook, color: "text-[#1877F2]", bg: "bg-[#1877F2]/10", border: "border-[#1877F2]" },
+                    ].map((c) => {
+                      const isSelected = selectedChannels.includes(c.id);
+                      return (
+                        <button
+                          key={c.id}
+                          onClick={() => toggleChannel(c.id)}
+                          className={`flex items-center gap-4 p-4 rounded-xl border-2 transition-all cursor-pointer ${
+                            isSelected 
+                              ? `${c.border} bg-zinc-50/50 shadow-sm` 
+                              : `border-zinc-200 hover:border-zinc-300 hover:bg-zinc-50`
+                          }`}
+                        >
+                          <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${isSelected ? c.bg : "bg-zinc-100"}`}>
+                            <c.icon className={`w-5 h-5 ${isSelected ? c.color : "text-zinc-500"}`} />
+                          </div>
+                          <span className={`font-bold text-[15px] ${isSelected ? "text-zinc-900" : "text-zinc-600"}`}>
+                            {c.name}
+                          </span>
+                          <div className="ml-auto">
+                            <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${isSelected ? c.border + " " + c.bg : "border-zinc-300"}`}>
+                              {isSelected && <Check className={`w-3.5 h-3.5 ${c.color}`} />}
+                            </div>
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </motion.div>
+                </div>
+              )}
+
+              {step === 7 && (
+                <div className="flex flex-col items-center">
+                  <motion.h2 
+                    variants={itemVariants}
+                    className="text-[26px] font-extrabold text-zinc-900 tracking-tight leading-tight mb-2"
+                  >
+                    Link Accounts
+                  </motion.h2>
+                  <motion.p 
+                    variants={itemVariants}
+                    className="text-[14px] text-zinc-500 font-medium mb-8 text-center"
+                  >
+                    Authenticate with Meta to finish setup.
+                  </motion.p>
+                  <motion.div variants={itemVariants} className="w-full">
+                    <MetaOAuthConnect 
+                      channels={selectedChannels} 
+                      onSuccess={handleSubmit} 
+                    />
+                  </motion.div>
+                </div>
+              )}
+
+              <div className="flex items-center justify-between pt-4 border-t border-zinc-100 mt-4">
                 <button
                   type="button"
                   onClick={handleBack}
@@ -568,7 +653,17 @@ export default function OnboardingPage() {
                 </button>
                 <button
                   type="button"
-                  onClick={handleNext}
+                  onClick={() => {
+                    // If step 6 and no channels selected, we can let them skip by just doing handleSubmit()
+                    if (step === 6 && selectedChannels.length === 0) {
+                      handleSubmit();
+                    } else if (step === 7) {
+                      // Do nothing, they must click the Meta button to proceed
+                    } else {
+                      handleNext();
+                    }
+                  }}
+                  style={step === 7 ? { display: 'none' } : { backgroundColor: accent }}
                   disabled={
                     (step === 1 && !industryId) ||
                     (step === 2 && (!fullName.trim() || !companyName.trim())) ||
@@ -577,9 +672,8 @@ export default function OnboardingPage() {
                     (step === 5 && enabledLanguages.length === 0)
                   }
                   className="h-11 px-6 rounded-xl text-white font-bold disabled:opacity-40 flex items-center gap-1.5 text-[13.5px] cursor-pointer transition-all shadow-md hover:shadow-lg hover:brightness-105"
-                  style={{ backgroundColor: accent }}
                 >
-                  <span>{step === 5 ? "Open my dashboard" : "Continue"}</span>
+                  <span>{step === 6 ? (selectedChannels.length === 0 ? "Skip for now" : "Continue") : "Continue"}</span>
                   <ArrowRight className="w-4 h-4" />
                 </button>
               </div>
@@ -589,7 +683,7 @@ export default function OnboardingPage() {
       </main>
 
       <footer className="w-full max-w-6xl mx-auto flex justify-center items-center gap-1.5 pb-6 z-10">
-        {[1, 2, 3, 4, 5].map((i) => (
+        {[1, 2, 3, 4, 5, 6, 7].map((i) => (
           <button
             key={i}
             type="button"

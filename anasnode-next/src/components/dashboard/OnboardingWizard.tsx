@@ -12,12 +12,7 @@ export function OnboardingWizard() {
   const [completed, setCompleted] = useState(false);
 
   useEffect(() => {
-    // Show wizard on first load if not completed before
-    const hasCompleted = localStorage.getItem("anaos_onboarding_completed");
-    if (!hasCompleted) {
-      setTimeout(() => setShow(true), 1500); // Small delay so the user sees the dashboard first, then POP
-    }
-
+    // Only show manually via event now, since onboarding covers initial setup
     const handleOpen = () => {
       setShow(true);
       setStep(1);

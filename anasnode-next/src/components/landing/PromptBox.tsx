@@ -22,52 +22,40 @@ export function PromptBox({ onGenerate, compact }: Props) {
   const [mounted, setMounted] = useState(false);
   const [selectedAction, setSelectedAction] = useState("Build");
 
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   // Typewriter effect state
   const placeholders = [
     "Create a WhatsApp AI that handles my car rental bookings...",
     "Build a lead qualification agent for my solar business...",
     "Set up an automated support bot for my Shopify store...",
-    "Automate my clinic's patient scheduling and reminders...",
-    "Build a CRM-integrated agent for my real estate agency...",
+    "Automate my clinic's patient scheduling and reminders..."
   ];
   const [placeholderText, setPlaceholderText] = useState("");
   const [placeholderIndex, setPlaceholderIndex] = useState(0);
   const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  // Typewriter animation loop
-  useEffect(() => {
     if (!mounted) return;
-    let timer: NodeJS.Timeout;
-    const currentText = placeholders[placeholderIndex];
     
-    if (isDeleting) {
-      if (placeholderText === "") {
-        setIsDeleting(false);
-        setPlaceholderIndex((prev) => (prev + 1) % placeholders.length);
-        timer = setTimeout(() => {}, 400); 
-      } else {
-        timer = setTimeout(() => {
-          setPlaceholderText(currentText.substring(0, placeholderText.length - 1));
-        }, 30); // Faster erasing
-      }
-    } else {
-      if (placeholderText === currentText) {
-        timer = setTimeout(() => {
-          setIsDeleting(true);
-        }, 2500); // Pause when fully typed
-      } else {
-        timer = setTimeout(() => {
-          setPlaceholderText(currentText.substring(0, placeholderText.length + 1));
-        }, 65); // Typing speed
-      }
-    }
-    return () => clearTimeout(timer);
-  }, [placeholderText, isDeleting, placeholderIndex, mounted]);
+    const currentText = placeholders[placeholderIndex];
+    let timeout: NodeJS.Timeout;
 
+    if (!isDeleting && placeholderText.length < currentText.length) {
+      timeout = setTimeout(() => setPlaceholderText(currentText.slice(0, placeholderText.length + 1)), 50);
+    } else if (!isDeleting && placeholderText.length === currentText.length) {
+      timeout = setTimeout(() => setIsDeleting(true), 2000);
+    } else if (isDeleting && placeholderText.length > 0) {
+      timeout = setTimeout(() => setPlaceholderText(currentText.slice(0, placeholderText.length - 1)), 30);
+    } else if (isDeleting && placeholderText.length === 0) {
+      setIsDeleting(false);
+      setPlaceholderIndex((prev) => (prev + 1) % placeholders.length);
+    }
+
+    return () => clearTimeout(timeout);
+  }, [placeholderText, isDeleting, placeholderIndex, mounted]);
   const stages = [
     "Reading requirements...",
     "Drafting agent schema...",
@@ -127,25 +115,25 @@ export function PromptBox({ onGenerate, compact }: Props) {
         />
         
         {mounted && (
-          <div className="flex items-center justify-between px-3 pb-2.5 pt-1">
+          <div className="flex flex-col md:flex-row md:items-center justify-between px-3 pb-2.5 pt-1 gap-3 md:gap-0">
             {/* Left circular plus button & Presets */}
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 md:gap-3 w-full md:w-auto overflow-hidden">
               <button
                 type="button"
-                className="w-10 h-10 rounded-full border border-zinc-200 bg-white hover:border-zinc-300 hover:shadow-sm flex items-center justify-center text-zinc-400 hover:text-zinc-800 transition-all cursor-pointer"
+                className="w-10 h-10 shrink-0 rounded-full border border-zinc-200 bg-white hover:border-zinc-300 hover:shadow-sm flex items-center justify-center text-zinc-400 hover:text-zinc-800 transition-all cursor-pointer"
               >
                 <Plus className="w-5 h-5" />
               </button>
               
               {!loading && (
-                <div className="hidden lg:flex items-center gap-2 ml-1">
-                  <span className="text-[11px] font-bold text-zinc-400 uppercase tracking-widest mr-1">Try Presets:</span>
+                <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide whitespace-nowrap pr-2 md:pr-0 pb-1 md:pb-0" style={{ msOverflowStyle: 'none', scrollbarWidth: 'none' }}>
+                  <span className="text-[11px] font-bold text-zinc-400 uppercase tracking-widest mr-1 shrink-0">Try Presets:</span>
                   {EXAMPLES.map((chip) => (
                     <button
                       key={chip.label}
                       type="button"
                       onClick={() => setValue(chip.text)}
-                      className="text-[12px] font-bold px-4 py-1.5 rounded-full bg-white hover:bg-zinc-50 text-zinc-700 border border-zinc-200 transition-all cursor-pointer shadow-sm active:scale-95"
+                      className="text-[12px] font-bold px-3 py-1.5 md:px-4 md:py-1.5 rounded-full bg-white hover:bg-zinc-50 text-zinc-700 border border-zinc-200 transition-all cursor-pointer shadow-sm active:scale-95 shrink-0"
                     >
                       {chip.label}
                     </button>
@@ -155,7 +143,7 @@ export function PromptBox({ onGenerate, compact }: Props) {
             </div>
 
             {/* Right-aligned action controls */}
-            <div className="flex items-center gap-4">
+            <div className="flex items-center justify-between md:justify-end w-full md:w-auto gap-2 md:gap-4 shrink-0">
               {/* Dropdown Action Selector */}
               <div className="relative">
                 <button

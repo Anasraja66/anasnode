@@ -164,7 +164,7 @@ export function Hero() {
   ];
 
   return (
-    <section className="pt-16 sm:pt-24 pb-20 px-6 relative overflow-hidden bg-white">
+    <section className="pt-16 sm:pt-24 pb-20 px-6 relative overflow-hidden bg-[#FBF9F6]">
       {/* Modal Overlay */}
       <AnimatePresence>
         {isModalOpen && (

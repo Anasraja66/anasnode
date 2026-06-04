@@ -295,7 +295,7 @@ function DashboardHome({ ws, preset }: { ws: Workspace; preset: IndustryPreset }
         </div>
 
         {/* 3-Column Analytics Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           <div className="bg-white border border-zinc-200 rounded-[16px] p-6 shadow-sm hover:border-zinc-300 transition-all duration-300">
             <p className="text-[11px] text-zinc-500 font-bold uppercase tracking-[0.1em]">Total Conversations</p>
             <div className="flex items-baseline gap-2 mt-2">
@@ -379,9 +379,18 @@ function DashboardHome({ ws, preset }: { ws: Workspace; preset: IndustryPreset }
               <h3 className="text-[14px] font-semibold text-zinc-900">Messaging</h3>
             </div>
             <div className="space-y-3 flex-1">
-              {["WhatsApp Business", "Instagram DM", "Facebook Messenger", "Email & SMS"].map((c) => (
-                <div key={c} className="bg-white border border-zinc-200 px-4 py-3 rounded-lg text-[13px] font-medium text-zinc-700 shadow-sm flex items-center justify-between hover:border-sky-300 transition-colors cursor-pointer">
-                  {c} <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+              {[
+                { name: "WhatsApp Business", id: "whatsapp" },
+                { name: "Instagram DM", id: "instagram" },
+                { name: "Facebook Messenger", id: "facebook" },
+                { name: "Email & SMS", id: "smtp" }
+              ].map((c) => (
+                <div key={c.name} className="bg-white border border-zinc-200 px-4 py-3 rounded-xl text-[13px] font-semibold text-zinc-750 shadow-sm flex items-center justify-between hover:border-sky-300 transition-colors cursor-pointer group/item">
+                  <div className="flex items-center gap-3">
+                    <BrandIcon id={c.id} className="w-4.5 h-4.5 shrink-0" />
+                    <span>{c.name}</span>
+                  </div>
+                  <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
                 </div>
               ))}
             </div>
@@ -463,7 +472,7 @@ function DashboardHome({ ws, preset }: { ws: Workspace; preset: IndustryPreset }
         </div>
 
         {/* Bookings & Operational Activity */}
-        <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-2 gap-[28px] pt-6">
+        <motion.div variants={itemVariants} className="grid grid-cols-1 lg:grid-cols-2 gap-[28px] pt-6">
           <TodayBookingsWidget />
           <ChannelStatusWidget />
         </motion.div>
@@ -1685,7 +1694,7 @@ export default function Dashboard() {
         />
           
           <main
-            className={`flex-1 overflow-y-auto ${
+            className={`flex-1 overflow-y-auto overflow-x-hidden ${
               tab === "inbox" ? "overflow-hidden p-0" : "bg-[#F8F9FA]"
             }`}
           >

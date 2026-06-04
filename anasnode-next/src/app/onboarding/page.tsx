@@ -153,21 +153,75 @@ export default function OnboardingPage() {
     { id: "large", label: "200+ people", desc: "Larger organization", icon: Building2 },
   ];
 
-  const slideVariants = {
-    initial: { opacity: 0, x: 20 },
-    animate: { opacity: 1, x: 0, transition: { duration: 0.35, ease: "easeOut" as const } },
-    exit: { opacity: 0, x: -20, transition: { duration: 0.25, ease: "easeIn" as const } },
+  const stepVariants = {
+    initial: { opacity: 0, y: 16 },
+    animate: { 
+      opacity: 1, 
+      y: 0,
+      transition: { 
+        duration: 0.6,
+        ease: [0.16, 1, 0.3, 1] as const,
+        staggerChildren: 0.05,
+        delayChildren: 0.05,
+      } 
+    },
+    exit: { 
+      opacity: 0, 
+      y: -12,
+      transition: { 
+        duration: 0.3, 
+        ease: [0.16, 1, 0.3, 1] as const,
+      } 
+    },
+  };
+
+  const itemVariants = {
+    initial: { y: 12, opacity: 0 },
+    animate: { 
+      y: 0, 
+      opacity: 1,
+      transition: {
+        duration: 0.5,
+        ease: [0.16, 1, 0.3, 1] as const,
+      }
+    },
+    exit: { y: -8, opacity: 0 }
   };
 
   const accent = selectedPreset?.primary ?? "#0A6BFF";
 
   return (
-    <div className="min-h-screen bg-white text-zinc-900 flex flex-col justify-between items-center p-6 relative overflow-hidden font-sans">
-      <div
-        className="absolute top-[-10%] left-[-10%] w-[60%] h-[50%] rounded-full blur-[140px] pointer-events-none"
-        style={{ backgroundColor: `${accent}18` }}
+    <div className="min-h-screen bg-[#F8FAFC] text-zinc-900 flex flex-col justify-between items-center p-6 relative overflow-hidden font-sans">
+      {/* Background Grid & Slow Floating Glows */}
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,#e2e8f0_1px,transparent_1px),linear-gradient(to_bottom,#e2e8f0_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_40%,#000_70%,transparent_100%)] opacity-60 pointer-events-none" />
+      
+      <motion.div 
+        animate={{ 
+          scale: [1, 1.1, 1],
+          x: [0, 20, 0],
+          y: [0, -20, 0]
+        }}
+        transition={{ 
+          duration: 15,
+          repeat: Infinity,
+          ease: "easeInOut"
+        }}
+        className="absolute top-[-10%] left-[-10%] w-[600px] h-[600px] rounded-full blur-[120px] pointer-events-none" 
+        style={{ backgroundColor: `${accent}12` }}
       />
-      <div className="absolute bottom-[-15%] right-[-10%] w-[60%] h-[50%] rounded-full bg-[#38BDF8]/10 blur-[140px] pointer-events-none" />
+      <motion.div 
+        animate={{ 
+          scale: [1, 1.15, 1],
+          x: [0, -25, 0],
+          y: [0, 25, 0]
+        }}
+        transition={{ 
+          duration: 18,
+          repeat: Infinity,
+          ease: "easeInOut"
+        }}
+        className="absolute bottom-[-10%] right-[-10%] w-[600px] h-[600px] rounded-full bg-sky-400/10 blur-[120px] pointer-events-none" 
+      />
 
       <header className="w-full max-w-6xl mx-auto flex items-center justify-between z-10 pt-4">
         <div className="flex items-center gap-2">
@@ -185,7 +239,7 @@ export default function OnboardingPage() {
             Business setup
           </span>
         </div>
-        <div className="text-[13px] text-zinc-400 font-semibold uppercase tracking-widest">
+        <div className="text-[13px] text-zinc-400 font-semibold uppercase tracking-widest font-mono">
           Step {step} of 5
         </div>
       </header>
@@ -197,7 +251,7 @@ export default function OnboardingPage() {
               key="loading-screen"
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="bg-white/80 border border-zinc-200/80 shadow-[0_20px_50px_rgba(0,0,0,0.06)] rounded-3xl backdrop-blur-2xl p-10 flex flex-col items-center justify-center text-center h-[380px]"
+              className="bg-white/95 border border-zinc-200 bg-white/95 p-10 flex flex-col items-center justify-center text-center h-[380px] rounded-3xl shadow-xl relative backdrop-blur-md"
             >
               <div className="relative w-16 h-16 mb-6">
                 <div className="absolute inset-0 rounded-full border-4 border-zinc-100" />
@@ -217,45 +271,55 @@ export default function OnboardingPage() {
           ) : (
             <motion.div
               key={`step-${step}`}
-              variants={slideVariants}
+              variants={stepVariants}
               initial="initial"
               animate="animate"
               exit="exit"
-              className="bg-white/85 border border-zinc-200/60 shadow-[0_20px_50px_rgba(10,107,255,0.05)] rounded-3xl backdrop-blur-2xl p-8 sm:p-10 relative"
-            >
-              {step === 1 && (
+              className="bg-white/95 border border-zinc-200 shadow-2xl rounded-3xl backdrop-blur-md p-8 sm:p-10 relative z-10"
+            >              {step === 1 && (
                 <div className="flex flex-col">
-                  <h2 className="text-[26px] font-extrabold text-zinc-900 tracking-tight text-center leading-tight mb-2">
+                  <motion.h2 
+                    variants={itemVariants}
+                    className="text-[26px] font-extrabold text-zinc-900 tracking-tight text-center leading-tight mb-2"
+                  >
                     What type of business do you run?
-                  </h2>
-                  <p className="text-[14px] text-zinc-500 text-center font-medium mb-6">
+                  </motion.h2>
+                  <motion.p 
+                    variants={itemVariants}
+                    className="text-[14px] text-zinc-500 text-center font-medium mb-6"
+                  >
                     Your dashboard will look and feel built for this industry.
-                  </p>
+                  </motion.p>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-[340px] overflow-y-auto pr-1 mb-8">
                     {INDUSTRY_OPTIONS.map((opt) => {
                       const Icon = opt.icon;
                       const selected = industryId === opt.id;
                       return (
-                        <button
+                        <motion.button
+                          variants={itemVariants}
+                          whileHover={{ scale: 1.02, y: -2 }}
+                          whileTap={{ scale: 0.98 }}
                           key={opt.id}
                           type="button"
                           onClick={() => setIndustryId(opt.id)}
                           className={`flex items-start gap-3 p-3.5 rounded-xl border text-left transition-all cursor-pointer ${
-                            selected ? "ring-2" : "border-zinc-200 bg-white hover:bg-zinc-50"
+                            selected 
+                              ? "border-transparent ring-2 shadow-lg" 
+                              : "border-zinc-200 bg-white hover:bg-zinc-50 shadow-sm hover:shadow-md"
                           }`}
                           style={
                             selected
                               ? {
                                   borderColor: opt.primary,
                                   backgroundColor: opt.softBg,
-                                  boxShadow: `0 0 0 1px ${opt.softBorder}`,
+                                  boxShadow: `0 0 0 2px ${opt.primary}, 0 8px 24px -4px ${opt.primary}20`,
                                 }
                               : undefined
                           }
                         >
                           <div
-                            className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0 text-white"
+                            className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0 text-white transition-colors"
                             style={{ backgroundColor: selected ? opt.primary : "#e4e4e7" }}
                           >
                             <Icon className={`w-5 h-5 ${selected ? "" : "text-zinc-500"}`} />
@@ -264,7 +328,7 @@ export default function OnboardingPage() {
                             <p className="text-[14px] font-bold text-zinc-900">{opt.label}</p>
                             <p className="text-[11px] text-zinc-500 mt-0.5">{opt.tagline}</p>
                           </div>
-                        </button>
+                        </motion.button>
                       );
                     })}
                   </div>
@@ -273,16 +337,22 @@ export default function OnboardingPage() {
 
               {step === 2 && (
                 <div className="flex flex-col">
-                  <h2 className="text-[26px] font-extrabold text-zinc-900 tracking-tight text-center leading-tight mb-2">
+                  <motion.h2 
+                    variants={itemVariants}
+                    className="text-[26px] font-extrabold text-zinc-900 tracking-tight text-center leading-tight mb-2"
+                  >
                     Your business details
-                  </h2>
-                  <p className="text-[14px] text-zinc-500 text-center font-medium mb-8">
+                  </motion.h2>
+                  <motion.p 
+                    variants={itemVariants}
+                    className="text-[14px] text-zinc-500 text-center font-medium mb-8"
+                  >
                     {selectedPreset
                       ? `Setting up ${selectedPreset.label} for you.`
                       : "Tell us your name and brand."}
-                  </p>
+                  </motion.p>
 
-                  <div className="space-y-5 mb-8">
+                  <motion.div className="space-y-5 mb-8" variants={itemVariants}>
                     <div>
                       <label className="block text-[11px] font-bold text-zinc-500 uppercase tracking-widest mb-1.5">
                         Your name
@@ -292,7 +362,7 @@ export default function OnboardingPage() {
                         value={fullName}
                         onChange={(e) => setFullName(e.target.value)}
                         placeholder="e.g. Muhammad Qasim"
-                        className="w-full h-12 bg-white border border-zinc-200 rounded-xl px-4 text-[14px] font-semibold text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:border-[#0A6BFF] focus:ring-4 focus:ring-blue-500/10 transition-all"
+                        className="w-full h-12 bg-white border border-zinc-200 rounded-xl px-4 text-[14px] font-semibold text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:border-[#0A6BFF] focus:ring-4 focus:ring-blue-500/10 transition-all shadow-sm"
                       />
                     </div>
                     <div>
@@ -310,42 +380,57 @@ export default function OnboardingPage() {
                               ? "e.g. Olive & Oak"
                               : "e.g. Your clinic or shop name"
                         }
-                        className="w-full h-12 bg-white border border-zinc-200 rounded-xl px-4 text-[14px] font-semibold text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:border-[#0A6BFF] focus:ring-4 focus:ring-blue-500/10 transition-all"
+                        className="w-full h-12 bg-white border border-zinc-200 rounded-xl px-4 text-[14px] font-semibold text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:border-[#0A6BFF] focus:ring-4 focus:ring-blue-500/10 transition-all shadow-sm"
                       />
                     </div>
-                  </div>
+                  </motion.div>
                 </div>
               )}
 
               {step === 3 && (
                 <div className="flex flex-col">
-                  <h2 className="text-[26px] font-extrabold text-zinc-900 tracking-tight text-center leading-tight mb-2">
+                  <motion.h2 
+                    variants={itemVariants}
+                    className="text-[26px] font-extrabold text-zinc-900 tracking-tight text-center leading-tight mb-2"
+                  >
                     What is your role?
-                  </h2>
-                  <p className="text-[14px] text-zinc-500 text-center font-medium mb-6">
+                  </motion.h2>
+                  <motion.p 
+                    variants={itemVariants}
+                    className="text-[14px] text-zinc-500 text-center font-medium mb-6"
+                  >
                     We keep the dashboard simple — no developer jargon.
-                  </p>
+                  </motion.p>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-8">
                     {ownerRoles.map((r) => {
                       const Icon = r.icon;
                       const selected = ownerRole === r.id;
                       return (
-                        <button
+                        <motion.button
+                          variants={itemVariants}
+                          whileHover={{ scale: 1.02, y: -2 }}
+                          whileTap={{ scale: 0.98 }}
                           key={r.id}
                           type="button"
                           onClick={() => setOwnerRole(r.id)}
-                          className={`flex items-start gap-3 p-3 rounded-xl border text-left cursor-pointer ${
-                            selected ? "ring-2" : "border-zinc-200 hover:bg-zinc-50"
+                          className={`flex items-start gap-3 p-3 rounded-xl border text-left cursor-pointer transition-all ${
+                            selected 
+                              ? "ring-2 shadow-lg" 
+                              : "border-zinc-200 bg-white hover:bg-zinc-50 shadow-sm hover:shadow-md"
                           }`}
                           style={
                             selected
-                              ? { borderColor: accent, backgroundColor: `${accent}08` }
+                              ? { 
+                                  borderColor: accent, 
+                                  backgroundColor: `${accent}06`,
+                                  boxShadow: `0 0 0 2px ${accent}, 0 8px 20px -4px ${accent}15`
+                                }
                               : undefined
                           }
                         >
                           <div
-                            className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${
+                            className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 transition-colors ${
                               selected ? "text-white" : "bg-zinc-100 text-zinc-500"
                             }`}
                             style={selected ? { backgroundColor: accent } : undefined}
@@ -356,7 +441,7 @@ export default function OnboardingPage() {
                             <p className="text-[13.5px] font-bold text-zinc-900">{r.label}</p>
                             <p className="text-[11px] text-zinc-400 mt-0.5">{r.desc}</p>
                           </div>
-                        </button>
+                        </motion.button>
                       );
                     })}
                   </div>
@@ -365,34 +450,49 @@ export default function OnboardingPage() {
 
               {step === 4 && (
                 <div className="flex flex-col">
-                  <h2 className="text-[26px] font-extrabold text-zinc-900 tracking-tight text-center leading-tight mb-2">
+                  <motion.h2 
+                    variants={itemVariants}
+                    className="text-[26px] font-extrabold text-zinc-900 tracking-tight text-center leading-tight mb-2"
+                  >
                     How big is your team?
-                  </h2>
-                  <p className="text-[14px] text-zinc-500 text-center font-medium mb-8">
+                  </motion.h2>
+                  <motion.p 
+                    variants={itemVariants}
+                    className="text-[14px] text-zinc-500 text-center font-medium mb-8"
+                  >
                     Optional — helps us suggest the right plan later.
-                  </p>
+                  </motion.p>
 
                   <div className="space-y-3 mb-8">
                     {companySizes.map((size) => {
                       const Icon = size.icon;
                       const selected = companySize === size.id;
                       return (
-                        <button
+                        <motion.button
+                          variants={itemVariants}
+                          whileHover={{ scale: 1.01, y: -1 }}
+                          whileTap={{ scale: 0.99 }}
                           key={size.id}
                           type="button"
                           onClick={() => setCompanySize(size.id)}
-                          className={`w-full flex items-center justify-between p-4 rounded-xl border text-left cursor-pointer ${
-                            selected ? "ring-2" : "border-zinc-200 hover:bg-zinc-50"
+                          className={`w-full flex items-center justify-between p-4 rounded-xl border text-left cursor-pointer transition-all ${
+                            selected 
+                              ? "ring-2 shadow-lg" 
+                              : "border-zinc-200 bg-white hover:bg-zinc-50 shadow-sm hover:shadow-md"
                           }`}
                           style={
                             selected
-                              ? { borderColor: accent, backgroundColor: `${accent}08` }
+                              ? { 
+                                  borderColor: accent, 
+                                  backgroundColor: `${accent}06`,
+                                  boxShadow: `0 0 0 2px ${accent}, 0 8px 20px -4px ${accent}15`
+                                }
                               : undefined
                           }
                         >
                           <div className="flex items-center gap-4">
                             <div
-                              className={`w-10 h-10 rounded-lg flex items-center justify-center ${
+                              className={`w-10 h-10 rounded-lg flex items-center justify-center transition-colors ${
                                 selected ? "text-white" : "bg-zinc-100 text-zinc-500"
                               }`}
                               style={selected ? { backgroundColor: accent } : undefined}
@@ -414,7 +514,7 @@ export default function OnboardingPage() {
                               <Check className="w-3.5 h-3.5" />
                             </div>
                           )}
-                        </button>
+                        </motion.button>
                       );
                     })}
                   </div>
@@ -423,22 +523,34 @@ export default function OnboardingPage() {
 
               {step === 5 && (
                 <div className="flex flex-col">
-                  <h2 className="text-[26px] font-extrabold text-zinc-900 tracking-tight text-center leading-tight mb-2">
+                  <motion.h2 
+                    variants={itemVariants}
+                    className="text-[26px] font-extrabold text-zinc-900 tracking-tight text-center leading-tight mb-2"
+                  >
                     Customer languages
-                  </h2>
-                  <p className="text-[14px] text-zinc-500 text-center font-medium mb-4">
+                  </motion.h2>
+                  <motion.p 
+                    variants={itemVariants}
+                    className="text-[14px] text-zinc-500 text-center font-medium mb-4"
+                  >
                     Every industry, every country — on WhatsApp Anaos auto-detects and replies in
                     the customer&apos;s language (same for any normal business).
-                  </p>
-                  <div className="flex items-center justify-center gap-2 mb-4 text-[#0A6BFF]">
+                  </motion.p>
+                  <motion.div 
+                    variants={itemVariants}
+                    className="flex items-center justify-center gap-2 mb-4 text-[#0A6BFF]"
+                  >
                     <Globe className="w-5 h-5" />
                     <span className="text-[13px] font-bold">45+ languages supported</span>
-                  </div>
+                  </motion.div>
                   <div className="grid grid-cols-2 gap-2 max-h-[240px] overflow-y-auto mb-4 pr-1">
                     {LANGUAGE_CATALOG.map((l) => {
                       const on = enabledLanguages.includes(l.code);
                       return (
-                        <button
+                        <motion.button
+                          variants={itemVariants}
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.98 }}
                           key={l.code}
                           type="button"
                           onClick={() =>
@@ -448,25 +560,28 @@ export default function OnboardingPage() {
                                 : [...prev, l.code]
                             )
                           }
-                          className={`flex items-center gap-2 p-2 rounded-lg border text-[12px] ${
-                            on ? "border-[#0A6BFF] bg-[#0A6BFF]/5 font-semibold" : "border-zinc-200"
+                          className={`flex items-center gap-2 p-2 rounded-lg border text-[12px] cursor-pointer transition-all ${
+                            on 
+                              ? "border-[#0A6BFF] bg-blue-500/5 font-semibold shadow-sm" 
+                              : "border-zinc-200 bg-white hover:bg-zinc-50"
                           }`}
                         >
                           <span>{l.flag}</span>
                           <span className="truncate">{l.label}</span>
-                        </button>
+                        </motion.button>
                       );
                     })}
                   </div>
-                  <button
+                  <motion.button
+                    variants={itemVariants}
                     type="button"
                     onClick={() =>
                       setEnabledLanguages(LANGUAGE_CATALOG.map((l) => l.code))
                     }
-                    className="text-[12px] font-bold text-[#0A6BFF] mx-auto"
+                    className="text-[12px] font-bold text-[#0A6BFF] mx-auto hover:underline"
                   >
                     Select all languages
-                  </button>
+                  </motion.button>
                 </div>
               )}
 

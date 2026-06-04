@@ -233,12 +233,18 @@ function CanvasNode({
   onClick,
   onDragStart,
   onDragEnd,
+  isDragging,
+  isConnectingSource,
+  isConnectingCandidate,
 }: {
   node: WorkflowNodeData;
   selected: boolean;
   onClick: () => void;
   onDragStart: (e: React.MouseEvent) => void;
   onDragEnd: () => void;
+  isDragging?: boolean;
+  isConnectingSource?: boolean;
+  isConnectingCandidate?: boolean;
 }) {
   const type = normaliseType(node.type);
   const cfg = NODE_TYPES[type] ?? NODE_TYPES["trigger"];
@@ -248,29 +254,33 @@ function CanvasNode({
     <motion.div
       initial={{ scale: 0.8, opacity: 0 }}
       animate={{ scale: 1, opacity: 1 }}
+      className="canvas-node"
       style={{
         position: "absolute",
         left: node.x,
         top: node.y,
-        cursor: "grab",
+        cursor: isDragging ? "grabbing" : "grab",
         userSelect: "none",
-        zIndex: selected ? 20 : 10,
+        zIndex: isDragging ? 30 : selected ? 20 : 10,
       }}
       onClick={(e) => { e.stopPropagation(); onClick(); }}
       onMouseDown={onDragStart}
       onMouseUp={onDragEnd}
     >
       <div
-        className="rounded-2xl transition-all"
+        className="rounded-2xl transition-all duration-200"
         style={{
           background: "rgba(15,23,42,0.85)",
           border: `1.5px solid ${selected ? cfg.color : "rgba(255,255,255,0.08)"}`,
-          boxShadow: selected
-            ? `0 0 0 2px ${cfg.color}60, 0 0 32px ${cfg.glow}, 0 4px 20px rgba(0,0,0,0.5)`
-            : `0 0 16px ${cfg.glow}, 0 4px 12px rgba(0,0,0,0.4)`,
+          boxShadow: isDragging
+            ? `0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 0 40px ${cfg.glow}`
+            : selected
+              ? `0 0 0 2px ${cfg.color}60, 0 0 32px ${cfg.glow}, 0 4px 20px rgba(0,0,0,0.5)`
+              : `0 0 16px ${cfg.glow}, 0 4px 12px rgba(0,0,0,0.4)`,
           width: 140,
           minHeight: 80,
           backdropFilter: "blur(10px)",
+          transform: isDragging ? "scale(1.05) translateY(-4px)" : "scale(1)",
         }}
       >
         {/* Header */}
@@ -300,13 +310,27 @@ function CanvasNode({
 
         {/* Output port dot */}
         <div
-          className="absolute right-[-6px] top-1/2 -translate-y-1/2 w-3.5 h-3.5 rounded-full border-2 bg-zinc-950 shadow-sm"
+          className={`absolute right-[-6px] top-1/2 -translate-y-1/2 w-3.5 h-3.5 rounded-full border-2 bg-zinc-950 shadow-sm transition-all duration-300 z-10 ${
+            isConnectingSource ? "scale-125 animate-ping opacity-75" : ""
+          }`}
           style={{ borderColor: cfg.color, boxShadow: `0 0 8px ${cfg.color}` }}
         />
+        {isConnectingSource && (
+          <div
+            className="absolute right-[-6px] top-1/2 -translate-y-1/2 w-3.5 h-3.5 rounded-full border-2 bg-zinc-950 shadow-sm z-20"
+            style={{ borderColor: cfg.color, boxShadow: `0 0 12px 2px ${cfg.color}` }}
+          />
+        )}
+
         {/* Input port dot */}
         <div
-          className="absolute left-[-6px] top-1/2 -translate-y-1/2 w-3.5 h-3.5 rounded-full border-2 bg-zinc-950 shadow-sm"
-          style={{ borderColor: cfg.color, boxShadow: `0 0 8px ${cfg.color}` }}
+          className={`absolute left-[-6px] top-1/2 -translate-y-1/2 w-3.5 h-3.5 rounded-full border-2 bg-zinc-950 shadow-sm transition-all duration-300 z-10 ${
+            isConnectingCandidate ? "scale-125 animate-pulse" : ""
+          }`}
+          style={{ 
+            borderColor: isConnectingCandidate ? "#A78BFA" : cfg.color, 
+            boxShadow: isConnectingCandidate ? "0 0 12px #A78BFA" : `0 0 8px ${cfg.color}` 
+          }}
         />
       </div>
     </motion.div>
@@ -404,7 +428,7 @@ function PropertiesPanel({
       initial={{ x: 320, opacity: 0 }}
       animate={{ x: 0, opacity: 1 }}
       exit={{ x: 320, opacity: 0 }}
-      className="w-72 shrink-0 rounded-2xl overflow-hidden flex flex-col"
+      className="w-72 shrink-0 rounded-2xl overflow-hidden flex flex-col properties-panel"
       style={{
         background: "rgba(10,10,15,0.95)",
         border: `1px solid ${cfg.border}40`,
@@ -506,9 +530,56 @@ export default function WorkflowCanvas({ workflowId, initialData, workflowName =
   const [name, setName] = useState(workflowName);
   const [connecting, setConnecting] = useState<string | null>(null);
 
+  // Canvas Panning states
+  const [isPanning, setIsPanning] = useState(false);
+  const [panStart, setPanStart] = useState({ x: 0, y: 0 });
+
   const canvasRef = useRef<HTMLDivElement>(null);
 
   const selectedNodeData = nodes.find((n) => n.id === selectedNode) || null;
+
+  // Handle canvas background mouse down for panning
+  const handleCanvasMouseDown = useCallback((e: React.MouseEvent) => {
+    if (e.button !== 0) return; // Left click only
+
+    const target = e.target as HTMLElement;
+    if (
+      target.closest(".canvas-node") ||
+      target.closest("button") ||
+      target.closest("input") ||
+      target.closest("select") ||
+      target.closest("textarea") ||
+      target.closest(".properties-panel") // Properties Panel container
+    ) {
+      return;
+    }
+
+    setIsPanning(true);
+    setPanStart({ x: e.clientX - pan.x, y: e.clientY - pan.y });
+  }, [pan]);
+
+  // Global event listener for mousemove & mouseup while panning
+  useEffect(() => {
+    if (!isPanning) return;
+
+    const handleMouseMove = (e: MouseEvent) => {
+      setPan({
+        x: e.clientX - panStart.x,
+        y: e.clientY - panStart.y,
+      });
+    };
+
+    const handleMouseUp = () => {
+      setIsPanning(false);
+    };
+
+    window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("mouseup", handleMouseUp);
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("mouseup", handleMouseUp);
+    };
+  }, [isPanning, panStart]);
 
   // ── Drag node from palette onto canvas ────────────────────────────────────
   const handleCanvasDrop = useCallback((e: React.DragEvent) => {
@@ -735,9 +806,12 @@ export default function WorkflowCanvas({ workflowId, initialData, workflowName =
         {/* Center: Canvas */}
         <div
           ref={canvasRef}
-          className="flex-1 relative overflow-hidden"
+          className={`flex-1 relative overflow-hidden transition-colors ${
+            isPanning ? "cursor-grabbing" : "cursor-grab"
+          }`}
           onDragOver={(e) => e.preventDefault()}
           onDrop={handleCanvasDrop}
+          onMouseDown={handleCanvasMouseDown}
           onClick={() => { setSelectedNode(null); setConnecting(null); }}
         >
           <div
@@ -758,6 +832,9 @@ export default function WorkflowCanvas({ workflowId, initialData, workflowName =
                 onClick={() => handleNodeClick(node.id)}
                 onDragStart={(e) => { e.stopPropagation(); handleNodeMouseDown(e, node.id); }}
                 onDragEnd={() => {}}
+                isDragging={dragState?.nodeId === node.id}
+                isConnectingSource={connecting === node.id}
+                isConnectingCandidate={!!connecting && connecting !== node.id}
               />
             ))}
           </div>

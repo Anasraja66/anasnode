@@ -2,10 +2,10 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, Check, MessageCircle, ArrowRight } from "lucide-react";
+import { ArrowLeft, Check, Facebook, ArrowRight } from "lucide-react";
 import { MetaOAuthConnect } from "@/components/dashboard/MetaOAuthConnect";
 
-export default function WhatsAppSetupPage() {
+export default function FacebookSetupPage() {
   const [connected, setConnected] = useState(false);
 
   return (
@@ -21,13 +21,13 @@ export default function WhatsAppSetupPage() {
 
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-8 gap-4">
           <div className="flex items-center gap-4">
-            <div className="w-14 h-14 rounded-2xl bg-[#25D366] flex items-center justify-center">
-              <MessageCircle className="w-7 h-7 text-white fill-current" />
+            <div className="w-14 h-14 rounded-2xl bg-[#0A6BFF] flex items-center justify-center">
+              <Facebook className="w-7 h-7 text-white fill-current" />
             </div>
             <div>
-              <h1 className="text-[26px] font-extrabold text-zinc-900">WhatsApp Business</h1>
+              <h1 className="text-[26px] font-extrabold text-zinc-900">Facebook Messenger</h1>
               <p className="text-[14px] text-zinc-500 font-medium mt-0.5">
-                Connect your WhatsApp number with Anaos in 1-click.
+                Connect your Facebook Page with Anaos in 1-click.
               </p>
             </div>
           </div>
@@ -35,7 +35,7 @@ export default function WhatsAppSetupPage() {
 
         {!connected ? (
           <MetaOAuthConnect 
-            channels={["whatsapp"]} 
+            channels={["facebook"]} 
             onSuccess={() => setConnected(true)} 
           />
         ) : (
@@ -43,9 +43,9 @@ export default function WhatsAppSetupPage() {
             <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mb-6">
               <Check className="w-8 h-8 text-emerald-600" />
             </div>
-            <h2 className="text-[20px] font-bold text-zinc-900 mb-2">WhatsApp is Active</h2>
+            <h2 className="text-[20px] font-bold text-zinc-900 mb-2">Messenger is Active</h2>
             <p className="text-[14px] text-zinc-500 mb-8 max-w-sm">
-              Your WhatsApp Business number is successfully connected. Anaos AI will now automatically handle incoming messages according to your workflows.
+              Your Facebook Page is successfully connected. Anaos AI will now automatically handle incoming messages.
             </p>
             <Link
               href="/dashboard"

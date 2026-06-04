@@ -129,6 +129,8 @@ import { WordRotator } from "@/components/landing/WordRotator";
 
 // ─── OS Home Component (Premium SaaS - Business Owner Focus) ──────────
 
+import { OnboardingWizard } from "@/components/dashboard/OnboardingWizard";
+
 function DashboardHome({ ws, preset }: { ws: Workspace; preset: IndustryPreset }) {
   const Icon = preset.icon;
   const [showConnectors, setShowConnectors] = useState(true);
@@ -220,6 +222,7 @@ function DashboardHome({ ws, preset }: { ws: Workspace; preset: IndustryPreset }
       variants={containerVariants}
       className="space-y-[28px] relative z-10"
     >
+      <OnboardingWizard />
       {/* Background foundation removed for cleaner look */}
       <div className="relative z-10 space-y-[28px] max-w-6xl mx-auto font-sans">
         {/* Welcome Row (SaaS Style) */}
@@ -305,6 +308,7 @@ function DashboardHome({ ws, preset }: { ws: Workspace; preset: IndustryPreset }
                       Dismiss
                     </button>
                     <button 
+                      onClick={() => window.dispatchEvent(new Event("anaos-open-onboarding"))}
                       className="bg-zinc-900 hover:bg-zinc-800 text-white text-[12px] font-semibold px-4 py-1.5 rounded-lg transition-all shadow-sm font-sans"
                     >
                       Connect

@@ -104,7 +104,7 @@ export function PromptBox({ onGenerate, compact }: Props) {
 
   return (
     <div className={`w-full ${compact ? "max-w-xl" : "max-w-3xl"} mx-auto text-left relative z-10`}>
-      <div className="rounded-[32px] border border-zinc-200 bg-[#F9F9F7] p-2 hover:border-zinc-300 transition-all shadow-[0_8px_30px_rgb(0,0,0,0.04)] relative group/box">
+      <div className="rounded-[32px] border border-zinc-200 bg-white p-2 hover:border-zinc-300 transition-all shadow-[0_8px_30px_rgb(0,0,0,0.04)] relative group/box">
         <textarea
           value={value}
           onChange={(e) => setValue(e.target.value)}

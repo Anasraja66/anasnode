@@ -164,7 +164,7 @@ export function Hero() {
   ];
 
   return (
-    <section className="pt-16 sm:pt-24 pb-20 px-6 relative overflow-hidden bg-[#FBF9F6]">
+    <section className="pt-16 sm:pt-24 pb-20 px-6 relative overflow-hidden">
       {/* Modal Overlay */}
       <AnimatePresence>
         {isModalOpen && (
@@ -237,9 +237,15 @@ export function Hero() {
         )}
       </AnimatePresence>
 
-      {/* Crisp White background structure with soft top radial gradient */}
+      {/* Gemini-style Sky Blue & White background */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
-        <div className="absolute top-[-10%] left-1/2 -translate-x-1/2 w-[1000px] h-[500px] rounded-full bg-blue-50/50 opacity-70 blur-[120px]" />
+        <div className="absolute inset-0 bg-white" />
+        <div 
+          className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-[1400px] h-[800px] opacity-80"
+          style={{
+            background: 'radial-gradient(ellipse at 50% 0%, #d6ebfc 0%, #ffffff 70%)'
+          }}
+        />
       </div>
 
       <div className="max-w-4xl mx-auto text-center relative z-10">

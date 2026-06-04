@@ -258,7 +258,7 @@ export function Hero() {
           initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.55, delay: 0.05 }}
-          className="text-[44px] sm:text-[68px] lg:text-[76px] font-extrabold text-[#111827] tracking-[-0.04em] leading-[1.04] font-sans"
+          className="text-[44px] sm:text-[68px] lg:text-[76px] font-extrabold text-[#111827] tracking-[-0.04em] leading-[1.04] font-sans min-h-[2.1em]"
         >
           <Typewriter text="Build something Automated" />
         </motion.h1>

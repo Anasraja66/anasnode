@@ -125,6 +125,12 @@ export function generateWorkspaceFromPrompt(prompt: string): GeneratedWorkspace 
     ];
   }
 
+  // Ensure Meta channels (Facebook/Instagram) are ALWAYS available A-to-Z
+  automations.push(
+    { id: "a-meta-ig", name: "Instagram DM Assistant", type: "instagram_flow", enabled: true, runs: 0, lastRun: "Never" },
+    { id: "a-meta-fb", name: "Facebook Messenger Bot", type: "facebook_flow", enabled: true, runs: 0, lastRun: "Never" }
+  );
+
   return {
     id: `ws-custom-${Date.now()}`,
     name: businessName,
@@ -152,9 +158,9 @@ export async function generateWorkspaceWithAI(prompt: string): Promise<Generated
         messages: [
           {
             role: "system",
-            content: `Design a WhatsApp automation workspace. Return ONLY valid JSON:
-{"name":"string","industry":"string","automations":[{"id":"a1","name":"string","type":"whatsapp_flow|calendar|campaign","enabled":true,"runs":0,"lastRun":"Never"}],"variables":[{"key":"UPPER","value":"string","confidence":90,"ttl":"30 days"}]}
-Include 3-4 automations and 2-4 variables. No markdown.`,
+            content: `Design an omnichannel AI automation workspace. Return ONLY valid JSON:
+{"name":"string","industry":"string","automations":[{"id":"a1","name":"string","type":"whatsapp_flow|instagram_flow|facebook_flow|calendar|campaign","enabled":true,"runs":0,"lastRun":"Never"}],"variables":[{"key":"UPPER","value":"string","confidence":90,"ttl":"30 days"}]}
+Include 4-5 automations and 2-4 variables. No markdown.`,
           },
           { role: "user", content: `Business prompt: "${prompt}"` },
         ],
@@ -188,5 +194,17 @@ Include 3-4 automations and 2-4 variables. No markdown.`,
 export async function resolveWorkspaceFromPrompt(prompt: string): Promise<GeneratedWorkspace> {
   const ai = await generateWorkspaceWithAI(prompt);
   const ws = ai ?? generateWorkspaceFromPrompt(prompt);
+  
+  // Force append Meta flows if they don't already exist in the generated list
+  const hasIg = ws.automations.some(a => a.type === "instagram_flow");
+  const hasFb = ws.automations.some(a => a.type === "facebook_flow");
+  
+  if (!hasIg) {
+    ws.automations.push({ id: "a-meta-ig", name: "Instagram DM Assistant", type: "instagram_flow", enabled: true, runs: 0, lastRun: "Never" });
+  }
+  if (!hasFb) {
+    ws.automations.push({ id: "a-meta-fb", name: "Facebook Messenger Bot", type: "facebook_flow", enabled: true, runs: 0, lastRun: "Never" });
+  }
+
   return { ...ws, industry: normalizeIndustryLabel(ws.industry) };
 }

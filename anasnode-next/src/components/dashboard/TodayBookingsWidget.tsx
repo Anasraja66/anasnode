@@ -29,42 +29,10 @@ export default function TodayBookingsWidget() {
       if (!res.ok) throw new Error(data.error || "Failed to load bookings");
       
       const rawBookings = data.bookings || [];
-      if (rawBookings.length === 0) {
-        const todayStr = new Date().toISOString().split("T")[0];
-        setBookings([
-          {
-            id: "figma-booking-1",
-            contactName: "Sarah Mitchell",
-            contactPhone: "+92 300 123 4567",
-            title: "Product Demo",
-            startAt: `${todayStr}T10:30:00Z`,
-            endAt: `${todayStr}T11:00:00Z`,
-            status: "confirmed",
-            channel: "whatsapp"
-          },
-          {
-            id: "figma-booking-2",
-            contactName: "James Chen",
-            contactPhone: "+1 415 555 9876",
-            title: "Technical Support",
-            startAt: `${todayStr}T14:00:00Z`,
-            endAt: `${todayStr}T14:30:00Z`,
-            status: "confirmed",
-            channel: "instagram"
-          },
-          {
-            id: "figma-booking-3",
-            contactName: "Emily Parker",
-            contactPhone: "+44 7911 888888",
-            title: "Sales Consultation",
-            startAt: `${todayStr}T16:15:00Z`,
-            endAt: `${todayStr}T16:45:00Z`,
-            status: "confirmed",
-            channel: "facebook"
-          }
-        ]);
-      } else {
+      if (rawBookings.length > 0) {
         setBookings(rawBookings);
+      } else {
+        setBookings([]);
       }
     } catch (err: any) {
       setError(err.message || "Could not sync bookings");

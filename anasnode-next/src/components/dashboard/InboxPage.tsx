@@ -96,168 +96,6 @@ export function InboxPage({
   const threadEndRef = useRef<HTMLDivElement>(null);
   const [mobileShowThread, setMobileShowThread] = useState(false);
 
-  // Figma Mock Data Fallbacks
-  const [mockConversations, setMockConversations] = useState<Conversation[]>([
-    {
-      id: "mock-1",
-      contactName: "Sarah Mitchell",
-      contactPhone: "+92 300 123 4567",
-      channel: "whatsapp",
-      lastMessage: "Yes, I'd like to schedule a demo for next week if possible.",
-      lastMessageAt: new Date(Date.now() - 2 * 60000).toISOString(),
-      unreadCount: 1,
-      tags: ["leads", "demo"],
-      optedOut: false,
-      aiEnabled: true,
-      timeLabel: "2m ago",
-      lastInboundAt: new Date(Date.now() - 6 * 60000).toISOString(),
-      email: "sarah.mitchell@gmail.com",
-      firstName: "Sarah",
-      lastName: "Mitchell",
-      gender: "Female",
-      customFields: { "Lead Stage": "Qualified", "Budget": "AED 2.5M" }
-    },
-    {
-      id: "mock-2",
-      contactName: "James Chen",
-      contactPhone: "+1 415 555 9876",
-      channel: "instagram",
-      lastMessage: "Thank you for the quick response!",
-      lastMessageAt: new Date(Date.now() - 15 * 60000).toISOString(),
-      unreadCount: 0,
-      tags: ["support"],
-      optedOut: false,
-      aiEnabled: true,
-      timeLabel: "15m ago",
-      lastInboundAt: new Date(Date.now() - 15 * 60000).toISOString(),
-      email: "james@chen.dev",
-      firstName: "James",
-      lastName: "Chen"
-    },
-    {
-      id: "mock-3",
-      contactName: "Emily Parker",
-      contactPhone: "+44 7911 888888",
-      channel: "facebook",
-      lastMessage: "The product looks amazing!",
-      lastMessageAt: new Date(Date.now() - 3 * 3600000).toISOString(),
-      unreadCount: 0,
-      tags: ["sales"],
-      optedOut: false,
-      aiEnabled: false,
-      timeLabel: "3h ago",
-      lastInboundAt: new Date(Date.now() - 3 * 3600000).toISOString(),
-      email: "emily@parker.co",
-      firstName: "Emily",
-      lastName: "Parker"
-    },
-    {
-      id: "mock-4",
-      contactName: "Michael Brown",
-      contactPhone: "+61 2 9382 0000",
-      channel: "whatsapp",
-      lastMessage: "I have a question about pricing.",
-      lastMessageAt: new Date(Date.now() - 5 * 3600000).toISOString(),
-      unreadCount: 0,
-      tags: ["pricing"],
-      optedOut: false,
-      aiEnabled: true,
-      timeLabel: "5h ago",
-      lastInboundAt: new Date(Date.now() - 5 * 3600000).toISOString(),
-      email: "michael.b@anderson.com",
-      firstName: "Michael",
-      lastName: "Brown"
-    }
-  ]);
-
-  const [mockMessages, setMockMessages] = useState<Record<string, Message[]>>({
-    "mock-1": [
-      {
-        id: "msg-1-1",
-        direction: "inbound",
-        body: "Hi! I'm interested in learning more about your services.",
-        source: "customer",
-        createdAt: new Date(Date.now() - 6 * 60000).toISOString()
-      },
-      {
-        id: "msg-1-2",
-        direction: "outbound",
-        body: "Hello! I'd be happy to help you. What specific area are you interested in?",
-        source: "ai",
-        createdAt: new Date(Date.now() - 5 * 60000).toISOString()
-      },
-      {
-        id: "msg-1-3",
-        direction: "inbound",
-        body: "Yes, I'd like to schedule a demo for next week if possible.",
-        source: "customer",
-        createdAt: new Date(Date.now() - 4 * 60000).toISOString()
-      },
-      {
-        id: "msg-1-4",
-        direction: "outbound",
-        body: "I can help you schedule that! What day works best for you?",
-        source: "ai",
-        createdAt: new Date(Date.now() - 2 * 60000).toISOString()
-      }
-    ],
-    "mock-2": [
-      {
-        id: "msg-2-1",
-        direction: "inbound",
-        body: "How do I connect Instagram to the workspace?",
-        source: "customer",
-        createdAt: new Date(Date.now() - 20 * 60000).toISOString()
-      },
-      {
-        id: "msg-2-2",
-        direction: "outbound",
-        body: "Hi James! You can connect Instagram by navigating to the Integrations tab in the sidebar and clicking Meta. Let me know if you run into any issues.",
-        source: "agent",
-        createdAt: new Date(Date.now() - 17 * 60000).toISOString()
-      },
-      {
-        id: "msg-2-3",
-        direction: "inbound",
-        body: "Thank you for the quick response!",
-        source: "customer",
-        createdAt: new Date(Date.now() - 15 * 60000).toISOString()
-      }
-    ],
-    "mock-3": [
-      {
-        id: "msg-3-1",
-        direction: "inbound",
-        body: "Hey there! Just checking out the demo.",
-        source: "customer",
-        createdAt: new Date(Date.now() - 4 * 3600000).toISOString()
-      },
-      {
-        id: "msg-3-2",
-        direction: "outbound",
-        body: "Welcome Emily! The product looks amazing! Feel free to ask any questions you have.",
-        source: "agent",
-        createdAt: new Date(Date.now() - 3.5 * 3600000).toISOString()
-      },
-      {
-        id: "msg-3-3",
-        direction: "inbound",
-        body: "The product looks amazing!",
-        source: "customer",
-        createdAt: new Date(Date.now() - 3 * 3600000).toISOString()
-      }
-    ],
-    "mock-4": [
-      {
-        id: "msg-4-1",
-        direction: "inbound",
-        body: "I have a question about pricing.",
-        source: "customer",
-        createdAt: new Date(Date.now() - 5 * 3600000).toISOString()
-      }
-    ]
-  });
-
   const loadList = useCallback(async () => {
     try {
       const params = new URLSearchParams();
@@ -267,67 +105,23 @@ export function InboxPage({
       const data = await res.json();
       if (data.success) {
         const dbConvs = data.conversations || [];
-        if (dbConvs.length === 0) {
-          const filteredMocks = mockConversations.filter((c) => {
-            if (search.trim() && !c.contactName.toLowerCase().includes(search.toLowerCase()) && !c.lastMessage.toLowerCase().includes(search.toLowerCase())) return false;
-            if (unreadOnly && c.unreadCount === 0) return false;
-            return true;
-          });
-          setConversations(filteredMocks);
-          setSelectedId((prev) => {
-            const want = prev || initialConversationId;
-            if (want && filteredMocks.some((c) => c.id === want)) {
-              return want;
-            }
-            return filteredMocks[0]?.id ?? null;
-          });
-        } else {
-          setConversations(dbConvs);
-          setSelectedId((prev) => {
-            const want = prev || initialConversationId;
-            if (want && dbConvs.some((c: Conversation) => c.id === want)) {
-              return want;
-            }
-            return dbConvs[0]?.id ?? null;
-          });
-        }
+        setConversations(dbConvs);
+        setSelectedId((prev) => {
+          const want = prev || initialConversationId;
+          if (want && dbConvs.some((c: Conversation) => c.id === want)) {
+            return want;
+          }
+          return dbConvs[0]?.id ?? null;
+        });
       }
     } catch {
-      // Offline fallback
-      const filteredMocks = mockConversations.filter((c) => {
-        if (search.trim() && !c.contactName.toLowerCase().includes(search.toLowerCase()) && !c.lastMessage.toLowerCase().includes(search.toLowerCase())) return false;
-        if (unreadOnly && c.unreadCount === 0) return false;
-        return true;
-      });
-      setConversations(filteredMocks);
-      setSelectedId((prev) => {
-        const want = prev || initialConversationId;
-        if (want && filteredMocks.some((c) => c.id === want)) return want;
-        return filteredMocks[0]?.id ?? null;
-      });
+      // API error / offline
     } finally {
       setLoading(false);
     }
-  }, [search, unreadOnly, initialConversationId, mockConversations]);
+  }, [search, unreadOnly, initialConversationId]);
 
   const loadThread = useCallback(async (id: string) => {
-    if (id.startsWith("mock-")) {
-      setLoadingThread(true);
-      const conv = mockConversations.find((c) => c.id === id);
-      if (conv) {
-        setMessages(mockMessages[id] || []);
-        setDetail(conv);
-        setTagEdit((conv.tags || []).join(", "));
-        if (conv.unreadCount > 0) {
-          setMockConversations((prev) =>
-            prev.map((c) => (c.id === id ? { ...c, unreadCount: 0 } : c))
-          );
-        }
-      }
-      setLoadingThread(false);
-      return;
-    }
-
     setLoadingThread(true);
     try {
       const res = await fetch(`/api/inbox?conversationId=${id}`);
@@ -345,7 +139,7 @@ export function InboxPage({
     } finally {
       setLoadingThread(false);
     }
-  }, [mockConversations, mockMessages]);
+  }, []);
 
   useEffect(() => {
     fetch("/api/integrations/whatsapp/status")
@@ -383,25 +177,6 @@ export function InboxPage({
   const patchConversation = async (patch: Record<string, unknown>) => {
     if (!selectedId) return;
 
-    if (selectedId.startsWith("mock-")) {
-      setMockConversations((prev) =>
-        prev.map((c) => {
-          if (c.id !== selectedId) return c;
-          const next = { ...c };
-          if (patch.aiEnabled !== undefined) next.aiEnabled = Boolean(patch.aiEnabled);
-          if (patch.optedOut !== undefined) next.optedOut = Boolean(patch.optedOut);
-          if (patch.tags !== undefined) {
-            next.tags = Array.isArray(patch.tags)
-              ? patch.tags.map(String)
-              : String(patch.tags).split(",").map((t: string) => t.trim());
-          }
-          setDetail(next);
-          return next;
-        })
-      );
-      return;
-    }
-
     const res = await fetch("/api/inbox", {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
@@ -416,58 +191,6 @@ export function InboxPage({
 
   const sendReply = async () => {
     if (!selectedId || !replyText.trim()) return;
-
-    if (selectedId.startsWith("mock-")) {
-      const newMsg: Message = {
-        id: `mock-msg-${Date.now()}`,
-        direction: "outbound",
-        body: replyText.trim(),
-        source: "agent",
-        createdAt: new Date().toISOString()
-      };
-
-      setMockMessages((prev) => ({
-        ...prev,
-        [selectedId]: [...(prev[selectedId] || []), newMsg]
-      }));
-      setMessages((prev) => [...prev, newMsg]);
-
-      setMockConversations((prev) =>
-        prev.map((c) =>
-          c.id === selectedId
-            ? { ...c, lastMessage: replyText.trim(), lastMessageAt: new Date().toISOString(), timeLabel: "Just now" }
-            : c
-        )
-      );
-
-      setReplyText("");
-
-      const currentConv = mockConversations.find(c => c.id === selectedId);
-      if (currentConv && currentConv.aiEnabled) {
-        setTimeout(() => {
-          const aiMsg: Message = {
-            id: `mock-ai-msg-${Date.now()}`,
-            direction: "outbound",
-            body: `Hello! Anaos AI has processed your message: "${newMsg.body}". Let me check the integration logic.`,
-            source: "ai",
-            createdAt: new Date().toISOString()
-          };
-          setMockMessages((prev) => ({
-            ...prev,
-            [selectedId]: [...(prev[selectedId] || []), aiMsg]
-          }));
-          setMessages((prev) => [...prev, aiMsg]);
-          setMockConversations((prev) =>
-            prev.map((c) =>
-              c.id === selectedId
-                ? { ...c, lastMessage: aiMsg.body, lastMessageAt: new Date().toISOString(), timeLabel: "Just now" }
-                : c
-            )
-          );
-        }, 1500);
-      }
-      return;
-    }
 
     setSending(true);
     const res = await fetch("/api/inbox", {
@@ -581,11 +304,7 @@ export function InboxPage({
                   : "bg-white border-zinc-200 text-zinc-650 hover:bg-zinc-50"
               }`}
             >
-              <svg viewBox="0 0 24 24" className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
-                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
-                <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
-              </svg>
+              <BrandIcon id="instagram" className="w-3.5 h-3.5" />
               Instagram
             </button>
             <button
@@ -597,9 +316,7 @@ export function InboxPage({
                   : "bg-white border-zinc-200 text-zinc-650 hover:bg-zinc-50"
               }`}
             >
-              <svg viewBox="0 0 24 24" className="w-3 h-3" fill="currentColor">
-                <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.469h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-              </svg>
+              <BrandIcon id="facebook" className="w-3.5 h-3.5" />
               Messenger
             </button>
           </div>
@@ -801,20 +518,20 @@ export function InboxPage({
                     >
                       <div className="max-w-[85%] space-y-1">
                         <div
-                          className={`rounded-xl px-4 py-2.5 transition-all ${
+                          className={`px-4 py-2.5 transition-all shadow-sm ${
                             out
                               ? isAi
-                                ? "bg-[#E6F0FF] text-[#0A6BFF] font-medium"
-                                : "bg-[#0A6BFF] text-white font-medium"
-                              : "bg-[#F1F5F9] text-zinc-900 font-medium"
+                                ? "bg-sky-50 text-sky-800 font-medium rounded-2xl rounded-br-sm border border-sky-100"
+                                : "bg-[#0A6BFF] text-white font-medium rounded-2xl rounded-br-sm"
+                              : "bg-white text-zinc-900 font-medium rounded-2xl rounded-bl-sm border border-zinc-200"
                           }`}
                         >
-                          <p className="text-[13px] whitespace-pre-wrap leading-relaxed">
+                          <p className="text-[13.5px] whitespace-pre-wrap leading-relaxed">
                             {cleanBody}
                           </p>
                         </div>
                         
-                        <div className={`flex items-center gap-1.5 text-[10px] px-1 ${out ? "justify-end text-zinc-400" : "text-zinc-400"}`}>
+                        <div className={`flex items-center gap-1.5 text-[10.5px] px-1 ${out ? "justify-end text-zinc-400" : "text-zinc-400"}`}>
                           {label && (
                             <span className={`inline-flex items-center gap-0.5 font-bold ${isAi ? "text-blue-600" : "text-zinc-600"}`}>
                               {isAi && <Bot className="w-3 h-3" />}

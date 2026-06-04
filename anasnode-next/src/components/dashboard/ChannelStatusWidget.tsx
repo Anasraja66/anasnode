@@ -30,13 +30,6 @@ export default function ChannelStatusWidget() {
       const messagingAndCal = (data.integrations || []).filter(
         (i: any) => i.id === "whatsapp" || i.id === "instagram" || i.id === "facebook" || i.id === "google_calendar"
       );
-      // Append a mock Google connection matching the figma
-      messagingAndCal.push({
-        id: "google_oauth",
-        name: "Google Account",
-        providerId: "google",
-        status: "connected"
-      });
       setChannels(messagingAndCal);
     } catch (err: any) {
       setError(err.message || "Failed to fetch channel status");

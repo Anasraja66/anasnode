@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { ArrowUp, Plus, Mic, ChevronDown, RefreshCw } from "lucide-react";
+import { ArrowUp, Plus, Mic, ChevronDown, RefreshCw, Paperclip } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const EXAMPLES = [
@@ -22,51 +22,14 @@ export function PromptBox({ onGenerate, compact }: Props) {
   const [mounted, setMounted] = useState(false);
   const [selectedAction, setSelectedAction] = useState("Build");
 
-  // Typewriter effect state
-  const placeholders = [
-    "Create a WhatsApp AI that handles my car rental bookings...",
-    "Build a lead qualification agent for my solar business...",
-    "Set up an automated support bot for my Shopify store...",
-    "Automate my clinic's patient scheduling and reminders...",
-    "Build a CRM-integrated agent for my real estate agency...",
-  ];
-  const [placeholderText, setPlaceholderText] = useState("");
-  const [placeholderIndex, setPlaceholderIndex] = useState(0);
-  const [isDeleting, setIsDeleting] = useState(false);
-
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  // Typewriter animation loop
-  useEffect(() => {
-    if (!mounted) return;
-    let timer: NodeJS.Timeout;
-    const currentText = placeholders[placeholderIndex];
-    
-    if (isDeleting) {
-      if (placeholderText === "") {
-        setIsDeleting(false);
-        setPlaceholderIndex((prev) => (prev + 1) % placeholders.length);
-        timer = setTimeout(() => {}, 400); 
-      } else {
-        timer = setTimeout(() => {
-          setPlaceholderText(currentText.substring(0, placeholderText.length - 1));
-        }, 30); // Faster erasing
-      }
-    } else {
-      if (placeholderText === currentText) {
-        timer = setTimeout(() => {
-          setIsDeleting(true);
-        }, 2500); // Pause when fully typed
-      } else {
-        timer = setTimeout(() => {
-          setPlaceholderText(currentText.substring(0, placeholderText.length + 1));
-        }, 65); // Typing speed
-      }
-    }
-    return () => clearTimeout(timer);
-  }, [placeholderText, isDeleting, placeholderIndex, mounted]);
+  // Static placeholder to prevent UI shaking
+  const placeholderText = "Describe your business automation... e.g. Create a WhatsApp AI that handles my car rental bookings.";
+
+
 
   const stages = [
     "Reading requirements...",
@@ -127,25 +90,25 @@ export function PromptBox({ onGenerate, compact }: Props) {
         />
         
         {mounted && (
-          <div className="flex items-center justify-between px-3 pb-2.5 pt-1">
+          <div className="flex flex-col md:flex-row md:items-center justify-between px-3 pb-2.5 pt-1 gap-3 md:gap-0">
             {/* Left circular plus button & Presets */}
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 md:gap-3 w-full md:w-auto overflow-hidden">
               <button
                 type="button"
-                className="w-10 h-10 rounded-full border border-zinc-200 bg-white hover:border-zinc-300 hover:shadow-sm flex items-center justify-center text-zinc-400 hover:text-zinc-800 transition-all cursor-pointer"
+                className="w-10 h-10 shrink-0 rounded-full border border-zinc-200 bg-white hover:border-zinc-300 hover:shadow-sm flex items-center justify-center text-zinc-400 hover:text-zinc-800 transition-all cursor-pointer"
               >
                 <Plus className="w-5 h-5" />
               </button>
               
               {!loading && (
-                <div className="hidden lg:flex items-center gap-2 ml-1">
-                  <span className="text-[11px] font-bold text-zinc-400 uppercase tracking-widest mr-1">Try Presets:</span>
+                <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide whitespace-nowrap pr-2 md:pr-0 pb-1 md:pb-0" style={{ msOverflowStyle: 'none', scrollbarWidth: 'none' }}>
+                  <span className="text-[11px] font-bold text-zinc-400 uppercase tracking-widest mr-1 shrink-0">Try Presets:</span>
                   {EXAMPLES.map((chip) => (
                     <button
                       key={chip.label}
                       type="button"
                       onClick={() => setValue(chip.text)}
-                      className="text-[12px] font-bold px-4 py-1.5 rounded-full bg-white hover:bg-zinc-50 text-zinc-700 border border-zinc-200 transition-all cursor-pointer shadow-sm active:scale-95"
+                      className="text-[12px] font-bold px-3 py-1.5 md:px-4 md:py-1.5 rounded-full bg-white hover:bg-zinc-50 text-zinc-700 border border-zinc-200 transition-all cursor-pointer shadow-sm active:scale-95 shrink-0"
                     >
                       {chip.label}
                     </button>
@@ -155,7 +118,7 @@ export function PromptBox({ onGenerate, compact }: Props) {
             </div>
 
             {/* Right-aligned action controls */}
-            <div className="flex items-center gap-4">
+            <div className="flex items-center justify-between md:justify-end w-full md:w-auto gap-2 md:gap-4 shrink-0">
               {/* Dropdown Action Selector */}
               <div className="relative">
                 <button
@@ -167,27 +130,37 @@ export function PromptBox({ onGenerate, compact }: Props) {
                 </button>
               </div>
 
-              {/* Voice icon */}
-              <button
-                type="button"
-                className="w-10 h-10 flex items-center justify-center text-zinc-400 hover:text-zinc-900 transition-all cursor-pointer hover:bg-zinc-200/40 rounded-full"
-              >
-                <Mic className="w-5 h-5" />
-              </button>
+              <div className="flex items-center gap-2 md:gap-4">
+                {/* File Upload icon */}
+                <button
+                  type="button"
+                  className="w-10 h-10 flex items-center justify-center text-zinc-400 hover:text-zinc-900 transition-all cursor-pointer hover:bg-zinc-200/40 rounded-full"
+                >
+                  <Paperclip className="w-5 h-5" />
+                </button>
 
-              {/* Send Button */}
-              <button
-                onClick={handleGenerate}
-                disabled={loading || !value.trim()}
-                className="w-11 h-11 rounded-full bg-zinc-400/80 hover:bg-blue-600 text-white flex items-center justify-center shadow-sm transition-all disabled:opacity-40 disabled:hover:bg-zinc-400/80 disabled:cursor-not-allowed hover:scale-105 active:scale-95 cursor-pointer shrink-0"
-                style={{ backgroundColor: value.trim() ? '#0A6BFF' : undefined }}
-              >
-                {loading ? (
-                  <RefreshCw className="w-5 h-5 animate-spin text-white" />
-                ) : (
-                  <ArrowUp className="w-5.5 h-5.5 stroke-[3]" />
-                )}
-              </button>
+                {/* Voice icon */}
+                <button
+                  type="button"
+                  className="w-10 h-10 flex items-center justify-center text-zinc-400 hover:text-zinc-900 transition-all cursor-pointer hover:bg-zinc-200/40 rounded-full"
+                >
+                  <Mic className="w-5 h-5" />
+                </button>
+
+                {/* Send Button */}
+                <button
+                  onClick={handleGenerate}
+                  disabled={loading || !value.trim()}
+                  className="w-11 h-11 rounded-full bg-zinc-400/80 hover:bg-blue-600 text-white flex items-center justify-center shadow-sm transition-all disabled:opacity-40 disabled:hover:bg-zinc-400/80 disabled:cursor-not-allowed hover:scale-105 active:scale-95 cursor-pointer shrink-0"
+                  style={{ backgroundColor: value.trim() ? '#0A6BFF' : undefined }}
+                >
+                  {loading ? (
+                    <RefreshCw className="w-5 h-5 animate-spin text-white" />
+                  ) : (
+                    <ArrowUp className="w-5.5 h-5.5 stroke-[3]" />
+                  )}
+                </button>
+              </div>
             </div>
           </div>
         )}

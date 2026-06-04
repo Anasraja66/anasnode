@@ -29,6 +29,7 @@ import {
   RefreshCw,
   ChevronRight,
   Activity,
+  Loader2,
   GitBranch,
   Clock,
   Hash,
@@ -108,54 +109,6 @@ type TrainedFile = {
   progress: number;
 };
 
-// ─── Initial Mock Data ───────────────────────────────────────────────────────
-
-const WORKSPACES: Workspace[] = [
-  {
-    id: "ws-1",
-    name: "Marina Realty",
-    industry: "Real Estate",
-    slug: "marina-realty",
-    status: "live",
-    version: 3,
-    automations: [
-      { id: "a-1", name: "Lead Qualification Bot", type: "whatsapp_flow", enabled: true, runs: 284, lastRun: "2 min ago" },
-      { id: "a-2", name: "Viewing Scheduler", type: "calendar", enabled: true, runs: 97, lastRun: "14 min ago" },
-      { id: "a-3", name: "Cold Lead Drip", type: "campaign", enabled: false, runs: 41, lastRun: "3 days ago" },
-    ]
-  },
-  {
-    id: "ws-2",
-    name: "Olive & Oak",
-    industry: "Restaurant",
-    slug: "olive-oak",
-    status: "live",
-    version: 1,
-    automations: [
-      { id: "a-4", name: "WhatsApp Ordering", type: "whatsapp_flow", enabled: true, runs: 512, lastRun: "Just now" },
-      { id: "a-5", name: "Table Reservations", type: "calendar", enabled: true, runs: 203, lastRun: "8 min ago" },
-      { id: "a-6", name: "Review Requests", type: "campaign", enabled: true, runs: 88, lastRun: "1 hr ago" },
-    ]
-  },
-];
-
-const CONTACTS: Contact[] = [
-  { id: "c-1", name: "Ahmed Hassan", phone: "+971 50 123 4567", industry: "Real Estate", stage: "Qualified", lastMessage: "Yes, AED 2.2M is my budget limit.", time: "2m ago", checked: false },
-  { id: "c-2", name: "Sara Khan", phone: "+92 300 987 6543", industry: "Restaurant", stage: "Booked", lastMessage: "Can I pre-order drinks?", time: "4h ago", checked: false },
-  { id: "c-3", name: "Dr. Imran Qureshi", phone: "+92 321 456 7890", industry: "Clinic", stage: "Reminded", lastMessage: "Confirmed for tomorrow 11am.", time: "1d ago", checked: false },
-  { id: "c-4", name: "Layla Al-Rashid", phone: "+971 55 234 5678", industry: "Real Estate", stage: "Viewing Set", lastMessage: "Saturday works for the viewing.", time: "2d ago", checked: false },
-];
-
-const INITIAL_FAQS: FAQ[] = [
-  { q: "What is your starting price?", a: "Our premium 3BHK waterfront apartments start from AED 2.2M with customized payment plans." },
-  { q: "Where is the property located?", a: "The premier Marina Realty towers are located at Dubai Marina, right beside the Yacht Club." },
-  { q: "Are viewing slots available?", a: "Yes! Viewings are scheduled daily from 9:00 AM to 6:00 PM. I can schedule a view for you right now." }
-];
-
-const INITIAL_FILES: TrainedFile[] = [
-  { name: "marina_realty_brochure.pdf", size: "5.2 MB", status: "Trained", progress: 100 },
-  { name: "pricing_sheet.xlsx", size: "1.8 MB", status: "Trained", progress: 100 }
-];
 
 import { FastApiClient } from "@/lib/api/fastapi";
 import { 
@@ -299,24 +252,24 @@ function DashboardHome({ ws, preset }: { ws: Workspace; preset: IndustryPreset }
           <div className="bg-white border border-zinc-200 rounded-xl p-6 shadow-sm hover:border-zinc-300 transition-all duration-300">
             <p className="text-[11px] text-zinc-500 font-bold uppercase tracking-[0.1em]">Total Conversations</p>
             <div className="flex items-baseline gap-2 mt-2">
-              <span className="text-[26px] font-bold text-zinc-900 leading-none">1,482</span>
-              <span className="text-[12px] text-sky-600 font-medium ml-1 bg-sky-50 px-2 py-0.5 rounded-full">+12.5%</span>
+              <span className="text-[26px] font-bold text-zinc-900 leading-none">0</span>
+              <span className="text-[12px] text-zinc-500 font-medium ml-1 bg-zinc-50 px-2 py-0.5 rounded-full">New Account</span>
             </div>
             <p className="text-[12px] text-zinc-500 mt-2">Active threads across Meta & WhatsApp</p>
           </div>
           <div className="bg-white border border-zinc-200 rounded-xl p-6 shadow-sm hover:border-zinc-300 transition-all duration-300">
             <p className="text-[11px] text-zinc-500 font-bold uppercase tracking-[0.1em]">AI Resolution Rate</p>
             <div className="flex items-baseline gap-2 mt-2">
-              <span className="text-[26px] font-bold text-zinc-900 leading-none">84.2%</span>
-              <span className="text-[12px] text-emerald-600 font-medium ml-1 bg-emerald-50 px-2 py-0.5 rounded-full">Optimal</span>
+              <span className="text-[26px] font-bold text-zinc-900 leading-none">0%</span>
+              <span className="text-[12px] text-zinc-500 font-medium ml-1 bg-zinc-50 px-2 py-0.5 rounded-full">Calibrating</span>
             </div>
             <p className="text-[12px] text-zinc-500 mt-2">Resolved automatically by Anaos AI</p>
           </div>
           <div className="bg-white border border-zinc-200 rounded-xl p-6 shadow-sm hover:border-zinc-300 transition-all duration-300">
             <p className="text-[11px] text-zinc-500 font-bold uppercase tracking-[0.1em]">Pending Bookings</p>
             <div className="flex items-baseline gap-2 mt-2">
-              <span className="text-[26px] font-bold text-zinc-900 leading-none">12</span>
-              <span className="text-[12px] text-sky-600 font-medium ml-1 bg-sky-50 px-2 py-0.5 rounded-full">Today</span>
+              <span className="text-[26px] font-bold text-zinc-900 leading-none">0</span>
+              <span className="text-[12px] text-zinc-500 font-medium ml-1 bg-zinc-50 px-2 py-0.5 rounded-full">Today</span>
             </div>
             <p className="text-[12px] text-zinc-500 mt-2">Google Calendar synced slot bookings</p>
           </div>
@@ -478,8 +431,8 @@ function DashboardHome({ ws, preset }: { ws: Workspace; preset: IndustryPreset }
         </motion.div>
 
         {/* Minimal Channel Switcher - Refined */}
-        <motion.div variants={itemVariants} className="pt-10 flex justify-center">
-          <div className="inline-flex items-center gap-14 border-b border-zinc-150 pb-px px-10">
+        <motion.div variants={itemVariants} className="pt-10 flex w-full overflow-x-auto scrollbar-none justify-start md:justify-center">
+          <div className="inline-flex items-center gap-8 md:gap-14 border-b border-zinc-150 pb-px px-4 md:px-10 min-w-max mx-auto">
             {["OVERVIEW", "WHATSAPP", "INSTAGRAM", "VOICE"].map((tab) => (
               <button
                 key={tab}
@@ -976,17 +929,21 @@ function ChannelBadge({ channelId, connected }: { channelId: string; connected: 
   const meta = CHANNEL_META[channelId] ?? { label: channelId, color: "#6B7280", connectHref: "/dashboard/integrations" };
   return (
     <span
-      className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold border"
+      className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11.5px] font-bold border shadow-sm transition-all"
       style={{
-        backgroundColor: connected ? `${meta.color}15` : "#F9FAFB",
+        backgroundColor: connected ? `${meta.color}08` : "#F9FAFB",
         color: connected ? meta.color : "#9CA3AF",
-        borderColor: connected ? `${meta.color}30` : "#E5E7EB",
+        borderColor: connected ? `${meta.color}25` : "#E5E7EB",
       }}
     >
-      <span
-        className={`w-1.5 h-1.5 rounded-full ${connected ? "animate-pulse" : ""}`}
-        style={{ backgroundColor: connected ? meta.color : "#D1D5DB" }}
-      />
+      {connected ? (
+        <BrandIcon id={channelId} className="w-3.5 h-3.5" />
+      ) : (
+        <span
+          className="w-1.5 h-1.5 rounded-full"
+          style={{ backgroundColor: "#D1D5DB" }}
+        />
+      )}
       {meta.label}
     </span>
   );
@@ -1383,6 +1340,7 @@ export default function Dashboard() {
   const [loadError, setLoadError] = useState<string | null>(null);
   const [integrations, setIntegrations] = useState({ whatsapp: false, shopify: false, fastapi: false });
   const [toggleLoading, setToggleLoading] = useState<string | null>(null);
+  const [isDeployingAgent, setIsDeployingAgent] = useState(false);
 
   const handleTabChange = (t: Tab) => {
     setTab(t);
@@ -1427,6 +1385,29 @@ export default function Dashboard() {
     async function loadDashboardData() {
       try {
         setLoadError(null);
+        
+        // --- INTERCEPTOR LOGIC FOR LANDING PAGE DEPLOYMENTS ---
+        const savedWorkspaces = localStorage.getItem("anaos_custom_workspaces");
+        if (savedWorkspaces) {
+          try {
+            setIsDeployingAgent(true);
+            const workspacesToImport = JSON.parse(savedWorkspaces);
+            const importRes = await fetch("/api/workspace/import", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ workspaces: workspacesToImport }),
+            });
+            if (importRes.ok) {
+              localStorage.removeItem("anaos_custom_workspaces");
+            }
+          } catch (e) {
+            console.error("Failed to import workspaces", e);
+          } finally {
+            setIsDeployingAgent(false);
+          }
+        }
+        // --------------------------------------------------------
+
         const res = await fetch("/api/dashboard/data");
         if (!res.ok) {
           setLoadError("Could not load dashboard. Try refreshing the page.");
@@ -1583,17 +1564,33 @@ export default function Dashboard() {
     team:        "Team Settings",
   };
 
-  if (!mounted || loadingData) {
+  if (!mounted || loadingData || isDeployingAgent) {
     return (
-      <div className="flex h-screen bg-[#F5F5F5] items-center justify-center">
-        <div className="flex gap-1.5 animate-pulse">
-          {[0, 1, 2].map((i) => (
-            <div
-              key={i}
-              className="w-2.5 h-2.5 rounded-full bg-[#0A6BFF] animate-bounce"
-              style={{ animationDelay: `${i * 150}ms` }}
-            />
-          ))}
+      <div className="flex h-screen w-full bg-[#F5F5F5] items-center justify-center flex-col gap-6 relative overflow-hidden">
+        {/* Animated Background */}
+        <div className="absolute inset-0 z-0">
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-blue-100/40 rounded-full blur-[100px] animate-pulse" />
+        </div>
+        
+        <div className="z-10 bg-white p-8 rounded-3xl shadow-[0_8px_30px_rgba(0,0,0,0.06)] border border-zinc-100 flex flex-col items-center max-w-sm w-full text-center">
+          <div className="w-16 h-16 bg-blue-50 text-[#0A6BFF] rounded-2xl flex items-center justify-center mb-6 shadow-inner border border-blue-100/50">
+            {isDeployingAgent ? <Activity className="w-8 h-8 animate-bounce" /> : <Loader2 className="w-8 h-8 animate-spin" />}
+          </div>
+          
+          <h2 className="text-xl font-bold text-zinc-900 mb-2">
+            {isDeployingAgent ? "Deploying Your AI Agent..." : "Loading Dashboard..."}
+          </h2>
+          
+          <p className="text-[13px] text-zinc-500 font-medium mb-8">
+            {isDeployingAgent 
+              ? "We are building your workspace and wiring up your automations to the AI engine." 
+              : "Syncing your secure workspace data."}
+          </p>
+
+          {/* Loading bar */}
+          <div className="w-full h-1.5 bg-zinc-100 rounded-full overflow-hidden">
+            <div className="h-full bg-[#0A6BFF] w-2/3 rounded-full animate-pulse transition-all duration-1000 ease-in-out" />
+          </div>
         </div>
       </div>
     );

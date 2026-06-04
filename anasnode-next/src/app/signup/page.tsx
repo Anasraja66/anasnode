@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { ArrowRight, Lock, Mail, User, AlertCircle, CheckCircle } from "lucide-react";
 import { motion } from "framer-motion";
+import { WorkflowBackground } from "@/components/ui/WorkflowBackground";
 
 export default function SignupPage() {
   const [name, setName] = useState("");
@@ -83,36 +84,8 @@ export default function SignupPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] text-zinc-900 flex items-center justify-center p-6 relative overflow-hidden font-sans">
-      {/* Background Grid & Slow Floating Glows */}
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,#e2e8f0_1px,transparent_1px),linear-gradient(to_bottom,#e2e8f0_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_40%,#000_70%,transparent_100%)] opacity-60 pointer-events-none" />
-      
-      <motion.div 
-        animate={{ 
-          scale: [1, 1.1, 1],
-          x: [0, 20, 0],
-          y: [0, -20, 0]
-        }}
-        transition={{ 
-          duration: 15,
-          repeat: Infinity,
-          ease: "easeInOut"
-        }}
-        className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] rounded-full bg-blue-500/10 blur-[120px] pointer-events-none" 
-      />
-      <motion.div 
-        animate={{ 
-          scale: [1, 1.15, 1],
-          x: [0, -25, 0],
-          y: [0, 25, 0]
-        }}
-        transition={{ 
-          duration: 18,
-          repeat: Infinity,
-          ease: "easeInOut"
-        }}
-        className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] rounded-full bg-sky-400/10 blur-[120px] pointer-events-none" 
-      />
+    <div className="min-h-screen bg-white text-zinc-900 flex items-center justify-center p-6 relative overflow-hidden font-sans">
+      <WorkflowBackground />
       
       <div className="w-full max-w-[420px] relative z-10">
         {/* Logo and title */}

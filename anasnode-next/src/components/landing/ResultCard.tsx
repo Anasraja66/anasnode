@@ -70,6 +70,16 @@ const getAutomationDetails = (type: string, industry: string) => {
         label: "AI WhatsApp Agent",
         desc: copy?.whatsapp_flow || "Intelligent customer interactions on WhatsApp.",
       };
+    case "instagram_flow":
+      return {
+        label: "AI Instagram Bot",
+        desc: "Automated DM assistant and engagement engine.",
+      };
+    case "facebook_flow":
+      return {
+        label: "AI Messenger Bot",
+        desc: "24/7 autonomous Facebook Messenger support.",
+      };
     case "calendar":
       return {
         label: "Autonomous Scheduler",

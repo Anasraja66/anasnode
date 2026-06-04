@@ -310,71 +310,77 @@ export function Hero() {
           />
         </motion.div>
 
-        {/* Grok-style Connectors Banner */}
-        <AnimatePresence>
-          {showConnectors && !workspace && (
-            <motion.div
-              initial={{ opacity: 0, y: 10, scale: 0.98 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              className="mt-6 mx-auto max-w-2xl"
-            >
-              <div className="bg-white/70 backdrop-blur-md border border-zinc-200/80 rounded-2xl p-3 sm:p-4 flex flex-col sm:flex-row items-center gap-4 shadow-sm hover:shadow-md transition-shadow">
-                {/* Icons Stack - Grok Style Overlapping */}
-                <div className="flex -space-x-3 shrink-0 ml-1">
-                  {[
-                    "WhatsApp",
-                    "Facebook",
-                    "Instagram",
-                    "Shopify",
-                    "TikTok"
-                  ].map((name, index) => (
-                    <div 
-                      key={name}
-                      className="w-9 h-9 rounded-full bg-white flex items-center justify-center shadow-sm border-2 border-white overflow-hidden relative"
-                      style={{ zIndex: 60 - index }}
+        {/* Stable container to prevent layout jumping when ResultCard appears */}
+        <div className="min-h-[500px] w-full flex flex-col items-center">
+          {/* Grok-style Connectors Banner */}
+          <AnimatePresence>
+            {showConnectors && !workspace && (
+              <motion.div
+                initial={{ opacity: 0, y: 10, scale: 0.98 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.95, transition: { duration: 0.2 } }}
+                className="mt-6 mx-auto w-full max-w-2xl"
+              >
+                <div className="bg-white/70 backdrop-blur-md border border-zinc-200/80 rounded-2xl p-3 sm:p-4 flex flex-col sm:flex-row items-center gap-4 shadow-sm hover:shadow-md transition-shadow">
+                  {/* Icons Stack - Grok Style Overlapping */}
+                  <div className="flex -space-x-3 shrink-0 ml-1">
+                    {[
+                      "WhatsApp",
+                      "Facebook",
+                      "Instagram",
+                      "Shopify",
+                      "TikTok"
+                    ].map((name, index) => (
+                      <div 
+                        key={name}
+                        className="w-9 h-9 rounded-full bg-white flex items-center justify-center shadow-sm border-2 border-white overflow-hidden relative"
+                        style={{ zIndex: 60 - index }}
+                      >
+                        {businessConnectors.find(c => c.name === name)?.icon}
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Text Content */}
+                  <div className="flex-1 text-left w-full text-center sm:text-left">
+                    <h4 className="text-[14px] font-bold text-zinc-900 leading-tight font-sans">Connectors are now available.</h4>
+                    <p className="text-[13px] text-zinc-500 mt-0.5 font-medium font-sans">Connectors allow Anaos to interact with apps directly in conversations.</p>
+                  </div>
+
+                  {/* Actions */}
+                  <div className="flex items-center gap-3 shrink-0">
+                    <button 
+                      onClick={() => setShowConnectors(false)}
+                      className="text-[13px] font-bold text-zinc-400 hover:text-zinc-600 transition-colors font-sans"
                     >
-                      {businessConnectors.find(c => c.name === name)?.icon}
-                    </div>
-                  ))}
+                      Dismiss
+                    </button>
+                    <button 
+                      onClick={() => setIsModalOpen(true)}
+                      className="bg-[#0A6BFF] text-white text-[13px] font-bold px-5 py-2 rounded-full hover:bg-blue-600 transition-all active:scale-95 shadow-sm font-sans"
+                    >
+                      Connect
+                    </button>
+                  </div>
                 </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
-                {/* Text Content */}
-                <div className="flex-1 text-left">
-                  <h4 className="text-[14px] font-bold text-zinc-900 leading-tight font-sans">Connectors are now available.</h4>
-                  <p className="text-[13px] text-zinc-500 mt-0.5 font-medium font-sans">Connectors allow Anaos to interact with apps directly in conversations.</p>
-                </div>
-
-                {/* Actions */}
-                <div className="flex items-center gap-3 shrink-0">
-                  <button 
-                    onClick={() => setShowConnectors(false)}
-                    className="text-[13px] font-bold text-zinc-400 hover:text-zinc-600 transition-colors font-sans"
-                  >
-                    Dismiss
-                  </button>
-                  <button 
-                    onClick={() => setIsModalOpen(true)}
-                    className="bg-[#0A6BFF] text-white text-[13px] font-bold px-5 py-2 rounded-full hover:bg-blue-600 transition-all active:scale-95 shadow-sm font-sans"
-                  >
-                    Connect
-                  </button>
-                </div>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        {/* ResultCard Output (Centrally aligned) */}
-        {workspace && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="mt-8"
-          >
-            <ResultCard workspace={workspace} prompt={lastPrompt} />
-          </motion.div>
-        )}
+          {/* ResultCard Output (Centrally aligned) */}
+          <AnimatePresence>
+            {workspace && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: 0.1 }}
+                className="mt-8 w-full"
+              >
+                <ResultCard workspace={workspace} prompt={lastPrompt} />
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
       </div>
     </section>
   );

@@ -192,36 +192,8 @@ export default function OnboardingPage() {
 
   return (
     <div className="min-h-screen bg-[#F8FAFC] text-zinc-900 flex flex-col justify-between items-center p-6 relative overflow-hidden font-sans">
-      {/* Background Grid & Slow Floating Glows */}
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,#e2e8f0_1px,transparent_1px),linear-gradient(to_bottom,#e2e8f0_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_40%,#000_70%,transparent_100%)] opacity-60 pointer-events-none" />
-      
-      <motion.div 
-        animate={{ 
-          scale: [1, 1.1, 1],
-          x: [0, 20, 0],
-          y: [0, -20, 0]
-        }}
-        transition={{ 
-          duration: 15,
-          repeat: Infinity,
-          ease: "easeInOut"
-        }}
-        className="absolute top-[-10%] left-[-10%] w-[600px] h-[600px] rounded-full blur-[120px] pointer-events-none" 
-        style={{ backgroundColor: `${accent}12` }}
-      />
-      <motion.div 
-        animate={{ 
-          scale: [1, 1.15, 1],
-          x: [0, -25, 0],
-          y: [0, 25, 0]
-        }}
-        transition={{ 
-          duration: 18,
-          repeat: Infinity,
-          ease: "easeInOut"
-        }}
-        className="absolute bottom-[-10%] right-[-10%] w-[600px] h-[600px] rounded-full bg-sky-400/10 blur-[120px] pointer-events-none" 
-      />
+      {/* Clean Grid Background */}
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,#e2e8f0_1px,transparent_1px),linear-gradient(to_bottom,#e2e8f0_1px,transparent_1px)] bg-[size:3rem_3rem] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_0%,#000_70%,transparent_100%)] opacity-40 pointer-events-none" />
 
       <header className="w-full max-w-6xl mx-auto flex items-center justify-between z-10 pt-4">
         <div className="flex items-center gap-2">

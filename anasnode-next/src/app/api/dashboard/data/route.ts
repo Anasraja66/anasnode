@@ -67,7 +67,7 @@ export async function GET(request: Request) {
       where: { accountId, isActive: true },
       select: { type: true },
     });
-    const connectedTypes = new Set(credentials.map(c => c.type));
+    const connectedTypes = new Set(credentials.map((c: { type: string }) => c.type));
     if (process.env.WHATSAPP_ACCESS_TOKEN) {
       connectedTypes.add("whatsapp");
     }

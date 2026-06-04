@@ -35,7 +35,7 @@ export async function GET(request: Request) {
     });
 
     // Parse stats string
-    const formatted = workflows.map(w => ({
+    const formatted = workflows.map((w: { id: string; name: string; description: string | null; isActive: boolean; version: number; stats: string; lastRunAt: Date | null; createdAt: Date }) => ({
       ...w,
       stats: JSON.parse(w.stats || "{}"),
     }));

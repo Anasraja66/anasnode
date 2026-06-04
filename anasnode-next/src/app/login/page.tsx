@@ -42,19 +42,20 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-zinc-950 text-zinc-100 flex items-center justify-center p-6 relative overflow-hidden">
-      {/* Dynamic glow grids */}
-      <div className="absolute top-[-20%] left-[-10%] w-[500px] h-[500px] rounded-full bg-indigo-500/10 blur-[120px] pointer-events-none" />
-      <div className="absolute bottom-[-20%] right-[-10%] w-[500px] h-[500px] rounded-full bg-emerald-500/10 blur-[120px] pointer-events-none" />
+    <div className="min-h-screen bg-[#F8FAFC] text-zinc-900 flex items-center justify-center p-6 relative overflow-hidden font-sans">
+      {/* Background Grid & Glows */}
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,#e2e8f0_1px,transparent_1px),linear-gradient(to_bottom,#e2e8f0_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_40%,#000_70%,transparent_100%)] opacity-60 pointer-events-none" />
+      <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] rounded-full bg-blue-500/10 blur-[120px] pointer-events-none" />
+      <div className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] rounded-full bg-sky-400/10 blur-[120px] pointer-events-none" />
       
       <div className="w-full max-w-[420px] relative z-10">
         {/* Logo and title */}
         <div className="text-center mb-8">
-          <Link href="/" className="inline-flex items-center gap-1.5 text-[22px] font-semibold tracking-tight hover:opacity-90 transition-opacity">
-            <span>Anaos</span>
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 mt-1" />
+          <Link href="/" className="inline-flex items-center gap-2.5 text-[24px] font-extrabold tracking-tight hover:opacity-90 transition-opacity">
+            <span className="w-7 h-7 rounded-lg bg-[#0A6BFF] flex items-center justify-center text-white text-[14px] font-black shadow-sm">A</span>
+            <span className="text-zinc-950">Anaos</span>
           </Link>
-          <p className="text-[13.5px] text-zinc-400 mt-2">Log in to operate your AI agents and workflows</p>
+          <p className="text-[14px] text-zinc-500 mt-2 font-medium">Log in to operate your AI agents and workflows</p>
         </div>
 
         {/* Card */}
@@ -62,24 +63,24 @@ export default function LoginPage() {
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.45 }}
-          className="rounded-2xl border border-zinc-800/80 bg-zinc-900/40 backdrop-blur-xl p-7 shadow-2xl relative"
+          className="rounded-3xl border border-zinc-200 bg-white/95 backdrop-blur-md p-8 shadow-xl relative"
         >
           {error && (
             <motion.div
               initial={{ opacity: 0, y: -8 }}
               animate={{ opacity: 1, y: 0 }}
-              className="mb-5 p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-[12.5px] flex items-center gap-2"
+              className="mb-5 p-3.5 rounded-xl bg-red-50 border border-red-200 text-red-700 text-[13px] flex items-center gap-2 font-medium"
             >
-              <AlertCircle className="w-4 h-4 shrink-0" />
+              <AlertCircle className="w-4 h-4 shrink-0 text-red-500" />
               <span>{error}</span>
             </motion.div>
           )}
 
           <form onSubmit={handleLogin} className="space-y-4.5">
             <div>
-              <label className="block text-[11px] font-mono uppercase tracking-wider text-zinc-400 mb-1.5">Email address</label>
+              <label className="block text-[11px] font-bold uppercase tracking-wider text-zinc-500 mb-1.5">Email address</label>
               <div className="relative">
-                <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-500">
+                <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-400">
                   <Mail className="w-4 h-4" />
                 </span>
                 <input
@@ -89,18 +90,18 @@ export default function LoginPage() {
                   placeholder="name@company.com"
                   required
                   disabled={loading}
-                  className="w-full h-11 bg-zinc-950/60 border border-zinc-800 rounded-xl pl-10.5 pr-4 text-[13.5px] text-zinc-100 placeholder:text-zinc-600 focus:outline-none focus:border-zinc-700 focus:ring-2 focus:ring-zinc-800/50 transition-all disabled:opacity-50"
+                  className="w-full h-11 bg-white border border-zinc-200 rounded-xl pl-10.5 pr-4 text-[14px] text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:border-[#0A6BFF] focus:ring-4 focus:ring-blue-500/10 transition-all disabled:opacity-50"
                 />
               </div>
             </div>
 
             <div>
               <div className="flex justify-between items-center mb-1.5">
-                <label className="block text-[11px] font-mono uppercase tracking-wider text-zinc-400">Password</label>
-                <a href="#" className="text-[11.5px] text-zinc-500 hover:text-zinc-300 transition-colors">Forgot?</a>
+                <label className="block text-[11px] font-bold uppercase tracking-wider text-zinc-500">Password</label>
+                <a href="#" className="text-[12px] text-zinc-500 hover:text-zinc-950 font-medium transition-colors">Forgot?</a>
               </div>
               <div className="relative">
-                <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-500">
+                <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-400">
                   <Lock className="w-4 h-4" />
                 </span>
                 <input
@@ -110,7 +111,7 @@ export default function LoginPage() {
                   placeholder="••••••••"
                   required
                   disabled={loading}
-                  className="w-full h-11 bg-zinc-950/60 border border-zinc-800 rounded-xl pl-10.5 pr-4 text-[13.5px] text-zinc-100 placeholder:text-zinc-600 focus:outline-none focus:border-zinc-700 focus:ring-2 focus:ring-zinc-800/50 transition-all disabled:opacity-50"
+                  className="w-full h-11 bg-white border border-zinc-200 rounded-xl pl-10.5 pr-4 text-[14px] text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:border-[#0A6BFF] focus:ring-4 focus:ring-blue-500/10 transition-all disabled:opacity-50"
                 />
               </div>
             </div>
@@ -118,13 +119,13 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full h-11 bg-zinc-100 text-zinc-950 hover:bg-zinc-200 disabled:opacity-40 rounded-xl font-medium text-[13.5px] flex items-center justify-center gap-1.5 transition-all shadow-md cursor-pointer mt-2"
+              className="w-full h-11 bg-[#0A6BFF] text-white hover:bg-blue-600 disabled:opacity-50 rounded-xl font-bold text-[14px] flex items-center justify-center gap-1.5 transition-all shadow-md hover:shadow-lg shadow-blue-500/15 cursor-pointer mt-4"
             >
               {loading ? (
-                <span className="flex gap-1 justify-center items-center">
-                  <span className="w-1.5 h-1.5 rounded-full bg-zinc-950 animate-bounce" />
-                  <span className="w-1.5 h-1.5 rounded-full bg-zinc-950 animate-bounce" style={{ animationDelay: "150ms" }} />
-                  <span className="w-1.5 h-1.5 rounded-full bg-zinc-950 animate-bounce" style={{ animationDelay: "300ms" }} />
+                <span className="flex gap-1.5 justify-center items-center">
+                  <span className="w-1.5 h-1.5 rounded-full bg-white animate-bounce" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-white animate-bounce" style={{ animationDelay: "150ms" }} />
+                  <span className="w-1.5 h-1.5 rounded-full bg-white animate-bounce" style={{ animationDelay: "300ms" }} />
                 </span>
               ) : (
                 <>
@@ -135,10 +136,10 @@ export default function LoginPage() {
             </button>
           </form>
 
-          <div className="mt-6 pt-5 border-t border-zinc-800/60 text-center">
-            <p className="text-[12.5px] text-zinc-400">
-              Don't have an account?{" "}
-              <Link href="/signup" className="text-zinc-100 hover:underline font-medium">
+          <div className="mt-6 pt-5 border-t border-zinc-100 text-center">
+            <p className="text-[13px] text-zinc-500 font-medium">
+              Don&apos;t have an account?{" "}
+              <Link href="/signup" className="text-[#0A6BFF] hover:underline font-bold transition-all">
                 Create one free
               </Link>
             </p>

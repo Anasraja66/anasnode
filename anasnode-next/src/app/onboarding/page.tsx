@@ -292,8 +292,7 @@ export default function OnboardingPage() {
                         value={fullName}
                         onChange={(e) => setFullName(e.target.value)}
                         placeholder="e.g. Muhammad Qasim"
-                        className="w-full h-12 bg-zinc-50/50 border border-zinc-200 rounded-xl px-4 text-[14px] font-semibold focus:outline-none focus:ring-2"
-                        style={{ outlineColor: accent }}
+                        className="w-full h-12 bg-white border border-zinc-200 rounded-xl px-4 text-[14px] font-semibold text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:border-[#0A6BFF] focus:ring-4 focus:ring-blue-500/10 transition-all"
                       />
                     </div>
                     <div>
@@ -311,7 +310,7 @@ export default function OnboardingPage() {
                               ? "e.g. Olive & Oak"
                               : "e.g. Your clinic or shop name"
                         }
-                        className="w-full h-12 bg-zinc-50/50 border border-zinc-200 rounded-xl px-4 text-[14px] font-semibold focus:outline-none focus:ring-2"
+                        className="w-full h-12 bg-white border border-zinc-200 rounded-xl px-4 text-[14px] font-semibold text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:border-[#0A6BFF] focus:ring-4 focus:ring-blue-500/10 transition-all"
                       />
                     </div>
                   </div>
@@ -476,7 +475,7 @@ export default function OnboardingPage() {
                   type="button"
                   onClick={handleBack}
                   disabled={step === 1}
-                  className="px-5 py-2.5 rounded-xl border border-zinc-200 text-zinc-600 font-bold text-[13.5px] disabled:opacity-30 cursor-pointer"
+                  className="px-5 py-2.5 rounded-xl border border-zinc-200 text-zinc-600 font-bold text-[13.5px] hover:bg-zinc-50 disabled:opacity-30 cursor-pointer transition-colors"
                 >
                   Back
                 </button>
@@ -490,7 +489,7 @@ export default function OnboardingPage() {
                     (step === 4 && !companySize) ||
                     (step === 5 && enabledLanguages.length === 0)
                   }
-                  className="h-11 px-6 rounded-xl text-white font-bold disabled:opacity-40 flex items-center gap-1.5 text-[13.5px] cursor-pointer"
+                  className="h-11 px-6 rounded-xl text-white font-bold disabled:opacity-40 flex items-center gap-1.5 text-[13.5px] cursor-pointer transition-all shadow-md hover:shadow-lg hover:brightness-105"
                   style={{ backgroundColor: accent }}
                 >
                   <span>{step === 5 ? "Open my dashboard" : "Continue"}</span>

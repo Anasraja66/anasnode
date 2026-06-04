@@ -60,6 +60,7 @@ import { BroadcastsHub } from "@/components/dashboard/BroadcastsHub";
 import TeamSettingsPage from "@/components/dashboard/TeamSettingsPage";
 import TodayBookingsWidget from "@/components/dashboard/TodayBookingsWidget";
 import ChannelStatusWidget from "@/components/dashboard/ChannelStatusWidget";
+import BrandIcon from "@/components/ui/BrandIcon";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -415,9 +416,15 @@ function DashboardHome({ ws, preset }: { ws: Workspace; preset: IndustryPreset }
                 <h3 className="text-[14px] font-semibold text-zinc-900">Growth AI</h3>
               </div>
               <div className="grid grid-cols-2 gap-3">
-                {["TikTok Ads", "YouTube", "LinkedIn", "Blog Posts"].map((c) => (
-                  <div key={c} className="bg-white border border-zinc-200 px-3 py-2.5 rounded-lg text-[12px] font-medium text-zinc-700 shadow-sm text-center hover:border-sky-300 transition-colors cursor-pointer">
-                    {c}
+                {[
+                  { name: "TikTok Ads", id: "tiktok" },
+                  { name: "YouTube", id: "youtube" },
+                  { name: "LinkedIn", id: "linkedin" },
+                  { name: "Blog Posts", id: "blog" }
+                ].map((c) => (
+                  <div key={c.name} className="bg-white border border-zinc-200 px-3 py-2.5 rounded-xl text-[12px] font-semibold text-zinc-750 shadow-sm flex items-center gap-2.5 hover:border-sky-300 transition-colors cursor-pointer">
+                    <BrandIcon id={c.id} className="w-4.5 h-4.5 shrink-0" />
+                    <span className="truncate">{c.name}</span>
                   </div>
                 ))}
               </div>
@@ -436,9 +443,18 @@ function DashboardHome({ ws, preset }: { ws: Workspace; preset: IndustryPreset }
               <h3 className="text-[14px] font-semibold text-zinc-900">Integrations</h3>
             </div>
             <div className="space-y-3 flex-1">
-              {["Shopify Store", "Google Calendar", "HubSpot CRM", "Stripe Payments"].map((c) => (
-                <div key={c} className="bg-white border border-zinc-200 px-4 py-3 rounded-lg text-[13px] font-medium text-zinc-700 shadow-sm flex items-center justify-between hover:border-sky-300 transition-colors cursor-pointer">
-                  {c} <ArrowUpRight className="w-4 h-4 text-zinc-400" />
+              {[
+                { name: "Shopify Store", id: "shopify" },
+                { name: "Google Calendar", id: "googlecalendar" },
+                { name: "HubSpot CRM", id: "hubspot" },
+                { name: "Stripe Payments", id: "stripe" }
+              ].map((c) => (
+                <div key={c.name} className="bg-white border border-zinc-200 px-4 py-3 rounded-xl text-[13px] font-semibold text-zinc-750 shadow-sm flex items-center justify-between hover:border-sky-300 transition-colors cursor-pointer group/item">
+                  <div className="flex items-center gap-3">
+                    <BrandIcon id={c.id} className="w-4.5 h-4.5 shrink-0" />
+                    <span>{c.name}</span>
+                  </div>
+                  <ArrowUpRight className="w-4 h-4 text-zinc-400 group-hover/item:text-sky-500 transition-colors" />
                 </div>
               ))}
             </div>

@@ -5,41 +5,15 @@ import {
   ArrowRight,
   CheckCircle2,
   Clock,
-  MessageCircle,
-  Store,
-  Mail,
-  Calendar,
-  Sheet,
-  HardDrive,
-  Users,
-  Phone,
-  Sparkles,
-  CreditCard,
   BarChart2,
 } from "lucide-react";
+import BrandIcon from "../ui/BrandIcon";
 
 export type IntegrationStatus =
   | "connected"
   | "platform"
   | "available"
   | "coming_soon";
-
-import type { ComponentType } from "react";
-
-const ICONS: Record<string, ComponentType<{ className?: string }>> = {
-  whatsapp: MessageCircle,
-  instagram: MessageCircle,
-  facebook: MessageCircle,
-  shopify: Store,
-  smtp: Mail,
-  google_calendar: Calendar,
-  google_sheets: Sheet,
-  google_drive: HardDrive,
-  hubspot: Users,
-  twilio: Phone,
-  openai: Sparkles,
-  stripe: CreditCard,
-};
 
 const ACCENT: Record<string, string> = {
   whatsapp: "from-emerald-500/15 to-emerald-600/5 border-emerald-200",
@@ -69,7 +43,6 @@ export function IntegrationCard({
   href,
   onConnect,
 }: Props) {
-  const Icon = ICONS[id] || Sparkles;
   const accent = ACCENT[id] || ACCENT.default;
   const isLive = status === "connected" || status === "platform";
   const isSoon = status === "coming_soon";
@@ -109,7 +82,7 @@ export function IntegrationCard({
     >
       <div className="flex items-start justify-between gap-3 mb-4">
         <div className="w-11 h-11 rounded-xl bg-white border border-zinc-200/80 flex items-center justify-center shadow-sm">
-          <Icon className={`w-5 h-5 ${id === "whatsapp" ? "text-emerald-600" : "text-zinc-700"}`} />
+          <BrandIcon id={id} className="w-6 h-6" />
         </div>
         {statusBadge()}
       </div>

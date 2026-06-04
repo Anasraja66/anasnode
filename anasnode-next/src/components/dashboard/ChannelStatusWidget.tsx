@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { MessageSquare, Calendar, CheckCircle2, AlertCircle, ArrowRight, RefreshCw } from "lucide-react";
 
+import BrandIcon from "../ui/BrandIcon";
+
 type ChannelStatus = {
   id: string;
   name: string;
@@ -48,36 +50,7 @@ export default function ChannelStatusWidget() {
   }, []);
 
   const getChannelIcon = (id: string) => {
-    switch (id) {
-      case "whatsapp":
-        return <MessageSquare className="w-5 h-5 text-sky-600" />;
-      case "instagram":
-        return (
-          <svg viewBox="0 0 24 24" className="w-5 h-5 text-sky-600" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-            <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
-            <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
-            <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
-          </svg>
-        );
-      case "facebook":
-        return (
-          <svg viewBox="0 0 24 24" className="w-5 h-5 text-sky-600" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
-          </svg>
-        );
-      case "google_calendar":
-        return <Calendar className="w-5 h-5 text-sky-600" />;
-      case "google_oauth":
-        return (
-          <svg viewBox="0 0 24 24" className="w-5 h-5 text-sky-600" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-            <circle cx="12" cy="12" r="10" />
-            <circle cx="12" cy="10" r="3" />
-            <path d="M7 20.662V19a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v1.662" />
-          </svg>
-        );
-      default:
-        return <MessageSquare className="w-5 h-5 text-sky-600" />;
-    }
+    return <BrandIcon id={id} className="w-5 h-5" />;
   };
 
   const getStatusBadge = (status: string) => {

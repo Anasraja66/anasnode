@@ -89,7 +89,7 @@ export async function GET() {
         inbound,
         automated,
       })),
-      integrations: credentials.map((c) => c.type),
+      integrations: credentials.map((c: { type: string }) => c.type),
     });
   } catch (error) {
     console.error("analytics summary error:", error);

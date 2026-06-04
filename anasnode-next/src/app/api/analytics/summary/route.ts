@@ -18,7 +18,7 @@ export async function GET() {
       select: { id: true, isActive: true, stats: true },
     });
 
-    const workflowIds = workflows.map((w) => w.id);
+    const workflowIds = workflows.map((w: { id: string }) => w.id);
 
     const since = new Date();
     since.setDate(since.getDate() - 6);

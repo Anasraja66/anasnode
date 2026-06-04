@@ -22,7 +22,7 @@ export async function GET(request: Request) {
 
     const now = new Date();
     const todayBookings = bookings.filter(
-      (b) => b.startAt >= new Date(now.setHours(0, 0, 0, 0))
+      (b: { startAt: Date }) => b.startAt >= new Date(now.setHours(0, 0, 0, 0))
         && b.startAt < new Date(now.setHours(23, 59, 59, 999))
     );
 

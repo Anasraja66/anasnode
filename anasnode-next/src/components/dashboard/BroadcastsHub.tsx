@@ -71,11 +71,9 @@ export function BroadcastsHub({ workspaceName }: { workspaceName: string }) {
 
       {/* AI OS: Prompt to Campaign */}
       <div className="rounded-xl border border-zinc-200 bg-white p-6 space-y-4 shadow-sm">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-zinc-950 flex items-center justify-center text-white">
-            <Zap className="w-5 h-5 fill-current text-emerald-400" />
-          </div>
-          <h2 className="text-[15px] font-bold text-zinc-900 tracking-tight">AI Campaign Generator</h2>
+        <div>
+          <h2 className="text-[15px] font-bold text-zinc-900 tracking-tight">Create Campaign</h2>
+          <p className="text-[12.5px] text-zinc-500 mt-0.5">Describe your target audience and goal to compose a new broadcast campaign draft.</p>
         </div>
         
         <div className="relative group">

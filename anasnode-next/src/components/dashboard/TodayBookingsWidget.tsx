@@ -132,8 +132,8 @@ export default function TodayBookingsWidget() {
                 className="flex items-center justify-between p-3.5 bg-zinc-50/50 hover:bg-zinc-50 border border-zinc-150 rounded-xl transition-all hover:scale-[1.01]"
               >
                 <div className="flex items-center gap-3 min-w-0">
-                  <div className="w-9 h-9 rounded-lg bg-white border border-zinc-200 flex items-center justify-center shrink-0">
-                    <span className="text-[11px] font-bold text-zinc-700 uppercase">
+                  <div className="w-8 h-8 rounded-lg bg-zinc-100 flex items-center justify-center shrink-0 text-zinc-700">
+                    <span className="text-[11px] font-bold uppercase">
                       {booking.contactName.slice(0, 2)}
                     </span>
                   </div>

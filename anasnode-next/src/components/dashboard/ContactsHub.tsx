@@ -457,7 +457,7 @@ export function ContactsHub() {
                   <tr key={c.id} className="hover:bg-zinc-50 transition-colors group">
                     <td className="px-6 py-5">
                       <div className="flex items-center gap-3">
-                        <div className="w-9 h-9 rounded-full bg-zinc-100 border border-zinc-200 flex items-center justify-center text-[12px] font-black text-zinc-900">
+                        <div className="w-8 h-8 rounded-full bg-zinc-100 flex items-center justify-center text-[12px] font-semibold text-zinc-700">
                           {c.name ? c.name[0].toUpperCase() : "?"}
                         </div>
                         <div className="min-w-0">

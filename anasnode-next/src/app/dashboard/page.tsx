@@ -280,8 +280,8 @@ function DashboardHome({ ws, preset }: { ws: Workspace; preset: IndustryPreset }
             </p>
           </div>
           <div className="flex items-center gap-3">
-            <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-sky-50 text-[#0A6BFF] border border-sky-100 text-[11px] font-semibold uppercase tracking-wider">
-              <span className="w-1.5 h-1.5 rounded-full bg-sky-500 animate-pulse" />
+            <span className="flex items-center gap-1.5 text-[12px] font-medium text-zinc-550 mr-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
               Production Workspace
             </span>
             <button
@@ -402,8 +402,8 @@ function DashboardHome({ ws, preset }: { ws: Workspace; preset: IndustryPreset }
               variants={itemVariants}
               className="bg-white border border-zinc-200 rounded-xl p-6 shadow-sm flex flex-col items-center text-center relative overflow-hidden group hover:border-zinc-300 transition-colors"
             >
-              <div className="w-14 h-14 rounded-full bg-sky-50 flex items-center justify-center text-sky-500 mb-4 relative border border-sky-100">
-                 <Zap className="w-6 h-6 fill-current" />
+              <div className="w-14 h-14 rounded-full bg-zinc-50 flex items-center justify-center text-zinc-700 mb-4 relative border border-zinc-200">
+                 <Activity className="w-6 h-6" />
               </div>
               <div className="space-y-1">
                 <h3 className="text-[16px] font-semibold text-zinc-900">Anaos Engine</h3>
@@ -527,20 +527,17 @@ function Sidebar({ active, onChange, ws, onWsChange, workspaces, preset, user, o
     NAV_ITEMS.push({ id: "broadcasts",  label: "Broadcasts", icon: Megaphone });
   }
 
-  NAV_ITEMS.push({ id: "ai_agent",    label: "AI Training",    icon: Zap });
+  NAV_ITEMS.push({ id: "ai_agent",    label: "Knowledge Base",    icon: FileText });
 
   return (
     <aside className={`dashboard-sidebar w-[260px] shrink-0 border-r border-zinc-200 bg-white flex flex-col h-full z-40 transition-transform duration-300 md:translate-x-0 md:static fixed inset-y-0 left-0 ${open ? "translate-x-0" : "-translate-x-full"}`}>
       {/* Professional Branding Logo */}
-      <div className="h-16 px-6 flex items-center justify-between border-b border-zinc-100 relative">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-zinc-800 flex items-center justify-center text-white shadow-sm ring-1 ring-white/10">
-            <Zap className="w-4.5 h-4.5 fill-current text-blue-400" />
+      <div className="h-16 px-6 flex items-center justify-between border-b border-zinc-100 relative bg-white">
+        <div className="flex items-center gap-2">
+          <div className="w-6.5 h-6.5 rounded-md bg-zinc-900 flex items-center justify-center text-white text-[11px] font-bold">
+            A
           </div>
-          <div className="flex flex-col">
-            <span className="text-[15px] font-black text-zinc-800 tracking-tighter leading-none">ANASNODE</span>
-            <span className="text-[9px] font-bold text-zinc-400 tracking-[0.2em] uppercase mt-0.5">Business OS</span>
-          </div>
+          <span className="text-[14px] font-bold text-zinc-900 tracking-tight leading-none">AnasNode</span>
         </div>
         <button
           type="button"
@@ -558,7 +555,7 @@ function Sidebar({ active, onChange, ws, onWsChange, workspaces, preset, user, o
           onClick={() => setWsOpen(!wsOpen)}
           className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-zinc-100 transition-all cursor-pointer text-left border border-transparent hover:border-zinc-200 group"
         >
-          <div className="w-9 h-9 rounded-lg bg-white border border-zinc-200 flex items-center justify-center shrink-0 text-[14px] font-bold text-zinc-800 shadow-sm group-hover:scale-105 transition-transform">
+          <div className="w-8 h-8 rounded-md bg-zinc-100 flex items-center justify-center shrink-0 text-[13px] font-semibold text-zinc-800">
             {ws.name[0]}
           </div>
           <div className="min-w-0 flex-1">
@@ -1154,17 +1151,12 @@ function AutomationsPage({ ws, integrations, toggleAutomation, toggleLoading }: 
       </div>
 
       {/* ── Build with Prompt Card ── */}
-      <div className="rounded-2xl border border-zinc-200 bg-white shadow-sm overflow-hidden">
-        <div className="px-5 pt-5 pb-4 flex items-start gap-3 border-b border-zinc-100">
-          <div className="w-9 h-9 rounded-xl bg-[#EBF2FF] flex items-center justify-center shrink-0 mt-0.5">
-            <Zap className="w-4 h-4 text-[#0A6BFF]" />
-          </div>
-          <div>
-            <p className="text-[15px] font-semibold text-zinc-900 leading-snug">Build with prompt</p>
-            <p className="text-[13px] text-zinc-400 font-medium mt-0.5">
-              Describe your flow — Anaos detects the channel automatically
-            </p>
-          </div>
+      <div className="rounded-xl border border-zinc-200 bg-white shadow-sm overflow-hidden">
+        <div className="px-5 pt-5 pb-4 border-b border-zinc-100">
+          <p className="text-[15px] font-semibold text-zinc-900 leading-snug">Build with prompt</p>
+          <p className="text-[13px] text-zinc-500 font-medium mt-0.5">
+            Describe your flow — Anaos detects the channel automatically
+          </p>
         </div>
 
         <form onSubmit={handleBuild}>
@@ -1210,7 +1202,7 @@ function AutomationsPage({ ws, integrations, toggleAutomation, toggleLoading }: 
             >
               {building
                 ? <><RefreshCw className="w-3.5 h-3.5 animate-spin" /> Building…</>
-                : <><Zap className="w-3.5 h-3.5" /> Generate automation</>
+                : <><Plus className="w-3.5 h-3.5" /> Generate automation</>
               }
             </button>
           </div>
@@ -1233,13 +1225,13 @@ function AutomationsPage({ ws, integrations, toggleAutomation, toggleLoading }: 
         {loadingList && finalList.length === 0 ? (
           <div className="space-y-2.5">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="h-[88px] rounded-2xl bg-white border border-zinc-100 animate-pulse" />
+              <div key={i} className="h-[88px] rounded-xl bg-white border border-zinc-100 animate-pulse" />
             ))}
           </div>
         ) : finalList.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-zinc-200 bg-white p-10 text-center">
-            <div className="w-12 h-12 rounded-2xl bg-zinc-50 border border-zinc-100 flex items-center justify-center mx-auto mb-4">
-              <Zap className="w-5 h-5 text-zinc-300" />
+          <div className="rounded-xl border border-dashed border-zinc-200 bg-white p-10 text-center">
+            <div className="w-12 h-12 rounded-xl bg-zinc-50 border border-zinc-100 flex items-center justify-center mx-auto mb-4">
+              <Activity className="w-5 h-5 text-zinc-400" />
             </div>
             <p className="text-[14px] font-bold text-zinc-700">No automations yet</p>
             <p className="text-[13px] text-zinc-400 mt-1">
@@ -1253,7 +1245,7 @@ function AutomationsPage({ ws, integrations, toggleAutomation, toggleLoading }: 
                 key={a.id}
                 initial={{ opacity: 0, y: 6 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="rounded-2xl border border-zinc-200 bg-white shadow-sm hover:shadow-md transition-all overflow-hidden"
+                className="rounded-xl border border-zinc-200 bg-white shadow-sm hover:shadow-md transition-all overflow-hidden"
               >
                 <div className="flex items-stretch">
                   {/* Left accent bar */}
@@ -1351,25 +1343,23 @@ function AutomationsPage({ ws, integrations, toggleAutomation, toggleLoading }: 
 
       {/* ── Bottom CTA ── */}
       {needsCount > 0 && (
-        <div className="rounded-2xl border border-sky-200 bg-sky-50/60 p-5 flex items-center justify-between gap-6">
-          <div className="flex items-start gap-3.5">
-            <div className="w-10 h-10 rounded-xl bg-sky-100 flex items-center justify-center shrink-0">
-              <Plug className="w-5 h-5 text-sky-600" />
-            </div>
+        <div className="rounded-xl border border-zinc-200 bg-zinc-50 p-4.5 flex items-center justify-between gap-6">
+          <div className="flex items-center gap-3">
+            <div className="w-1.5 h-1.5 rounded-full bg-zinc-400 shrink-0" />
             <div>
-              <p className="text-[14px] font-bold text-sky-900">
+              <p className="text-[13.5px] font-semibold text-zinc-950">
                 {needsCount} automation{needsCount > 1 ? "s" : ""} waiting for connection
               </p>
-              <p className="text-[12.5px] text-sky-600 font-medium mt-0.5">
+              <p className="text-[12.5px] text-zinc-500 font-medium mt-0.5">
                 Connect your channels once — automations go live instantly.
               </p>
             </div>
           </div>
           <a
             href="/dashboard/integrations"
-            className="shrink-0 inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#0A6BFF] hover:bg-blue-600 text-white text-[13px] font-bold transition-colors shadow-sm whitespace-nowrap"
+            className="shrink-0 inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-white text-[12.5px] font-semibold transition-colors shadow-sm whitespace-nowrap"
           >
-            Connect now <ArrowRight className="w-4 h-4" />
+            Connect now <ArrowRight className="w-3.5 h-3.5" />
           </a>
         </div>
       )}

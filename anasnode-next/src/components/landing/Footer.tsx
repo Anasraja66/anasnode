@@ -61,16 +61,7 @@ const footerColumns = [
 
 export function Footer() {
   return (
-    <footer className="relative bg-white border-t border-zinc-100 overflow-hidden" suppressHydrationWarning>
-      {/* Gemini-style Sky Blue & White background (Bottom) */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
-        <div 
-          className="absolute bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[1400px] h-[800px] opacity-80"
-          style={{
-            background: 'radial-gradient(ellipse at 50% 100%, #d6ebfc 0%, #ffffff 70%)'
-          }}
-        />
-      </div>
+    <footer className="relative bg-transparent border-t border-zinc-100 overflow-hidden" suppressHydrationWarning>
 
       <div className="max-w-[1200px] mx-auto px-6 pt-14 pb-8 relative z-10">
 

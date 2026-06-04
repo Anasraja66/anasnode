@@ -237,16 +237,7 @@ export function Hero() {
         )}
       </AnimatePresence>
 
-      {/* Gemini-style Sky Blue & White background */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
-        <div className="absolute inset-0 bg-white" />
-        <div 
-          className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-[1400px] h-[800px] opacity-80"
-          style={{
-            background: 'radial-gradient(ellipse at 50% 0%, #d6ebfc 0%, #ffffff 70%)'
-          }}
-        />
-      </div>
+
 
       <div className="max-w-4xl mx-auto text-center relative z-10">
         {/* Top Label */}

@@ -152,7 +152,11 @@
 
   .gemini-bg {
     background-color: #ffffff;
-    background-image: radial-gradient(circle at 50% -20%, #dbeafe 0%, #e0f2fe 20%, #ffffff 70%);
+    background-image: 
+      radial-gradient(ellipse at 50% 0%, #d6ebfc 0%, transparent 70%),
+      radial-gradient(ellipse at 50% 100%, #d6ebfc 0%, transparent 70%);
+    background-attachment: fixed;
+    background-size: 100% 100vh;
   }
 }
 

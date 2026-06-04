@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { ArrowUp, Plus, Mic, ChevronDown, RefreshCw } from "lucide-react";
+import { ArrowUp, Plus, Mic, ChevronDown, RefreshCw, Paperclip } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const EXAMPLES = [
@@ -167,27 +167,37 @@ export function PromptBox({ onGenerate, compact }: Props) {
                 </button>
               </div>
 
-              {/* Voice icon */}
-              <button
-                type="button"
-                className="w-10 h-10 flex items-center justify-center text-zinc-400 hover:text-zinc-900 transition-all cursor-pointer hover:bg-zinc-200/40 rounded-full"
-              >
-                <Mic className="w-5 h-5" />
-              </button>
+              <div className="flex items-center gap-2 md:gap-4">
+                {/* File Upload icon */}
+                <button
+                  type="button"
+                  className="w-10 h-10 flex items-center justify-center text-zinc-400 hover:text-zinc-900 transition-all cursor-pointer hover:bg-zinc-200/40 rounded-full"
+                >
+                  <Paperclip className="w-5 h-5" />
+                </button>
 
-              {/* Send Button */}
-              <button
-                onClick={handleGenerate}
-                disabled={loading || !value.trim()}
-                className="w-11 h-11 rounded-full bg-zinc-400/80 hover:bg-blue-600 text-white flex items-center justify-center shadow-sm transition-all disabled:opacity-40 disabled:hover:bg-zinc-400/80 disabled:cursor-not-allowed hover:scale-105 active:scale-95 cursor-pointer shrink-0"
-                style={{ backgroundColor: value.trim() ? '#0A6BFF' : undefined }}
-              >
-                {loading ? (
-                  <RefreshCw className="w-5 h-5 animate-spin text-white" />
-                ) : (
-                  <ArrowUp className="w-5.5 h-5.5 stroke-[3]" />
-                )}
-              </button>
+                {/* Voice icon */}
+                <button
+                  type="button"
+                  className="w-10 h-10 flex items-center justify-center text-zinc-400 hover:text-zinc-900 transition-all cursor-pointer hover:bg-zinc-200/40 rounded-full"
+                >
+                  <Mic className="w-5 h-5" />
+                </button>
+
+                {/* Send Button */}
+                <button
+                  onClick={handleGenerate}
+                  disabled={loading || !value.trim()}
+                  className="w-11 h-11 rounded-full bg-zinc-400/80 hover:bg-blue-600 text-white flex items-center justify-center shadow-sm transition-all disabled:opacity-40 disabled:hover:bg-zinc-400/80 disabled:cursor-not-allowed hover:scale-105 active:scale-95 cursor-pointer shrink-0"
+                  style={{ backgroundColor: value.trim() ? '#0A6BFF' : undefined }}
+                >
+                  {loading ? (
+                    <RefreshCw className="w-5 h-5 animate-spin text-white" />
+                  ) : (
+                    <ArrowUp className="w-5.5 h-5.5 stroke-[3]" />
+                  )}
+                </button>
+              </div>
             </div>
           </div>
         )}

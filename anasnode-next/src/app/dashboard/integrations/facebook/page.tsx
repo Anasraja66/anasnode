@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, Check, Facebook, ArrowRight } from "lucide-react";
+import { ArrowLeft, Check, MessageSquare as Facebook, ArrowRight } from "lucide-react";
 import { MetaOAuthConnect } from "@/components/dashboard/MetaOAuthConnect";
 
 export default function FacebookSetupPage() {

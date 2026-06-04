@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Facebook, Loader2, CheckCircle2, ChevronRight, Phone } from "lucide-react";
+import { CheckCircle2, ChevronRight, MessageSquare as Facebook, Camera as Instagram, Loader2, Phone } from "lucide-react";
 
 interface Props {
   onSuccess: () => void;

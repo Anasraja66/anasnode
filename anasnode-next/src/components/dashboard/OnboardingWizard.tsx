@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Facebook, Instagram, MessageCircle, ArrowRight, Loader2, CheckCircle2 } from "lucide-react";
+import { MessageSquare as Facebook, Camera as Instagram, MessageCircle, ArrowRight, Loader2, CheckCircle2 } from "lucide-react";
 import { MetaOAuthConnect } from "@/components/dashboard/MetaOAuthConnect";
 
 export function OnboardingWizard() {

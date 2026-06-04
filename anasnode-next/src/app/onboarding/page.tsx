@@ -16,8 +16,8 @@ import {
   TrendingUp,
   Activity,
   Globe,
-  Facebook,
-  Instagram,
+  MessageSquare as Facebook,
+  Camera as Instagram,
   MessageCircle,
 } from "lucide-react";
 import { MetaOAuthConnect } from "@/components/dashboard/MetaOAuthConnect";

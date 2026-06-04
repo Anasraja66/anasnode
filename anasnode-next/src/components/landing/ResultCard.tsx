@@ -228,7 +228,7 @@ export function ResultCard({ workspace, prompt = "" }: Props) {
                 <button
                   onClick={() => toggleState(i)}
                   className={`relative w-11 h-6 rounded-full transition-all duration-300 shrink-0 cursor-pointer ${
-                    isEnabled ? "bg-zinc-900 shadow-inner" : "bg-zinc-200"
+                    isEnabled ? "bg-[#0A6BFF] shadow-inner" : "bg-zinc-200"
                   }`}
                 >
                   <span
@@ -263,7 +263,7 @@ export function ResultCard({ workspace, prompt = "" }: Props) {
           <button
             onClick={handleOpenDashboard}
             disabled={deploying}
-            className="group relative h-12 px-8 rounded-full bg-zinc-900 text-white text-[15px] font-bold flex items-center gap-2 hover:bg-black transition-all duration-300 shadow-[0_10px_25px_rgba(0,0,0,0.15)] active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed overflow-hidden"
+            className="group relative h-12 px-8 rounded-full bg-[#0A6BFF] text-white text-[15px] font-bold flex items-center gap-2 hover:bg-blue-600 transition-all duration-300 shadow-sm active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed overflow-hidden"
           >
             {deploying ? (
               <>

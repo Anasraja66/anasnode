@@ -179,8 +179,8 @@ export function PromptBox({ onGenerate, compact }: Props) {
               <button
                 onClick={handleGenerate}
                 disabled={loading || !value.trim()}
-                className="w-11 h-11 rounded-full bg-zinc-400/80 hover:bg-zinc-900 text-white flex items-center justify-center shadow-lg transition-all disabled:opacity-40 disabled:hover:bg-zinc-400/80 disabled:cursor-not-allowed hover:scale-105 active:scale-95 cursor-pointer shrink-0"
-                style={{ backgroundColor: value.trim() ? '#18181b' : undefined }}
+                className="w-11 h-11 rounded-full bg-zinc-400/80 hover:bg-blue-600 text-white flex items-center justify-center shadow-sm transition-all disabled:opacity-40 disabled:hover:bg-zinc-400/80 disabled:cursor-not-allowed hover:scale-105 active:scale-95 cursor-pointer shrink-0"
+                style={{ backgroundColor: value.trim() ? '#0A6BFF' : undefined }}
               >
                 {loading ? (
                   <RefreshCw className="w-5 h-5 animate-spin text-white" />

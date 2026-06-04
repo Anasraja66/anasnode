@@ -214,12 +214,12 @@ export function FinalCTA() {
 
           {/* Final CTA Button */}
           <FadeIn delay={0.5}>
-            <button className="group relative bg-zinc-900 text-white px-8 py-4 rounded-full font-bold text-[15px] flex items-center gap-3 hover:bg-black transition-all shadow-xl shadow-zinc-200">
+            <button className="group relative bg-[#0A6BFF] text-white px-8 py-4 rounded-full font-bold text-[15px] flex items-center gap-3 hover:bg-blue-600 transition-all shadow-sm">
               <div className="flex -space-x-2">
-                <div className="w-6 h-6 rounded-full bg-blue-400 flex items-center justify-center border-2 border-zinc-900">
+                <div className="w-6 h-6 rounded-full bg-blue-400 flex items-center justify-center border-2 border-[#0A6BFF] group-hover:border-blue-600 transition-colors">
                   <Send className="w-3 h-3" />
                 </div>
-                <div className="w-6 h-6 rounded-full bg-green-500 flex items-center justify-center border-2 border-zinc-900">
+                <div className="w-6 h-6 rounded-full bg-green-500 flex items-center justify-center border-2 border-[#0A6BFF] group-hover:border-blue-600 transition-colors">
                   <MessageCircle className="w-3.5 h-3.5" />
                 </div>
               </div>

@@ -237,12 +237,9 @@ export function Hero() {
         )}
       </AnimatePresence>
 
-      {/* High-Vibrancy Glowing Blur Blobs (Lovable Style) */}
+      {/* Crisp White background structure with soft top radial gradient */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
-        <div className="absolute top-[-15%] right-[-10%] w-[550px] h-[550px] rounded-full bg-[#00B0FF] opacity-35 blur-[120px] animate-pulse" style={{ animationDuration: '8s' }} />
-        <div className="absolute top-[-25%] left-[-15%] w-[480px] h-[480px] rounded-full bg-[#3B82F6] opacity-30 blur-[100px]" />
-        <div className="absolute bottom-[-20%] left-[-20%] w-[650px] h-[650px] rounded-full bg-[#0EA5E9] opacity-30 blur-[130px] animate-pulse" style={{ animationDuration: '10s' }} />
-        <div className="absolute bottom-[-25%] right-[-10%] w-[550px] h-[550px] rounded-full bg-[#7DD3FC] opacity-25 blur-[110px]" />
+        <div className="absolute top-[-10%] left-1/2 -translate-x-1/2 w-[1000px] h-[500px] rounded-full bg-blue-50/50 opacity-70 blur-[120px]" />
       </div>
 
       <div className="max-w-4xl mx-auto text-center relative z-10">
@@ -358,7 +355,7 @@ export function Hero() {
                   </button>
                   <button 
                     onClick={() => setIsModalOpen(true)}
-                    className="bg-zinc-900 text-white text-[13px] font-bold px-5 py-2 rounded-full hover:bg-black transition-all active:scale-95 shadow-sm font-sans"
+                    className="bg-[#0A6BFF] text-white text-[13px] font-bold px-5 py-2 rounded-full hover:bg-blue-600 transition-all active:scale-95 shadow-sm font-sans"
                   >
                     Connect
                   </button>

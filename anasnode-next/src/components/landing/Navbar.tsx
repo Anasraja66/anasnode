@@ -291,7 +291,7 @@ export function Navbar() {
             </a>
             <a 
               href="/signup" 
-              className="hidden sm:inline-flex h-8.5 px-4.5 rounded-lg bg-[#111827] text-white text-[13.5px] font-semibold hover:bg-zinc-800 transition-colors cursor-pointer flex items-center justify-center shadow-sm"
+              className="hidden sm:inline-flex h-8.5 px-4.5 rounded-lg bg-[#0A6BFF] text-white text-[13.5px] font-semibold hover:bg-blue-600 transition-colors cursor-pointer flex items-center justify-center shadow-sm"
             >
               Get started
             </a>
@@ -471,7 +471,7 @@ export function Navbar() {
                 <a
                   href="/signup"
                   onClick={() => setMobileOpen(false)}
-                  className="h-10 rounded-lg bg-[#111827] text-white text-[14px] font-semibold hover:bg-zinc-800 transition-colors flex items-center justify-center cursor-pointer shadow-sm"
+                  className="h-10 rounded-lg bg-[#0A6BFF] text-white text-[14px] font-semibold hover:bg-blue-600 transition-colors flex items-center justify-center cursor-pointer shadow-sm"
                 >
                   Get started
                 </a>

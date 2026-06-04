@@ -98,7 +98,7 @@ export async function GET(request: Request) {
         orderBy: { createdAt: "desc" },
       });
 
-      const automations = dbWorkflows.map(wf => {
+      const automations = dbWorkflows.map((wf: { id: string; name: string; description: string | null; stats: string; isActive: boolean; lastRunAt: Date | null; updatedAt: Date; nodes: string; edges: string }) => {
         let stats = { runs: 0, success: 0, failed: 0 };
         try {
           stats = JSON.parse(wf.stats);

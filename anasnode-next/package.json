@@ -7,6 +7,7 @@
     "tunnel": "bin\\cloudflared.exe tunnel --url http://localhost:3000",
     "tunnel:setup": "node scripts/setup-tunnel.mjs",
     "build": "next build",
+    "postinstall": "prisma generate",
     "start": "next start",
     "lint": "eslint"
   },

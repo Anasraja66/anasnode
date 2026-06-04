@@ -268,7 +268,7 @@ export function Hero() {
           initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.55, delay: 0.15 }}
-          className="text-[17px] sm:text-[19px] text-[#4B5563] mt-6 leading-relaxed max-w-[540px] mx-auto font-medium"
+          className="text-[17px] sm:text-[19px] text-[#4B5563] mt-6 leading-relaxed max-w-[540px] mx-auto font-medium min-h-[56px] sm:min-h-[60px]"
         >
           Create{" "}
           <WordRotator 

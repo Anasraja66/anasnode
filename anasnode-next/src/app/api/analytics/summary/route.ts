@@ -80,7 +80,7 @@ export async function GET() {
         automationRuns: totalRuns,
         successfulRuns: successRuns,
         failedRuns: failedRuns,
-        activeAutomations: workflows.filter((w) => w.isActive).length,
+        activeAutomations: workflows.filter((w: { isActive: boolean }) => w.isActive).length,
         connectedChannels: credentials.length,
         executionsLast7Days: executions.length,
       },

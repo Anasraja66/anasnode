@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowRight, Check, Zap, Sparkles, Loader2 } from "lucide-react";
+import { ArrowRight, Check, Zap, Sparkles, Loader2, GitBranch } from "lucide-react";
 import { useState, useEffect } from "react";
 import { getIndustryPreset, resolveIndustryId, type IndustryId } from "@/lib/industry/presets";
 
@@ -98,6 +98,7 @@ export function ResultCard({ workspace, prompt = "" }: Props) {
   const [mounted, setMounted] = useState(false);
   const [deploying, setDeploying] = useState(false);
   const [deployError, setDeployError] = useState<string | null>(null);
+  const [buildingWorkflow, setBuildingWorkflow] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -113,10 +114,43 @@ export function ResultCard({ workspace, prompt = "" }: Props) {
     setStates((s) => s.map((v, i) => (i === idx ? !v : v)));
   };
 
+  // ── Open Visual Workflow Builder with AI-generated nodes ─────────────────
+  const handleOpenWorkflow = async () => {
+    setBuildingWorkflow(true);
+    setDeployError(null);
+    try {
+      const res = await fetch("/api/generate/workflow", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompt: prompt || `Automation for ${workspace.name}` }),
+      });
+      const data = await res.json();
+      if (data.success && data.workflow) {
+        // Save to localStorage so WorkflowCanvas can load it
+        const entry = {
+          id: workspace.id,
+          name: data.workflowName || workspace.name,
+          workflow: data.workflow,
+          industry: data.industry,
+          prompt,
+          createdAt: Date.now(),
+        };
+        localStorage.setItem("anaos_pending_workflow", JSON.stringify(entry));
+        window.location.href = `/dashboard/workflows/${workspace.id}`;
+        return;
+      }
+      setDeployError("Could not generate workflow. Try again.");
+    } catch {
+      setDeployError("Network error. Please try again.");
+    } finally {
+      setBuildingWorkflow(false);
+    }
+  };
+
+  // ── Open Dashboard (existing flow) ───────────────────────────────────────
   const handleOpenDashboard = async () => {
     setDeploying(true);
     setDeployError(null);
-
     const updatedWorkspace = {
       ...workspace,
       automations: workspace.automations.map((a, i) => ({
@@ -124,11 +158,9 @@ export function ResultCard({ workspace, prompt = "" }: Props) {
         enabled: states[i] ?? a.enabled,
       })),
     };
-
     const whatsappOn = updatedWorkspace.automations.some(
       (a) => a.type === "whatsapp_flow" && a.enabled
     );
-
     try {
       const res = await fetch("/api/v1/workflows/from-prompt", {
         method: "POST",
@@ -141,12 +173,10 @@ export function ResultCard({ workspace, prompt = "" }: Props) {
         }),
       });
       const data = await res.json();
-
       if (data.saved && data.workspace?.id) {
         window.location.href = `/dashboard?ws=${data.workspace.id}`;
         return;
       }
-
       if (data.requiresAuth) {
         const saved = localStorage.getItem("anaos_custom_workspaces");
         let workspacesList = saved ? JSON.parse(saved) : [];
@@ -158,7 +188,6 @@ export function ResultCard({ workspace, prompt = "" }: Props) {
         window.location.href = `/signup?next=/dashboard`;
         return;
       }
-
       setDeployError(data.error || "Could not deploy automation.");
     } catch {
       setDeployError("Network error. Try again or sign in first.");
@@ -258,35 +287,53 @@ export function ResultCard({ workspace, prompt = "" }: Props) {
       </div>
 
       {/* Footer CTA */}
-      <div className="px-10 py-6 border-t border-zinc-100 flex items-center justify-between bg-zinc-50/20">
-        <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-full bg-emerald-50 flex items-center justify-center border border-emerald-100 shadow-sm">
-            <Check className="w-4 h-4 text-emerald-500" />
+      <div className="px-10 py-6 border-t border-zinc-100 bg-zinc-50/20">
+        {deployError && (
+          <p className="text-[11px] font-bold text-red-500 mb-3 text-right animate-bounce">{deployError}</p>
+        )}
+        <div className="flex items-center justify-between gap-3 flex-wrap">
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-full bg-emerald-50 flex items-center justify-center border border-emerald-100 shadow-sm">
+              <Check className="w-4 h-4 text-emerald-500" />
+            </div>
+            <span className="text-[14px] font-bold text-zinc-500">Agent Setup Complete</span>
           </div>
-          <span className="text-[14px] font-bold text-zinc-500">Agent Setup Complete</span>
-        </div>
-        
-        <div className="flex flex-col items-end gap-2">
-          {deployError && (
-            <span className="text-[11px] font-bold text-red-500 animate-bounce">{deployError}</span>
-          )}
-          <button
-            onClick={handleOpenDashboard}
-            disabled={deploying}
-            className="group relative h-12 px-8 rounded-full bg-[#0A6BFF] text-white text-[15px] font-bold flex items-center gap-2 hover:bg-blue-600 transition-all duration-300 shadow-sm active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed overflow-hidden"
-          >
-            {deploying ? (
-              <>
+
+          <div className="flex items-center gap-3">
+            {/* ── Visual Workflow Builder Button (PRIMARY) ── */}
+            <button
+              onClick={handleOpenWorkflow}
+              disabled={buildingWorkflow || deploying}
+              className="group relative h-12 px-7 rounded-full bg-[#0A6BFF] text-white text-[14px] font-bold flex items-center gap-2 hover:bg-blue-600 transition-all duration-300 shadow-lg active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {buildingWorkflow ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <span>Building Workflow...</span>
+                </>
+              ) : (
+                <>
+                  <GitBranch className="w-4 h-4" />
+                  <span>Open Visual Builder</span>
+                  <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                </>
+              )}
+            </button>
+
+            {/* ── Dashboard shortcut ── */}
+            <button
+              onClick={handleOpenDashboard}
+              disabled={deploying || buildingWorkflow}
+              className="h-12 px-6 rounded-full border border-zinc-200 bg-white text-zinc-700 text-[14px] font-bold flex items-center gap-2 hover:border-zinc-300 hover:bg-zinc-50 transition-all duration-300 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
+            >
+              {deploying ? (
                 <Loader2 className="w-4 h-4 animate-spin" />
-                <span>Deploying Agent...</span>
-              </>
-            ) : (
-              <>
-                <span>Deploy Automation</span>
-                <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
-              </>
-            )}
-          </button>
+              ) : (
+                <Zap className="w-4 h-4" />
+              )}
+              <span>Dashboard</span>
+            </button>
+          </div>
         </div>
       </div>
     </motion.div>

@@ -15,6 +15,10 @@ export type GeneratedVariable = {
 };
 
 import { normalizeIndustryLabel } from "@/lib/industry/presets";
+import { AnaosNLP } from "@/lib/ai/pipeline/AnaosNLP";
+import { DecisionEngine } from "@/lib/ai/pipeline/DecisionEngine";
+import { NeuralClassifier } from "@/lib/ai/pipeline/NeuralEmbedding";
+import { FeedbackLearner } from "@/lib/ai/pipeline/FeedbackLearner";
 
 export type GeneratedWorkspace = {
   id: string;
@@ -27,12 +31,15 @@ export type GeneratedWorkspace = {
   variables: GeneratedVariable[];
 };
 
+// ── Helper: Extract business name from prompt ─────────────────────────────────
 function extractName(prompt: string): string | null {
-  const match = prompt.match(/(?:named|called|name is|brand is)\s+([A-Za-z0-9\s'&]+?)(?:\.|\b|$)/i);
+  const match = prompt.match(
+    /(?:named|called|name is|brand is)\s+([A-Za-z0-9\s'&]+?)(?:\s*\.|$)/i
+  );
   if (match?.[1]) return match[1].trim();
 
   const altMatch = prompt.match(
-    /(?:run|own|manage)\s+(?:a|an)\s+([A-Za-z0-9\s'&]+?)(?:\s+(?:brokerage|restaurant|clinic|gym|salon|shop|store|business|brand))(?:\.|\b|$)/i
+    /(?:run|own|manage)\s+(?:a|an)\s+([A-Za-z0-9\s'&]+?)(?:\s+(?:brokerage|restaurant|clinic|gym|salon|shop|store|business|brand))/i
   );
   if (altMatch?.[1]) {
     const word = altMatch[1].trim();
@@ -41,102 +48,158 @@ function extractName(prompt: string): string | null {
   return null;
 }
 
+// ── Helper: Extract money amount from prompt ──────────────────────────────────
 function extractAmount(prompt: string): string | null {
-  const match = prompt.match(/(\$|£|€|aed|rs)?\s*([0-9]+(?:\.[0-9]+)?\s*(k|m|million|billion)?)/i);
+  const match = prompt.match(
+    /(\$|£|€|aed|rs)?\s*([0-9]+(?:\.[0-9]+)?\s*(k|m|million|billion)?)/i
+  );
   return match ? match[0].trim().toUpperCase() : null;
 }
 
-import { AnaosNLP } from "@/lib/ai/pipeline/AnaosNLP";
-import { DecisionEngine } from "@/lib/ai/pipeline/DecisionEngine";
+// ── Helper: Infer automation channel type from name ───────────────────────────
+function inferAutomationType(name: string): string {
+  const lower = name.toLowerCase();
+  if (lower.includes("whatsapp")) return "whatsapp_flow";
+  if (lower.includes("instagram")) return "instagram_flow";
+  if (lower.includes("facebook")) return "facebook_flow";
+  if (
+    lower.includes("schedule") ||
+    lower.includes("reminder") ||
+    lower.includes("appointment")
+  )
+    return "calendar";
+  if (
+    lower.includes("broadcast") ||
+    lower.includes("campaign") ||
+    lower.includes("alert")
+  )
+    return "campaign";
+  return "whatsapp_flow";
+}
 
+/**
+ * ─────────────────────────────────────────────────────────────────────────────
+ * generateWorkspaceFromPrompt — Deep Learning Powered Fallback
+ *
+ * 4-Stage Deep Learning Pipeline (no API key required):
+ *   Stage 1 — Traditional NLP   : POS tagging, NER, Intent extraction
+ *   Stage 2 — Neural Embeddings : Cosine similarity + Softmax classification
+ *   Stage 3 — Feedback Learning : Reinforcement boost from past user signals
+ *   Stage 4 — Workspace Build   : Assemble automations + variables from results
+ * ─────────────────────────────────────────────────────────────────────────────
+ */
 export function generateWorkspaceFromPrompt(prompt: string): GeneratedWorkspace {
-  // ─────────────────────────────────────────────────────────────────
-  // Anaos Matrix: Smart Intent & Action Routing
-  // ─────────────────────────────────────────────────────────────────
+  // ── Stage 1: Traditional NLP ──────────────────────────────────────────────
   const nlpResult = AnaosNLP.processText(prompt, "general" as any);
   const action = DecisionEngine.determineAction(nlpResult);
-  
-  let industry = "General Business";
-  let businessName = extractName(prompt) || "Custom Workspace";
-  let automations: GeneratedAutomation[] = [];
-  let variables: GeneratedVariable[] = [];
 
-  // Map the extracted NLP intent directly to industries
-  switch (nlpResult.intent) {
-    case "real_estate":
-    case "purchase":
-      industry = "Real Estate";
-      businessName = extractName(prompt) || "Estate Flow";
-      automations = [
-        { id: "a-custom-1", name: "WhatsApp Lead Qualifier", type: "whatsapp_flow", enabled: true, runs: 0, lastRun: "Never" },
-        { id: "a-custom-2", name: "Viewing Scheduler Bot", type: "calendar", enabled: true, runs: 0, lastRun: "Never" },
-        { id: "a-custom-3", name: "Listing Match Broadcast", type: "campaign", enabled: false, runs: 0, lastRun: "Never" },
-      ];
-      variables = [
-        { key: "BUDGET_LIMIT", value: extractAmount(prompt) || "Flexible", confidence: 95, ttl: "30 days" },
-        { key: "PROPERTY_TYPE", value: "Purchase/Rental", confidence: 90, ttl: "30 days" },
-      ];
-      break;
+  // ── Stage 2: Neural Embedding Classification ──────────────────────────────
+  const neuralResult = NeuralClassifier.classify(prompt);
 
-    case "food":
-      industry = "Restaurant";
-      businessName = extractName(prompt) || "Bistro Flow";
-      automations = [
-        { id: "a-custom-1", name: "WhatsApp Smart Ordering", type: "whatsapp_flow", enabled: true, runs: 0, lastRun: "Never" },
-        { id: "a-custom-2", name: "Table Reservation Manager", type: "calendar", enabled: true, runs: 0, lastRun: "Never" },
-      ];
-      variables = [
-        { key: "PARTY_SIZE", value: "2-4 People", confidence: 95, ttl: "7 days" },
-      ];
-      break;
+  // ── Stage 3: Feedback Learning Boost ─────────────────────────────────────
+  const promptWords = prompt
+    .toLowerCase()
+    .split(/\s+/)
+    .filter((w) => w.length > 3);
+  const learningBoost = FeedbackLearner.getLearningBoost(
+    promptWords,
+    neuralResult.industry
+  );
 
-    case "medical":
-      industry = "Clinic & Health";
-      businessName = extractName(prompt) || "Care Flow";
-      automations = [
-        { id: "a-custom-1", name: "WhatsApp Appointment Booker", type: "whatsapp_flow", enabled: true, runs: 0, lastRun: "Never" },
-        { id: "a-custom-2", name: "Automated Visit Reminders", type: "calendar", enabled: true, runs: 0, lastRun: "Never" },
-      ];
-      variables = [
-        { key: "VISIT_REASON", value: "General Checkup", confidence: 92, ttl: "15 days" },
-      ];
-      break;
+  // Combined confidence: neural score + reinforcement learning signal
+  const finalConfidence = Math.min(
+    1,
+    neuralResult.confidence + learningBoost * 0.1
+  );
 
-    case "ecommerce":
-      industry = "E-Commerce";
-      businessName = extractName(prompt) || "Cart Flow";
-      automations = [
-        { id: "a-custom-1", name: "WhatsApp Product Catalog", type: "whatsapp_flow", enabled: true, runs: 0, lastRun: "Never" },
-        { id: "a-custom-2", name: "Abandoned Cart Recovery", type: "campaign", enabled: true, runs: 0, lastRun: "Never" },
-      ];
-      variables = [
-        { key: "LAST_CART_VALUE", value: extractAmount(prompt) || "$45.00", confidence: 95, ttl: "7 days" },
-      ];
-      break;
+  // ── Stage 4: Build Workspace ──────────────────────────────────────────────
+  const businessName =
+    extractName(prompt) ||
+    `${neuralResult.emoji} ${neuralResult.label} Workspace`;
 
-    default:
-      businessName = extractName(prompt) || "Anaos Workspace";
-      automations = [
-        { id: "a-custom-1", name: "WhatsApp Support Responder", type: "whatsapp_flow", enabled: true, runs: 0, lastRun: "Never" },
-        { id: "a-custom-2", name: "Meeting Scheduler", type: "calendar", enabled: true, runs: 0, lastRun: "Never" },
-      ];
-      variables = [
-        { key: "CUSTOMER_NEED", value: action === "ROUTE_TO_HUMAN" ? "Human Support" : "General Inquiry", confidence: 85, ttl: "30 days" },
-      ];
-      break;
+  const automations: GeneratedAutomation[] = neuralResult.automations.map(
+    (name, i) => ({
+      id: `a-neural-${i + 1}`,
+      name,
+      type: inferAutomationType(name),
+      enabled: i < 3, // top 3 auto-enabled
+      runs: 0,
+      lastRun: "Never",
+    })
+  );
+
+  const variables: GeneratedVariable[] = [
+    {
+      key: "INDUSTRY_CONFIDENCE",
+      value: `${Math.round(finalConfidence * 100)}%`,
+      confidence: Math.round(finalConfidence * 100),
+      ttl: "session",
+    },
+    {
+      key: "DETECTED_INDUSTRY",
+      value: neuralResult.label,
+      confidence: neuralResult.confidencePct,
+      ttl: "30 days",
+    },
+    {
+      key: "CUSTOMER_ACTION",
+      value: action,
+      confidence: 88,
+      ttl: "30 days",
+    },
+  ];
+
+  // Add budget if detected by NER
+  const amount = extractAmount(prompt);
+  if (amount) {
+    variables.push({
+      key: "BUDGET_DETECTED",
+      value: amount,
+      confidence: 95,
+      ttl: "30 days",
+    });
   }
 
-  // Ensure Meta channels (Facebook/Instagram) are ALWAYS available A-to-Z
-  automations.push(
-    { id: "a-meta-ig", name: "Instagram DM Assistant", type: "instagram_flow", enabled: true, runs: 0, lastRun: "Never" },
-    { id: "a-meta-fb", name: "Facebook Messenger Bot", type: "facebook_flow", enabled: true, runs: 0, lastRun: "Never" }
-  );
+  // Add location if NER found one
+  if (nlpResult.summary.locations.length > 0) {
+    variables.push({
+      key: "LOCATION",
+      value: nlpResult.summary.locations[0],
+      confidence: 90,
+      ttl: "30 days",
+    });
+  }
+
+  // Always ensure Meta channels exist
+  const hasIg = automations.some((a) => a.type === "instagram_flow");
+  const hasFb = automations.some((a) => a.type === "facebook_flow");
+  if (!hasIg)
+    automations.push({
+      id: "a-meta-ig",
+      name: "Instagram DM Assistant",
+      type: "instagram_flow",
+      enabled: true,
+      runs: 0,
+      lastRun: "Never",
+    });
+  if (!hasFb)
+    automations.push({
+      id: "a-meta-fb",
+      name: "Facebook Messenger Bot",
+      type: "facebook_flow",
+      enabled: true,
+      runs: 0,
+      lastRun: "Never",
+    });
 
   return {
     id: `ws-custom-${Date.now()}`,
     name: businessName,
-    industry,
-    slug: (businessName || "workspace").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, ""),
+    industry: neuralResult.label,
+    slug: (businessName || "workspace")
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/(^-|-$)/g, ""),
     status: "draft",
     version: 1,
     automations,
@@ -144,30 +207,83 @@ export function generateWorkspaceFromPrompt(prompt: string): GeneratedWorkspace 
   };
 }
 
-export async function generateWorkspaceWithAI(prompt: string): Promise<GeneratedWorkspace | null> {
+/**
+ * ─────────────────────────────────────────────────────────────────────────────
+ * generateWorkspaceWithAI — Grok LLM + Deep Learning Context Injection
+ *
+ * We run our NLP pipeline FIRST, then inject the results into the LLM prompt.
+ * This is "Chain-of-Thought" prompting — giving the model pre-computed context.
+ * Temperature 0.3 = focused output (like a fine-tuned model).
+ * ─────────────────────────────────────────────────────────────────────────────
+ */
+export async function generateWorkspaceWithAI(
+  prompt: string
+): Promise<GeneratedWorkspace | null> {
   if (!process.env.GROQ_API_KEY) return null;
 
+  // Run neural classification first to give Grok context
+  const neuralResult = NeuralClassifier.classify(prompt);
+  const nlpResult = AnaosNLP.processText(prompt, "general" as any);
+
   try {
-    const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${process.env.GROQ_API_KEY}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model: "llama-3.3-70b-versatile",
-        messages: [
-          {
-            role: "system",
-            content: `Design an omnichannel AI automation workspace. Return ONLY valid JSON:
-{"name":"string","industry":"string","automations":[{"id":"a1","name":"string","type":"whatsapp_flow|instagram_flow|facebook_flow|calendar|campaign","enabled":true,"runs":0,"lastRun":"Never"}],"variables":[{"key":"UPPER","value":"string","confidence":90,"ttl":"30 days"}]}
-Include 4-5 automations and 2-4 variables. No markdown.`,
-          },
-          { role: "user", content: `Business prompt: "${prompt}"` },
-        ],
-        response_format: { type: "json_object" },
-      }),
-    });
+    const response = await fetch(
+      "https://api.groq.com/openai/v1/chat/completions",
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${process.env.GROQ_API_KEY}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          model: "llama-3.3-70b-versatile",
+          messages: [
+            {
+              role: "system",
+              content: `You are Anaos AI — an expert business automation architect.
+
+Your task: Analyze a business description and design the PERFECT automation workspace.
+
+## Pre-Analysis (from our Neural NLP engine):
+- Detected Industry: ${neuralResult.label} (${neuralResult.confidencePct}% confidence)
+- User Intent: ${nlpResult.intent}
+- Sentiment: ${nlpResult.sentiment}
+- Key Entities: ${JSON.stringify(nlpResult.summary)}
+
+## Think Step by Step (Chain-of-Thought):
+1. IDENTIFY the exact business type and its core daily operations
+2. FIND the 3 biggest pain points for this business
+3. DESIGN automations that directly solve those pain points
+4. PRIORITIZE by ROI (highest impact automations first)
+5. NAME variables this business actually tracks day-to-day
+
+## Output (ONLY valid JSON, zero markdown):
+{
+  "name": "Business Name",
+  "industry": "Industry Label",
+  "automations": [
+    {"id":"a1","name":"Specific Name","type":"whatsapp_flow|instagram_flow|facebook_flow|calendar|campaign","enabled":true,"runs":0,"lastRun":"Never"}
+  ],
+  "variables": [
+    {"key":"UPPER_SNAKE_CASE","value":"value","confidence":90,"ttl":"30 days"}
+  ]
+}
+
+Rules:
+- 5-7 automations ordered by business impact
+- 3-5 variables specific to THIS business type
+- Automation names must be specific (e.g. "Pizza Order Tracker" not "Order Bot")
+- No markdown, no text outside JSON`,
+            },
+            {
+              role: "user",
+              content: `Business Description: "${prompt}"`,
+            },
+          ],
+          response_format: { type: "json_object" },
+          temperature: 0.3,
+        }),
+      }
+    );
 
     if (!response.ok) return null;
 
@@ -177,35 +293,90 @@ Include 4-5 automations and 2-4 variables. No markdown.`,
 
     const parsed = JSON.parse(content);
     const name = parsed.name || "Custom Workspace";
+
+    const automations: GeneratedAutomation[] = parsed.automations || [];
+    const hasIg = automations.some(
+      (a: GeneratedAutomation) => a.type === "instagram_flow"
+    );
+    const hasFb = automations.some(
+      (a: GeneratedAutomation) => a.type === "facebook_flow"
+    );
+    if (!hasIg)
+      automations.push({
+        id: "a-meta-ig",
+        name: "Instagram DM Assistant",
+        type: "instagram_flow",
+        enabled: true,
+        runs: 0,
+        lastRun: "Never",
+      });
+    if (!hasFb)
+      automations.push({
+        id: "a-meta-fb",
+        name: "Facebook Messenger Bot",
+        type: "facebook_flow",
+        enabled: true,
+        runs: 0,
+        lastRun: "Never",
+      });
+
+    const variables: GeneratedVariable[] = parsed.variables || [];
+    // Prepend neural confidence score for transparency
+    variables.unshift({
+      key: "AI_CONFIDENCE",
+      value: `${neuralResult.confidencePct}% (${neuralResult.label})`,
+      confidence: neuralResult.confidencePct,
+      ttl: "session",
+    });
+
     return {
       id: `ws-custom-${Date.now()}`,
       name,
-      industry: parsed.industry || "General Business",
-      slug: (name || "workspace").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, ""),
+      industry: parsed.industry || neuralResult.label,
+      slug: (name || "workspace")
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/(^-|-$)/g, ""),
       status: "draft",
       version: 1,
-      automations: parsed.automations || [],
-      variables: parsed.variables || [],
+      automations,
+      variables,
     };
   } catch {
     return null;
   }
 }
 
-export async function resolveWorkspaceFromPrompt(prompt: string): Promise<GeneratedWorkspace> {
+/**
+ * Main resolver — tries AI first, falls back to deep learning pipeline
+ */
+export async function resolveWorkspaceFromPrompt(
+  prompt: string
+): Promise<GeneratedWorkspace> {
   const ai = await generateWorkspaceWithAI(prompt);
   const ws = ai ?? generateWorkspaceFromPrompt(prompt);
-  
-  // Force append Meta flows if they don't already exist in the generated list
-  const hasIg = ws.automations.some(a => a.type === "instagram_flow");
-  const hasFb = ws.automations.some(a => a.type === "facebook_flow");
-  
-  if (!hasIg) {
-    ws.automations.push({ id: "a-meta-ig", name: "Instagram DM Assistant", type: "instagram_flow", enabled: true, runs: 0, lastRun: "Never" });
-  }
-  if (!hasFb) {
-    ws.automations.push({ id: "a-meta-fb", name: "Facebook Messenger Bot", type: "facebook_flow", enabled: true, runs: 0, lastRun: "Never" });
-  }
+
+  // Force Meta channels
+  const hasIg = ws.automations.some((a) => a.type === "instagram_flow");
+  const hasFb = ws.automations.some((a) => a.type === "facebook_flow");
+  if (!hasIg)
+    ws.automations.push({
+      id: "a-meta-ig",
+      name: "Instagram DM Assistant",
+      type: "instagram_flow",
+      enabled: true,
+      runs: 0,
+      lastRun: "Never",
+    });
+  if (!hasFb)
+    ws.automations.push({
+      id: "a-meta-fb",
+      name: "Facebook Messenger Bot",
+      type: "facebook_flow",
+      enabled: true,
+      runs: 0,
+      lastRun: "Never",
+    });
 
   return { ...ws, industry: normalizeIndustryLabel(ws.industry) };
 }

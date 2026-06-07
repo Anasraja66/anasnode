@@ -19,6 +19,7 @@ import { AnaosNLP } from "@/lib/ai/pipeline/AnaosNLP";
 import { DecisionEngine } from "@/lib/ai/pipeline/DecisionEngine";
 import { NeuralClassifier } from "@/lib/ai/pipeline/NeuralEmbedding";
 import { FeedbackLearner } from "@/lib/ai/pipeline/FeedbackLearner";
+import { Autoencoder } from "@/lib/ai/pipeline/Autoencoder";
 
 export type GeneratedWorkspace = {
   id: string;
@@ -81,7 +82,8 @@ function inferAutomationType(name: string): string {
  * ─────────────────────────────────────────────────────────────────────────────
  * generateWorkspaceFromPrompt — Deep Learning Powered Fallback
  *
- * 4-Stage Deep Learning Pipeline (no API key required):
+ * 5-Stage Deep Learning Pipeline (no API key required):
+ *   Stage 0 — Autoencoder       : Spam / anomaly detection (BLOCK bad prompts)
  *   Stage 1 — Traditional NLP   : POS tagging, NER, Intent extraction
  *   Stage 2 — Neural Embeddings : Cosine similarity + Softmax classification
  *   Stage 3 — Feedback Learning : Reinforcement boost from past user signals
@@ -89,6 +91,44 @@ function inferAutomationType(name: string): string {
  * ─────────────────────────────────────────────────────────────────────────────
  */
 export function generateWorkspaceFromPrompt(prompt: string): GeneratedWorkspace {
+  // ── Stage 0: Autoencoder — Anomaly / Spam Detection ──────────────────────
+  // Encode → Decode → Measure reconstruction error
+  // High error = prompt is gibberish / spam / injection attack
+  const aeResult = Autoencoder.analyze(prompt);
+
+  // If spam detected, return a safe minimal workspace
+  if (aeResult.isAnomaly) {
+    return {
+      id: `ws-blocked-${Date.now()}`,
+      name: "Invalid Prompt Detected",
+      industry: "Unknown",
+      slug: "invalid-prompt",
+      status: "draft",
+      version: 1,
+      automations: [],
+      variables: [
+        {
+          key: "ANOMALY_DETECTED",
+          value: "true",
+          confidence: 100,
+          ttl: "session",
+        },
+        {
+          key: "REJECTION_REASON",
+          value: aeResult.reason,
+          confidence: 100,
+          ttl: "session",
+        },
+        {
+          key: "RECONSTRUCTION_ERROR",
+          value: `${aeResult.reconstructionError}`,
+          confidence: 100,
+          ttl: "session",
+        },
+      ],
+    };
+  }
+
   // ── Stage 1: Traditional NLP ──────────────────────────────────────────────
   const nlpResult = AnaosNLP.processText(prompt, "general" as any);
   const action = DecisionEngine.determineAction(nlpResult);
@@ -170,6 +210,14 @@ export function generateWorkspaceFromPrompt(prompt: string): GeneratedWorkspace 
     });
   }
 
+  // Add Autoencoder confidence variable (shows prompt quality score)
+  variables.push({
+    key: "PROMPT_QUALITY",
+    value: `${aeResult.confidence}% — ${aeResult.reason}`,
+    confidence: aeResult.confidence,
+    ttl: "session",
+  });
+
   // Always ensure Meta channels exist
   const hasIg = automations.some((a) => a.type === "instagram_flow");
   const hasFb = automations.some((a) => a.type === "facebook_flow");
@@ -192,6 +240,10 @@ export function generateWorkspaceFromPrompt(prompt: string): GeneratedWorkspace 
       lastRun: "Never",
     });
 
+  // ── Stage 5: Remember this valid prompt in Autoencoder memory ─────────────
+  // Next time a similar prompt comes → we can recall it instantly!
+  Autoencoder.remember(prompt, neuralResult.industry);
+
   return {
     id: `ws-custom-${Date.now()}`,
     name: businessName,
@@ -206,6 +258,7 @@ export function generateWorkspaceFromPrompt(prompt: string): GeneratedWorkspace 
     variables,
   };
 }
+
 
 /**
  * ─────────────────────────────────────────────────────────────────────────────

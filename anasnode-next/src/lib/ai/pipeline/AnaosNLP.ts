@@ -32,9 +32,9 @@ export class AnaosNLP {
     // ── Step 1: Load Language Resources (LRs) ──────────────────────────────
     const lexicon = getLexicon(industry);
 
-    // ── Step 2: Tokenization (PR) ───────────────────────────────────────────
-    const tokens = Tokenizer.tokenize(text);
-    const words  = tokens.map(t => t.value);
+    // ── Step 2: Tokenization & Lexical Analysis (PR) ───────────────────────
+    const tokens = Tokenizer.process(text);
+    const words  = tokens.map(t => t.originalValue);
 
     // ── Step 3: POS Tagging (PR) ────────────────────────────────────────────
     // Runs 3 levels: Dictionary → Suffix/Morphology → Context/Brill rules

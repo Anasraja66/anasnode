@@ -46,83 +46,84 @@ function extractAmount(prompt: string): string | null {
   return match ? match[0].trim().toUpperCase() : null;
 }
 
+import { AnaosNLP } from "@/lib/ai/pipeline/AnaosNLP";
+import { DecisionEngine } from "@/lib/ai/pipeline/DecisionEngine";
+
 export function generateWorkspaceFromPrompt(prompt: string): GeneratedWorkspace {
-  const cleanPrompt = prompt.toLowerCase();
+  // ─────────────────────────────────────────────────────────────────
+  // Anaos Matrix: Smart Intent & Action Routing
+  // ─────────────────────────────────────────────────────────────────
+  const nlpResult = AnaosNLP.processText(prompt, "general" as any);
+  const action = DecisionEngine.determineAction(nlpResult);
+  
   let industry = "General Business";
-  let businessName = "Custom Workspace";
+  let businessName = extractName(prompt) || "Custom Workspace";
   let automations: GeneratedAutomation[] = [];
   let variables: GeneratedVariable[] = [];
 
-  const has = (...keys: string[]) => keys.some((k) => cleanPrompt.includes(k));
+  // Map the extracted NLP intent directly to industries
+  switch (nlpResult.intent) {
+    case "real_estate":
+    case "purchase":
+      industry = "Real Estate";
+      businessName = extractName(prompt) || "Estate Flow";
+      automations = [
+        { id: "a-custom-1", name: "WhatsApp Lead Qualifier", type: "whatsapp_flow", enabled: true, runs: 0, lastRun: "Never" },
+        { id: "a-custom-2", name: "Viewing Scheduler Bot", type: "calendar", enabled: true, runs: 0, lastRun: "Never" },
+        { id: "a-custom-3", name: "Listing Match Broadcast", type: "campaign", enabled: false, runs: 0, lastRun: "Never" },
+      ];
+      variables = [
+        { key: "BUDGET_LIMIT", value: extractAmount(prompt) || "Flexible", confidence: 95, ttl: "30 days" },
+        { key: "PROPERTY_TYPE", value: "Purchase/Rental", confidence: 90, ttl: "30 days" },
+      ];
+      break;
 
-  if (has("real estate", "property", "broker", "apartment", "house", "rent", "buy", "sell")) {
-    industry = "Real Estate";
-    businessName = extractName(prompt) || "Estate Flow";
-    automations = [
-      { id: "a-custom-1", name: "WhatsApp Lead Qualifier", type: "whatsapp_flow", enabled: true, runs: 0, lastRun: "Never" },
-      { id: "a-custom-2", name: "Viewing Scheduler Bot", type: "calendar", enabled: true, runs: 0, lastRun: "Never" },
-      { id: "a-custom-3", name: "Listing Match Broadcast", type: "campaign", enabled: false, runs: 0, lastRun: "Never" },
-    ];
-    variables = [
-      { key: "BUDGET_LIMIT", value: extractAmount(prompt) || "Flexible", confidence: 95, ttl: "30 days" },
-      { key: "PROPERTY_TYPE", value: has("rent") ? "Rental" : "Purchase", confidence: 90, ttl: "30 days" },
-      { key: "PREFERED_AREA", value: "Downtown", confidence: 85, ttl: "30 days" },
-    ];
-  } else if (has("restaurant", "food", "cafe", "dine", "eat", "order", "table", "menu")) {
-    industry = "Restaurant";
-    businessName = extractName(prompt) || "Bistro Flow";
-    automations = [
-      { id: "a-custom-1", name: "WhatsApp Smart Ordering", type: "whatsapp_flow", enabled: true, runs: 0, lastRun: "Never" },
-      { id: "a-custom-2", name: "Table Reservation Manager", type: "calendar", enabled: true, runs: 0, lastRun: "Never" },
-      { id: "a-custom-3", name: "Weekly Specials Broadcast", type: "campaign", enabled: false, runs: 0, lastRun: "Never" },
-    ];
-    variables = [
-      { key: "CRAVING", value: "Chef Special", confidence: 88, ttl: "7 days" },
-      { key: "PARTY_SIZE", value: "2-4 People", confidence: 95, ttl: "7 days" },
-    ];
-  } else if (has("clinic", "doctor", "dentist", "patient", "health", "appointment", "medical")) {
-    industry = "Clinic & Health";
-    businessName = extractName(prompt) || "Care Flow";
-    automations = [
-      { id: "a-custom-1", name: "WhatsApp Appointment Booker", type: "whatsapp_flow", enabled: true, runs: 0, lastRun: "Never" },
-      { id: "a-custom-2", name: "Automated Visit Reminders", type: "calendar", enabled: true, runs: 0, lastRun: "Never" },
-      { id: "a-custom-3", name: "Post-Treatment Checkup", type: "campaign", enabled: true, runs: 0, lastRun: "Never" },
-    ];
-    variables = [
-      { key: "VISIT_REASON", value: "General Checkup", confidence: 92, ttl: "15 days" },
-      { key: "PATIENT_TYPE", value: "Returning", confidence: 98, ttl: "365 days" },
-    ];
-  } else if (has("shop", "store", "e-commerce", "ecommerce", "cart", "shopify")) {
-    industry = "E-Commerce";
-    businessName = extractName(prompt) || "Cart Flow";
-    automations = [
-      { id: "a-custom-1", name: "WhatsApp Product Catalog", type: "whatsapp_flow", enabled: true, runs: 0, lastRun: "Never" },
-      { id: "a-custom-2", name: "Abandoned Cart Recovery", type: "campaign", enabled: true, runs: 0, lastRun: "Never" },
-      { id: "a-custom-3", name: "Order Tracking Alerts", type: "campaign", enabled: true, runs: 0, lastRun: "Never" },
-    ];
-    variables = [
-      { key: "LAST_CART_VALUE", value: extractAmount(prompt) || "$45.00", confidence: 95, ttl: "7 days" },
-      { key: "ABANDONED_ITEM", value: "Product in cart", confidence: 80, ttl: "7 days" },
-    ];
-  } else if (has("salon", "spa", "hair", "barber", "beauty")) {
-    industry = "Salon & Beauty";
-    businessName = extractName(prompt) || "Glow Flow";
-    automations = [
-      { id: "a-custom-1", name: "WhatsApp Styling Booker", type: "whatsapp_flow", enabled: true, runs: 0, lastRun: "Never" },
-      { id: "a-custom-2", name: "Stylist Slot Allocator", type: "calendar", enabled: true, runs: 0, lastRun: "Never" },
-    ];
-    variables = [
-      { key: "TREATMENT", value: "Hair Cut & Wash", confidence: 96, ttl: "14 days" },
-    ];
-  } else {
-    businessName = extractName(prompt) || "Anaos Workspace";
-    automations = [
-      { id: "a-custom-1", name: "WhatsApp Support Responder", type: "whatsapp_flow", enabled: true, runs: 0, lastRun: "Never" },
-      { id: "a-custom-2", name: "Meeting Scheduler", type: "calendar", enabled: true, runs: 0, lastRun: "Never" },
-    ];
-    variables = [
-      { key: "CUSTOMER_NEED", value: "General Inquiry", confidence: 85, ttl: "30 days" },
-    ];
+    case "food":
+      industry = "Restaurant";
+      businessName = extractName(prompt) || "Bistro Flow";
+      automations = [
+        { id: "a-custom-1", name: "WhatsApp Smart Ordering", type: "whatsapp_flow", enabled: true, runs: 0, lastRun: "Never" },
+        { id: "a-custom-2", name: "Table Reservation Manager", type: "calendar", enabled: true, runs: 0, lastRun: "Never" },
+      ];
+      variables = [
+        { key: "PARTY_SIZE", value: "2-4 People", confidence: 95, ttl: "7 days" },
+      ];
+      break;
+
+    case "medical":
+      industry = "Clinic & Health";
+      businessName = extractName(prompt) || "Care Flow";
+      automations = [
+        { id: "a-custom-1", name: "WhatsApp Appointment Booker", type: "whatsapp_flow", enabled: true, runs: 0, lastRun: "Never" },
+        { id: "a-custom-2", name: "Automated Visit Reminders", type: "calendar", enabled: true, runs: 0, lastRun: "Never" },
+      ];
+      variables = [
+        { key: "VISIT_REASON", value: "General Checkup", confidence: 92, ttl: "15 days" },
+      ];
+      break;
+
+    case "ecommerce":
+      industry = "E-Commerce";
+      businessName = extractName(prompt) || "Cart Flow";
+      automations = [
+        { id: "a-custom-1", name: "WhatsApp Product Catalog", type: "whatsapp_flow", enabled: true, runs: 0, lastRun: "Never" },
+        { id: "a-custom-2", name: "Abandoned Cart Recovery", type: "campaign", enabled: true, runs: 0, lastRun: "Never" },
+      ];
+      variables = [
+        { key: "LAST_CART_VALUE", value: extractAmount(prompt) || "$45.00", confidence: 95, ttl: "7 days" },
+      ];
+      break;
+
+    default:
+      businessName = extractName(prompt) || "Anaos Workspace";
+      automations = [
+        { id: "a-custom-1", name: "WhatsApp Support Responder", type: "whatsapp_flow", enabled: true, runs: 0, lastRun: "Never" },
+        { id: "a-custom-2", name: "Meeting Scheduler", type: "calendar", enabled: true, runs: 0, lastRun: "Never" },
+      ];
+      variables = [
+        { key: "CUSTOMER_NEED", value: action === "ROUTE_TO_HUMAN" ? "Human Support" : "General Inquiry", confidence: 85, ttl: "30 days" },
+      ];
+      break;
   }
 
   // Ensure Meta channels (Facebook/Instagram) are ALWAYS available A-to-Z

@@ -66,38 +66,40 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-white text-zinc-900 flex items-center justify-center p-6 relative overflow-hidden font-sans">
-      <WorkflowBackground />
+    <div className="min-h-screen bg-[#F8FAFC] text-zinc-900 flex items-center justify-center p-6 relative overflow-hidden font-sans">
+      {/* Premium minimal background */}
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,#e2e8f0_1px,transparent_1px),linear-gradient(to_bottom,#e2e8f0_1px,transparent_1px)] bg-[size:3rem_3rem] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_0%,#000_70%,transparent_100%)] opacity-40 pointer-events-none" />
+      <div className="absolute top-[-10%] left-1/2 -translate-x-1/2 w-[800px] h-[400px] rounded-full bg-[#0A6BFF] opacity-[0.04] blur-[120px] pointer-events-none" />
       
-      <div className="w-full max-w-[420px] relative z-10">
+      <div className="w-full max-w-[440px] relative z-10 flex flex-col items-center">
         {/* Logo and title */}
         <motion.div 
-          initial={{ opacity: 0, y: -12 }}
+          initial={{ opacity: 0, y: -16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-          className="text-center mb-8"
+          className="text-center mb-10 w-full"
         >
-          <Link href="/" className="inline-flex items-center gap-2.5 text-[24px] font-extrabold tracking-tight hover:opacity-90 transition-opacity">
-            <span className="w-7 h-7 rounded-lg bg-[#0A6BFF] flex items-center justify-center text-white text-[14px] font-black shadow-sm">A</span>
-            <span className="text-zinc-950">Anaos</span>
+          <Link href="/" className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-white shadow-sm border border-zinc-200/80 mb-5 group hover:shadow-md transition-all">
+            <span className="text-[#0A6BFF] text-[20px] font-black italic transform group-hover:scale-110 transition-transform">A</span>
           </Link>
-          <p className="text-[14px] text-zinc-500 mt-2 font-medium">Log in to operate your AI agents and workflows</p>
+          <h1 className="text-[26px] font-extrabold tracking-tight text-zinc-900 mb-2">Welcome back</h1>
+          <p className="text-[15px] text-zinc-500 font-medium">Log in to manage your AI workflows</p>
         </motion.div>
 
         {/* Card */}
         <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          animate={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0, y: 24, scale: 0.98 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
           transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-          className="rounded-3xl border border-zinc-200 bg-white/95 backdrop-blur-md p-8 shadow-xl relative"
+          className="w-full rounded-[28px] border border-zinc-200/80 bg-white/70 backdrop-blur-xl p-8 sm:p-10 shadow-[0_8px_40px_rgb(0,0,0,0.04)] relative"
         >
           {error && (
             <motion.div
               initial={{ opacity: 0, y: -8 }}
               animate={{ opacity: 1, y: 0 }}
-              className="mb-5 p-3.5 rounded-xl bg-red-50 border border-red-200 text-red-700 text-[13px] flex items-center gap-2 font-medium"
+              className="mb-6 p-4 rounded-2xl bg-red-50/80 border border-red-100 text-red-700 text-[14px] flex items-center gap-3 font-medium shadow-sm"
             >
-              <AlertCircle className="w-4 h-4 shrink-0 text-red-500" />
+              <AlertCircle className="w-5 h-5 shrink-0 text-red-500" />
               <span>{error}</span>
             </motion.div>
           )}
@@ -107,13 +109,13 @@ export default function LoginPage() {
             initial="hidden"
             animate="visible"
             onSubmit={handleLogin} 
-            className="space-y-4.5"
+            className="space-y-5"
           >
             <motion.div variants={itemVariants}>
-              <label className="block text-[11px] font-bold uppercase tracking-wider text-zinc-500 mb-1.5">Email address</label>
-              <div className="relative">
-                <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-400">
-                  <Mail className="w-4 h-4" />
+              <label className="block text-[13px] font-bold text-zinc-700 mb-2">Email Address</label>
+              <div className="relative group">
+                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400 group-focus-within:text-[#0A6BFF] transition-colors">
+                  <Mail className="w-[18px] h-[18px]" />
                 </span>
                 <input
                   type="email"
@@ -122,19 +124,19 @@ export default function LoginPage() {
                   placeholder="name@company.com"
                   required
                   disabled={loading}
-                  className="w-full h-11 bg-white border border-zinc-200 rounded-xl pl-10.5 pr-4 text-[14px] text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:border-[#0A6BFF] focus:ring-4 focus:ring-blue-500/10 transition-all disabled:opacity-50"
+                  className="w-full h-12 bg-white/80 border border-zinc-200/80 rounded-2xl pl-11 pr-4 text-[15px] text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:border-[#0A6BFF] focus:ring-4 focus:ring-[#0A6BFF]/10 transition-all disabled:opacity-50 shadow-sm"
                 />
               </div>
             </motion.div>
 
             <motion.div variants={itemVariants}>
-              <div className="flex justify-between items-center mb-1.5">
-                <label className="block text-[11px] font-bold uppercase tracking-wider text-zinc-500">Password</label>
-                <a href="#" className="text-[12px] text-zinc-500 hover:text-zinc-950 font-medium transition-colors">Forgot?</a>
+              <div className="flex justify-between items-center mb-2">
+                <label className="block text-[13px] font-bold text-zinc-700">Password</label>
+                <a href="#" className="text-[13px] text-[#0A6BFF] hover:text-blue-600 font-bold transition-colors">Forgot?</a>
               </div>
-              <div className="relative">
-                <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-400">
-                  <Lock className="w-4 h-4" />
+              <div className="relative group">
+                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400 group-focus-within:text-[#0A6BFF] transition-colors">
+                  <Lock className="w-[18px] h-[18px]" />
                 </span>
                 <input
                   type="password"
@@ -143,7 +145,7 @@ export default function LoginPage() {
                   placeholder="••••••••"
                   required
                   disabled={loading}
-                  className="w-full h-11 bg-white border border-zinc-200 rounded-xl pl-10.5 pr-4 text-[14px] text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:border-[#0A6BFF] focus:ring-4 focus:ring-blue-500/10 transition-all disabled:opacity-50"
+                  className="w-full h-12 bg-white/80 border border-zinc-200/80 rounded-2xl pl-11 pr-4 text-[15px] text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:border-[#0A6BFF] focus:ring-4 focus:ring-[#0A6BFF]/10 transition-all disabled:opacity-50 shadow-sm"
                 />
               </div>
             </motion.div>
@@ -152,7 +154,7 @@ export default function LoginPage() {
               variants={itemVariants}
               type="submit"
               disabled={loading}
-              className="w-full h-11 bg-[#0A6BFF] text-white hover:bg-blue-600 disabled:opacity-50 rounded-xl font-bold text-[14px] flex items-center justify-center gap-1.5 transition-all shadow-md hover:shadow-lg shadow-blue-500/15 cursor-pointer mt-4"
+              className="w-full h-12 bg-[#0A6BFF] text-white hover:bg-blue-600 disabled:opacity-50 rounded-2xl font-bold text-[15px] flex items-center justify-center gap-2 transition-all shadow-[0_4px_14px_0_rgba(10,107,255,0.25)] hover:shadow-[0_6px_20px_rgba(10,107,255,0.23)] active:scale-[0.98] cursor-pointer mt-6"
             >
               {loading ? (
                 <span className="flex gap-1.5 justify-center items-center">
@@ -162,21 +164,27 @@ export default function LoginPage() {
                 </span>
               ) : (
                 <>
-                  <span>Log in</span>
-                  <ArrowRight className="w-4 h-4" />
+                  <span>Log in securely</span>
+                  <ArrowRight className="w-[18px] h-[18px]" />
                 </>
               )}
             </motion.button>
           </motion.form>
+        </motion.div>
 
-          <div className="mt-6 pt-5 border-t border-zinc-100 text-center">
-            <p className="text-[13px] text-zinc-500 font-medium">
-              Don&apos;t have an account?{" "}
-              <Link href="/signup" className="text-[#0A6BFF] hover:underline font-bold transition-all">
-                Create one free
-              </Link>
-            </p>
-          </div>
+        {/* Footer Link */}
+        <motion.div 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.6 }}
+          className="mt-8 text-center"
+        >
+          <p className="text-[14px] text-zinc-500 font-medium">
+            Don't have an account?{" "}
+            <Link href="/signup" className="text-[#0A6BFF] hover:text-blue-600 font-bold transition-colors">
+              Create one free
+            </Link>
+          </p>
         </motion.div>
       </div>
     </div>

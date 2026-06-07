@@ -19,6 +19,7 @@ import {
   MessageSquare as Facebook,
   Camera as Instagram,
   MessageCircle,
+  Loader2,
 } from "lucide-react";
 import { MetaOAuthConnect } from "@/components/dashboard/MetaOAuthConnect";
 import {
@@ -36,7 +37,7 @@ export default function OnboardingPage() {
   const router = useRouter();
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
-  const [loadingText, setLoadingText] = useState("Setting up your business desk...");
+  const [loadingText, setLoadingText] = useState("Setting up your workspace...");
 
   const [fullName, setFullName] = useState("");
   const [companyName, setCompanyName] = useState("");
@@ -62,6 +63,7 @@ export default function OnboardingPage() {
   }, [session, fullName]);
 
   const selectedPreset = industryId ? getIndustryPreset(industryId) : null;
+  const accent = selectedPreset?.primary ?? "#000000"; // Fallback to black for ultra-clean look if no industry
 
   const handleNext = () => {
     if (step < 7) {
@@ -80,10 +82,10 @@ export default function OnboardingPage() {
     setLoading(true);
 
     const stages = [
-      `Preparing your ${selectedPreset.label} dashboard...`,
-      "Connecting WhatsApp-ready automations...",
-      "Training your AI assistant tone...",
-      "Almost ready — opening your desk...",
+      `Provisioning ${selectedPreset.label} environment...`,
+      "Configuring communication channels...",
+      "Initializing AI models...",
+      "Finalizing workspace setup...",
     ];
 
     let currentStage = 0;
@@ -136,25 +138,25 @@ export default function OnboardingPage() {
       id: "owner",
       label: "Business Owner",
       icon: Briefcase,
-      desc: "I run the business and want simple automation",
+      desc: "I run the business and need full control",
     },
     {
       id: "manager",
       label: "Manager",
       icon: Activity,
-      desc: "I manage daily operations and customer replies",
+      desc: "I oversee daily operations and team",
     },
     {
       id: "sales",
       label: "Sales / Marketing",
       icon: TrendingUp,
-      desc: "I handle leads, campaigns, and follow-ups",
+      desc: "I handle growth, leads, and campaigns",
     },
     {
       id: "support",
       label: "Customer Support",
       icon: MessageSquare,
-      desc: "I answer customer messages every day",
+      desc: "I interact with customers directly",
     },
   ];
 
@@ -165,539 +167,400 @@ export default function OnboardingPage() {
     { id: "large", label: "200+ people", desc: "Larger organization", icon: Building2 },
   ];
 
-  const stepVariants = {
-    initial: { opacity: 0, y: 16 },
-    animate: { 
-      opacity: 1, 
-      y: 0,
-      transition: { 
-        duration: 0.6,
-        ease: [0.16, 1, 0.3, 1] as const,
-        staggerChildren: 0.05,
-        delayChildren: 0.05,
-      } 
-    },
-    exit: { 
-      opacity: 0, 
-      y: -12,
-      transition: { 
-        duration: 0.3, 
-        ease: [0.16, 1, 0.3, 1] as const,
-      } 
-    },
+  const slideVariants = {
+    initial: { opacity: 0, x: 20 },
+    animate: { opacity: 1, x: 0, transition: { duration: 0.4, ease: [0.16, 1, 0.3, 1] as const } },
+    exit: { opacity: 0, x: -20, transition: { duration: 0.3, ease: [0.16, 1, 0.3, 1] as const } }
   };
-
-  const itemVariants = {
-    initial: { y: 12, opacity: 0 },
-    animate: { 
-      y: 0, 
-      opacity: 1,
-      transition: {
-        duration: 0.5,
-        ease: [0.16, 1, 0.3, 1] as const,
-      }
-    },
-    exit: { y: -8, opacity: 0 }
-  };
-
-  const accent = selectedPreset?.primary ?? "#0A6BFF";
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] text-zinc-900 flex flex-col justify-between items-center p-6 relative overflow-hidden font-sans">
-      {/* Clean Grid Background */}
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,#e2e8f0_1px,transparent_1px),linear-gradient(to_bottom,#e2e8f0_1px,transparent_1px)] bg-[size:3rem_3rem] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_0%,#000_70%,transparent_100%)] opacity-40 pointer-events-none" />
+    <div className="min-h-screen bg-[#FAFAFA] text-zinc-900 flex flex-col items-center justify-center p-4 sm:p-8 font-sans relative selection:bg-zinc-200">
+      {/* Clean subtle dot background */}
+      <div className="absolute inset-0 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:16px_16px] opacity-60 pointer-events-none" />
 
-      <header className="w-full max-w-6xl mx-auto flex items-center justify-between z-10 pt-4">
-        <div className="flex items-center gap-2">
-          <div
-            className="w-7 h-7 rounded-[8px] flex items-center justify-center shadow-sm"
-            style={{ backgroundColor: accent }}
-          >
-            <Zap className="w-4 h-4 text-white fill-current" />
-          </div>
-          <span className="text-[17px] font-extrabold text-zinc-950 tracking-tight">Anaos</span>
-          <span
-            className="text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider"
-            style={{ backgroundColor: `${accent}15`, color: accent }}
-          >
-            Business setup
-          </span>
+      {/* Top Left Branding */}
+      <div className="absolute top-8 left-8 flex items-center gap-2.5 z-10">
+        <div className="w-8 h-8 rounded-lg bg-zinc-900 flex items-center justify-center shadow-sm">
+          <Zap className="w-4 h-4 text-white fill-current" />
         </div>
-        <div className="text-[13px] text-zinc-400 font-semibold uppercase tracking-widest font-mono">
-          Step {step} of 7
+        <span className="font-semibold text-[17px] tracking-tight">Anaos</span>
+      </div>
+
+      <main className="w-full max-w-[640px] relative z-10">
+        {/* Sleek Progress Bar */}
+        <div className="flex items-center gap-2 mb-8">
+          {[1, 2, 3, 4, 5, 6, 7].map((i) => (
+            <div
+              key={i}
+              className="h-1 flex-1 rounded-full transition-colors duration-500"
+              style={{
+                backgroundColor: i <= step ? accent : "#E4E4E7",
+                opacity: i <= step ? 1 : 0.6
+              }}
+            />
+          ))}
         </div>
-      </header>
 
-      <main className="w-full max-w-[560px] my-auto relative z-10 py-10">
-        <AnimatePresence mode="wait">
-          {loading ? (
-            <motion.div
-              key="loading-screen"
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              className="bg-white/95 border border-zinc-200 bg-white/95 p-10 flex flex-col items-center justify-center text-center h-[380px] rounded-3xl shadow-xl relative backdrop-blur-md"
-            >
-              <div className="relative w-16 h-16 mb-6">
-                <div className="absolute inset-0 rounded-full border-4 border-zinc-100" />
-                <div
-                  className="absolute inset-0 rounded-full border-4 border-t-transparent animate-spin"
-                  style={{ borderColor: accent, borderTopColor: "transparent" }}
-                />
-              </div>
-              <h3 className="text-[18px] font-bold text-zinc-950 mb-2 animate-pulse">
-                {loadingText}
-              </h3>
-              <p className="text-[13.5px] text-zinc-500 font-medium">
-                Your dashboard will open with a {selectedPreset?.label ?? "business"} layout — easy
-                for owners, no coding.
-              </p>
-            </motion.div>
-          ) : (
-            <motion.div
-              key={`step-${step}`}
-              variants={stepVariants}
-              initial="initial"
-              animate="animate"
-              exit="exit"
-              className="bg-white/95 border border-zinc-200 shadow-2xl rounded-3xl backdrop-blur-md p-8 sm:p-10 relative z-10"
-            >              {step === 1 && (
-                <div className="flex flex-col">
-                  <motion.h2 
-                    variants={itemVariants}
-                    className="text-[26px] font-extrabold text-zinc-900 tracking-tight text-center leading-tight mb-2"
-                  >
-                    What type of business do you run?
-                  </motion.h2>
-                  <motion.p 
-                    variants={itemVariants}
-                    className="text-[14px] text-zinc-500 text-center font-medium mb-6"
-                  >
-                    Your dashboard will look and feel built for this industry.
-                  </motion.p>
+        <div className="bg-white rounded-2xl border border-zinc-200 shadow-sm overflow-hidden flex flex-col">
+          <AnimatePresence mode="wait">
+            {loading ? (
+              <motion.div
+                key="loading-screen"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="p-10 flex flex-col items-center justify-center text-center min-h-[400px]"
+              >
+                <Loader2 className="w-10 h-10 animate-spin mb-6" style={{ color: accent }} />
+                <h3 className="text-xl font-semibold text-zinc-900 mb-2 tracking-tight">
+                  {loadingText}
+                </h3>
+                <p className="text-[14px] text-zinc-500">
+                  Please wait while we initialize your {selectedPreset?.label ?? "workspace"}.
+                </p>
+              </motion.div>
+            ) : (
+              <motion.div
+                key={`step-${step}`}
+                variants={slideVariants}
+                initial="initial"
+                animate="animate"
+                exit="exit"
+                className="flex flex-col h-full"
+              >
+                <div className="p-8 sm:p-10 flex-1">
+                  {step === 1 && (
+                    <div className="flex flex-col">
+                      <h2 className="text-2xl font-semibold text-zinc-900 tracking-tight mb-2">
+                        What type of business do you run?
+                      </h2>
+                      <p className="text-[15px] text-zinc-500 mb-8">
+                        Your workspace and AI will be tailored for this industry.
+                      </p>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-[340px] overflow-y-auto pr-1 mb-8">
-                    {INDUSTRY_OPTIONS.map((opt) => {
-                      const Icon = opt.icon;
-                      const selected = industryId === opt.id;
-                      return (
-                        <motion.button
-                          variants={itemVariants}
-                          whileHover={{ scale: 1.02, y: -2 }}
-                          whileTap={{ scale: 0.98 }}
-                          key={opt.id}
-                          type="button"
-                          onClick={() => setIndustryId(opt.id)}
-                          className={`flex items-start gap-3 p-3.5 rounded-xl border text-left transition-all cursor-pointer ${
-                            selected 
-                              ? "border-transparent ring-2 shadow-lg" 
-                              : "border-zinc-200 bg-white hover:bg-zinc-50 shadow-sm hover:shadow-md"
-                          }`}
-                          style={
-                            selected
-                              ? {
-                                  borderColor: opt.primary,
-                                  backgroundColor: opt.softBg,
-                                  boxShadow: `0 0 0 2px ${opt.primary}, 0 8px 24px -4px ${opt.primary}20`,
-                                }
-                              : undefined
-                          }
-                        >
-                          <div
-                            className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0 text-white transition-colors"
-                            style={{ backgroundColor: selected ? opt.primary : "#e4e4e7" }}
-                          >
-                            <Icon className={`w-5 h-5 ${selected ? "" : "text-zinc-500"}`} />
-                          </div>
-                          <div>
-                            <p className="text-[14px] font-bold text-zinc-900">{opt.label}</p>
-                            <p className="text-[11px] text-zinc-500 mt-0.5">{opt.tagline}</p>
-                          </div>
-                        </motion.button>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
-
-              {step === 2 && (
-                <div className="flex flex-col">
-                  <motion.h2 
-                    variants={itemVariants}
-                    className="text-[26px] font-extrabold text-zinc-900 tracking-tight text-center leading-tight mb-2"
-                  >
-                    Your business details
-                  </motion.h2>
-                  <motion.p 
-                    variants={itemVariants}
-                    className="text-[14px] text-zinc-500 text-center font-medium mb-8"
-                  >
-                    {selectedPreset
-                      ? `Setting up ${selectedPreset.label} for you.`
-                      : "Tell us your name and brand."}
-                  </motion.p>
-
-                  <motion.div className="space-y-5 mb-8" variants={itemVariants}>
-                    <div>
-                      <label className="block text-[11px] font-bold text-zinc-500 uppercase tracking-widest mb-1.5">
-                        Your name
-                      </label>
-                      <input
-                        type="text"
-                        value={fullName}
-                        onChange={(e) => setFullName(e.target.value)}
-                        placeholder="e.g. Muhammad Qasim"
-                        className="w-full h-12 bg-white border border-zinc-200 rounded-xl px-4 text-[14px] font-semibold text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:border-[#0A6BFF] focus:ring-4 focus:ring-blue-500/10 transition-all shadow-sm"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-[11px] font-bold text-zinc-500 uppercase tracking-widest mb-1.5">
-                        Business name
-                      </label>
-                      <input
-                        type="text"
-                        value={companyName}
-                        onChange={(e) => setCompanyName(e.target.value)}
-                        placeholder={
-                          industryId === "real-estate"
-                            ? "e.g. Marina Realty"
-                            : industryId === "restaurant"
-                              ? "e.g. Olive & Oak"
-                              : "e.g. Your clinic or shop name"
-                        }
-                        className="w-full h-12 bg-white border border-zinc-200 rounded-xl px-4 text-[14px] font-semibold text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:border-[#0A6BFF] focus:ring-4 focus:ring-blue-500/10 transition-all shadow-sm"
-                      />
-                    </div>
-                  </motion.div>
-                </div>
-              )}
-
-              {step === 3 && (
-                <div className="flex flex-col">
-                  <motion.h2 
-                    variants={itemVariants}
-                    className="text-[26px] font-extrabold text-zinc-900 tracking-tight text-center leading-tight mb-2"
-                  >
-                    What is your role?
-                  </motion.h2>
-                  <motion.p 
-                    variants={itemVariants}
-                    className="text-[14px] text-zinc-500 text-center font-medium mb-6"
-                  >
-                    We keep the dashboard simple — no developer jargon.
-                  </motion.p>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-8">
-                    {ownerRoles.map((r) => {
-                      const Icon = r.icon;
-                      const selected = ownerRole === r.id;
-                      return (
-                        <motion.button
-                          variants={itemVariants}
-                          whileHover={{ scale: 1.02, y: -2 }}
-                          whileTap={{ scale: 0.98 }}
-                          key={r.id}
-                          type="button"
-                          onClick={() => setOwnerRole(r.id)}
-                          className={`flex items-start gap-3 p-3 rounded-xl border text-left cursor-pointer transition-all ${
-                            selected 
-                              ? "ring-2 shadow-lg" 
-                              : "border-zinc-200 bg-white hover:bg-zinc-50 shadow-sm hover:shadow-md"
-                          }`}
-                          style={
-                            selected
-                              ? { 
-                                  borderColor: accent, 
-                                  backgroundColor: `${accent}06`,
-                                  boxShadow: `0 0 0 2px ${accent}, 0 8px 20px -4px ${accent}15`
-                                }
-                              : undefined
-                          }
-                        >
-                          <div
-                            className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 transition-colors ${
-                              selected ? "text-white" : "bg-zinc-100 text-zinc-500"
-                            }`}
-                            style={selected ? { backgroundColor: accent } : undefined}
-                          >
-                            <Icon className="w-4.5 h-4.5" />
-                          </div>
-                          <div>
-                            <p className="text-[13.5px] font-bold text-zinc-900">{r.label}</p>
-                            <p className="text-[11px] text-zinc-400 mt-0.5">{r.desc}</p>
-                          </div>
-                        </motion.button>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
-
-              {step === 4 && (
-                <div className="flex flex-col">
-                  <motion.h2 
-                    variants={itemVariants}
-                    className="text-[26px] font-extrabold text-zinc-900 tracking-tight text-center leading-tight mb-2"
-                  >
-                    How big is your team?
-                  </motion.h2>
-                  <motion.p 
-                    variants={itemVariants}
-                    className="text-[14px] text-zinc-500 text-center font-medium mb-8"
-                  >
-                    Optional — helps us suggest the right plan later.
-                  </motion.p>
-
-                  <div className="space-y-3 mb-8">
-                    {companySizes.map((size) => {
-                      const Icon = size.icon;
-                      const selected = companySize === size.id;
-                      return (
-                        <motion.button
-                          variants={itemVariants}
-                          whileHover={{ scale: 1.01, y: -1 }}
-                          whileTap={{ scale: 0.99 }}
-                          key={size.id}
-                          type="button"
-                          onClick={() => setCompanySize(size.id)}
-                          className={`w-full flex items-center justify-between p-4 rounded-xl border text-left cursor-pointer transition-all ${
-                            selected 
-                              ? "ring-2 shadow-lg" 
-                              : "border-zinc-200 bg-white hover:bg-zinc-50 shadow-sm hover:shadow-md"
-                          }`}
-                          style={
-                            selected
-                              ? { 
-                                  borderColor: accent, 
-                                  backgroundColor: `${accent}06`,
-                                  boxShadow: `0 0 0 2px ${accent}, 0 8px 20px -4px ${accent}15`
-                                }
-                              : undefined
-                          }
-                        >
-                          <div className="flex items-center gap-4">
-                            <div
-                              className={`w-10 h-10 rounded-lg flex items-center justify-center transition-colors ${
-                                selected ? "text-white" : "bg-zinc-100 text-zinc-500"
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        {INDUSTRY_OPTIONS.map((opt) => {
+                          const Icon = opt.icon;
+                          const selected = industryId === opt.id;
+                          return (
+                            <button
+                              key={opt.id}
+                              type="button"
+                              onClick={() => setIndustryId(opt.id)}
+                              className={`flex items-start gap-3 p-4 rounded-xl border text-left transition-all ${
+                                selected 
+                                  ? "bg-zinc-50 shadow-sm" 
+                                  : "border-zinc-200 hover:border-zinc-300 hover:bg-zinc-50/50"
                               }`}
-                              style={selected ? { backgroundColor: accent } : undefined}
+                              style={selected ? { borderColor: opt.primary, boxShadow: `0 0 0 1px ${opt.primary}` } : undefined}
                             >
-                              <Icon className="w-5 h-5" />
-                            </div>
-                            <div>
-                              <p className="text-[14.5px] font-bold text-zinc-900">
-                                {size.label}
-                              </p>
-                              <p className="text-[12px] text-zinc-400">{size.desc}</p>
-                            </div>
-                          </div>
-                          {selected && (
-                            <div
-                              className="w-5 h-5 rounded-full flex items-center justify-center text-white"
-                              style={{ backgroundColor: accent }}
-                            >
-                              <Check className="w-3.5 h-3.5" />
-                            </div>
-                          )}
-                        </motion.button>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
+                              <div className={`mt-0.5 ${selected ? "" : "text-zinc-400"}`} style={selected ? { color: opt.primary } : undefined}>
+                                <Icon className="w-5 h-5" />
+                              </div>
+                              <div>
+                                <p className={`text-[15px] font-medium ${selected ? "text-zinc-900" : "text-zinc-700"}`}>
+                                  {opt.label}
+                                </p>
+                                <p className="text-[13px] text-zinc-500 mt-0.5">{opt.tagline}</p>
+                              </div>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
 
-              {step === 5 && (
-                <div className="flex flex-col">
-                  <motion.h2 
-                    variants={itemVariants}
-                    className="text-[26px] font-extrabold text-zinc-900 tracking-tight text-center leading-tight mb-2"
-                  >
-                    Customer languages
-                  </motion.h2>
-                  <motion.p 
-                    variants={itemVariants}
-                    className="text-[14px] text-zinc-500 text-center font-medium mb-4"
-                  >
-                    Every industry, every country — on WhatsApp Anaos auto-detects and replies in
-                    the customer&apos;s language (same for any normal business).
-                  </motion.p>
-                  <motion.div 
-                    variants={itemVariants}
-                    className="flex items-center justify-center gap-2 mb-4 text-[#0A6BFF]"
-                  >
-                    <Globe className="w-5 h-5" />
-                    <span className="text-[13px] font-bold">45+ languages supported</span>
-                  </motion.div>
-                  <div className="grid grid-cols-2 gap-2 max-h-[240px] overflow-y-auto mb-4 pr-1">
-                    {LANGUAGE_CATALOG.map((l) => {
-                      const on = enabledLanguages.includes(l.code);
-                      return (
-                        <motion.button
-                          variants={itemVariants}
-                          whileHover={{ scale: 1.02 }}
-                          whileTap={{ scale: 0.98 }}
-                          key={l.code}
-                          type="button"
-                          onClick={() =>
-                            setEnabledLanguages((prev) =>
-                              on
-                                ? prev.filter((c) => c !== l.code)
-                                : [...prev, l.code]
-                            )
-                          }
-                          className={`flex items-center gap-2 p-2 rounded-lg border text-[12px] cursor-pointer transition-all ${
-                            on 
-                              ? "border-[#0A6BFF] bg-blue-500/5 font-semibold shadow-sm" 
-                              : "border-zinc-200 bg-white hover:bg-zinc-50"
-                          }`}
-                        >
-                          <span>{l.flag}</span>
-                          <span className="truncate">{l.label}</span>
-                        </motion.button>
-                      );
-                    })}
-                  </div>
-                  <motion.button
-                    variants={itemVariants}
+                  {step === 2 && (
+                    <div className="flex flex-col">
+                      <h2 className="text-2xl font-semibold text-zinc-900 tracking-tight mb-2">
+                        Workspace Details
+                      </h2>
+                      <p className="text-[15px] text-zinc-500 mb-8">
+                        {selectedPreset
+                          ? `Setting up a ${selectedPreset.label} environment.`
+                          : "Tell us a bit about yourself."}
+                      </p>
+
+                      <div className="space-y-6">
+                        <div>
+                          <label className="block text-[13px] font-medium text-zinc-700 mb-2">
+                            Your full name
+                          </label>
+                          <input
+                            type="text"
+                            value={fullName}
+                            onChange={(e) => setFullName(e.target.value)}
+                            placeholder="e.g. John Doe"
+                            className="w-full h-11 bg-white border border-zinc-200 rounded-lg px-3 text-[15px] text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-all"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-[13px] font-medium text-zinc-700 mb-2">
+                            Business or company name
+                          </label>
+                          <input
+                            type="text"
+                            value={companyName}
+                            onChange={(e) => setCompanyName(e.target.value)}
+                            placeholder={
+                              industryId === "real-estate"
+                                ? "e.g. Marina Realty"
+                                : industryId === "restaurant"
+                                  ? "e.g. Olive & Oak"
+                                  : "e.g. Acme Corp"
+                            }
+                            className="w-full h-11 bg-white border border-zinc-200 rounded-lg px-3 text-[15px] text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-all"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {step === 3 && (
+                    <div className="flex flex-col">
+                      <h2 className="text-2xl font-semibold text-zinc-900 tracking-tight mb-2">
+                        What is your role?
+                      </h2>
+                      <p className="text-[15px] text-zinc-500 mb-8">
+                        We'll adapt the dashboard experience to your needs.
+                      </p>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        {ownerRoles.map((r) => {
+                          const Icon = r.icon;
+                          const selected = ownerRole === r.id;
+                          return (
+                            <button
+                              key={r.id}
+                              type="button"
+                              onClick={() => setOwnerRole(r.id)}
+                              className={`flex items-start gap-3 p-4 rounded-xl border text-left transition-all ${
+                                selected 
+                                  ? "border-zinc-900 ring-1 ring-zinc-900 bg-zinc-50 shadow-sm" 
+                                  : "border-zinc-200 hover:border-zinc-300 hover:bg-zinc-50/50"
+                              }`}
+                            >
+                              <Icon className={`mt-0.5 w-5 h-5 ${selected ? "text-zinc-900" : "text-zinc-400"}`} />
+                              <div>
+                                <p className={`text-[15px] font-medium ${selected ? "text-zinc-900" : "text-zinc-700"}`}>
+                                  {r.label}
+                                </p>
+                                <p className="text-[13px] text-zinc-500 mt-0.5">{r.desc}</p>
+                              </div>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+
+                  {step === 4 && (
+                    <div className="flex flex-col">
+                      <h2 className="text-2xl font-semibold text-zinc-900 tracking-tight mb-2">
+                        How big is your team?
+                      </h2>
+                      <p className="text-[15px] text-zinc-500 mb-8">
+                        This helps us configure collaboration features.
+                      </p>
+
+                      <div className="space-y-3">
+                        {companySizes.map((size) => {
+                          const Icon = size.icon;
+                          const selected = companySize === size.id;
+                          return (
+                            <button
+                              key={size.id}
+                              type="button"
+                              onClick={() => setCompanySize(size.id)}
+                              className={`w-full flex items-center justify-between p-4 rounded-xl border text-left transition-all ${
+                                selected 
+                                  ? "border-zinc-900 ring-1 ring-zinc-900 bg-zinc-50 shadow-sm" 
+                                  : "border-zinc-200 hover:border-zinc-300 hover:bg-zinc-50/50"
+                              }`}
+                            >
+                              <div className="flex items-center gap-3">
+                                <Icon className={`w-5 h-5 ${selected ? "text-zinc-900" : "text-zinc-400"}`} />
+                                <div>
+                                  <p className={`text-[15px] font-medium ${selected ? "text-zinc-900" : "text-zinc-700"}`}>
+                                    {size.label}
+                                  </p>
+                                  <p className="text-[13px] text-zinc-500 mt-0.5">{size.desc}</p>
+                                </div>
+                              </div>
+                              {selected && <Check className="w-4 h-4 text-zinc-900" />}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+
+                  {step === 5 && (
+                    <div className="flex flex-col">
+                      <h2 className="text-2xl font-semibold text-zinc-900 tracking-tight mb-2">
+                        Customer Languages
+                      </h2>
+                      <p className="text-[15px] text-zinc-500 mb-6">
+                        Anaos AI auto-detects and replies in your customers' native language. Select the ones you frequently encounter.
+                      </p>
+                      
+                      <div className="flex items-center gap-2 mb-6 px-4 py-2.5 bg-zinc-50 rounded-lg border border-zinc-200 text-zinc-700">
+                        <Globe className="w-4 h-4 text-zinc-400" />
+                        <span className="text-[13px] font-medium">45+ languages supported out of the box.</span>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-2 max-h-[220px] overflow-y-auto mb-4 pr-2 custom-scrollbar">
+                        {LANGUAGE_CATALOG.map((l) => {
+                          const on = enabledLanguages.includes(l.code);
+                          return (
+                            <button
+                              key={l.code}
+                              type="button"
+                              onClick={() =>
+                                setEnabledLanguages((prev) =>
+                                  on ? prev.filter((c) => c !== l.code) : [...prev, l.code]
+                                )
+                              }
+                              className={`flex items-center gap-2 p-2.5 rounded-lg border text-[13px] transition-all ${
+                                on 
+                                  ? "border-zinc-900 bg-zinc-900 text-white font-medium shadow-sm" 
+                                  : "border-zinc-200 bg-white text-zinc-700 hover:border-zinc-300 hover:bg-zinc-50"
+                              }`}
+                            >
+                              <span className="text-base">{l.flag}</span>
+                              <span className="truncate">{l.label}</span>
+                            </button>
+                          );
+                        })}
+                      </div>
+                      
+                      <button
+                        type="button"
+                        onClick={() => setEnabledLanguages(LANGUAGE_CATALOG.map((l) => l.code))}
+                        className="text-[13px] font-medium text-zinc-500 hover:text-zinc-900 transition-colors self-start"
+                      >
+                        Select all languages
+                      </button>
+                    </div>
+                  )}
+
+                  {step === 6 && (
+                    <div className="flex flex-col">
+                      <h2 className="text-2xl font-semibold text-zinc-900 tracking-tight mb-2">
+                        Connect Communication Channels
+                      </h2>
+                      <p className="text-[15px] text-zinc-500 mb-8">
+                        Select the platforms where your customers reach out. You can change this later.
+                      </p>
+
+                      <div className="space-y-3">
+                        {[
+                          { id: "whatsapp" as const, name: "WhatsApp Business", icon: MessageCircle, brand: "text-[#25D366]" },
+                          { id: "instagram" as const, name: "Instagram DM", icon: Instagram, brand: "text-[#E4405F]" },
+                          { id: "facebook" as const, name: "Facebook Messenger", icon: Facebook, brand: "text-[#1877F2]" },
+                        ].map((c) => {
+                          const isSelected = selectedChannels.includes(c.id);
+                          return (
+                            <button
+                              key={c.id}
+                              onClick={() => toggleChannel(c.id)}
+                              className={`w-full flex items-center justify-between p-4 rounded-xl border transition-all ${
+                                isSelected 
+                                  ? "border-zinc-900 ring-1 ring-zinc-900 bg-zinc-50 shadow-sm" 
+                                  : "border-zinc-200 hover:border-zinc-300 hover:bg-zinc-50/50"
+                              }`}
+                            >
+                              <div className="flex items-center gap-3">
+                                <c.icon className={`w-5 h-5 ${isSelected ? c.brand : "text-zinc-400"}`} />
+                                <span className={`text-[15px] font-medium ${isSelected ? "text-zinc-900" : "text-zinc-700"}`}>
+                                  {c.name}
+                                </span>
+                              </div>
+                              <div className={`w-5 h-5 rounded-full border flex items-center justify-center ${isSelected ? "border-zinc-900 bg-zinc-900" : "border-zinc-300"}`}>
+                                {isSelected && <Check className="w-3.5 h-3.5 text-white" />}
+                              </div>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+
+                  {step === 7 && (
+                    <div className="flex flex-col items-center">
+                      <h2 className="text-2xl font-semibold text-zinc-900 tracking-tight mb-2">
+                        Link Meta Accounts
+                      </h2>
+                      <p className="text-[15px] text-zinc-500 mb-8 text-center">
+                        Authenticate securely to grant Anaos access to your selected channels.
+                      </p>
+                      <div className="w-full">
+                        <MetaOAuthConnect 
+                          channels={selectedChannels} 
+                          onSuccess={handleSubmit} 
+                        />
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Footer Actions inside Card */}
+                <div className="px-8 sm:px-10 py-5 bg-zinc-50/80 border-t border-zinc-100 flex items-center justify-between">
+                  <button
                     type="button"
-                    onClick={() =>
-                      setEnabledLanguages(LANGUAGE_CATALOG.map((l) => l.code))
+                    onClick={handleBack}
+                    disabled={step === 1}
+                    className={`text-[14px] font-medium transition-colors ${
+                      step === 1 ? "text-zinc-300 cursor-not-allowed" : "text-zinc-600 hover:text-zinc-900"
+                    }`}
+                  >
+                    Back
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (step === 6 && selectedChannels.length === 0) {
+                        handleSubmit();
+                      } else if (step === 7) {
+                        // Wait for Meta popup
+                      } else {
+                        handleNext();
+                      }
+                    }}
+                    style={step === 7 ? { display: 'none' } : { backgroundColor: accent }}
+                    disabled={
+                      (step === 1 && !industryId) ||
+                      (step === 2 && (!fullName.trim() || !companyName.trim())) ||
+                      (step === 3 && !ownerRole) ||
+                      (step === 4 && !companySize) ||
+                      (step === 5 && enabledLanguages.length === 0)
                     }
-                    className="text-[12px] font-bold text-[#0A6BFF] mx-auto hover:underline"
+                    className="h-10 px-5 rounded-lg text-white font-medium disabled:opacity-50 flex items-center gap-2 text-[14px] transition-all hover:brightness-110 active:scale-95 shadow-sm"
                   >
-                    Select all languages
-                  </motion.button>
+                    <span>{step === 6 ? (selectedChannels.length === 0 ? "Skip for now" : "Continue") : "Continue"}</span>
+                    {step !== 6 || selectedChannels.length > 0 ? (
+                      <ArrowRight className="w-4 h-4" />
+                    ) : null}
+                  </button>
                 </div>
-              )}
-
-              {step === 6 && (
-                <div className="flex flex-col items-center text-center">
-                  <motion.h2 
-                    variants={itemVariants}
-                    className="text-[26px] font-extrabold text-zinc-900 tracking-tight leading-tight mb-2"
-                  >
-                    Connect your channels
-                  </motion.h2>
-                  <motion.p 
-                    variants={itemVariants}
-                    className="text-[14px] text-zinc-500 font-medium mb-8 max-w-sm mx-auto"
-                  >
-                    Select the business channels you want Anaos AI to manage for you.
-                  </motion.p>
-
-                  <motion.div variants={itemVariants} className="grid grid-cols-1 gap-3 w-full max-w-md mx-auto mb-8">
-                    {[
-                      { id: "whatsapp" as const, name: "WhatsApp Business", icon: MessageCircle, color: "text-[#25D366]", bg: "bg-[#25D366]/10", border: "border-[#25D366]" },
-                      { id: "instagram" as const, name: "Instagram DM", icon: Instagram, color: "text-[#E4405F]", bg: "bg-[#E4405F]/10", border: "border-[#E4405F]" },
-                      { id: "facebook" as const, name: "Facebook Messenger", icon: Facebook, color: "text-[#1877F2]", bg: "bg-[#1877F2]/10", border: "border-[#1877F2]" },
-                    ].map((c) => {
-                      const isSelected = selectedChannels.includes(c.id);
-                      return (
-                        <button
-                          key={c.id}
-                          onClick={() => toggleChannel(c.id)}
-                          className={`flex items-center gap-4 p-4 rounded-xl border-2 transition-all cursor-pointer ${
-                            isSelected 
-                              ? `${c.border} bg-zinc-50/50 shadow-sm` 
-                              : `border-zinc-200 hover:border-zinc-300 hover:bg-zinc-50`
-                          }`}
-                        >
-                          <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${isSelected ? c.bg : "bg-zinc-100"}`}>
-                            <c.icon className={`w-5 h-5 ${isSelected ? c.color : "text-zinc-500"}`} />
-                          </div>
-                          <span className={`font-bold text-[15px] ${isSelected ? "text-zinc-900" : "text-zinc-600"}`}>
-                            {c.name}
-                          </span>
-                          <div className="ml-auto">
-                            <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${isSelected ? c.border + " " + c.bg : "border-zinc-300"}`}>
-                              {isSelected && <Check className={`w-3.5 h-3.5 ${c.color}`} />}
-                            </div>
-                          </div>
-                        </button>
-                      );
-                    })}
-                  </motion.div>
-                </div>
-              )}
-
-              {step === 7 && (
-                <div className="flex flex-col items-center">
-                  <motion.h2 
-                    variants={itemVariants}
-                    className="text-[26px] font-extrabold text-zinc-900 tracking-tight leading-tight mb-2"
-                  >
-                    Link Accounts
-                  </motion.h2>
-                  <motion.p 
-                    variants={itemVariants}
-                    className="text-[14px] text-zinc-500 font-medium mb-8 text-center"
-                  >
-                    Authenticate with Meta to finish setup.
-                  </motion.p>
-                  <motion.div variants={itemVariants} className="w-full">
-                    <MetaOAuthConnect 
-                      channels={selectedChannels} 
-                      onSuccess={handleSubmit} 
-                    />
-                  </motion.div>
-                </div>
-              )}
-
-              <div className="flex items-center justify-between pt-4 border-t border-zinc-100 mt-4">
-                <button
-                  type="button"
-                  onClick={handleBack}
-                  disabled={step === 1}
-                  className="px-5 py-2.5 rounded-xl border border-zinc-200 text-zinc-600 font-bold text-[13.5px] hover:bg-zinc-50 disabled:opacity-30 cursor-pointer transition-colors"
-                >
-                  Back
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    // If step 6 and no channels selected, we can let them skip by just doing handleSubmit()
-                    if (step === 6 && selectedChannels.length === 0) {
-                      handleSubmit();
-                    } else if (step === 7) {
-                      // Do nothing, they must click the Meta button to proceed
-                    } else {
-                      handleNext();
-                    }
-                  }}
-                  style={step === 7 ? { display: 'none' } : { backgroundColor: accent }}
-                  disabled={
-                    (step === 1 && !industryId) ||
-                    (step === 2 && (!fullName.trim() || !companyName.trim())) ||
-                    (step === 3 && !ownerRole) ||
-                    (step === 4 && !companySize) ||
-                    (step === 5 && enabledLanguages.length === 0)
-                  }
-                  className="h-11 px-6 rounded-xl text-white font-bold disabled:opacity-40 flex items-center gap-1.5 text-[13.5px] cursor-pointer transition-all shadow-md hover:shadow-lg hover:brightness-105"
-                >
-                  <span>{step === 6 ? (selectedChannels.length === 0 ? "Skip for now" : "Continue") : "Continue"}</span>
-                  <ArrowRight className="w-4 h-4" />
-                </button>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
       </main>
-
-      <footer className="w-full max-w-6xl mx-auto flex justify-center items-center gap-1.5 pb-6 z-10">
-        {[1, 2, 3, 4, 5, 6, 7].map((i) => (
-          <button
-            key={i}
-            type="button"
-            onClick={() => {
-              if (i < step) setStep(i);
-            }}
-            disabled={i > step}
-            className={`h-2 rounded-full transition-all duration-300 ${
-              i === step ? "w-7" : "w-2 bg-zinc-200"
-            }`}
-            style={i === step ? { backgroundColor: accent } : undefined}
-          />
-        ))}
-      </footer>
+      
+      {/* Global CSS for custom scrollbar hidden in normal tailwind */}
+      <style dangerouslySetInnerHTML={{__html: `
+        .custom-scrollbar::-webkit-scrollbar {
+          width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+          background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+          background-color: #E4E4E7;
+          border-radius: 4px;
+        }
+      `}} />
     </div>
   );
 }

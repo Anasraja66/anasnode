@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { MessageSquare as Facebook, Camera as Instagram, MessageCircle, ArrowRight, Loader2, CheckCircle2 } from "lucide-react";
-import { MetaOAuthConnect } from "@/components/dashboard/MetaOAuthConnect";
+import { MessageSquare as Facebook, Camera as Instagram, MessageCircle, ArrowRight, CheckCircle2 } from "lucide-react";
+import { MetaEmbeddedSignup } from "@/components/integrations/MetaEmbeddedSignup";
 
 export function OnboardingWizard() {
   const [show, setShow] = useState(false);
@@ -132,10 +132,7 @@ export function OnboardingWizard() {
                     <ArrowLeft className="w-5 h-5" />
                   </button>
                   
-                  <MetaOAuthConnect 
-                    channels={selectedChannels} 
-                    onSuccess={handleComplete} 
-                  />
+                  <MetaEmbeddedSignup onSuccess={() => handleComplete()} />
                 </motion.div>
               )}
             </>

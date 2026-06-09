@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ArrowLeft, Plug, Search } from "lucide-react";
 import { PROVIDERS, pluginsByProvider } from "@/lib/integrations/plugins";
-import { AnalyticsPromoCard, IntegrationCard, IntegrationStatus } from "./IntegrationCard";
+import { AnalyticsPromoCard, IntegrationStatus, ProviderIntegrationCard } from "./IntegrationCard";
 
 type ApiItem = {
   id: string;
@@ -42,6 +42,13 @@ export function IntegrationsHub() {
         p.description.toLowerCase().includes(filter.toLowerCase())
     ),
   })).filter((c) => c.plugins.length > 0);
+
+  const providerHref: Record<string, string> = {
+    meta: "/dashboard/integrations/whatsapp",
+    google: "/dashboard/integrations/email",
+    commerce: "/dashboard/integrations/shopify",
+    others: "/dashboard/integrations",
+  };
 
   return (
     <div className="min-h-screen bg-[#F0F2F5]">
@@ -105,33 +112,95 @@ export function IntegrationsHub() {
             ))}
           </div>
         ) : (
-          sections.map((section) => (
-            <section key={section.id} className="space-y-4">
+          <div className="space-y-16">
+            {/* Native Integrations */}
+            <section className="space-y-4">
               <div>
                 <h2 className="text-[13px] font-black uppercase tracking-[0.15em] text-zinc-800">
-                  {section.label}
+                  Native Integrations
                 </h2>
                 <p className="text-[12.5px] text-zinc-400 font-semibold mt-0.5">
-                  {section.description}
+                  1-click connect. Anaos handles the webhooks and API limits automatically.
                 </p>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {section.plugins.map((p) => (
-                  <IntegrationCard
-                    key={p.id}
-                    id={p.id}
-                    name={p.name}
-                    description={p.description}
-                    ownerHint={p.ownerHint}
-                    status={(statusMap[p.id] || p.status) as IntegrationStatus}
-                    connectLabel={p.connectLabel}
-                    href={p.href}
+                {sections.filter(s => s.id === "meta" || s.id === "commerce").map((section) => (
+                  <ProviderIntegrationCard
+                    key={section.id}
+                    id={section.id}
+                    label={section.label}
+                    description={section.description}
+                    href={providerHref[section.id] || "/dashboard/integrations"}
+                    channels={section.plugins.map((p) => ({
+                      id: p.id,
+                      name: p.name,
+                      status: (statusMap[p.id] || p.status) as IntegrationStatus,
+                      href: p.href,
+                    }))}
                   />
                 ))}
-                {section.id === "meta" && <AnalyticsPromoCard />}
+                <AnalyticsPromoCard />
               </div>
             </section>
-          ))
+
+            {/* API Workflows */}
+            <section className="space-y-4">
+              <div>
+                <h2 className="text-[13px] font-black uppercase tracking-[0.15em] text-zinc-800">
+                  API Workflows
+                </h2>
+                <p className="text-[12.5px] text-zinc-400 font-semibold mt-0.5">
+                  Connect third-party accounts via OAuth or API keys for background workflows.
+                </p>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {sections.filter(s => s.id === "google").map((section) => (
+                  <ProviderIntegrationCard
+                    key={section.id}
+                    id={section.id}
+                    label={section.label}
+                    description={section.description}
+                    href={providerHref[section.id] || "/dashboard/integrations"}
+                    channels={section.plugins.map((p) => ({
+                      id: p.id,
+                      name: p.name,
+                      status: (statusMap[p.id] || p.status) as IntegrationStatus,
+                      href: p.href,
+                    }))}
+                  />
+                ))}
+              </div>
+            </section>
+
+            {/* Upcoming */}
+            <section className="space-y-4">
+              <div>
+                <h2 className="text-[13px] font-black uppercase tracking-[0.15em] text-zinc-800">
+                  Upcoming
+                </h2>
+                <p className="text-[12.5px] text-zinc-400 font-semibold mt-0.5">
+                  In development by the Anaos team.
+                </p>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 opacity-80">
+                {sections.filter(s => s.id === "others").map((section) => (
+                  <ProviderIntegrationCard
+                    key={section.id}
+                    id={section.id}
+                    label={section.label}
+                    description={section.description}
+                    href={providerHref[section.id] || "/dashboard/integrations"}
+                    channels={section.plugins.map((p) => ({
+                      id: p.id,
+                      name: p.name,
+                      status: (statusMap[p.id] || p.status) as IntegrationStatus,
+                      href: p.href,
+                    }))}
+                  />
+                ))}
+              </div>
+            </section>
+          </div>
         )}
 
         <div className="rounded-xl border border-dashed border-zinc-300 bg-white/60 p-8 text-center">

@@ -8,6 +8,7 @@ import {
   parseLanguageSettings,
   resolveReplyLanguage,
 } from "@/lib/i18n/settings";
+import { buildKnowledgeContext, loadKnowledgeDocs } from "@/lib/knowledge/store";
 
 export async function generateConversationReply(params: {
   accountId: string;
@@ -69,6 +70,26 @@ export async function generateConversationReply(params: {
 
   const enrichedMessage = await enrichMessageWithLinks(params.messageText);
   const languageRule = buildLanguageRule(replyLang);
+  const docs = await loadKnowledgeDocs({
+    accountId: params.accountId,
+    workspaceId: workspace?.id,
+    limit: 12,
+  });
+  const queryForKnowledge = [
+    params.messageText,
+    ...params.history
+      .filter((h) => h.role === "user")
+      .slice(-3)
+      .map((h) => h.content),
+  ]
+    .join("\n")
+    .slice(0, 1500);
+  const knowledge = buildKnowledgeContext({
+    query: queryForKnowledge,
+    docs,
+    maxChunks: 6,
+    maxChars: 1700,
+  });
 
   const system = `${buildHumanPersona({
     workspaceName,
@@ -76,6 +97,8 @@ export async function generateConversationReply(params: {
     contactName: params.contactName,
     languageRule,
   })}
+
+${knowledge.context || ""}
 
 Extra rules:
 - Voice messages show as "🎤 Voice: …" — answer what they said in voice.

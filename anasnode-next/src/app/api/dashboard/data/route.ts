@@ -3,6 +3,7 @@ import { auth } from "@/auth";
 import { prisma } from "@/lib/db";
 import { normalizeIndustryLabel } from "@/lib/industry/presets";
 import { FastApiClient } from "@/lib/api/fastapi";
+import { decrypt } from "@/lib/crypto";
 
 function formatRelativeTime(date: Date): string {
   const diff = Date.now() - date.getTime();
@@ -47,6 +48,14 @@ function getRequiredIntegrations(nodes: any[]): string[] {
   return Array.from(reqs);
 }
 
+function resolveRequiredProvider(missing: string[]): "meta" | "commerce" | "google" | "others" | null {
+  if (missing.some((m) => m === "whatsapp" || m === "instagram" || m === "facebook")) return "meta";
+  if (missing.some((m) => m === "shopify" || m === "stripe" || m === "woocommerce")) return "commerce";
+  if (missing.some((m) => m === "smtp" || m.startsWith("google_"))) return "google";
+  if (missing.length > 0) return "others";
+  return null;
+}
+
 export async function GET(request: Request) {
   try {
     const session = await auth();
@@ -65,11 +74,26 @@ export async function GET(request: Request) {
     // Fetch all active integration credentials for this account
     const credentials = await prisma.integrationCredential.findMany({
       where: { accountId, isActive: true },
-      select: { type: true },
+      select: { type: true, credentials: true },
     });
     const connectedTypes = new Set(credentials.map((c: { type: string }) => c.type));
     if (process.env.WHATSAPP_ACCESS_TOKEN) {
       connectedTypes.add("whatsapp");
+    }
+
+    const metaCred = credentials.find((c) => c.type === "whatsapp");
+    let instagramConnected = false;
+    let facebookConnected = false;
+
+    if (metaCred) {
+      try {
+        const parsed = JSON.parse(decrypt(metaCred.credentials));
+        instagramConnected = Array.isArray(parsed.instagramAccountIds) && parsed.instagramAccountIds.length > 0;
+        facebookConnected = Array.isArray(parsed.pageIds) && parsed.pageIds.length > 0;
+      } catch {
+        instagramConnected = false;
+        facebookConnected = false;
+      }
     }
 
     // Fetch workspaces with their workflows (automations) from database
@@ -117,20 +141,18 @@ export async function GET(request: Request) {
 
         // Determine required integrations & check status
         const reqs = getRequiredIntegrations(nodes);
-        const missing = reqs.filter(r => {
-          if (r === "whatsapp" || r === "instagram" || r === "facebook") {
-            return !connectedTypes.has("whatsapp");
-          }
-          if (r === "shopify") {
-            return !connectedTypes.has("shopify");
-          }
-          if (r === "smtp" || r === "google_calendar" || r === "google_drive" || r === "google_sheets") {
-            return !connectedTypes.has("smtp");
-          }
+        const missing = reqs.filter((r) => {
+          if (r === "whatsapp") return !connectedTypes.has("whatsapp");
+          if (r === "instagram") return !instagramConnected;
+          if (r === "facebook") return !facebookConnected;
+          if (r === "shopify") return !connectedTypes.has("shopify");
+          if (r === "smtp") return !connectedTypes.has("smtp");
+          if (r === "google_calendar" || r === "google_drive" || r === "google_sheets") return !connectedTypes.has("smtp");
           return !connectedTypes.has(r);
         });
 
         const isConnected = missing.length === 0;
+        const requiredProvider = !isConnected ? resolveRequiredProvider(missing) : null;
 
         return {
           id: wf.id,
@@ -151,6 +173,7 @@ export async function GET(request: Request) {
           edges,
           requiredIntegrations: reqs,
           missingIntegrations: missing,
+          requiredProvider,
         };
       });
 
@@ -203,6 +226,8 @@ export async function GET(request: Request) {
       contacts,
       integrations: {
         whatsapp: connectedTypes.has("whatsapp"),
+        instagram: instagramConnected,
+        facebook: facebookConnected,
         shopify: connectedTypes.has("shopify"),
         smtp: connectedTypes.has("smtp"),
         fastapi: fastApiOnline,

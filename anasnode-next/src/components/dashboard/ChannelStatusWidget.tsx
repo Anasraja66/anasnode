@@ -10,7 +10,7 @@ type ChannelStatus = {
   id: string;
   name: string;
   providerId: string;
-  status: "connected" | "platform" | "available" | "coming_soon";
+  status: "connected" | "platform" | "action_required" | "available" | "coming_soon";
 };
 
 export default function ChannelStatusWidget() {
@@ -55,11 +55,34 @@ export default function ChannelStatusWidget() {
         </span>
       );
     }
+    if (status === "platform") {
+      return (
+        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-700 text-[11px] font-semibold border border-blue-100">
+          <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" />
+          Server
+        </span>
+      );
+    }
+    if (status === "action_required") {
+      return (
+        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-orange-50 text-orange-700 text-[11px] font-semibold border border-orange-200">
+          <span className="w-1.5 h-1.5 rounded-full bg-orange-500" />
+          Action required
+        </span>
+      );
+    }
     return (
       <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-zinc-50 text-zinc-500 text-[11px] font-semibold border border-zinc-200">
         Offline
       </span>
     );
+  };
+
+  const connectHrefForChannel = (id: string) => {
+    if (id === "google_calendar") return "/dashboard/integrations/google-calendar";
+    if (id === "instagram") return "/dashboard/integrations/instagram";
+    if (id === "facebook") return "/dashboard/integrations/facebook";
+    return "/dashboard/integrations/whatsapp";
   };
 
   return (
@@ -113,9 +136,9 @@ export default function ChannelStatusWidget() {
                 
                 <div className="flex items-center gap-3 shrink-0">
                   {getStatusBadge(channel.status)}
-                  {channel.status !== "connected" && (
+                  {channel.status !== "connected" && channel.status !== "platform" && channel.status !== "coming_soon" && (
                     <Link
-                      href={channel.id === "google_calendar" ? "/dashboard/integrations/google-calendar" : "/dashboard/integrations/whatsapp"}
+                      href={connectHrefForChannel(channel.id)}
                       className="p-1 hover:bg-zinc-100 text-zinc-400 hover:text-zinc-900 rounded-lg transition-all"
                     >
                       <ArrowRight className="w-4 h-4 text-sky-500" />

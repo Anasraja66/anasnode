@@ -20,6 +20,7 @@ model Account {
   broadcasts    BroadcastCampaign[]
   invites       TeamInvite[]
   bookingEvents BookingEvent[]
+  pendingActions PendingAction[]
 
   @@map("accounts")
 }
@@ -61,6 +62,7 @@ model Workflow {
   name        String
   description String?
   isActive    Boolean             @default(false)
+  mode        String              @default("draft") // draft|autopilot
   version     Int                 @default(1)
   nodes       String              // Stringified JSON WorkflowNode[]
   edges       String              // Stringified JSON WorkflowEdge[]
@@ -72,8 +74,26 @@ model Workflow {
   account     Account             @relation(fields: [accountId], references: [id], onDelete: Cascade)
   workspace   Workspace           @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
   executions  WorkflowExecution[]
+  pendingActions PendingAction[]
 
   @@map("workflows")
+}
+
+model PendingAction {
+  id           String    @id @default(uuid())
+  accountId    String
+  workflowId   String
+  contactPhone String?
+  channel      String    @default("whatsapp")
+  actionType   String    // send_message, book_appointment, etc.
+  payload      String    // Stringified JSON of the action payload (e.g. { body: "..." })
+  status       String    @default("pending") // pending|approved|rejected|sent
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  workflow     Workflow  @relation(fields: [workflowId], references: [id], onDelete: Cascade)
+  account      Account   @relation(fields: [accountId], references: [id], onDelete: Cascade)
+
+  @@map("pending_actions")
 }
 
 model WorkflowExecution {

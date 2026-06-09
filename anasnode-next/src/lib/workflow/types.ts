@@ -66,6 +66,7 @@ export interface ExecutionContext {
   executionId: string;
   workflowId: string;
   accountId: string;
+  mode: string;
   contactId?: string | null;
   variables: Record<string, any>; // Runtime local variables
   anamind: Record<string, any>;   // Loaded persistent customer context

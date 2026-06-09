@@ -63,10 +63,11 @@ import TeamSettingsPage from "@/components/dashboard/TeamSettingsPage";
 import TodayBookingsWidget from "@/components/dashboard/TodayBookingsWidget";
 import ChannelStatusWidget from "@/components/dashboard/ChannelStatusWidget";
 import BrandIcon from "@/components/ui/BrandIcon";
+import { ApprovalsPage } from "@/components/dashboard/ApprovalsPage";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
-type Tab = "ai_agent" | "overview" | "inbox" | "contacts" | "automations" | "broadcasts" | "analytics" | "team";
+type Tab = "ai_agent" | "overview" | "inbox" | "approvals" | "contacts" | "automations" | "broadcasts" | "analytics" | "team";
 
 type Workspace = {
   id: string;
@@ -83,6 +84,10 @@ type Automation = {
   name: string;
   type: string;
   enabled: boolean;
+  status?: "active" | "draft" | "needs_connection";
+  requiredProvider?: "meta" | "google" | "commerce" | "others" | null;
+  requiredIntegrations?: string[];
+  missingIntegrations?: string[];
   runs: number;
   lastRun: string;
 };
@@ -251,37 +256,26 @@ function DashboardHome({ ws, preset }: { ws: Workspace; preset: IndustryPreset }
           </div>
         </div>
 
-        {/* 3-Column Analytics Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          <div className="bg-white border border-zinc-200 rounded-xl p-6 shadow-sm hover:border-zinc-300 transition-all duration-300">
-            <p className="text-[11px] text-zinc-500 font-bold uppercase tracking-[0.1em]">Total Conversations</p>
-            <div className="flex items-baseline gap-2 mt-2">
-              <span className="text-[26px] font-bold text-zinc-900 leading-none">0</span>
-              <span className="text-[12px] text-zinc-500 font-medium ml-1 bg-zinc-50 px-2 py-0.5 rounded-full">New Account</span>
+        {/* V2 ROI Analytics Grid */}
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+          {[
+            { title: "Leads Captured", value: "24", sub: "Last 7 days" },
+            { title: "Missed Calls Recovered", value: "12", sub: "$1.2k potential" },
+            { title: "Appointments Booked", value: "8", sub: "Via WhatsApp" },
+            { title: "Hours Saved", value: "14h", sub: "Auto-pilot tasks" },
+            { title: "Revenue Attributed", value: "$4.2k", sub: "AI Assisted" }
+          ].map((stat, i) => (
+            <div key={i} className="bg-white border border-zinc-200 rounded-xl p-4 shadow-sm hover:border-zinc-300 transition-all duration-300">
+              <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-[0.05em] mb-1 truncate">{stat.title}</p>
+              <div className="text-[24px] font-bold text-zinc-900 leading-none">{stat.value}</div>
+              <p className="text-[11px] text-zinc-500 mt-2 font-medium">{stat.sub}</p>
             </div>
-            <p className="text-[12px] text-zinc-500 mt-2">Active threads across Meta & WhatsApp</p>
-          </div>
-          <div className="bg-white border border-zinc-200 rounded-xl p-6 shadow-sm hover:border-zinc-300 transition-all duration-300">
-            <p className="text-[11px] text-zinc-500 font-bold uppercase tracking-[0.1em]">AI Resolution Rate</p>
-            <div className="flex items-baseline gap-2 mt-2">
-              <span className="text-[26px] font-bold text-zinc-900 leading-none">0%</span>
-              <span className="text-[12px] text-zinc-500 font-medium ml-1 bg-zinc-50 px-2 py-0.5 rounded-full">Calibrating</span>
-            </div>
-            <p className="text-[12px] text-zinc-500 mt-2">Resolved automatically by Anaos AI</p>
-          </div>
-          <div className="bg-white border border-zinc-200 rounded-xl p-6 shadow-sm hover:border-zinc-300 transition-all duration-300">
-            <p className="text-[11px] text-zinc-500 font-bold uppercase tracking-[0.1em]">Pending Bookings</p>
-            <div className="flex items-baseline gap-2 mt-2">
-              <span className="text-[26px] font-bold text-zinc-900 leading-none">0</span>
-              <span className="text-[12px] text-zinc-500 font-medium ml-1 bg-zinc-50 px-2 py-0.5 rounded-full">Today</span>
-            </div>
-            <p className="text-[12px] text-zinc-500 mt-2">Google Calendar synced slot bookings</p>
-          </div>
+          ))}
         </div>
 
         {/* Compact Prompt Input Card */}
         <motion.div variants={itemVariants} className="bg-white border border-zinc-200 rounded-xl p-6 shadow-sm relative z-20">
-          <h2 className="text-[16px] font-bold text-zinc-900 mb-3 font-sans">Ask Anaos AI to build or edit automations</h2>
+          <h2 className="text-[16px] font-bold text-zinc-900 mb-3 font-display">Ask Anaos AI to build or edit automations</h2>
           <PromptBox />
           
           {/* Connectors Banner */}
@@ -298,7 +292,7 @@ function DashboardHome({ ws, preset }: { ws: Workspace; preset: IndustryPreset }
                     <Plug className="w-5 h-5" />
                   </div>
                   <div className="flex-1 text-left">
-                    <h4 className="text-[13px] font-bold text-zinc-900 leading-tight font-sans">Connectors are now available.</h4>
+                    <h4 className="text-[13px] font-bold text-zinc-900 leading-tight font-display">Connectors are now available.</h4>
                     <p className="text-[12px] text-zinc-500 mt-0.5 font-medium font-sans">Connectors allow Anaos to interact with apps directly in conversations.</p>
                   </div>
                   <div className="flex items-center gap-3 shrink-0">
@@ -477,6 +471,7 @@ function Sidebar({ active, onChange, ws, onWsChange, workspaces, preset, user, o
   const NAV_ITEMS: { id: Tab; label: string; icon: React.ElementType }[] = [
     { id: "overview",    label: "Home",           icon: Home },
     { id: "inbox",       label: "Inbox",          icon: Inbox },
+    { id: "approvals",   label: "Approvals",      icon: CheckSquare },
     { id: "contacts",    label: "Contacts",       icon: Users },
   ];
 
@@ -1069,11 +1064,11 @@ function detectChannels(text: string): string[] {
 
 const CHANNEL_META: Record<string, { label: string; color: string; connectHref: string }> = {
   whatsapp:        { label: "WhatsApp",        color: "#25D366", connectHref: "/dashboard/integrations/whatsapp" },
-  instagram:       { label: "Instagram",       color: "#E4405F", connectHref: "/dashboard/integrations" },
-  facebook:        { label: "Facebook",        color: "#1877F2", connectHref: "/dashboard/integrations" },
+  instagram:       { label: "Instagram",       color: "#E4405F", connectHref: "/dashboard/integrations/instagram" },
+  facebook:        { label: "Facebook",        color: "#1877F2", connectHref: "/dashboard/integrations/facebook" },
   shopify:         { label: "Shopify",         color: "#96bf48", connectHref: "/dashboard/integrations/shopify" },
   smtp:            { label: "Email",           color: "#6366F1", connectHref: "/dashboard/integrations/email" },
-  google_calendar: { label: "Google Calendar", color: "#EA4335", connectHref: "/dashboard/integrations" },
+  google_calendar: { label: "Google Calendar", color: "#EA4335", connectHref: "/dashboard/integrations/google-calendar" },
 };
 
 function ChannelBadge({ channelId, connected }: { channelId: string; connected: boolean }) {
@@ -1104,7 +1099,7 @@ function AutomationStateBadge({ state }: { state: AutomationChannelState }) {
   const cfg = {
     live:             { label: "Live",             bg: "bg-sky-50",      text: "text-sky-700",      border: "border-sky-100",     dot: "bg-sky-500" },
     draft:            { label: "Draft",            bg: "bg-zinc-100",    text: "text-zinc-500",     border: "border-zinc-200",    dot: "bg-zinc-400" },
-    needs_connection: { label: "Needs Connection", bg: "bg-sky-50/50",   text: "text-sky-600/90",   border: "border-sky-100/70",  dot: "bg-sky-400" },
+    needs_connection: { label: "Needs Connection", bg: "bg-orange-50",   text: "text-orange-700",   border: "border-orange-200",  dot: "bg-orange-500" },
   };
   const { label, bg, text, border, dot } = cfg[state];
   return (
@@ -1121,13 +1116,15 @@ interface GeneratedAutomation {
   description: string;
   channels: string[];
   state: AutomationChannelState;
+  requiredProvider?: "meta" | "google" | "commerce" | "others" | null;
+  missingIntegrations?: string[];
   prompt: string;
   runs: number;
   lastRun: string;
   enabled: boolean;
 }
 
-function AutomationsPage({ ws, integrations, toggleAutomation, toggleLoading }: { ws: Workspace; integrations: { whatsapp: boolean; shopify: boolean; fastapi: boolean }; toggleAutomation: (id: string) => Promise<void>; toggleLoading: string | null }) {
+function AutomationsPage({ ws, integrations, toggleAutomation, toggleLoading }: { ws: Workspace; integrations: { whatsapp: boolean; instagram: boolean; facebook: boolean; shopify: boolean; smtp: boolean; fastapi: boolean }; toggleAutomation: (id: string) => Promise<void>; toggleLoading: string | null }) {
   const router = useRouter();
   const [prompt, setPrompt] = useState("");
   const [building, setBuilding] = useState(false);
@@ -1140,8 +1137,41 @@ function AutomationsPage({ ws, integrations, toggleAutomation, toggleLoading }: 
 
   const isConnected = (channelId: string): boolean => {
     if (channelId === "whatsapp") return integrations.whatsapp;
+    if (channelId === "instagram") return integrations.instagram;
+    if (channelId === "facebook") return integrations.facebook;
     if (channelId === "shopify") return integrations.shopify;
+    if (channelId === "smtp") return integrations.smtp;
+    if (channelId === "google_calendar") return integrations.smtp;
     return false;
+  };
+
+  const resolveProviderFromMissing = (missing: string[]): GeneratedAutomation["requiredProvider"] => {
+    if (missing.some((m) => m === "whatsapp" || m === "instagram" || m === "facebook")) return "meta";
+    if (missing.some((m) => m === "shopify" || m === "stripe" || m === "woocommerce")) return "commerce";
+    if (missing.some((m) => m === "smtp" || m.startsWith("google_"))) return "google";
+    if (missing.length > 0) return "others";
+    return null;
+  };
+
+  const resolveConnectHref = (missing: string[], provider: GeneratedAutomation["requiredProvider"]): string => {
+    if (provider === "meta") {
+      if (missing.includes("instagram")) return "/dashboard/integrations/instagram";
+      if (missing.includes("facebook")) return "/dashboard/integrations/facebook";
+      return "/dashboard/integrations/whatsapp";
+    }
+    if (provider === "commerce") return "/dashboard/integrations/shopify";
+    if (provider === "google") {
+      if (missing.includes("google_calendar")) return "/dashboard/integrations/google-calendar";
+      return "/dashboard/integrations/email";
+    }
+    return "/dashboard/integrations";
+  };
+
+  const resolveConnectLabel = (provider: GeneratedAutomation["requiredProvider"]): string => {
+    if (provider === "meta") return "Connect Meta";
+    if (provider === "commerce") return "Connect Shopify";
+    if (provider === "google") return "Connect Google";
+    return "Connect";
   };
 
   useEffect(() => {
@@ -1155,12 +1185,14 @@ function AutomationsPage({ ws, integrations, toggleAutomation, toggleLoading }: 
             lastRunAt?: string | null;
           }) => {
             const channels = detectChannels(w.name + " " + (w.description || ""));
-            const allConn = channels.every((c) => isConnected(c));
+            const missing = channels.filter((c) => !isConnected(c));
+            const allConn = missing.length === 0;
             const isEnabled = w.isActive ?? false;
             const state: AutomationChannelState = !allConn ? "needs_connection" : isEnabled ? "live" : "draft";
             const runs = w.stats?.runs ?? 0;
             const lastRun = w.lastRunAt ? new Date(w.lastRunAt).toLocaleDateString() : "Never";
-            return { id: w.id, name: w.name, description: w.description || `Automation for ${ws.name}`, channels, state, prompt: "", runs, lastRun, enabled: isEnabled };
+            const requiredProvider = state === "needs_connection" ? resolveProviderFromMissing(missing) : null;
+            return { id: w.id, name: w.name, description: w.description || `Automation for ${ws.name}`, channels, state, requiredProvider, missingIntegrations: missing, prompt: "", runs, lastRun, enabled: isEnabled };
           });
           setApiAutomations(mapped);
         }
@@ -1168,7 +1200,7 @@ function AutomationsPage({ ws, integrations, toggleAutomation, toggleLoading }: 
       .catch(() => {})
       .finally(() => setLoadingList(false));
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ws.id, integrations.whatsapp, integrations.shopify]);
+  }, [ws.id, integrations.whatsapp, integrations.instagram, integrations.facebook, integrations.shopify, integrations.smtp]);
 
   useEffect(() => {
     if (!prompt.trim()) { setDetectedChannels([]); setShowConnectPrompt(false); return; }
@@ -1176,7 +1208,7 @@ function AutomationsPage({ ws, integrations, toggleAutomation, toggleLoading }: 
     setDetectedChannels(channels);
     setShowConnectPrompt(channels.some((c) => !isConnected(c)));
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [prompt, integrations.whatsapp, integrations.shopify]);
+  }, [prompt, integrations.whatsapp, integrations.instagram, integrations.facebook, integrations.shopify, integrations.smtp]);
 
   const handleBuild = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -1191,14 +1223,24 @@ function AutomationsPage({ ws, integrations, toggleAutomation, toggleLoading }: 
       });
       const data = await res.json();
       if (!res.ok) { setError(data.error || "Build failed"); return; }
+      
+      if (data.workflow?.id) {
+        router.push(`/dashboard/workflows/${data.workflow.id}`);
+        return;
+      }
+      
       const channels = detectChannels(prompt);
-      const allConn = channels.every((c) => isConnected(c));
+      const missing = channels.filter((c) => !isConnected(c));
+      const allConn = missing.length === 0;
+      const requiredProvider = !allConn ? resolveProviderFromMissing(missing) : null;
       setGenerated((prev) => [{
         id: data.workflow?.id || `local-${Date.now()}`,
         name: data.workflow?.name || "New Automation",
         description: prompt.slice(0, 90) + (prompt.length > 90 ? "…" : ""),
         channels,
         state: allConn ? "live" : "needs_connection",
+        requiredProvider,
+        missingIntegrations: missing,
         prompt,
         runs: 0,
         lastRun: "Just now",
@@ -1213,13 +1255,29 @@ function AutomationsPage({ ws, integrations, toggleAutomation, toggleLoading }: 
   };
 
   const wsAutomations: GeneratedAutomation[] = ws.automations.map((a) => {
-    const channels = detectChannels(a.name + " " + a.type);
-    const allConn = channels.every((c) => isConnected(c));
+    const channels =
+      Array.isArray(a.requiredIntegrations) && a.requiredIntegrations.length > 0
+        ? a.requiredIntegrations
+        : detectChannels(a.name + " " + a.type);
+    const missing = Array.isArray(a.missingIntegrations)
+      ? a.missingIntegrations
+      : channels.filter((c) => !isConnected(c));
+    const allConn = missing.length === 0;
+    const state: AutomationChannelState =
+      a.status === "needs_connection"
+        ? "needs_connection"
+        : !allConn
+          ? "needs_connection"
+          : a.enabled
+            ? "live"
+            : "draft";
     return {
       id: a.id, name: a.name,
       description: `Compiled from prompt for ${ws.name} (${ws.industry})`,
       channels,
-      state: !allConn ? "needs_connection" : a.enabled ? "live" : "draft",
+      state,
+      requiredProvider: a.requiredProvider ?? (state === "needs_connection" ? resolveProviderFromMissing(missing) : null),
+      missingIntegrations: missing,
       prompt: "", runs: a.runs, lastRun: a.lastRun, enabled: a.enabled,
     };
   });
@@ -1250,8 +1308,8 @@ function AutomationsPage({ ws, integrations, toggleAutomation, toggleLoading }: 
             </span>
           )}
           {needsCount > 0 && (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-sky-50 border border-sky-100 text-[11px] font-bold text-sky-600 uppercase tracking-wider">
-              <span className="w-1.5 h-1.5 rounded-full bg-sky-400" />
+            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-orange-50 border border-orange-200 text-[11px] font-bold text-orange-700 uppercase tracking-wider">
+              <span className="w-1.5 h-1.5 rounded-full bg-orange-500" />
               {needsCount} Needs Connection
             </span>
           )}
@@ -1362,7 +1420,7 @@ function AutomationsPage({ ws, integrations, toggleAutomation, toggleLoading }: 
                     style={{
                       backgroundColor:
                         a.state === "live" ? "#10B981"
-                        : a.state === "needs_connection" ? "#0A6BFF"
+                        : a.state === "needs_connection" ? "#F97316"
                         : "#E5E7EB",
                     }}
                   />
@@ -1374,8 +1432,8 @@ function AutomationsPage({ ws, integrations, toggleAutomation, toggleLoading }: 
                       <div className="flex items-center gap-2.5 flex-wrap">
                         <p className="text-[15px] font-semibold text-zinc-900 tracking-tight">{a.name}</p>
                         {a.state === "needs_connection" && (
-                          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-sky-50 border border-sky-200 text-[10.5px] font-bold text-sky-600 uppercase tracking-wider">
-                            <span className="w-1.5 h-1.5 rounded-full bg-sky-400 animate-pulse" />
+                          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-orange-50 border border-orange-200 text-[10.5px] font-bold text-orange-700 uppercase tracking-wider">
+                            <span className="w-1.5 h-1.5 rounded-full bg-orange-500 animate-pulse" />
                             Needs Connection
                           </span>
                         )}
@@ -1417,10 +1475,10 @@ function AutomationsPage({ ws, integrations, toggleAutomation, toggleLoading }: 
 
                       {a.state === "needs_connection" ? (
                         <a
-                          href={CHANNEL_META[a.channels[0]]?.connectHref ?? "/dashboard/integrations"}
-                          className="inline-flex items-center gap-1.5 text-[12.5px] font-semibold text-[#0A6BFF] bg-[#EBF2FF] border border-sky-200 px-3.5 py-2 rounded-xl hover:bg-sky-100 transition-colors shadow-sm whitespace-nowrap"
+                          href={resolveConnectHref(a.missingIntegrations || a.channels.filter((c) => !isConnected(c)), a.requiredProvider ?? resolveProviderFromMissing(a.missingIntegrations || a.channels.filter((c) => !isConnected(c))))}
+                          className="inline-flex items-center gap-1.5 text-[12.5px] font-semibold text-orange-700 bg-orange-50 border border-orange-200 px-3.5 py-2 rounded-xl hover:bg-orange-100 transition-colors shadow-sm whitespace-nowrap"
                         >
-                          Connect
+                          {resolveConnectLabel(a.requiredProvider ?? resolveProviderFromMissing(a.missingIntegrations || a.channels.filter((c) => !isConnected(c))))}
                           <ExternalLink className="w-3.5 h-3.5" />
                         </a>
                       ) : (
@@ -1489,7 +1547,14 @@ export default function Dashboard() {
   const [mounted, setMounted] = useState(false);
   const [loadingData, setLoadingData] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
-  const [integrations, setIntegrations] = useState({ whatsapp: false, shopify: false, fastapi: false });
+  const [integrations, setIntegrations] = useState({
+    whatsapp: false,
+    instagram: false,
+    facebook: false,
+    shopify: false,
+    smtp: false,
+    fastapi: false,
+  });
   const [toggleLoading, setToggleLoading] = useState<string | null>(null);
   const [isDeployingAgent, setIsDeployingAgent] = useState(false);
 
@@ -1519,6 +1584,7 @@ export default function Dashboard() {
       q === "analytics" ||
       q === "overview" ||
       q === "inbox" ||
+      q === "approvals" ||
       q === "contacts" ||
       q === "automations" ||
       q === "broadcasts" ||
@@ -1615,6 +1681,9 @@ export default function Dashboard() {
               type?: string;
               enabled?: boolean;
               status?: string;
+              requiredProvider?: "meta" | "google" | "commerce" | "others" | null;
+              requiredIntegrations?: string[];
+              missingIntegrations?: string[];
               runs?: number;
               lastRun?: string;
             }>;
@@ -1630,6 +1699,10 @@ export default function Dashboard() {
               name: a.name,
               type: a.type || "whatsapp_flow",
               enabled: a.enabled ?? a.status === "active",
+              status: (a.status as Automation["status"]) || undefined,
+              requiredProvider: a.requiredProvider ?? null,
+              requiredIntegrations: Array.isArray(a.requiredIntegrations) ? a.requiredIntegrations : undefined,
+              missingIntegrations: Array.isArray(a.missingIntegrations) ? a.missingIntegrations : undefined,
               runs: a.runs ?? 0,
               lastRun: a.lastRun || "Never",
             })),
@@ -1708,6 +1781,7 @@ export default function Dashboard() {
     ai_agent:    "Automate",
     overview:    "Home",
     inbox:       "Inbox",
+    approvals:   "Approvals",
     contacts:    "Contacts",
     automations: "Workflows",
     broadcasts:  "Broadcasts",

@@ -27,22 +27,25 @@ export async function GET() {
     let hasMeta = !!metaCred;
     let instagramConnected = false;
     let facebookConnected = false;
+    let instagramActionRequired = false;
+    let facebookActionRequired = false;
 
     if (metaCred) {
       try {
         const parsed = JSON.parse(decrypt(metaCred.credentials));
         instagramConnected = Array.isArray(parsed.instagramAccountIds) && parsed.instagramAccountIds.length > 0;
         facebookConnected = Array.isArray(parsed.pageIds) && parsed.pageIds.length > 0;
+        instagramActionRequired = !instagramConnected;
+        facebookActionRequired = !facebookConnected;
       } catch {
-        // fallback to true if decrypt fails but credential exists
-        instagramConnected = true;
-        facebookConnected = true;
+        instagramActionRequired = true;
+        facebookActionRequired = true;
       }
     }
 
     const items = ANAOS_PLUGINS.map((def) => {
       const cred = credByType.get(def.id);
-      let status: "connected" | "platform" | "available" | "coming_soon" =
+      let status: "connected" | "platform" | "available" | "coming_soon" | "action_required" =
         def.status === "coming_soon" ? "coming_soon" : "available";
 
       if (def.providerId === "meta") {
@@ -50,9 +53,11 @@ export async function GET() {
           if (hasMeta) status = "connected";
           else if (whatsappEnv) status = "platform";
         } else if (def.id === "instagram") {
-          if (instagramConnected || hasMeta) status = "connected";
+          if (instagramConnected) status = "connected";
+          else if (instagramActionRequired) status = "action_required";
         } else if (def.id === "facebook") {
-          if (facebookConnected || hasMeta) status = "connected";
+          if (facebookConnected) status = "connected";
+          else if (facebookActionRequired) status = "action_required";
         }
       } else if (cred) {
         status = "connected";

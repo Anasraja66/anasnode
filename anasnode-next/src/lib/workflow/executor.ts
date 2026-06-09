@@ -68,6 +68,7 @@ export class WorkflowExecutor {
       executionId: execution.id,
       workflowId,
       accountId: workflow.accountId,
+      mode: workflow.mode,
       contactId: triggerData.contactId || null,
       variables: {},
       anamind: {},
@@ -315,10 +316,25 @@ export class WorkflowExecutor {
             ctx.contactId ||
             "";
 
-          let status: "sent" | "skipped" | "failed" = "skipped";
+          let status: "sent" | "skipped" | "failed" | "drafted" = "skipped";
           if (to && template) {
-            const ok = await sendMetaTextMessage(String(to), template, ctx.accountId);
-            status = ok ? "sent" : "failed";
+            if (ctx.mode === "draft") {
+              await prisma.pendingAction.create({
+                data: {
+                  accountId: ctx.accountId,
+                  workflowId: ctx.workflowId,
+                  contactPhone: String(to),
+                  channel: "whatsapp",
+                  actionType: "send_message",
+                  payload: JSON.stringify({ body: template }),
+                  status: "pending",
+                }
+              });
+              status = "drafted";
+            } else {
+              const ok = await sendMetaTextMessage(String(to), template, ctx.accountId);
+              status = ok ? "sent" : "failed";
+            }
           }
 
           result = {
@@ -331,10 +347,29 @@ export class WorkflowExecutor {
         case NodeType.SEND_INSTAGRAM_DM:
         case NodeType.SEND_EMAIL: {
           const template = resolveTemplate(node.config.template || "Hello!", ctx);
-          console.log(`[ACTION] [${node.type}] Sent message: "${template}"`);
+          const channel = node.type === NodeType.SEND_INSTAGRAM_DM ? "instagram" : "email";
+          const to = ctx.triggerData.phone || ctx.triggerData.contactPhone || ctx.contactId || "";
+          
+          let status = "sent";
+          if (ctx.mode === "draft" && to) {
+            await prisma.pendingAction.create({
+              data: {
+                accountId: ctx.accountId,
+                workflowId: ctx.workflowId,
+                contactPhone: String(to),
+                channel,
+                actionType: "send_message",
+                payload: JSON.stringify({ body: template }),
+                status: "pending",
+              }
+            });
+            status = "drafted";
+          } else {
+            console.log(`[ACTION] [${node.type}] Sent message: "${template}"`);
+          }
 
           result = {
-            output: { MESSAGE_SENT: template, status: "sent" },
+            output: { MESSAGE_SENT: template, status },
             nextNodeIds: node.outputs,
           };
           break;
@@ -350,10 +385,25 @@ export class WorkflowExecutor {
             "";
           const body = `${content}\n\n${buttons.map((b: string, i: number) => `${i + 1}. ${b}`).join("\n")}`;
 
-          let status: "sent" | "skipped" | "failed" = "skipped";
+          let status: "sent" | "skipped" | "failed" | "drafted" = "skipped";
           if (to && body) {
-            const ok = await sendMetaTextMessage(String(to), body, ctx.accountId);
-            status = ok ? "sent" : "failed";
+            if (ctx.mode === "draft") {
+              await prisma.pendingAction.create({
+                data: {
+                  accountId: ctx.accountId,
+                  workflowId: ctx.workflowId,
+                  contactPhone: String(to),
+                  channel: "whatsapp",
+                  actionType: "send_buttons",
+                  payload: JSON.stringify({ body, content, options: buttons }),
+                  status: "pending",
+                }
+              });
+              status = "drafted";
+            } else {
+              const ok = await sendMetaTextMessage(String(to), body, ctx.accountId);
+              status = ok ? "sent" : "failed";
+            }
           }
           console.log(`[ACTION] [SEND BUTTONS] ${status}: "${content}"`);
 

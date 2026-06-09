@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { PromptBox } from "./PromptBox";
+import { IndustrySelector, Industry } from "./IndustrySelector";
 import { ResultCard } from "./ResultCard";
 import { X, Search, Plus } from "lucide-react";
 import { Typewriter } from "./Typewriter";
@@ -13,6 +14,8 @@ export function Hero() {
   const [lastPrompt, setLastPrompt] = useState("");
   const [showConnectors, setShowConnectors] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [showAdvanced, setShowAdvanced] = useState(false);
+  const [selectedIndustry, setSelectedIndustry] = useState<Industry | null>(null);
 
   const businessConnectors = [
     { 
@@ -184,7 +187,7 @@ export function Hero() {
             >
               <div className="p-6">
                 <div className="flex justify-between items-center mb-5">
-                  <h3 className="text-[18px] font-bold text-zinc-900 font-sans tracking-tight">New Connector</h3>
+                  <h3 className="text-[18px] font-bold text-zinc-900 font-display tracking-tight">New Connector</h3>
                   <button onClick={() => setIsModalOpen(false)} className="text-zinc-400 hover:text-zinc-600 transition-colors">
                     <X className="w-5 h-5" />
                   </button>
@@ -255,9 +258,9 @@ export function Hero() {
           initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.55, delay: 0.05 }}
-          className="text-[44px] sm:text-[68px] lg:text-[76px] font-extrabold text-[#111827] tracking-[-0.04em] leading-[1.04] font-sans min-h-[2.1em]"
+          className="text-[48px] sm:text-[72px] lg:text-[80px] font-extrabold text-[#111827] tracking-[-0.04em] leading-[1.04] font-display min-h-[2.1em]"
         >
-          <Typewriter text="Build something Automated" />
+          <Typewriter text="Automate operations. Keep control." />
         </motion.h1>
 
         {/* Subtitle (Lovable Style) */}
@@ -265,46 +268,81 @@ export function Hero() {
           initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.55, delay: 0.15 }}
-          className="text-[17px] sm:text-[19px] text-[#4B5563] mt-6 leading-relaxed max-w-[540px] mx-auto font-medium min-h-[56px] sm:min-h-[60px]"
+          className="text-[15px] sm:text-[16px] text-[#4B5563] mt-6 leading-relaxed max-w-[540px] mx-auto font-medium min-h-[56px] sm:min-h-[60px] font-sans"
         >
-          Create{" "}
-          <WordRotator 
-            words={[
-              "WhatsApp", 
-              "Facebook", 
-              "Instagram", 
-              "Shopify", 
-              "TikTok", 
-              "Gmail", 
-              "Google Drive", 
-              "Calendar", 
-              "Voice Calling", 
-              "Twilio", 
-              "HubSpot", 
-              "WooCommerce", 
-              "WordPress", 
-              "Claude", 
-              "ChatGPT", 
-              "Gemini"
-            ]} 
-            className="text-blue-600 font-bold"
-          />{" "}
-          agents and operational workflows by chatting with AI
+          Build <WordRotator words={["lead capture", "appointment booking", "customer follow-up", "sales"]} className="text-blue-500 font-bold" /> agents for your business — without hiring an automation expert.
         </motion.p>
 
-        {/* PromptBox – tight gap (Lovable Style) */}
+        {/* PromptBox and Industry Selector */}
         <motion.div
           initial={{ opacity: 0, y: 18 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.55, delay: 0.18 }}
           className="mt-10"
         >
-          <PromptBox
-            onGenerate={(ws, prompt) => {
-              setWorkspace(ws);
-              setLastPrompt(prompt);
-            }}
-          />
+          <div className="relative w-full z-20">
+            <PromptBox 
+              onGenerate={async (ws, prompt) => {
+                try {
+                  const res = await fetch("/api/generate/workflow", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ prompt: prompt || `Automation for ${ws.name}` }),
+                  });
+                  const data = await res.json();
+                  if (data.success && data.workflow) {
+                    const entry = {
+                      id: ws.id,
+                      name: data.workflowName || ws.name,
+                      workflow: data.workflow,
+                      industry: data.industry,
+                      prompt,
+                      createdAt: Date.now(),
+                    };
+                    localStorage.setItem("anaos_pending_workflow", JSON.stringify(entry));
+                    window.location.href = `/dashboard/workflows/${ws.id}`;
+                  } else {
+                    setWorkspace(ws);
+                    setLastPrompt(prompt);
+                  }
+                } catch (e) {
+                  setWorkspace(ws);
+                  setLastPrompt(prompt);
+                }
+              }}
+            />
+          </div>
+
+          {!selectedIndustry && (
+            <div className="mt-16">
+              <motion.p 
+                initial={{ opacity: 0, y: 14 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.55, delay: 0.35 }}
+                className="text-[13px] font-bold text-zinc-400 uppercase tracking-widest mb-6 font-sans"
+              >
+                Or pick an industry template to start instantly
+              </motion.p>
+              <IndustrySelector 
+                onSelect={(ind) => {
+                  setSelectedIndustry(ind);
+                  const prompt = `Build an automated system for my ${ind.name} business. It should: ${ind.workflows.join(', ')}. Enable draft mode for safety.`;
+                  setLastPrompt(prompt);
+                  setIsModalOpen(true);
+                  setShowConnectors(false);
+                  
+                  const pendingId = "wf_" + Math.random().toString(36).substring(7);
+                  localStorage.setItem("anaos_pending_workflow", JSON.stringify({
+                    id: pendingId,
+                    prompt: prompt,
+                    name: `${ind.name} OS`,
+                    industry: ind.id
+                  }));
+                  window.location.href = `/dashboard/workflows/${pendingId}`;
+                }} 
+              />
+            </div>
+          )}
         </motion.div>
 
         {/* Stable container to prevent layout jumping when ResultCard appears */}
@@ -340,7 +378,7 @@ export function Hero() {
 
                   {/* Text Content */}
                   <div className="flex-1 text-left w-full text-center sm:text-left">
-                    <h4 className="text-[14px] font-bold text-zinc-900 leading-tight font-sans">Connectors are now available.</h4>
+                    <h4 className="text-[14px] font-bold text-zinc-900 leading-tight font-display">Connectors are now available.</h4>
                     <p className="text-[13px] text-zinc-500 mt-0.5 font-medium font-sans">Connectors allow Anaos to interact with apps directly in conversations.</p>
                   </div>
 

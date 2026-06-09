@@ -76,6 +76,7 @@ class WorkflowSchedulerService {
       },
       triggerData: JSON.parse(execution.input || "{}"),
       logs: JSON.parse(execution.logs || "[]"),
+      mode: (workflow.mode as "draft" | "autopilot") || "draft",
     };
 
     const startTime = Date.now();

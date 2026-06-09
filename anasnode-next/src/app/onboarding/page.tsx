@@ -21,7 +21,7 @@ import {
   MessageCircle,
   Loader2,
 } from "lucide-react";
-import { MetaOAuthConnect } from "@/components/dashboard/MetaOAuthConnect";
+import { MetaEmbeddedSignup } from "@/components/integrations/MetaEmbeddedSignup";
 import {
   INDUSTRY_OPTIONS,
   type IndustryId,
@@ -494,10 +494,7 @@ export default function OnboardingPage() {
                         Authenticate securely to grant Anaos access to your selected channels.
                       </p>
                       <div className="w-full">
-                        <MetaOAuthConnect 
-                          channels={selectedChannels} 
-                          onSuccess={handleSubmit} 
-                        />
+                        <MetaEmbeddedSignup onSuccess={() => handleSubmit()} />
                       </div>
                     </div>
                   )}

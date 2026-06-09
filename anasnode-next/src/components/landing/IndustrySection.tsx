@@ -79,7 +79,7 @@ export function IndustrySection() {
         {/* Header Block */}
         <FadeIn delay={0.1}>
           <div className="text-center max-w-3xl mx-auto mb-16 sm:mb-20">
-            <h2 className="text-[36px] sm:text-[50px] font-black text-[#111827] tracking-tight leading-[1.08] font-sans">
+            <h2 className="text-[36px] sm:text-[50px] font-black text-[#111827] tracking-tight leading-[1.08] font-display">
               <Typewriter text="Built for every industry" />
             </h2>
             <p className="text-[17px] sm:text-[19px] text-[#4B5563] mt-4 font-semibold leading-relaxed max-w-2xl mx-auto">

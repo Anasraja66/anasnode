@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { ArrowLeft, Check, MessageSquare as Facebook, ArrowRight } from "lucide-react";
-import { MetaOAuthConnect } from "@/components/dashboard/MetaOAuthConnect";
+import { MetaEmbeddedSignup } from "@/components/integrations/MetaEmbeddedSignup";
 
 export default function FacebookSetupPage() {
   const [connected, setConnected] = useState(false);
@@ -34,10 +34,7 @@ export default function FacebookSetupPage() {
         </div>
 
         {!connected ? (
-          <MetaOAuthConnect 
-            channels={["facebook"]} 
-            onSuccess={() => setConnected(true)} 
-          />
+          <MetaEmbeddedSignup onSuccess={() => setConnected(true)} />
         ) : (
           <div className="bg-white rounded-2xl border border-zinc-200 p-8 shadow-sm flex flex-col items-center text-center max-w-lg mx-auto">
             <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mb-6">

@@ -111,29 +111,29 @@ export function PromptBox({ onGenerate, compact }: Props) {
           placeholder={mounted && !value ? placeholderText : "Describe your business automation..."}
           rows={3}
           disabled={loading}
-          className="w-full resize-none bg-transparent px-6 pt-5 pb-2 text-[16px] text-zinc-800 placeholder:text-zinc-400 focus:outline-none leading-relaxed"
+          className="w-full resize-none bg-transparent px-4 sm:px-6 pt-4 sm:pt-5 pb-2 text-[15px] sm:text-[16px] text-zinc-800 placeholder:text-zinc-400 focus:outline-none leading-relaxed"
         />
         
         {mounted && (
-          <div className="flex flex-col md:flex-row md:items-center justify-between px-3 pb-2.5 pt-1 gap-3 md:gap-0">
+          <div className="flex flex-col md:flex-row md:items-center justify-between px-2 sm:px-3 pb-2.5 pt-1 gap-4 md:gap-0">
             {/* Left circular plus button & Presets */}
             <div className="flex items-center gap-2 md:gap-3 w-full md:w-auto overflow-hidden">
               <button
                 type="button"
-                className="w-10 h-10 shrink-0 rounded-full border border-zinc-200 bg-white hover:border-zinc-300 hover:shadow-sm flex items-center justify-center text-zinc-400 hover:text-zinc-800 transition-all cursor-pointer"
+                className="w-9 h-9 sm:w-10 sm:h-10 shrink-0 rounded-full border border-zinc-200 bg-white hover:border-zinc-300 hover:shadow-sm flex items-center justify-center text-zinc-400 hover:text-zinc-800 transition-all cursor-pointer"
               >
                 <Plus className="w-5 h-5" />
               </button>
               
               {!loading && (
-                <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide whitespace-nowrap pr-2 md:pr-0 pb-1 md:pb-0" style={{ msOverflowStyle: 'none', scrollbarWidth: 'none' }}>
-                  <span className="text-[11px] font-bold text-zinc-400 uppercase tracking-widest mr-1 shrink-0">Try Presets:</span>
+                <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide whitespace-nowrap pr-2 pb-1 md:pb-0" style={{ msOverflowStyle: 'none', scrollbarWidth: 'none' }}>
+                  <span className="text-[10px] sm:text-[11px] font-bold text-zinc-400 uppercase tracking-widest mr-1 shrink-0">Try Presets:</span>
                   {EXAMPLES.map((chip) => (
                     <button
                       key={chip.label}
                       type="button"
                       onClick={() => setValue(chip.text)}
-                      className="text-[12px] font-bold px-3 py-1.5 md:px-4 md:py-1.5 rounded-full bg-white hover:bg-zinc-50 text-zinc-700 border border-zinc-200 transition-all cursor-pointer shadow-sm active:scale-95 shrink-0"
+                      className="text-[11px] sm:text-[12px] font-bold px-3 py-1.5 md:px-4 md:py-1.5 rounded-full bg-white hover:bg-zinc-50 text-zinc-700 border border-zinc-200 transition-all cursor-pointer shadow-sm active:scale-95 shrink-0"
                     >
                       {chip.label}
                     </button>
@@ -143,7 +143,7 @@ export function PromptBox({ onGenerate, compact }: Props) {
             </div>
 
             {/* Right-aligned action controls */}
-            <div className="flex items-center justify-between md:justify-end w-full md:w-auto gap-2 md:gap-4 shrink-0">
+            <div className="flex items-center justify-between md:justify-end w-full md:w-auto gap-2 md:gap-4 shrink-0 border-t border-zinc-100 md:border-none pt-2 md:pt-0">
               {/* Dropdown Action Selector */}
               <div className="relative">
                 <button
@@ -176,13 +176,13 @@ export function PromptBox({ onGenerate, compact }: Props) {
                 <button
                   onClick={handleGenerate}
                   disabled={loading || !value.trim()}
-                  className="w-11 h-11 rounded-full bg-zinc-400/80 hover:bg-blue-600 text-white flex items-center justify-center shadow-sm transition-all disabled:opacity-40 disabled:hover:bg-zinc-400/80 disabled:cursor-not-allowed hover:scale-105 active:scale-95 cursor-pointer shrink-0"
+                  className="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-zinc-400/80 hover:bg-blue-600 text-white flex items-center justify-center shadow-sm transition-all disabled:opacity-40 disabled:hover:bg-zinc-400/80 disabled:cursor-not-allowed hover:scale-105 active:scale-95 cursor-pointer shrink-0"
                   style={{ backgroundColor: value.trim() ? '#0A6BFF' : undefined }}
                 >
                   {loading ? (
                     <RefreshCw className="w-5 h-5 animate-spin text-white" />
                   ) : (
-                    <ArrowUp className="w-5.5 h-5.5 stroke-[3]" />
+                    <ArrowUp className="w-5 sm:w-5.5 h-5 sm:h-5.5 stroke-[3]" />
                   )}
                 </button>
               </div>
@@ -215,9 +215,14 @@ export function PromptBox({ onGenerate, compact }: Props) {
       </div>
       
       {!loading && (
-        <p className="mt-3.5 text-[12px] text-zinc-400 font-medium text-center">
+        <motion.p 
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.3 }}
+          className="mt-3.5 text-[12px] text-zinc-400 font-medium text-center"
+        >
           Free for your first workspace. No credit card required.
-        </p>
+        </motion.p>
       )}
     </div>
   );

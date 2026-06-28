@@ -50,7 +50,7 @@ export async function handleInboundWhatsApp(message: InboundWhatsAppMessage) {
     return {
       handled: true,
       workflowId: wf.id,
-      reply: null, // Message will be sent by background worker
+      reply: null as string | null, // Message will be sent by background worker
       sent: false, // Background worker handles this
       mode: "executor" as const,
     };

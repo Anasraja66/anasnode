@@ -12,7 +12,7 @@ export const workflowWorker = new Worker(
     await executor.execute(workflowId, triggerData);
   },
   { 
-    connection,
+    connection: connection as any,
     concurrency: 5 // Process 5 workflows concurrently
   }
 );

@@ -54,19 +54,19 @@ export async function POST(req: Request) {
       let sent = false;
 
       if (pending.channel === "whatsapp" && pending.actionType === "send_message") {
-        sent = await sendMetaTextMessage(pending.contactPhone, payload.body, accountId);
+        sent = await sendMetaTextMessage(pending.contactPhone!, payload.body, accountId);
       } else if (pending.channel === "whatsapp" && pending.actionType === "send_buttons") {
-        sent = await sendMetaTextMessage(pending.contactPhone, payload.body, accountId); // Fallback to text for now
+        sent = await sendMetaTextMessage(pending.contactPhone!, payload.body, accountId); // Fallback to text for now
       } else if (pending.channel === "sms") {
-        sent = await sendTwilioMessage(pending.contactPhone, payload.body, accountId);
+        sent = await sendTwilioMessage(pending.contactPhone!, payload.body, accountId);
       } else if (pending.channel === "voice") {
         const { dispatchVapiCall } = await import("@/lib/voice/vapi");
         const { deductCredits } = await import("@/lib/billing/credits");
         await deductCredits(accountId, 15, "voice_call_minute", "Vapi.ai outbound call (Approved)");
-
+        
         const res = await dispatchVapiCall({
           phoneNumberId: process.env.VAPI_PHONE_ID || "",
-          customerNumber: pending.contactPhone,
+          customerNumber: pending.contactPhone!,
           assistantPrompt: payload.prompt,
           firstMessage: payload.firstMessage
         });

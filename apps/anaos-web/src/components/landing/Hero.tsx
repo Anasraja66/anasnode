@@ -48,13 +48,13 @@ export function Hero() {
       category: "Social" 
     },
     { 
-      name: "ManyChat", 
+      name: "ElevenLabs", 
       icon: (
-        <svg viewBox="0 0 24 24" className="w-full h-full p-1.5" fill="#0084FF">
-          <path d="M12 2C6.48 2 2 6.13 2 11.23c0 2.92 1.53 5.51 3.93 7.23v3.54L9.6 20.3c.78.21 1.58.33 2.4.33 5.52 0 10-4.13 10-9.23S17.52 2 12 2zm1.48 12.33l-2.6-2.77-5.06 2.77 5.55-5.91 2.62 2.78 5.03-2.78-5.54 5.91z"/>
+        <svg viewBox="0 0 24 24" className="w-full h-full p-2" fill="#000000">
+          <path d="M4 10h3v4H4v-4zm6-4h3v12h-3V6zm6 6h3v6h-3v-6z"/>
         </svg>
       ), 
-      category: "Messenger" 
+      category: "Voice AI" 
     },
     { 
       name: "HubSpot", 

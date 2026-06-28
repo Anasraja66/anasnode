@@ -45,3 +45,6 @@ next-env.d.ts
 # SQLite WAL-mode lock files (created at runtime, should never be committed)
 *.db-shm
 *.db-wal
+
+.vercel
+.env*.local

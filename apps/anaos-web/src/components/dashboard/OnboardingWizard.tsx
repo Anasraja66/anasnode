@@ -46,21 +46,29 @@ export function OnboardingWizard() {
   if (!show) return null;
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-zinc-900/40 backdrop-blur-sm p-4 sm:p-6">
+    <motion.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-[100] flex items-center justify-center bg-zinc-900/40 backdrop-blur-sm p-4 sm:p-6"
+    >
       <motion.div
-        initial={{ opacity: 0, scale: 0.95, y: 10 }}
+        initial={{ opacity: 0, scale: 0.95, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.95, y: 10 }}
-        className="w-full max-w-xl bg-white rounded-3xl shadow-2xl overflow-y-auto max-h-[100vh] sm:max-h-[90vh] flex flex-col relative"
+        exit={{ opacity: 0, scale: 0.95, y: 20 }}
+        transition={{ type: "spring", stiffness: 300, damping: 30 }}
+        className="w-full max-w-xl bg-white rounded-3xl shadow-2xl overflow-y-auto max-h-[100vh] sm:max-h-[90vh] flex flex-col relative custom-scrollbar"
       >
-        <div className="p-6 sm:p-8 md:p-10">
+        <div className="p-6 sm:p-8 md:p-10 pb-10 sm:pb-12 md:pb-12">
           {!completed ? (
-            <>
+            <AnimatePresence mode="wait">
               {step === 1 && (
                 <motion.div 
+                  key="step1"
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: 20 }}
+                  transition={{ duration: 0.3 }}
                   className="flex flex-col items-center text-center"
                 >
                   <div className="w-16 h-16 bg-gradient-to-tr from-sky-400 to-indigo-500 rounded-2xl flex items-center justify-center mb-6 shadow-lg">
@@ -142,7 +150,7 @@ export function OnboardingWizard() {
                   <MetaEmbeddedSignup onSuccess={() => handleComplete()} />
                 </motion.div>
               )}
-            </>
+            </AnimatePresence>
           ) : (
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
@@ -160,7 +168,7 @@ export function OnboardingWizard() {
           )}
         </div>
       </motion.div>
-    </div>
+    </motion.div>
   );
 }
 

@@ -587,15 +587,15 @@ function Sidebar({ active, onChange, ws, onWsChange, workspaces, preset, user, o
               key={id}
               type="button"
               onClick={() => onChange(id)}
-              className={`w-full flex items-center gap-3 h-11 px-3 rounded-xl text-[13px] transition-all cursor-pointer group border-l-4 ${
+              className={`w-full flex items-center gap-3 h-10 px-3.5 rounded-[8px] text-[13px] transition-all cursor-pointer group ${
                 isActive
-                  ? "bg-[#E6F0FF] text-[#0A6BFF] font-bold border-[#0A6BFF] rounded-l-none pl-2 shadow-sm"
-                  : "text-zinc-550 font-medium hover:bg-zinc-100 hover:text-zinc-855 border-transparent pl-2"
+                  ? "bg-[#0A6BFF]/10 text-[#0A6BFF] font-semibold"
+                  : "text-zinc-500 font-medium hover:bg-zinc-100 hover:text-zinc-900"
               }`}
             >
               <Icon
-                className={`w-[20px] h-[20px] shrink-0 transition-colors ${
-                  isActive ? "text-[#0A6BFF] stroke-[2.5]" : "text-zinc-400 group-hover:text-zinc-600 stroke-[2]"
+                className={`w-[18px] h-[18px] shrink-0 transition-colors ${
+                  isActive ? "text-[#0A6BFF] stroke-[2]" : "text-zinc-400 group-hover:text-zinc-600 stroke-[2]"
                 }`}
               />
               {label}
@@ -606,21 +606,21 @@ function Sidebar({ active, onChange, ws, onWsChange, workspaces, preset, user, o
         {!isAgent && (
           <>
             <div className="pt-6 pb-2 px-3">
-              <span className="text-[9px] font-bold tracking-[0.25em] text-zinc-400 uppercase">Insights</span>
+              <span className="text-[10px] font-semibold tracking-widest text-zinc-400 uppercase">Insights</span>
             </div>
             
             <button
               type="button"
               onClick={() => onChange("analytics")}
-              className={`w-full flex items-center gap-3 h-11 px-3 rounded-xl text-[13px] transition-all cursor-pointer group border-l-4 ${
+              className={`w-full flex items-center gap-3 h-10 px-3.5 rounded-[8px] text-[13px] transition-all cursor-pointer group ${
                 active === "analytics"
-                  ? "bg-[#E6F0FF] text-[#0A6BFF] font-bold border-[#0A6BFF] rounded-l-none pl-2 shadow-sm"
-                  : "text-zinc-550 font-medium hover:bg-zinc-100 hover:text-zinc-855 border-transparent pl-2"
+                  ? "bg-[#0A6BFF]/10 text-[#0A6BFF] font-semibold"
+                  : "text-zinc-500 font-medium hover:bg-zinc-100 hover:text-zinc-900"
               }`}
             >
               <BarChart2
-                className={`w-[20px] h-[20px] shrink-0 transition-colors ${
-                  active === "analytics" ? "text-[#0A6BFF] stroke-[2.5]" : "text-zinc-400 group-hover:text-zinc-600 stroke-[2]"
+                className={`w-[18px] h-[18px] shrink-0 transition-colors ${
+                  active === "analytics" ? "text-[#0A6BFF] stroke-[2]" : "text-zinc-400 group-hover:text-zinc-600 stroke-[2]"
                 }`}
               />
               Analytics
@@ -635,28 +635,28 @@ function Sidebar({ active, onChange, ws, onWsChange, workspaces, preset, user, o
           <button
             type="button"
             onClick={() => onChange("team")}
-            className={`w-full flex items-center gap-3 h-11 px-3 rounded-xl text-[13px] font-medium transition-all group cursor-pointer border-l-4 ${
+            className={`w-full flex items-center gap-3 h-10 px-3.5 rounded-[8px] text-[13px] transition-all cursor-pointer group ${
               active === "team"
-                ? "bg-[#E6F0FF] text-[#0A6BFF] font-bold border-[#0A6BFF] rounded-l-none pl-2 shadow-sm"
-                : "text-zinc-450 hover:bg-zinc-100 hover:text-zinc-700 border-transparent pl-2"
+                ? "bg-[#0A6BFF]/10 text-[#0A6BFF] font-semibold"
+                : "text-zinc-500 font-medium hover:bg-zinc-100 hover:text-zinc-900"
             }`}
           >
-            <Users className={`w-[18px] h-[18px] group-hover:text-zinc-500 stroke-[2] ${active === "team" ? "text-[#0A6BFF]" : "text-zinc-300"}`} />
+            <Users className={`w-[18px] h-[18px] shrink-0 transition-colors ${active === "team" ? "text-[#0A6BFF]" : "text-zinc-400 group-hover:text-zinc-600"} stroke-[2]`} />
             Team Settings
           </button>
         )}
         <a
           href="/dashboard/integrations"
-          className="w-full flex items-center gap-3 h-11 px-3 rounded-xl text-[13px] font-medium text-zinc-450 hover:bg-zinc-100 hover:text-zinc-700 transition-all group border-l-4 border-transparent pl-2"
+          className="w-full flex items-center gap-3 h-10 px-3.5 rounded-[8px] text-[13px] text-zinc-500 font-medium hover:bg-zinc-100 hover:text-zinc-900 transition-all cursor-pointer group"
         >
-          <Plug className="w-[18px] h-[18px] text-zinc-300 group-hover:text-zinc-500 stroke-[2]" />
+          <Plug className="w-[18px] h-[18px] text-zinc-400 group-hover:text-zinc-600 stroke-[2] shrink-0 transition-colors" />
           Integrations
         </a>
         <button 
           onClick={() => signOut({ callbackUrl: "/" })}
-          className="w-full flex items-center gap-3 h-11 px-3 rounded-xl text-[13px] font-medium text-zinc-450 hover:bg-zinc-100 hover:text-zinc-700 transition-all group border-l-4 border-transparent pl-2 cursor-pointer"
+          className="w-full flex items-center gap-3 h-10 px-3.5 rounded-[8px] text-[13px] text-zinc-500 font-medium hover:bg-zinc-100 hover:text-zinc-900 transition-all cursor-pointer group"
         >
-          <LogOut className="w-[18px] h-[18px] text-zinc-300 group-hover:text-zinc-500 stroke-[2]" />
+          <LogOut className="w-[18px] h-[18px] text-zinc-400 group-hover:text-zinc-600 stroke-[2] shrink-0 transition-colors" />
           Log out
         </button>
         

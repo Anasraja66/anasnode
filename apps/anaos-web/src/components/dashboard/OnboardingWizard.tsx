@@ -123,7 +123,8 @@ export function OnboardingWizard() {
                           </div>
                         </button>
                       );
-                    })()}
+                    });
+                  })()}
                   </div>
 
                   <button

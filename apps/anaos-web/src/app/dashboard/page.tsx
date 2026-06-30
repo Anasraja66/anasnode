@@ -279,7 +279,13 @@ function DashboardHome({ ws, preset, roiMetrics }: { ws: Workspace; preset: Indu
         {/* Compact Prompt Input Card */}
         <motion.div variants={itemVariants} className="bg-white border border-zinc-200 rounded-xl p-6 shadow-sm relative z-20">
           <h2 className="text-[16px] font-bold text-zinc-900 mb-3 font-display">Ask Anaos AI to build or edit automations</h2>
-          <PromptBox />
+          <PromptBox 
+            staticPlaceholder="e.g. Build a lead qualification agent for WhatsApp and Facebook"
+            onSubmitPrompt={(prompt) => {
+              const event = new CustomEvent("anaos-open-onboarding", { detail: { prompt } });
+              window.dispatchEvent(event);
+            }}
+          />
           
           {/* Connectors Banner */}
           <AnimatePresence>

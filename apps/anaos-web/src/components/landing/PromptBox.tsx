@@ -13,9 +13,11 @@ const EXAMPLES = [
 interface Props {
   onGenerate?: (workspace: any, prompt: string) => void;
   compact?: boolean;
+  staticPlaceholder?: string;
+  onSubmitPrompt?: (prompt: string) => void;
 }
 
-export function PromptBox({ onGenerate, compact }: Props) {
+export function PromptBox({ onGenerate, compact, staticPlaceholder, onSubmitPrompt }: Props) {
   const [value, setValue] = useState("");
   const [loading, setLoading] = useState(false);
   const [stage, setStage] = useState(0);
@@ -65,6 +67,12 @@ export function PromptBox({ onGenerate, compact }: Props) {
 
   const handleGenerate = async () => {
     if (loading || !value.trim()) return;
+
+    if (onSubmitPrompt) {
+      onSubmitPrompt(value.trim());
+      return;
+    }
+
     setLoading(true);
     setStage(0);
     
@@ -108,7 +116,7 @@ export function PromptBox({ onGenerate, compact }: Props) {
         <textarea
           value={value}
           onChange={(e) => setValue(e.target.value)}
-          placeholder={mounted && !value ? placeholderText : "Describe your business automation..."}
+          placeholder={mounted && !value ? (staticPlaceholder || placeholderText) : (staticPlaceholder || "Describe your business automation...")}
           rows={3}
           disabled={loading}
           className="w-full resize-none bg-transparent px-4 sm:px-6 pt-4 sm:pt-5 pb-2 text-[15px] sm:text-[16px] text-zinc-800 placeholder:text-zinc-400 focus:outline-none leading-relaxed"

@@ -13,21 +13,26 @@ export function OnboardingWizard() {
   const [selectedChannels, setSelectedChannels] = useState<("whatsapp"|"instagram"|"facebook")[]>([]);
   const [completed, setCompleted] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [filteredChannels, setFilteredChannels] = useState<string[]>([]);
 
   useEffect(() => {
     setMounted(true);
-    // Check if onboarding was already completed
-    const isCompleted = localStorage.getItem("anaos_onboarding_completed");
-    if (isCompleted !== "true") {
-      setShow(true);
-      setStep(1);
-    }
-
-    // Still allow manual trigger
-    const handleOpen = () => {
+    // Still allow manual trigger or trigger with prompt
+    const handleOpen = (e: any) => {
       setShow(true);
       setStep(1);
       setCompleted(false);
+
+      if (e && e.detail && typeof e.detail.prompt === "string") {
+        const text = e.detail.prompt.toLowerCase();
+        const detected = [];
+        if (text.includes("whatsapp") || text.includes("wa")) detected.push("whatsapp");
+        if (text.includes("instagram") || text.includes("ig")) detected.push("instagram");
+        if (text.includes("facebook") || text.includes("messenger") || text.includes("fb")) detected.push("facebook");
+        setFilteredChannels(detected);
+      } else {
+        setFilteredChannels([]);
+      }
     };
     window.addEventListener("anaos-open-onboarding", handleOpen);
     return () => window.removeEventListener("anaos-open-onboarding", handleOpen);
@@ -82,11 +87,18 @@ export function OnboardingWizard() {
                   </p>
 
                   <div className="grid grid-cols-1 gap-3 w-full max-w-md mx-auto">
-                    {[
-                      { id: "whatsapp" as const, name: "WhatsApp Business", icon: FaWhatsapp, color: "text-[#25D366]", bg: "bg-[#25D366]/10", border: "border-[#25D366]" },
-                      { id: "instagram" as const, name: "Instagram DM", icon: FaInstagram, color: "text-[#E4405F]", bg: "bg-[#E4405F]/10", border: "border-[#E4405F]" },
-                      { id: "facebook" as const, name: "Facebook Messenger", icon: FaFacebookMessenger, color: "text-[#1877F2]", bg: "bg-[#1877F2]/10", border: "border-[#1877F2]" },
-                    ].map((c) => {
+                    {(() => {
+                      const channelsData = [
+                        { id: "whatsapp" as const, name: "WhatsApp Business", icon: FaWhatsapp, color: "text-[#25D366]", bg: "bg-[#25D366]/10", border: "border-[#25D366]" },
+                        { id: "instagram" as const, name: "Instagram DM", icon: FaInstagram, color: "text-[#E4405F]", bg: "bg-[#E4405F]/10", border: "border-[#E4405F]" },
+                        { id: "facebook" as const, name: "Facebook Messenger", icon: FaFacebookMessenger, color: "text-[#1877F2]", bg: "bg-[#1877F2]/10", border: "border-[#1877F2]" },
+                      ];
+                      
+                      const visibleChannels = filteredChannels.length > 0 
+                        ? channelsData.filter(c => filteredChannels.includes(c.id))
+                        : channelsData;
+
+                      return visibleChannels.map((c) => {
                       const isSelected = selectedChannels.includes(c.id);
                       return (
                         <button
@@ -111,7 +123,7 @@ export function OnboardingWizard() {
                           </div>
                         </button>
                       );
-                    })}
+                    })()}
                   </div>
 
                   <button

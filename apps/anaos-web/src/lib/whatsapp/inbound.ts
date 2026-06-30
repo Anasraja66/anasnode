@@ -43,15 +43,18 @@ export async function handleInboundWhatsApp(message: InboundWhatsAppMessage) {
     );
     if (!hasWhatsAppTrigger) continue;
 
-    // Phase 2.2: Event-Driven execution via BullMQ
-    const { enqueueWorkflow } = await import("@/lib/queue/publisher");
-    await enqueueWorkflow(wf.id, triggerData);
+    // Phase 1 (Vercel): Run execution inline instead of via BullMQ
+    const { WorkflowExecutor } = await import("@/lib/workflow/executor");
+    const executor = new WorkflowExecutor();
+    
+    // Execute async in the background (already wrapped in after() in route.ts)
+    await executor.execute(wf.id, triggerData);
 
     return {
       handled: true,
       workflowId: wf.id,
-      reply: null as string | null, // Message will be sent by background worker
-      sent: false, // Background worker handles this
+      reply: null as string | null, // Message will be sent by executor
+      sent: false, // Executor handles sending
       mode: "executor" as const,
     };
   }

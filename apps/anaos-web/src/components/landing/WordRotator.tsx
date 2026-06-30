@@ -24,7 +24,7 @@ export function WordRotator({
   }, [words.length, interval]);
 
   return (
-    <span className={`relative inline-flex flex-col h-[1em] ${className}`}>
+    <span className={`relative inline-flex flex-col h-[1.2em] justify-center ${className}`}>
       <AnimatePresence mode="wait">
         <motion.span
           key={words[index]}

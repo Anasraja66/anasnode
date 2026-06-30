@@ -12,7 +12,14 @@ export function OnboardingWizard() {
   const [completed, setCompleted] = useState(false);
 
   useEffect(() => {
-    // Only show manually via event now, since onboarding covers initial setup
+    // Check if onboarding was already completed
+    const isCompleted = localStorage.getItem("anaos_onboarding_completed");
+    if (isCompleted !== "true") {
+      setShow(true);
+      setStep(1);
+    }
+
+    // Still allow manual trigger
     const handleOpen = () => {
       setShow(true);
       setStep(1);

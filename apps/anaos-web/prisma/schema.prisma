@@ -72,6 +72,8 @@ model Workflow {
   edges          String // Stringified JSON WorkflowEdge[]
   variables      String              @default("[]") // Stringified JSON string[]
   stats          String              @default("{\"runs\":0,\"success\":0,\"failed\":0}")
+  voiceProvider  String?             // "vapi" | "retell"
+  voiceAgentId   String?             // External ID of the agent in Vapi/Retell
   lastRunAt      DateTime?
   createdAt      DateTime            @default(now())
   updatedAt      DateTime            @updatedAt

@@ -253,9 +253,16 @@ export function Hero() {
           initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.55, delay: 0.05 }}
-          className="text-[32px] sm:text-[40px] lg:text-[48px] font-extrabold text-[#111827] tracking-[-0.04em] leading-[1.04] font-display"
+          className="text-[32px] sm:text-[48px] lg:text-[56px] font-extrabold text-[#111827] tracking-[-0.03em] leading-[1.1] font-display"
         >
-          Automate <WordRotator words={["operations", "lead capture", "appointment booking", "customer follow-up", "sales"]} className="text-blue-600" />.<br className="hidden sm:block" /> Keep control.
+          <span className="flex flex-col lg:flex-row items-center justify-center lg:gap-x-4 w-full">
+            <span>Automate</span>
+            <WordRotator 
+              words={["customer follow-ups", "lead generation", "appointment booking", "support tickets", "sales outreach"]} 
+              className="text-blue-500 overflow-visible lg:text-left h-[1.2em] flex items-center"
+            />
+          </span>
+          <span className="mt-1 sm:mt-2 block">Keep control.</span>
         </motion.h1>
 
         {/* Subtitle (Lovable Style) */}
@@ -265,7 +272,10 @@ export function Hero() {
           transition={{ duration: 0.55, delay: 0.15 }}
           className="text-[15px] sm:text-[16px] text-[#4B5563] mt-6 leading-relaxed max-w-[540px] mx-auto font-medium font-sans"
         >
-          Build AI agents for your business — without hiring an automation expert.
+          Build <WordRotator 
+            words={["lead capture", "customer support", "appointment booking", "sales outreach"]} 
+            className="text-blue-500 font-bold overflow-visible inline-flex items-center justify-center mx-1"
+          /> agents for your business — without hiring an automation expert.
         </motion.p>
 
         {/* PromptBox and Industry Selector */}

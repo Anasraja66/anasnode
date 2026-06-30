@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { signOut } from "next-auth/react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -51,6 +52,7 @@ import {
   Megaphone,
   Plug,
   TrendingUp,
+  PhoneCall,
 } from "lucide-react";
 import { InboxPage } from "@/components/dashboard/InboxPage";
 import { ContactsHub } from "@/components/dashboard/ContactsHub";
@@ -59,6 +61,7 @@ import { IndustryWelcome } from "@/components/dashboard/IndustryWelcome";
 import { getIndustryPreset, type IndustryPreset } from "@/lib/industry/presets";
 import { AnaosAIHub } from "@/components/dashboard/AnaosAIHub";
 import { BroadcastsHub } from "@/components/dashboard/BroadcastsHub";
+import { AnaosLogo } from "@/components/landing/Navbar";
 import TeamSettingsPage from "@/components/dashboard/TeamSettingsPage";
 import TodayBookingsWidget from "@/components/dashboard/TodayBookingsWidget";
 import ChannelStatusWidget from "@/components/dashboard/ChannelStatusWidget";
@@ -137,7 +140,7 @@ import { WordRotator } from "@/components/landing/WordRotator";
 
 import { OnboardingWizard } from "@/components/dashboard/OnboardingWizard";
 
-function DashboardHome({ ws, preset }: { ws: Workspace; preset: IndustryPreset }) {
+function DashboardHome({ ws, preset, roiMetrics }: { ws: Workspace; preset: IndustryPreset; roiMetrics?: any }) {
   const Icon = preset.icon;
   const [showConnectors, setShowConnectors] = useState(true);
   const [greeting, setGreeting] = useState("");
@@ -259,11 +262,11 @@ function DashboardHome({ ws, preset }: { ws: Workspace; preset: IndustryPreset }
         {/* V2 ROI Analytics Grid */}
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
           {[
-            { title: "Leads Captured", value: "24", sub: "Last 7 days" },
-            { title: "Missed Calls Recovered", value: "12", sub: "$1.2k potential" },
-            { title: "Appointments Booked", value: "8", sub: "Via WhatsApp" },
-            { title: "Hours Saved", value: "14h", sub: "Auto-pilot tasks" },
-            { title: "Revenue Attributed", value: "$4.2k", sub: "AI Assisted" }
+            { title: "Leads Captured", value: roiMetrics?.leadsThisWeek || "0", sub: "Last 7 days" },
+            { title: "Missed Calls Recovered", value: roiMetrics?.leadsRecovered || "0", sub: "AI assisted" },
+            { title: "Appointments Booked", value: roiMetrics?.appointmentsBooked || "0", sub: "Via WhatsApp" },
+            { title: "AI Replies", value: roiMetrics?.aiReplies || "0", sub: "Auto-pilot tasks" },
+            { title: "Avg Response Time", value: roiMetrics?.avgResponseSec ? `${roiMetrics.avgResponseSec}s` : "0s", sub: "Instant AI" }
           ].map((stat, i) => (
             <div key={i} className="bg-white border border-zinc-200 rounded-xl p-4 shadow-sm hover:border-zinc-300 transition-all duration-300">
               <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-[0.05em] mb-1 truncate">{stat.title}</p>
@@ -332,38 +335,41 @@ function DashboardHome({ ws, preset }: { ws: Workspace; preset: IndustryPreset }
             </div>
             <div className="space-y-3 flex-1">
               {[
-                { name: "WhatsApp Business", id: "whatsapp" },
-                { name: "Instagram DM", id: "instagram" },
-                { name: "Facebook Messenger", id: "facebook" },
-                { name: "Email & SMS", id: "smtp" }
+                { name: "WhatsApp Business", id: "whatsapp", href: "/dashboard/integrations/whatsapp" },
+                { name: "Instagram DM", id: "instagram", href: "/dashboard/integrations/instagram" },
+                { name: "Facebook Messenger", id: "facebook", href: "/dashboard/integrations/facebook" },
+                { name: "Email & SMS", id: "smtp", href: "/dashboard/integrations/email" }
               ].map((c) => (
-                <div key={c.name} className="bg-white border border-zinc-200 px-4 py-3 rounded-xl text-[13px] font-semibold text-zinc-750 shadow-sm flex items-center justify-between hover:border-sky-300 transition-colors cursor-pointer group/item">
+                <Link href={c.href} key={c.name} className="bg-white border border-zinc-200 px-4 py-3 rounded-xl text-[13px] font-semibold text-zinc-750 shadow-sm flex items-center justify-between hover:border-sky-300 transition-colors cursor-pointer group/item block">
                   <div className="flex items-center gap-3">
-                    <BrandIcon id={c.id} className="w-4.5 h-4.5 shrink-0" />
+                    <BrandIcon id={c.id} className="w-5 h-5 shrink-0" />
                     <span>{c.name}</span>
                   </div>
                   <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                </div>
+                </Link>
               ))}
             </div>
           </motion.div>
 
-          {/* CENTER: Anaos Engine (The Brain) */}
+          {/* CENTER: Voice Integration */}
           <div className="flex flex-col gap-6">
-            <motion.div 
-              variants={itemVariants}
-              className="bg-white border border-zinc-200 rounded-xl p-6 shadow-sm flex flex-col items-center text-center relative overflow-hidden group hover:border-zinc-300 transition-colors"
+            <Link 
+              href="/dashboard/integrations"
+              className="bg-white border border-zinc-200 rounded-xl p-6 shadow-sm flex flex-col items-center text-center relative overflow-hidden group hover:border-sky-300 transition-colors block"
             >
-              <div className="w-14 h-14 rounded-full bg-zinc-50 flex items-center justify-center text-zinc-700 mb-4 relative border border-zinc-200">
-                 <Activity className="w-6 h-6" />
+              <div className="w-14 h-14 rounded-full bg-sky-50 flex items-center justify-center text-sky-500 mb-4 relative border border-sky-100 shadow-sm group-hover:scale-110 transition-transform">
+                 <PhoneCall className="w-6 h-6" />
               </div>
               <div className="space-y-1">
-                <h3 className="text-[16px] font-semibold text-zinc-900">Anaos Engine</h3>
-                <p className="text-[11px] font-medium text-zinc-500 uppercase tracking-wider">
-                  ANASMIND MEMORY
-                </p>
+                <h3 className="text-[16px] font-semibold text-zinc-900">Vapi Voice AI</h3>
+                <div className="flex items-center justify-center gap-1.5 mt-1">
+                  <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                  <p className="text-[11px] font-medium text-emerald-600 uppercase tracking-wider">
+                    INTEGRATION ACTIVE
+                  </p>
+                </div>
               </div>
-            </motion.div>
+            </Link>
 
             {/* BOTTOM: Content & Growth */}
             <motion.div 
@@ -378,15 +384,17 @@ function DashboardHome({ ws, preset }: { ws: Workspace; preset: IndustryPreset }
               </div>
               <div className="grid grid-cols-2 gap-3">
                 {[
-                  { name: "TikTok Ads", id: "tiktok" },
-                  { name: "YouTube", id: "youtube" },
-                  { name: "LinkedIn", id: "linkedin" },
-                  { name: "Blog Posts", id: "blog" }
+                  { name: "TikTok Ads", id: "tiktok", href: "/dashboard/integrations" },
+                  { name: "YouTube", id: "youtube", href: "/dashboard/integrations" },
+                  { name: "LinkedIn", id: "linkedin", href: "/dashboard/integrations" },
+                  { name: "Blog Posts", id: "blog", href: "/dashboard/integrations" }
                 ].map((c) => (
-                  <div key={c.name} className="bg-white border border-zinc-200 px-3 py-2.5 rounded-xl text-[12px] font-semibold text-zinc-750 shadow-sm flex items-center gap-2.5 hover:border-sky-300 transition-colors cursor-pointer">
-                    <BrandIcon id={c.id} className="w-4.5 h-4.5 shrink-0" />
-                    <span className="truncate">{c.name}</span>
-                  </div>
+                  <Link href={c.href} key={c.name} className="bg-white border border-zinc-200 px-3 py-2.5 rounded-xl text-[12px] font-semibold text-zinc-750 shadow-sm flex items-center gap-2.5 hover:border-sky-300 transition-colors cursor-pointer block">
+                    <div className="flex items-center gap-2.5">
+                      <BrandIcon id={c.id} className="w-5 h-5 shrink-0" />
+                      <span className="truncate">{c.name}</span>
+                    </div>
+                  </Link>
                 ))}
               </div>
             </motion.div>
@@ -405,18 +413,18 @@ function DashboardHome({ ws, preset }: { ws: Workspace; preset: IndustryPreset }
             </div>
             <div className="space-y-3 flex-1">
               {[
-                { name: "Shopify Store", id: "shopify" },
-                { name: "Google Calendar", id: "googlecalendar" },
-                { name: "HubSpot CRM", id: "hubspot" },
-                { name: "Stripe Payments", id: "stripe" }
+                { name: "Shopify Store", id: "shopify", href: "/dashboard/integrations/shopify" },
+                { name: "Google Calendar", id: "googlecalendar", href: "/dashboard/integrations/google-calendar" },
+                { name: "HubSpot CRM", id: "hubspot", href: "/dashboard/integrations" },
+                { name: "Stripe Payments", id: "stripe", href: "/dashboard/integrations" }
               ].map((c) => (
-                <div key={c.name} className="bg-white border border-zinc-200 px-4 py-3 rounded-xl text-[13px] font-semibold text-zinc-750 shadow-sm flex items-center justify-between hover:border-sky-300 transition-colors cursor-pointer group/item">
+                <Link href={c.href} key={c.name} className="bg-white border border-zinc-200 px-4 py-3 rounded-xl text-[13px] font-semibold text-zinc-750 shadow-sm flex items-center justify-between hover:border-sky-300 transition-colors cursor-pointer group/item block">
                   <div className="flex items-center gap-3">
-                    <BrandIcon id={c.id} className="w-4.5 h-4.5 shrink-0" />
+                    <BrandIcon id={c.id} className="w-5 h-5 shrink-0" />
                     <span>{c.name}</span>
                   </div>
                   <ArrowUpRight className="w-4 h-4 text-zinc-400 group-hover/item:text-sky-500 transition-colors" />
-                </div>
+                </Link>
               ))}
             </div>
           </motion.div>
@@ -486,11 +494,9 @@ function Sidebar({ active, onChange, ws, onWsChange, workspaces, preset, user, o
     <aside className={`dashboard-sidebar w-[260px] shrink-0 border-r border-zinc-200 bg-white flex flex-col h-full z-40 transition-transform duration-300 md:translate-x-0 md:static fixed inset-y-0 left-0 ${open ? "translate-x-0" : "-translate-x-full"}`}>
       {/* Professional Branding Logo */}
       <div className="h-16 px-6 flex items-center justify-between border-b border-zinc-100 relative bg-white">
-        <div className="flex items-center gap-2">
-          <div className="w-6.5 h-6.5 rounded-md bg-zinc-900 flex items-center justify-center text-white text-[11px] font-bold">
-            A
-          </div>
-          <span className="text-[14px] font-bold text-zinc-900 tracking-tight leading-none">AnasNode</span>
+        <div className="flex items-center gap-2.5">
+          <AnaosLogo className="w-8 h-8" />
+          <span className="text-[17px] font-bold text-zinc-900 tracking-tight leading-none">AnaOS</span>
         </div>
         <button
           type="button"
@@ -1547,6 +1553,7 @@ export default function Dashboard() {
   const [mounted, setMounted] = useState(false);
   const [loadingData, setLoadingData] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
+  const [roiMetrics, setRoiMetrics] = useState<any>(null);
   const [integrations, setIntegrations] = useState({
     whatsapp: false,
     instagram: false,
@@ -1634,6 +1641,9 @@ export default function Dashboard() {
         
         if (data.user) {
           setUser(data.user);
+        }
+        if (data.roiMetrics) {
+          setRoiMetrics(data.roiMetrics);
         }
         
         if (data.integrations) {
@@ -1912,7 +1922,7 @@ export default function Dashboard() {
           >
             <div className={tab === "inbox" || tab === "ai_agent" || tab === "contacts" ? "" : "px-4 py-6 md:px-10 md:pt-8 md:pb-8"}>
               {tab === "ai_agent"    && <AIAgentPage     ws={ws} />}
-              {tab === "overview"    && <DashboardHome ws={ws} preset={industryPreset} />}
+              {tab === "overview"    && <DashboardHome ws={ws} preset={industryPreset} roiMetrics={roiMetrics} />}
               {tab === "inbox"       && <InboxPage initialConversationId={inboxChatId} preset={industryPreset} />}
               {tab === "contacts"    && <ContactsHub />}
               {tab === "automations" && <AutomationsPage ws={ws} integrations={integrations} toggleAutomation={toggleAutomation} toggleLoading={toggleLoading} />}

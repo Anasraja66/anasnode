@@ -1,6 +1,27 @@
 "use client";
 
 import React from "react";
+import {
+  SiWhatsapp,
+  SiInstagram,
+  SiFacebook,
+  SiMessenger,
+  SiShopify,
+  SiGmail,
+  SiGooglecalendar,
+  SiGooglesheets,
+  SiGoogledrive,
+  SiHubspot,
+  SiTwilio,
+  SiOpenai,
+  SiStripe,
+  SiTiktok,
+  SiYoutube,
+} from "react-icons/si";
+import { FcGoogle } from "react-icons/fc";
+import { MdEmail } from "react-icons/md";
+import { FaBlog, FaLinkedin } from "react-icons/fa";
+import { Layers } from "lucide-react";
 
 type BrandIconProps = {
   id: string;
@@ -12,12 +33,7 @@ export default function BrandIcon({ id, className = "w-5 h-5" }: BrandIconProps)
 
   switch (normId) {
     case "whatsapp":
-      return (
-        <svg viewBox="0 0 24 24" className={className} fill="currentColor" style={{ color: "#25D366" }}>
-          <path d="M12.004 2C6.48 2 2 6.48 2 12.004c0 1.764.457 3.49 1.328 5.016L2 22l5.12-1.344a9.957 9.957 0 0 0 4.884 1.348c5.523 0 10.004-4.48 10.004-10.004C22.008 6.48 17.527 2 12.004 2zm0 1.832c4.506 0 8.168 3.662 8.168 8.172 0 4.51-3.662 8.172-8.168 8.172a8.11 8.11 0 0 1-4.164-1.144l-.3-.176-3.096.812.828-3.016-.192-.308a8.125 8.125 0 0 1-1.248-4.34c0-4.51 3.662-8.172 8.172-8.172zm-3.528 3.128c-.192 0-.396.04-.548.148-.156.108-.344.276-.432.444-.132.256-.256.632-.128 1.136.196.76.628 1.556 1.196 2.216 1.088 1.26 2.456 2.212 3.86 2.76.444.172.932.26 1.412.212.564-.056.964-.32 1.124-.652.128-.268.096-.6-.008-.756-.076-.112-.224-.184-.464-.304-.24-.12-1.416-.7-1.64-.78-.224-.08-.388-.12-.552.12-.164.24-.632.78-.776.944-.144.164-.288.184-.528.064-.24-.12-1.016-.376-1.936-1.196-.716-.64-1.2-1.428-1.34-1.668-.14-.24-.016-.368.104-.488.108-.108.24-.28.36-.42.12-.14.16-.24.24-.4.08-.16.04-.3-.02-.42-.06-.12-.552-1.332-.756-1.824-.2-.488-.42-.42-.572-.428z" />
-        </svg>
-      );
-
+      return <SiWhatsapp className={className} style={{ color: "#25D366" }} />;
     case "instagram":
       return (
         <svg viewBox="0 0 24 24" className={className}>
@@ -30,142 +46,52 @@ export default function BrandIcon({ id, className = "w-5 h-5" }: BrandIconProps)
               <stop offset="90%" stopColor="#285AEB" />
             </radialGradient>
           </defs>
-          <rect width="24" height="24" rx="6" fill="url(#ig-grad)" />
-          <rect x="5.5" y="5.5" width="13" height="13" rx="3.5" fill="none" stroke="white" strokeWidth="1.5" />
-          <circle cx="12" cy="12" r="3" fill="none" stroke="white" strokeWidth="1.5" />
-          <circle cx="16.5" cy="7.5" r="0.75" fill="white" />
+          <SiInstagram style={{ fill: "url(#ig-grad)" }} className="w-full h-full" />
         </svg>
       );
-
     case "facebook":
+      return <SiFacebook className={className} style={{ color: "#1877F2" }} />;
     case "facebookmessenger":
-      return (
-        <svg viewBox="0 0 24 24" className={className} fill="currentColor" style={{ color: "#1877F2" }}>
-          <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
-        </svg>
-      );
-
+      return <SiMessenger className={className} style={{ color: "#00B2FF" }} />;
     case "shopify":
     case "shopifystore":
-      return (
-        <svg viewBox="0 0 24 24" className={className} fill="currentColor" style={{ color: "#96bf48" }}>
-          <path d="M19.034 6.782a.855.855 0 0 0-.685-.366h-1.8V5.37a2.57 2.57 0 0 0-2.57-2.57h-3.958a2.57 2.57 0 0 0-2.57 2.57v1.046H5.65a.858.858 0 0 0-.686.366L2.034 11.51a.858.858 0 0 0 .12 1.026l1.714 1.714a.858.858 0 0 0 .609.256h15.046a.858.858 0 0 0 .609-.256l1.714-1.714a.858.858 0 0 0 .12-1.026l-2.933-4.728zm-8.766-.946a.857.857 0 0 1 .857-.857h3.958a.857.857 0 0 1 .857.857v1.046h-5.672V5.836zm5.714 5.372a1.286 1.286 0 1 1-2.572 0 1.286 1.286 0 0 1 2.572 0zm-4.286 0a1.286 1.286 0 1 1-2.572 0 1.286 1.286 0 0 1 2.572 0z" />
-        </svg>
-      );
-
+      return <SiShopify className={className} style={{ color: "#96bf48" }} />;
     case "smtp":
     case "gmail":
     case "businessemail":
     case "email":
-      return (
-        <svg viewBox="0 0 24 24" className={className} fill="currentColor" style={{ color: "#EA4335" }}>
-          <path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" />
-        </svg>
-      );
-
+      return <MdEmail className={className} style={{ color: "#EA4335" }} />;
     case "googlecalendar":
-      return (
-        <svg viewBox="0 0 24 24" className={className} fill="currentColor" style={{ color: "#1A73E8" }}>
-          <path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11zM7 11h2v2H7zm4 0h2v2h-2zm4 0h2v2h-2zm-8 4h2v2H7zm4 0h2v2h-2zm4 0h2v2h-2z" />
-        </svg>
-      );
-
+      return <SiGooglecalendar className={className} style={{ color: "#4285F4" }} />;
     case "googlesheets":
-      return (
-        <svg viewBox="0 0 24 24" className={className} fill="currentColor" style={{ color: "#0F9D58" }}>
-          <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z" />
-        </svg>
-      );
-
+      return <SiGooglesheets className={className} style={{ color: "#34A853" }} />;
     case "googledrive":
-      return (
-        <svg viewBox="0 0 24 24" className={className} fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M8.7 15.3L15.3 3.9H2L8.7 15.3Z" fill="#FFCC00" />
-          <path d="M15.3 3.9L22 15.3H8.7L15.3 3.9Z" fill="#0052CC" />
-          <path d="M8.7 15.3L5.3 21H18.7L15.3 15.3H8.7Z" fill="#00A859" />
-        </svg>
-      );
-
+      return <SiGoogledrive className={className} style={{ color: "#FFBA00" }} />;
     case "google":
     case "googleoauth":
     case "googleaccount":
-      return (
-        <svg viewBox="0 0 24 24" className={className} fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
-          <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
-          <path d="M5.84 14.1c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.08H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.61z" fill="#FBBC05" />
-          <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.08l3.66 2.84c.87-2.6 3.3-4.54 6.16-4.54z" fill="#EA4335" />
-        </svg>
-      );
-
+      return <FcGoogle className={className} />;
     case "hubspot":
     case "hubspotcrm":
-      return (
-        <svg viewBox="0 0 24 24" className={className} fill="currentColor" style={{ color: "#FF7A59" }}>
-          <path d="M21.9 11.2c-.3-.2-.7-.3-1.1-.3H18c-.4.8-1.1 1.5-2 1.8v2.6c0 1.2-.8 2.2-1.9 2.5v2.3c.7.2 1.2.9 1.2 1.7 0 1-.8 1.8-1.8 1.8s-1.8-.8-1.8-1.8c0-.8.5-1.5 1.2-1.7v-2.3c-1.1-.3-1.9-1.3-1.9-2.5v-2.6c-.9-.3-1.6-1-2-1.8H5.2c-.8.8-1.9 1.2-3.1 1.1C.9 16-.1 14.9 0 13.7c.1-1.1 1.1-2 2.2-1.9.9.1 1.7.7 2 1.5H9c.3-.8 1-1.5 1.8-1.8V7.5c0-1.2.8-2.2 1.9-2.5V2.7c-.7-.2-1.2-.9-1.2-1.7C11.5 1 12.3.2 13.3.2s1.8.8 1.8 1.8c0 .8-.5 1.5-1.2 1.7v2.3c1.1.3 1.9 1.3 1.9 2.5v4c.8.3 1.5 1 1.8 1.8H21c1.1-.1 2.1.8 2.2 1.9-.1 1.2-1.1 2.1-2.2 2-1-.2-1.8-.8-2.1-1.6zM13.3 9c-.6 0-1 .4-1 1s.4 1 1 1 1-.4 1-1-.4-1-1-1zm0 4.5c-.6 0-1 .4-1 1s.4 1 1 1 1-.4 1-1-.4-1-1-1zm-9.1-1.2c-.3 0-.6.3-.6.6 0 .3.3.6.6.6s.6-.3.6-.6c-.1-.3-.3-.6-.6-.6z" />
-        </svg>
-      );
-
+      return <SiHubspot className={className} style={{ color: "#FF7A59" }} />;
     case "twilio":
-      return (
-        <svg viewBox="0 0 24 24" className={className} fill="currentColor" style={{ color: "#F22F46" }}>
-          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-3.5 13.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm0-5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm7 5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm0-5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z" />
-        </svg>
-      );
-
+      return <SiTwilio className={className} style={{ color: "#F22F46" }} />;
     case "openai":
-      return (
-        <svg viewBox="0 0 24 24" className={className} fill="currentColor" style={{ color: "#10A37F" }}>
-          <path d="M21.7 11.2c-.2-.6-.6-1-1.1-1.3-.2-.1-.5-.2-.7-.3l.1-.8c.2-1.3-.4-2.6-1.5-3.3-1.1-.7-2.6-.6-3.6.2l-.6-.4C13.2 4.6 11.7 4.6 10.7 5.3c-.6.4-1 .9-1.2 1.6l-.7-.4C7.7 5.7 6.2 5.8 5.2 6.5c-1 1-1.2 2.5-.5 3.6l-.3.2c-1.3.8-1.8 2.4-1.3 3.8.4 1.3 1.7 2.1 3 2.1H7l-.1.6c-.2 1.3.4 2.6 1.5 3.3.7.5 1.5.7 2.3.7.5 0 1-.1 1.4-.3l.5.3c.6.4 1.3.6 2 .6s1.4-.2 2-.6c.5-.3.8-.8 1.1-1.3l.7.4c.5.3 1 .4 1.6.4 1.2 0 2.4-.8 2.8-2 .5-1.3.1-2.9-1-3.7l.3-.2c1-.6 1.5-1.7 1.5-2.9 0-.4-.1-.8-.2-1.2zm-2.8 1.6v.5l-4.5 2.6c-.3.2-.6.2-.9 0l-3.9-2.2v-4.5c0-.3.2-.6.4-.8l3.9-2.2.5.3c.3.2.3.6 0 .9l-3.6 2.1V12l3.6 2.1c.3.2.6.2.9 0l3.6-2.1v.2zm-5.7-6.2l-.5-.3v4.5c0 .3-.2.6-.4.8l-3.9 2.2V9.3l3.6-2.1c.3-.2.3-.6 0-.9L8.3 8.5v-4.5c.3-.2.6-.2.9 0l3.9 2.2zm-4.7 8l-3.6-2.1v-.5c0-.3.2-.6.4-.8l3.9-2.2.5.3c.3.2.3.6 0 .9L7 10.9v4.1c-.3.2-.6.2-.9 0zm.8 1.2l3.9 2.2-.5-.3c-.3-.2-.3-.6 0-.9l3.6-2.1V15.1l-3.6 2.1c-.3.2-.6.2-.9 0l-3.6-2.1v-4.3c0-.3.2-.6.4-.8l3.9 2.2v.9zm8.5-.7V11.2l-3.6-2.1c-.3-.2-.6-.2-.9 0L7.6 11.2v4.2c0 .3.2.6.4.8l3.9 2.2.5-.3c.3-.2.3-.6 0-.9l-3.6-2.1v-4.2l3.6-2.1c.3-.2.6-.2.9 0l3.6 2.1V15.1zm.9-4.2V8.3l-3.9-2.2v4.5c0 .3-.2.6-.4.8l-3.9 2.2v4.5c.3.2.6.2.9 0l3.9-2.2.5.3c.3.2.3.6 0 .9l-3.6 2.1v.2z" />
-        </svg>
-      );
-
+      return <SiOpenai className={className} style={{ color: "#10A37F" }} />;
     case "stripe":
     case "stripepayments":
-      return (
-        <svg viewBox="0 0 24 24" className={className} fill="currentColor" style={{ color: "#635BFF" }}>
-          <path d="M13.962 8.785c0-1.04-.796-1.545-2.072-1.545-1.393 0-2.855.437-3.97 1.042l-.635-2.585c1.233-.556 2.898-.946 4.79-.946 3.23 0 5.176 1.489 5.176 4.417 0 3.328-2.665 4.38-4.887 5.114-1.28.423-2.083.743-2.083 1.34 0 .723.635 1.137 1.737 1.137 1.554 0 3.21-.6 4.43-1.312l.666 2.583c-1.375.765-3.328 1.258-5.32 1.258-3.418 0-5.59-1.614-5.59-4.436 0-3.313 2.766-4.469 4.966-5.184 1.308-.423 1.99-.74 1.99-1.318z" />
-        </svg>
-      );
-
+      return <SiStripe className={className} style={{ color: "#635BFF" }} />;
     case "tiktok":
     case "tiktokads":
-      return (
-        <svg viewBox="0 0 24 24" className={className} fill="currentColor" style={{ color: "#010101" }}>
-          <path d="M12.53.02C13.84 0 15.14.01 16.44 0c.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.06-2.89-.52-4.09-1.35-.32-.22-.61-.47-.88-.74v7.16c.06 1.55-.4 3.16-1.4 4.38-1.5 1.88-4.03 2.87-6.4 2.51-2.48-.36-4.65-2.18-5.33-4.63-.82-2.89.39-6.19 2.91-7.55 1.24-.67 2.68-.88 4.08-.6v4.03c-.88-.23-1.85-.08-2.6.43-.88.6-.17 1.72-.1 2.2.3 1.83 1.98 3.19 3.82 2.95 1.69-.21 3.01-1.63 3.09-3.32V.02z" />
-        </svg>
-      );
-
+      return <SiTiktok className={className} style={{ color: "#000000" }} />;
     case "youtube":
-      return (
-        <svg viewBox="0 0 24 24" className={className} fill="currentColor" style={{ color: "#FF0000" }}>
-          <path d="M23.498 6.163a3.003 3.003 0 0 0-2.11-2.108C19.53 3.5 12 3.5 12 3.5s-7.53 0-9.388.555A3.003 3.003 0 0 0 .502 6.163C0 8.07 0 12 0 12s0 3.93.502 5.837a3.003 3.003 0 0 0 2.11 2.108C4.47 20.5 12 20.5 12 20.5s7.53 0 9.388-.555a3.003 3.003 0 0 0 2.11-2.108C24 15.93 24 12 24 12s0-3.93-.502-5.837zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
-        </svg>
-      );
-
+      return <SiYoutube className={className} style={{ color: "#FF0000" }} />;
     case "linkedin":
-      return (
-        <svg viewBox="0 0 24 24" className={className} fill="currentColor" style={{ color: "#0A66C2" }}>
-          <path d="M22.23 0H1.77C.8 0 0 .77 0 1.72v20.56C0 23.23.8 24 1.77 24h20.46c.98 0 1.77-.77 1.77-1.72V1.72C24 .77 23.2 0 22.23 0zM7.12 20.45H3.56V9H7.12v11.45zM5.34 7.43c-1.14 0-2.06-.92-2.06-2.06 0-1.14.92-2.06 2.06-2.06 1.14 0 2.06.92 2.06 2.06 0 1.14-.92 2.06-2.06 2.06zm15.11 13.02h-3.56v-5.6c0-1.34-.03-3.05-1.86-3.05-1.86 0-2.14 1.45-2.14 2.95v5.7h-3.56V9h3.42v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29z" />
-        </svg>
-      );
-
+      return <FaLinkedin className={className} style={{ color: "#0A66C2" }} />;
     case "blog":
     case "blogposts":
-      return (
-        <svg viewBox="0 0 24 24" className={className} fill="currentColor" style={{ color: "#F26522" }}>
-          <circle cx="6.18" cy="17.82" r="2.18" />
-          <path d="M4 4.44v2.83c5.61 0 10.18 4.57 10.18 10.18h2.83c0-7.18-5.83-13.01-13.01-13.01z" />
-          <path d="M4 10.1v2.83c2.48 0 4.5 2.02 4.5 4.5h2.83c0-4.04-3.29-7.33-7.33-7.33z" />
-        </svg>
-      );
-
+      return <FaBlog className={className} style={{ color: "#F26522" }} />;
     default:
-      // Fallback puzzle piece or generic integration plug
-      return (
-        <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" />
-        </svg>
-      );
+      return <Layers className={`${className} text-zinc-400`} />;
   }
 }

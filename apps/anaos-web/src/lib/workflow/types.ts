@@ -72,6 +72,7 @@ export interface ExecutionContext {
   mode: string;
   contactId?: string | null;
   variables: Record<string, any>; // Runtime local variables
+  nodeData: Record<string, { output: any }>; // Stores full output of every executed node by Node ID or Name
   anamind: Record<string, any>;   // Loaded persistent customer context
   triggerData: Record<string, any>;
   logs: {
@@ -87,5 +88,6 @@ export interface ExecutionContext {
 
 export interface NodeResult {
   output: Record<string, any>;
-  nextNodeIds: string[];
+  nextNodeIds: string[]; // Fallback list of nodes (legacy flat array)
+  branchIndex?: string | number; // Specific edge sourceHandle to traverse (n8n style multi-branching)
 }

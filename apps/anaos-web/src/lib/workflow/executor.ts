@@ -7,6 +7,7 @@ import {
 } from "./types";
 import { executeLLMCompletion, resolveTemplate } from "./ai-client";
 import { sendMetaTextMessage } from "@/lib/whatsapp/meta";
+import { globalRegistry } from "./engine/registry";
 
 // CRITICAL LOOP PROTECTION CONSTANTS
 const MAX_NODES_PER_EXECUTION = 100;
@@ -51,7 +52,14 @@ export class WorkflowExecutor {
       return;
     }
 
-    const nodes: WorkflowNode[] = JSON.parse(workflow.nodes);
+    let nodes: WorkflowNode[] = [];
+    let edges: any[] = [];
+    try {
+      nodes = JSON.parse(workflow.nodes);
+      edges = JSON.parse(workflow.edges || "[]");
+    } catch (e) {
+      throw new Error("Invalid workflow nodes/edges JSON.");
+    }
 
     // 2. Create execution record
     const execution = await prisma.workflowExecution.create({
@@ -64,8 +72,8 @@ export class WorkflowExecutor {
     });
 
     // 3. Find trigger node
-    const triggerNode = nodes.find(n => n.type.startsWith("trigger_"));
-    if (!triggerNode) {
+    const triggerNodes = nodes.filter(n => n.type.startsWith("trigger_"));
+    if (triggerNodes.length === 0) {
       await prisma.workflowExecution.update({
         where: { id: execution.id },
         data: {
@@ -90,6 +98,7 @@ export class WorkflowExecutor {
       mode: workflow.mode,
       contactId: triggerData.contactId || null,
       variables: {},
+      nodeData: {},
       anamind: {},
       triggerData,
       logs: [],
@@ -105,8 +114,8 @@ export class WorkflowExecutor {
     }
 
     try {
-      // 6. Execute nodes recursively starting from the trigger
-      await this.executeNode(triggerNode, ctx, nodes);
+      // 6. Recursively execute all nodes starting from the trigger
+      await this.executeNode(triggerNode, ctx, nodes, edges);
 
       // 7. Save execution success state
       const duration = Date.now() - this.startTime;
@@ -175,7 +184,7 @@ export class WorkflowExecutor {
     }
   }
 
-  async executeNode(node: WorkflowNode, ctx: ExecutionContext, nodes: WorkflowNode[]) {
+  async executeNode(node: WorkflowNode, ctx: ExecutionContext, nodes: WorkflowNode[], edges: any[]) {
     // ── LOOP PROTECTION CHECKS ──
     this.totalExecuted++;
     if (this.totalExecuted > MAX_NODES_PER_EXECUTION) {
@@ -202,7 +211,19 @@ export class WorkflowExecutor {
     let result: NodeResult = { output: {}, nextNodeIds: node.outputs };
 
     try {
-      switch (node.type) {
+      // 1. Try new modular registry first
+      let handler = null;
+      try {
+        handler = globalRegistry.getHandler(node.type);
+      } catch (e) {
+        // Fallback to monolithic switch if not found
+      }
+
+      if (handler) {
+        result = await handler.execute(node, ctx);
+      } else {
+        // 2. Fallback to old monolithic switch logic
+        switch (node.type) {
         case NodeType.TRIGGER_WHATSAPP:
         case NodeType.TRIGGER_INSTAGRAM:
         case NodeType.TRIGGER_WEBHOOK:
@@ -630,6 +651,7 @@ export class WorkflowExecutor {
           break;
         }
       }
+      } // End of registry else fallback
 
       // Record logs
       ctx.logs[logIndex].finishedAt = Date.now();
@@ -637,6 +659,8 @@ export class WorkflowExecutor {
       
       // Update variables cache
       ctx.variables = { ...ctx.variables, ...result.output };
+      ctx.nodeData[node.name] = { output: result.output };
+      ctx.nodeData[node.id] = { output: result.output };
 
     } catch (e: any) {
       ctx.logs[logIndex].finishedAt = Date.now();
@@ -645,18 +669,38 @@ export class WorkflowExecutor {
       throw e; // rethrow to stop or handle failed state
     }
 
+    // ── SUSPEND & HYDRATION LOGIC ──
+    if (result.output && result.output._suspendExecution) {
+      // The node (like WAIT or manual approval) halted the execution.
+      // We pass it to the scheduler to resume at the NEXT nodes when the time comes.
+      const { workflowScheduler } = require("./scheduler");
+      const delayMinutes = Number(node.config.minutes || node.config.duration || 1);
+      
+      for (const nextId of result.nextNodeIds) {
+        if (!nextId) continue;
+        workflowScheduler.scheduleWaitResume(ctx.executionId, nextId, delayMinutes);
+      }
+      return; // Stop recursive execution here. It will resume in a separate context later.
+    }
+
+    // ── MULTI-BRANCH ROUTING LOGIC ──
+    let targetNodeIds = result.nextNodeIds;
+    
+    // If the node returned a specific branch to follow, override the flat output array
+    if (result.branchIndex !== undefined) {
+      const matchingEdges = edges.filter(e => 
+        (e.source === node.id || e.from === node.id) && 
+        String(e.sourceHandle) === String(result.branchIndex)
+      );
+      targetNodeIds = matchingEdges.map(e => e.target || e.to);
+    }
+
     // Recursively execute downstream matching nodes in parallel/sequential order
-    for (const nextId of result.nextNodeIds) {
+    for (const nextId of targetNodeIds) {
+      if (!nextId) continue;
       const nextNode = nodes.find(n => n.id === nextId);
       if (nextNode) {
-        if (node.type === NodeType.WAIT) {
-          const delayMinutes = Number(node.config.minutes || 1);
-          // Dynamically require the scheduler service to avoid circular dependency cycles in ES Modules
-          const { workflowScheduler } = require("./scheduler");
-          workflowScheduler.scheduleWaitResume(ctx.executionId, nextNode.id, delayMinutes);
-        } else {
-          await this.executeNode(nextNode, ctx, nodes);
-        }
+        await this.executeNode(nextNode, ctx, nodes, edges);
       }
     }
   }

@@ -579,7 +579,7 @@ function Sidebar({ active, onChange, ws, onWsChange, workspaces, preset, user, o
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 px-3 pt-4 space-y-1 overflow-y-auto">
+      <nav className="flex-1 px-3 pt-4 space-y-1 overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
         {NAV_ITEMS.map(({ id, label, icon: Icon }) => {
           const isActive = active === id;
           return (

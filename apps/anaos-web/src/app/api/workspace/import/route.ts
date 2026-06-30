@@ -70,7 +70,7 @@ export async function POST(request: Request) {
             accountId,
             workspaceId: newWorkspace.id,
             name: auto.name || "AI Automation",
-            description: `Auto-generated ${auto.type} workflow`,
+            description: auto.description || `Auto-generated ${auto.type} workflow`,
             isActive: true,
             nodes: JSON.stringify(nodes),
             edges: JSON.stringify(edges),

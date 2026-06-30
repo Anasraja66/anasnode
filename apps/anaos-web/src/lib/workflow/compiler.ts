@@ -210,7 +210,7 @@ export async function compileAutomationFromPrompt(
     nodes,
     edges: JSON.parse(JSON.stringify(template.edges)) as WorkflowEdge[],
     workflowName: primaryAutomation?.name || template.name,
-    workflowDescription: `Compiled from prompt for ${workspace.name} (${workspace.industry})`,
+    workflowDescription: prompt,
   };
 }
 

@@ -5,6 +5,7 @@ export type GeneratedAutomation = {
   enabled: boolean;
   runs: number;
   lastRun: string;
+  description?: string;
 };
 
 export type GeneratedVariable = {
@@ -161,6 +162,7 @@ export function generateWorkspaceFromPrompt(prompt: string): GeneratedWorkspace 
     (name, i) => ({
       id: `a-neural-${i + 1}`,
       name,
+      description: prompt,
       type: inferAutomationType(name),
       enabled: i < 3, // top 3 auto-enabled
       runs: 0,

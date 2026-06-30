@@ -1305,7 +1305,7 @@ function AutomationsPage({ ws, integrations, toggleAutomation, toggleLoading }: 
             : "draft";
     return {
       id: a.id, name: a.name,
-      description: `Compiled from prompt for ${ws.name} (${ws.industry})`,
+      description: (a as any).description || `Compiled from prompt for ${ws.name} (${ws.industry})`,
       channels,
       state,
       requiredProvider: a.requiredProvider ?? (state === "needs_connection" ? resolveProviderFromMissing(missing) : null),

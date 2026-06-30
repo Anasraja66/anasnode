@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { MessageSquare as Facebook, Camera as Instagram, MessageCircle, ArrowRight, CheckCircle2 } from "lucide-react";
 import { MetaEmbeddedSignup } from "@/components/integrations/MetaEmbeddedSignup";
@@ -10,8 +11,10 @@ export function OnboardingWizard() {
   const [step, setStep] = useState(1);
   const [selectedChannels, setSelectedChannels] = useState<("whatsapp"|"instagram"|"facebook")[]>([]);
   const [completed, setCompleted] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
     // Check if onboarding was already completed
     const isCompleted = localStorage.getItem("anaos_onboarding_completed");
     if (isCompleted !== "true") {
@@ -43,9 +46,9 @@ export function OnboardingWizard() {
     );
   };
 
-  if (!show) return null;
+  if (!mounted || !show || typeof document === "undefined") return null;
 
-  return (
+  return createPortal(
     <motion.div 
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}

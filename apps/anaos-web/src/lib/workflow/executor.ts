@@ -114,8 +114,10 @@ export class WorkflowExecutor {
     }
 
     try {
-      // 6. Recursively execute all nodes starting from the trigger
-      await this.executeNode(triggerNode, ctx, nodes, edges);
+      // 6. Recursively execute all nodes starting from the triggers
+      for (const tNode of triggerNodes) {
+        await this.executeNode(tNode, ctx, nodes, edges);
+      }
 
       // 7. Save execution success state
       const duration = Date.now() - this.startTime;

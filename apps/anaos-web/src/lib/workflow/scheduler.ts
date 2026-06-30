@@ -56,6 +56,7 @@ class WorkflowSchedulerService {
     }
 
     const nodes: WorkflowNode[] = JSON.parse(workflow.nodes || "[]");
+    const edges: any[] = JSON.parse(workflow.edges || "[]");
     const nextNode = nodes.find(n => n.id === nextNodeId);
 
     if (!nextNode) {
@@ -84,7 +85,7 @@ class WorkflowSchedulerService {
     
     try {
       // Begin executing downstream actions from the next node
-      await executor.executeNode(nextNode, ctx, nodes);
+      await executor.executeNode(nextNode, ctx, nodes, edges);
 
       const duration = Date.now() - startTime;
       await prisma.workflowExecution.update({

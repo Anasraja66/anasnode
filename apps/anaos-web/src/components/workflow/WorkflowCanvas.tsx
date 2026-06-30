@@ -614,9 +614,9 @@ function CanvasNode({
 
   return (
     <motion.div
-      initial={{ scale: 0.7, opacity: 0 }}
+      initial={{ scale: 0.8, opacity: 0 }}
       animate={{ scale: 1, opacity: 1 }}
-      transition={{ type: "spring", stiffness: 400, damping: 25 }}
+      transition={{ duration: 0.15 }}
       className="canvas-node"
       style={{
         position: "absolute",
@@ -631,64 +631,53 @@ function CanvasNode({
       onMouseUp={onDragEnd}
     >
       <div
-        className="rounded-2xl transition-all duration-200"
+        className="rounded-lg transition-all duration-100 flex flex-col overflow-hidden"
         style={{
-          background: "rgba(10,12,20,0.92)",
-          border: `1.5px solid ${selected ? cfg.color : "rgba(255,255,255,0.08)"}`,
-          boxShadow: isDragging
-            ? `0 24px 40px -8px rgba(0,0,0,0.6), 0 0 50px ${cfg.glow}`
-            : selected
-              ? `0 0 0 2px ${cfg.color}50, 0 0 40px ${cfg.glow}, 0 8px 24px rgba(0,0,0,0.5)`
-              : `0 0 20px ${cfg.glow}, 0 4px 16px rgba(0,0,0,0.4)`,
-          width: 160,
-          minHeight: 72,
-          backdropFilter: "blur(16px)",
-          transform: isDragging ? "scale(1.06) translateY(-6px) rotate(1deg)" : "scale(1)",
+          background: "#1E222B", // n8n dark mode style body
+          border: `1px solid ${selected ? "#FF6E4A" : "#303440"}`, // n8n uses orange for selection
+          boxShadow: selected ? "0 0 0 1px #FF6E4A" : "0 2px 5px rgba(0,0,0,0.2)",
+          width: 200,
+          minHeight: 70,
+          transform: isDragging ? "scale(1.02) translateY(-2px)" : "scale(1)",
         }}
       >
-        {/* Colored top bar */}
-        <div className="h-1 rounded-t-2xl" style={{ background: `linear-gradient(90deg, ${cfg.color}, ${cfg.color}80)` }} />
-
-        {/* Content */}
-        <div className="px-3 py-2.5">
-          <div className="flex items-center gap-2 mb-1.5">
-            <div
-              className="w-6 h-6 rounded-lg flex items-center justify-center shrink-0"
-              style={{ background: cfg.color + "20", border: `1px solid ${cfg.color}30` }}
-            >
-              {cfg.isCustomIcon ? (
-                <Icon size={11} color={cfg.color} />
-              ) : (
-                <Icon size={11} style={{ color: cfg.color }} />
-              )}
-            </div>
-            <div className="min-w-0 flex-1">
-              <p className="text-[8.5px] font-bold text-white/35 uppercase tracking-widest leading-none mb-0.5 truncate">{cfg.label}</p>
-              <p className="text-[11.5px] font-bold text-white leading-tight truncate max-w-[105px]">{node.label}</p>
-            </div>
+        {/* n8n Style Header */}
+        <div className="flex items-center gap-2 px-3 py-2 border-b border-[#303440] bg-[#252A33]">
+          <div
+            className="w-5 h-5 rounded flex items-center justify-center shrink-0"
+            style={{ background: cfg.color }}
+          >
+            {cfg.isCustomIcon ? (
+              <Icon size={12} color="#ffffff" />
+            ) : (
+              <Icon size={12} style={{ color: "#ffffff" }} />
+            )}
           </div>
+          <p className="text-[12px] font-semibold text-white/90 leading-tight truncate">{node.label || cfg.label}</p>
+        </div>
 
-          {/* Config preview */}
-          {node.config && Object.keys(node.config).length > 0 && (
-            <div className="pt-1.5 border-t border-white/5">
-              {Object.entries(node.config).slice(0, 1).map(([k, v]) => v && (
-                <p key={k} className="text-[9px] text-white/35 truncate max-w-[140px] font-medium">
-                  {String(v).slice(0, 40)}{String(v).length > 40 ? "…" : ""}
-                </p>
-              ))}
-            </div>
+        {/* n8n Style Body / Config preview */}
+        <div className="px-3 py-2.5 bg-[#1E222B] flex-1 flex flex-col justify-center">
+          {node.config && Object.keys(node.config).length > 0 ? (
+            Object.entries(node.config).slice(0, 1).map(([k, v]) => v && (
+              <p key={k} className="text-[10px] text-white/60 truncate w-full font-medium">
+                <span className="opacity-50">{k}:</span> {String(v)}
+              </p>
+            ))
+          ) : (
+            <p className="text-[10px] text-white/40 italic">Double-click to set up</p>
           )}
         </div>
 
-        {/* Output port */}
+        {/* Output port (Right) */}
         <div
-          className={`absolute right-[-7px] top-1/2 -translate-y-1/2 w-3.5 h-3.5 rounded-full border-2 bg-[#0a0c14] z-10 transition-all ${isConnectingSource ? "scale-150 animate-pulse" : ""}`}
-          style={{ borderColor: cfg.color, boxShadow: `0 0 10px ${cfg.color}` }}
+          className={`absolute right-[-5px] top-[60%] -translate-y-1/2 w-[10px] h-[10px] rounded-full border-[1.5px] bg-[#1E222B] z-10 transition-all ${isConnectingSource ? "scale-125" : ""}`}
+          style={{ borderColor: "#6b7280" }}
         />
-        {/* Input port */}
+        {/* Input port (Left) */}
         <div
-          className={`absolute left-[-7px] top-1/2 -translate-y-1/2 w-3.5 h-3.5 rounded-full border-2 bg-[#0a0c14] z-10 transition-all ${isConnectingCandidate ? "scale-150 animate-pulse" : ""}`}
-          style={{ borderColor: isConnectingCandidate ? "#A78BFA" : cfg.color, boxShadow: isConnectingCandidate ? "0 0 12px #A78BFA" : `0 0 10px ${cfg.color}` }}
+          className={`absolute left-[-5px] top-[60%] -translate-y-1/2 w-[10px] h-[10px] rounded-full border-[1.5px] bg-[#1E222B] z-10 transition-all ${isConnectingCandidate ? "scale-125 bg-green-500" : ""}`}
+          style={{ borderColor: isConnectingCandidate ? "#22c55e" : "#6b7280" }}
         />
       </div>
     </motion.div>
@@ -698,46 +687,32 @@ function CanvasNode({
 // ─── Animated Edges ───────────────────────────────────────────────────────────
 function EdgeLayer({ nodes, edges }: { nodes: WorkflowNodeData[]; edges: WorkflowEdge[] }) {
   const nodeMap = Object.fromEntries(nodes.map(n => [n.id, n]));
-  const [dashOffset, setDashOffset] = useState(0);
-
-  useEffect(() => {
-    const id = setInterval(() => setDashOffset(p => p - 1), 30);
-    return () => clearInterval(id);
-  }, []);
 
   return (
     <svg style={{ position: "absolute", inset: 0, pointerEvents: "none", overflow: "visible" }} width="100%" height="100%">
       <defs>
-        {Object.entries(NODE_TYPES).map(([type, cfg]) => (
-          <marker key={type} id={`arrow-${type}`} markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
-            <path d="M0,0 L0,6 L8,3 z" fill={cfg.color} />
-          </marker>
-        ))}
+        <marker id="arrow-n8n" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+          <path d="M0,1 L0,5 L5,3 z" fill="#6b7280" />
+        </marker>
       </defs>
       {edges.map(edge => {
         const from = nodeMap[edge.from];
         const to = nodeMap[edge.to];
         if (!from || !to) return null;
 
-        const x1 = from.x + 166;
-        const y1 = from.y + 40;
-        const x2 = to.x - 7;
-        const y2 = to.y + 40;
+        // n8n node width is 200, output port is at right edge, top 60%
+        const x1 = from.x + 200;
+        const y1 = from.y + 51; // ~60% of 70px height + header
+        const x2 = to.x;
+        const y2 = to.y + 51;
         const cx = (x1 + x2) / 2;
-
-        const typeKey = normaliseType(from.type);
-        const cfg = NODE_TYPES[typeKey] ?? NODE_TYPES["trigger_whatsapp"];
 
         return (
           <g key={edge.id}>
-            {/* Glow shadow */}
+            {/* Main solid n8n style edge */}
             <path d={`M${x1},${y1} C${cx},${y1} ${cx},${y2} ${x2},${y2}`}
-              fill="none" stroke={cfg.color} strokeWidth={8} opacity={0.1} />
-            {/* Main edge */}
-            <path d={`M${x1},${y1} C${cx},${y1} ${cx},${y2} ${x2},${y2}`}
-              fill="none" stroke={cfg.color} strokeWidth={2}
-              strokeDasharray="6 4" strokeDashoffset={dashOffset}
-              opacity={0.75} markerEnd={`url(#arrow-${typeKey})`} />
+              fill="none" stroke="#6b7280" strokeWidth={2}
+              opacity={0.8} markerEnd="url(#arrow-n8n)" />
           </g>
         );
       })}
@@ -769,16 +744,15 @@ function PropertiesPanel({ node, onChange, onDelete, onClose }: {
       animate={{ x: 0, opacity: 1 }}
       exit={{ x: 320, opacity: 0 }}
       transition={{ type: "spring", stiffness: 400, damping: 30 }}
-      className="w-72 shrink-0 rounded-2xl overflow-hidden flex flex-col properties-panel"
+      className="w-80 shrink-0 border-l flex flex-col properties-panel h-full"
       style={{
-        background: "rgba(8,10,18,0.97)",
-        border: `1px solid ${cfg.border}35`,
-        boxShadow: `0 0 50px ${cfg.glow}`,
-        backdropFilter: "blur(24px)",
+        background: "#1E222B",
+        borderColor: "#303440",
+        boxShadow: "-5px 0 30px rgba(0,0,0,0.5)",
       }}
     >
       {/* Header */}
-      <div className="flex items-center justify-between px-4 py-3.5 border-b" style={{ borderColor: cfg.border + "25" }}>
+      <div className="flex items-center justify-between px-5 py-4 border-b border-[#303440] bg-[#252A33]">
         <div className="flex items-center gap-2.5">
           <div className="w-7 h-7 rounded-xl flex items-center justify-center" style={{ background: cfg.color + "20" }}>
             {cfg.isCustomIcon
@@ -839,10 +813,13 @@ function PropertiesPanel({ node, onChange, onDelete, onClose }: {
         ))}
 
         {/* Variables hint */}
-        <div className="bg-blue-500/5 border border-blue-500/15 rounded-xl p-3">
-          <p className="text-[9.5px] font-bold text-blue-400/70 uppercase tracking-wider mb-1">Available Variables</p>
-          <p className="text-[10px] text-white/30 leading-relaxed">
-            {"{{name}} {{phone}} {{email}} {{message}} {{tag}}"}
+        <div className="mt-6 border border-[#FF6E4A]/30 bg-[#FF6E4A]/5 rounded-lg p-3">
+          <p className="text-[10px] font-semibold text-[#FF6E4A] mb-1.5 flex items-center gap-1.5">
+            <Zap size={10} /> Expression Support
+          </p>
+          <p className="text-[11px] text-white/50 leading-relaxed font-mono">
+            {`{{ $json.name }}`} <br />
+            {`{{ $node["Webhook"].output.phone }}`}
           </p>
         </div>
       </div>
@@ -882,10 +859,10 @@ function MiniMap({ nodes, pan, zoom, canvasW, canvasH }: {
 
   return (
     <div
-      className="absolute bottom-6 right-6 rounded-xl overflow-hidden border border-white/8"
-      style={{ background: "rgba(8,10,18,0.9)", width: W + 16, height: H + 16, backdropFilter: "blur(12px)" }}
+      className="absolute bottom-6 right-6 rounded-xl overflow-hidden border border-[#303440]"
+      style={{ background: "#1E222B", width: W + 16, height: H + 16 }}
     >
-      <p className="text-[8px] font-bold text-white/25 uppercase tracking-widest px-2 pt-1.5">Mini Map</p>
+      <p className="text-[8px] font-bold text-white/40 uppercase tracking-widest px-2 pt-1.5">Mini Map</p>
       <svg width={W} height={H} style={{ display: "block", margin: "0 auto" }}>
         {nodes.map(n => {
           const typeKey = normaliseType(n.type);
@@ -1173,7 +1150,7 @@ export default function WorkflowCanvas({ workflowId, initialData, workflowName =
       {/* ── Left Sidebar ─────────────────────────────────────────────────── */}
       <div
         className="w-[220px] shrink-0 border-r flex flex-col p-3 z-20 relative"
-        style={{ background: "rgba(8,10,18,0.95)", borderColor: "rgba(255,255,255,0.05)", backdropFilter: "blur(20px)" }}
+        style={{ background: "#1E222B", borderColor: "#303440" }}
       >
         {/* Logo */}
         <div className="flex items-center gap-2 mb-4 px-1">
@@ -1208,7 +1185,7 @@ export default function WorkflowCanvas({ workflowId, initialData, workflowName =
         {/* Top Toolbar */}
         <div
           className="h-14 shrink-0 flex items-center justify-between px-5 border-b z-20 relative"
-          style={{ background: "rgba(8,10,18,0.97)", borderColor: "rgba(255,255,255,0.05)" }}
+          style={{ background: "#1E222B", borderColor: "#303440" }}
         >
           <div className="flex items-center gap-3">
             {onBack && (

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { ArrowUp, Plus, Mic, ChevronDown, RefreshCw, Paperclip } from "lucide-react";
+import { ArrowUp, Plus, Mic, ChevronDown, RefreshCw, Paperclip, Edit2, Sparkles } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const EXAMPLES = [
@@ -124,20 +124,22 @@ export function PromptBox({ onGenerate, compact, staticPlaceholder, onSubmitProm
     <div className={`w-full ${compact ? "max-w-xl" : "max-w-3xl"} mx-auto text-left relative z-10`}>
       <div className="rounded-[32px] border border-zinc-200 bg-white p-2 hover:border-zinc-300 transition-all shadow-[0_8px_30px_rgb(0,0,0,0.04)] relative group/box">
         {onModeChange && (
-          <div className="flex items-center gap-2 px-4 sm:px-6 pt-2 pb-1 border-b border-zinc-100/50 mb-2">
+          <div className="flex items-center gap-2 px-4 sm:px-6 pt-3 pb-2 border-b border-zinc-100/60 mb-2">
             <button 
               type="button"
               onClick={() => onModeChange("edit")}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[13px] font-bold transition-all ${mode === "edit" ? "bg-[#0A6BFF]/10 text-[#0A6BFF]" : "text-zinc-500 hover:bg-zinc-100"}`}
+              className={`flex items-center gap-2 px-3.5 py-1.5 rounded-full text-[12.5px] font-semibold tracking-wide transition-all ${mode === "edit" ? "bg-[#0A6BFF]/10 text-[#0A6BFF] shadow-sm" : "text-zinc-500 hover:bg-zinc-100 hover:text-zinc-700"}`}
             >
-              <span className="text-[14px]">✏️</span> Editing: {automationName || "Current Automation"}
+              <Edit2 className="w-3.5 h-3.5" /> 
+              <span>Editing: {automationName || "Current Automation"}</span>
             </button>
             <button 
               type="button"
               onClick={() => onModeChange("new")}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[13px] font-bold transition-all ${mode === "new" ? "bg-zinc-900 text-white" : "text-zinc-500 hover:bg-zinc-100"}`}
+              className={`flex items-center gap-2 px-3.5 py-1.5 rounded-full text-[12.5px] font-semibold tracking-wide transition-all ${mode === "new" ? "bg-zinc-900 text-white shadow-sm" : "text-zinc-500 hover:bg-zinc-100 hover:text-zinc-700"}`}
             >
-              <span className="text-[14px]">✨</span> New Automation
+              <Sparkles className="w-3.5 h-3.5" />
+              <span>New Automation</span>
             </button>
           </div>
         )}

@@ -171,7 +171,8 @@ export function OnboardingWizard() {
           )}
         </div>
       </motion.div>
-    </motion.div>
+    </motion.div>,
+    document.body
   );
 }
 

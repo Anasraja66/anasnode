@@ -71,6 +71,7 @@ class WorkflowSchedulerService {
       accountId: workflow.accountId,
       contactId: execution.contactId,
       variables: JSON.parse(execution.output || "{}"),
+      nodeData: {}, // Hydrated on-demand if resuming mid-flow
       anamind: {
         name: "Customer",
         phone: "+1234567890"

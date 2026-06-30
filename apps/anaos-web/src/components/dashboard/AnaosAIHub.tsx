@@ -135,7 +135,7 @@ export function AnaosAIHub({ ws }: { ws: Workspace }) {
           </p>
         </div>
         <div
-          className="flex rounded-2xl border border-zinc-200/50 bg-white/50 backdrop-blur-md p-1.5 shrink-0 shadow-sm"
+          className="flex rounded-2xl border border-zinc-200/50 bg-zinc-100/50 p-1.5 shrink-0 shadow-inner"
           role="tablist"
         >
           <button
@@ -143,9 +143,9 @@ export function AnaosAIHub({ ws }: { ws: Workspace }) {
             role="tab"
             aria-selected={mode === "simple"}
             onClick={() => setMode("simple")}
-            className={`px-5 py-2 rounded-xl text-[13px] transition-all cursor-pointer font-bold uppercase tracking-wider ${
+            className={`px-5 py-2 rounded-xl text-[13px] transition-all cursor-pointer font-semibold uppercase tracking-wider ${
               mode === "simple"
-                ? "bg-zinc-900 text-white shadow-lg shadow-zinc-200"
+                ? "bg-white text-[#0A6BFF] shadow-[0_2px_8px_rgb(0,0,0,0.04)]"
                 : "text-zinc-500 hover:text-zinc-900"
             }`}
           >
@@ -156,9 +156,9 @@ export function AnaosAIHub({ ws }: { ws: Workspace }) {
             role="tab"
             aria-selected={mode === "developer"}
             onClick={() => setMode("developer")}
-            className={`px-5 py-2 rounded-xl text-[13px] transition-all cursor-pointer font-bold uppercase tracking-wider ${
+            className={`px-5 py-2 rounded-xl text-[13px] transition-all cursor-pointer font-semibold uppercase tracking-wider ${
               mode === "developer"
-                ? "bg-zinc-900 text-white shadow-lg shadow-zinc-200"
+                ? "bg-white text-[#0A6BFF] shadow-[0_2px_8px_rgb(0,0,0,0.04)]"
                 : "text-zinc-500 hover:text-zinc-900"
             }`}
           >
@@ -264,19 +264,19 @@ export function AnaosAIHub({ ws }: { ws: Workspace }) {
         </div>
 
         <div className="lg:col-span-5 flex justify-center">
-          <div className="w-full max-w-[340px] rounded-[3rem] border-[12px] border-zinc-950 bg-white shadow-2xl overflow-hidden flex flex-col h-[560px] relative ring-1 ring-zinc-200">
-            <div className="bg-zinc-950 text-white px-6 py-5">
-              <p className="text-[15px] font-bold tracking-tight leading-tight">{ws.name}</p>
-              <p className="text-[11px] text-zinc-400 font-bold uppercase tracking-[0.2em] mt-1">Live Preview</p>
+          <div className="w-full max-w-[340px] rounded-[3rem] border-[10px] border-zinc-100 bg-white shadow-[0_8px_30px_rgb(0,0,0,0.06)] overflow-hidden flex flex-col h-[560px] relative ring-1 ring-zinc-200">
+            <div className="bg-[#0A6BFF] text-white px-6 py-5 shadow-sm relative z-10">
+              <p className="text-[15px] font-semibold tracking-tight leading-tight">{ws.name}</p>
+              <p className="text-[11px] text-blue-100 font-medium uppercase tracking-[0.2em] mt-1">Live Preview</p>
             </div>
-            <div className="flex-1 bg-zinc-50/50 p-4 overflow-y-auto space-y-3 flex flex-col">
+            <div className="flex-1 bg-zinc-50/80 p-4 overflow-y-auto space-y-3 flex flex-col relative">
               {previewMessages.map((msg, i) => (
                 <div
                   key={i}
                   className={`max-w-[85%] rounded-[20px] px-4 py-3 text-[14px] font-medium leading-relaxed shadow-sm ${
                     msg.role === "bot"
                       ? "bg-white text-zinc-800 self-start border border-zinc-100 rounded-tl-none"
-                      : "bg-zinc-900 text-white self-end rounded-tr-none"
+                      : "bg-[#0A6BFF] text-white self-end rounded-tr-none"
                   }`}
                 >
                   {msg.text}

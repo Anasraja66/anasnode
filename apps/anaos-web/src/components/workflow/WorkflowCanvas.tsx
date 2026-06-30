@@ -9,7 +9,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   Zap, GitBranch, Bot, MessageSquare, Clock, Globe, Tag, Square,
   Play, ZoomIn, ZoomOut, Trash2, ChevronRight, X,
-  ArrowLeft, Loader2, Sliders, ChevronDown,
+  ArrowLeft, Loader2, Sliders, ChevronDown, Plus,
   Phone, Mail, Database, Star, UserPlus, Send, Bell, Filter,
   Search, Map, LayoutGrid, Sparkles, CheckCircle2, Repeat,
 } from "lucide-react";
@@ -631,53 +631,48 @@ function CanvasNode({
       onMouseUp={onDragEnd}
     >
       <div
-        className="rounded-lg transition-all duration-100 flex flex-col overflow-hidden"
+        className="transition-all duration-100 flex items-center bg-white"
         style={{
-          background: "#1E222B", // n8n dark mode style body
-          border: `1px solid ${selected ? "#FF6E4A" : "#303440"}`, // n8n uses orange for selection
-          boxShadow: selected ? "0 0 0 1px #FF6E4A" : "0 2px 5px rgba(0,0,0,0.2)",
+          borderRadius: "8px",
+          border: `1px solid ${selected ? "#FF6E4A" : "#E5E7EB"}`,
+          boxShadow: selected ? "0 0 0 1px #FF6E4A, 0 4px 6px -1px rgba(0, 0, 0, 0.1)" : "0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1)",
           width: 200,
-          minHeight: 70,
+          minHeight: 50,
           transform: isDragging ? "scale(1.02) translateY(-2px)" : "scale(1)",
         }}
       >
-        {/* n8n Style Header */}
-        <div className="flex items-center gap-2 px-3 py-2 border-b border-[#303440] bg-[#252A33]">
+        {/* Input port (Left) */}
+        <div
+          className={`absolute left-[-5px] top-[50%] -translate-y-1/2 w-[10px] h-[10px] rounded border bg-white z-10 transition-all ${isConnectingCandidate ? "scale-125 bg-green-500" : ""}`}
+          style={{ borderColor: isConnectingCandidate ? "#22c55e" : "#9CA3AF" }}
+        />
+
+        {/* Icon & Label */}
+        <div className="flex items-center gap-3 px-3 py-3 w-full">
           <div
-            className="w-5 h-5 rounded flex items-center justify-center shrink-0"
+            className="w-8 h-8 rounded flex items-center justify-center shrink-0"
             style={{ background: cfg.color }}
           >
             {cfg.isCustomIcon ? (
-              <Icon size={12} color="#ffffff" />
+              <Icon size={16} color="#ffffff" />
             ) : (
-              <Icon size={12} style={{ color: "#ffffff" }} />
+              <Icon size={16} style={{ color: "#ffffff" }} />
             )}
           </div>
-          <p className="text-[12px] font-semibold text-white/90 leading-tight truncate">{node.label || cfg.label}</p>
-        </div>
-
-        {/* n8n Style Body / Config preview */}
-        <div className="px-3 py-2.5 bg-[#1E222B] flex-1 flex flex-col justify-center">
-          {node.config && Object.keys(node.config).length > 0 ? (
-            Object.entries(node.config).slice(0, 1).map(([k, v]) => v && (
-              <p key={k} className="text-[10px] text-white/60 truncate w-full font-medium">
-                <span className="opacity-50">{k}:</span> {String(v)}
+          <div className="flex flex-col truncate w-full">
+            <p className="text-[13px] font-semibold text-gray-800 leading-tight truncate">{node.label || cfg.label}</p>
+            {node.config && Object.keys(node.config).length > 0 && (
+              <p className="text-[10px] text-gray-400 truncate mt-0.5">
+                {Object.values(node.config).find(v => v) || "Configured"}
               </p>
-            ))
-          ) : (
-            <p className="text-[10px] text-white/40 italic">Double-click to set up</p>
-          )}
+            )}
+          </div>
         </div>
 
         {/* Output port (Right) */}
         <div
-          className={`absolute right-[-5px] top-[60%] -translate-y-1/2 w-[10px] h-[10px] rounded-full border-[1.5px] bg-[#1E222B] z-10 transition-all ${isConnectingSource ? "scale-125" : ""}`}
-          style={{ borderColor: "#6b7280" }}
-        />
-        {/* Input port (Left) */}
-        <div
-          className={`absolute left-[-5px] top-[60%] -translate-y-1/2 w-[10px] h-[10px] rounded-full border-[1.5px] bg-[#1E222B] z-10 transition-all ${isConnectingCandidate ? "scale-125 bg-green-500" : ""}`}
-          style={{ borderColor: isConnectingCandidate ? "#22c55e" : "#6b7280" }}
+          className={`absolute right-[-5px] top-[50%] -translate-y-1/2 w-[10px] h-[10px] rounded border bg-white z-10 transition-all ${isConnectingSource ? "scale-125" : ""}`}
+          style={{ borderColor: "#9CA3AF" }}
         />
       </div>
     </motion.div>
@@ -691,8 +686,8 @@ function EdgeLayer({ nodes, edges }: { nodes: WorkflowNodeData[]; edges: Workflo
   return (
     <svg style={{ position: "absolute", inset: 0, pointerEvents: "none", overflow: "visible" }} width="100%" height="100%">
       <defs>
-        <marker id="arrow-n8n" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
-          <path d="M0,1 L0,5 L5,3 z" fill="#6b7280" />
+        <marker id="arrow-n8n" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+          <path d="M0,2 L0,8 L8,5 z" fill="#9CA3AF" />
         </marker>
       </defs>
       {edges.map(edge => {
@@ -700,18 +695,18 @@ function EdgeLayer({ nodes, edges }: { nodes: WorkflowNodeData[]; edges: Workflo
         const to = nodeMap[edge.to];
         if (!from || !to) return null;
 
-        // n8n node width is 200, output port is at right edge, top 60%
+        // n8n style edges are bezier curves connecting middle-right to middle-left
         const x1 = from.x + 200;
-        const y1 = from.y + 51; // ~60% of 70px height + header
+        const y1 = from.y + 25; // 50% of 50px height
         const x2 = to.x;
-        const y2 = to.y + 51;
+        const y2 = to.y + 25;
         const cx = (x1 + x2) / 2;
 
         return (
           <g key={edge.id}>
-            {/* Main solid n8n style edge */}
             <path d={`M${x1},${y1} C${cx},${y1} ${cx},${y2} ${x2},${y2}`}
-              fill="none" stroke="#6b7280" strokeWidth={2}
+              fill="none" stroke="#9CA3AF" strokeWidth={2.5}
+              strokeDasharray="5, 5" // Dashed line for n8n execution style
               opacity={0.8} markerEnd="url(#arrow-n8n)" />
           </g>
         );
@@ -1004,6 +999,9 @@ export default function WorkflowCanvas({ workflowId, initialData, workflowName =
   const [panStart, setPanStart] = useState({ x: 0, y: 0 });
   const [search, setSearch] = useState("");
   const [canvasSize, setCanvasSize] = useState({ w: 0, h: 0 });
+  const [aiModalOpen, setAiModalOpen] = useState(false);
+  const [aiPrompt, setAiPrompt] = useState("");
+  const [isGenerating, setIsGenerating] = useState(false);
   const canvasRef = useRef<HTMLDivElement>(null);
   const selectedNodeData = nodes.find(n => n.id === selectedNode) || null;
 
@@ -1123,6 +1121,35 @@ export default function WorkflowCanvas({ workflowId, initialData, workflowName =
     }
   };
 
+  // Generate with AI
+  const handleGenerateAI = async () => {
+    if (!aiPrompt.trim()) return;
+    setIsGenerating(true);
+    try {
+      const res = await fetch("/api/workflows/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompt: aiPrompt })
+      });
+      const data = await res.json();
+      if (data.nodes && data.edges) {
+        setNodes(data.nodes.map((n: any) => dbNodeToCanvas(n)));
+        setEdges(data.edges.map((e: any) => ({
+          id: `edge-${e.source}-${e.target}`,
+          from: e.source,
+          to: e.target,
+          label: e.label
+        })));
+        setAiModalOpen(false);
+        setAiPrompt("");
+      }
+    } catch (e) {
+      console.error("AI Generation failed:", e);
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
   // Zoom with scroll
   const handleWheel = useCallback((e: React.WheelEvent) => {
     e.preventDefault();
@@ -1133,24 +1160,20 @@ export default function WorkflowCanvas({ workflowId, initialData, workflowName =
   const edgeCount = edges.length;
 
   return (
-    <div className="flex h-screen overflow-hidden" style={{ background: "#080A12", fontFamily: "'Inter', system-ui, sans-serif" }}>
+    <div className="flex h-screen overflow-hidden" style={{ background: "#FAFAFA", fontFamily: "'Inter', system-ui, sans-serif" }}>
 
       {/* Background grid */}
       <div className="absolute inset-0 pointer-events-none" style={{
         backgroundImage: `
-          radial-gradient(ellipse at 15% 25%, rgba(37,211,102,0.03) 0%, transparent 50%),
-          radial-gradient(ellipse at 85% 75%, rgba(24,119,242,0.03) 0%, transparent 50%),
-          radial-gradient(ellipse at 50% 50%, rgba(225,48,108,0.02) 0%, transparent 60%),
-          linear-gradient(rgba(255,255,255,0.012) 1px, transparent 1px),
-          linear-gradient(90deg, rgba(255,255,255,0.012) 1px, transparent 1px)
+          radial-gradient(#E5E7EB 1.5px, transparent 1.5px)
         `,
-        backgroundSize: "100% 100%, 100% 100%, 100% 100%, 28px 28px, 28px 28px",
+        backgroundSize: "20px 20px",
       }} />
 
       {/* ── Left Sidebar ─────────────────────────────────────────────────── */}
       <div
-        className="w-[220px] shrink-0 border-r flex flex-col p-3 z-20 relative"
-        style={{ background: "#1E222B", borderColor: "#303440" }}
+        className="w-[240px] shrink-0 border-r flex flex-col p-3 z-20 relative"
+        style={{ background: "#0F172A", borderColor: "#1E293B" }}
       >
         {/* Logo */}
         <div className="flex items-center gap-2 mb-4 px-1">
@@ -1262,18 +1285,79 @@ export default function WorkflowCanvas({ workflowId, initialData, workflowName =
             onClick={() => { if (!connecting) setSelectedNode(null); }}
             style={{ cursor: isPanning ? "grabbing" : connecting ? "crosshair" : "default" }}
           >
-            {/* Empty state */}
+            {/* Empty state (n8n style) */}
             {nodes.length === 0 && (
-              <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                <div className="text-center">
-                  <div className="w-16 h-16 rounded-2xl bg-white/3 border border-white/8 flex items-center justify-center mx-auto mb-4">
-                    <Sparkles size={24} className="text-white/20" />
-                  </div>
-                  <p className="text-[15px] font-bold text-white/20">Drag nodes from the left panel</p>
-                  <p className="text-[12px] text-white/10 font-medium mt-1">or use AI to generate your workflow</p>
+              <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
+                <div className="flex items-center gap-6 bg-[#FAFAFA]/80 backdrop-blur-sm p-8 rounded-2xl pointer-events-auto shadow-sm">
+                  <button 
+                    onClick={() => {}} 
+                    className="flex flex-col items-center justify-center w-[120px] h-[120px] bg-white border border-dashed border-gray-300 rounded-xl hover:border-orange-500 hover:text-orange-500 transition-colors cursor-pointer group"
+                  >
+                    <div className="text-gray-400 group-hover:text-orange-500 mb-2">
+                      <Plus size={24} />
+                    </div>
+                    <span className="text-xs font-semibold text-gray-500 group-hover:text-orange-500">Add first step...</span>
+                  </button>
+
+                  <span className="text-sm font-medium text-gray-400">or</span>
+
+                  <button 
+                    onClick={() => setAiModalOpen(true)}
+                    className="flex flex-col items-center justify-center w-[120px] h-[120px] bg-white border border-dashed border-gray-300 rounded-xl hover:border-purple-500 hover:text-purple-500 transition-colors cursor-pointer group shadow-[0_0_15px_rgba(168,85,247,0.1)]"
+                  >
+                    <div className="text-purple-400 group-hover:text-purple-500 mb-2">
+                      <Sparkles size={24} />
+                    </div>
+                    <span className="text-xs font-semibold text-gray-500 group-hover:text-purple-500">Build with AI</span>
+                  </button>
                 </div>
               </div>
             )}
+
+            {/* AI Modal Overlay */}
+            <AnimatePresence>
+              {aiModalOpen && (
+                <motion.div 
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 20 }}
+                  className="absolute bottom-8 right-8 w-[380px] bg-white rounded-2xl shadow-[0_10px_40px_rgba(0,0,0,0.1)] border border-gray-200 overflow-hidden z-50 flex flex-col"
+                >
+                  <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100 bg-gray-50/50">
+                    <div className="flex items-center gap-2">
+                      <Sparkles size={16} className="text-purple-500" />
+                      <span className="text-sm font-bold text-gray-800">AnaOS AI</span>
+                    </div>
+                    <button onClick={() => setAiModalOpen(false)} className="text-gray-400 hover:text-gray-600">
+                      <X size={16} />
+                    </button>
+                  </div>
+                  <div className="p-4 bg-white">
+                    <textarea
+                      value={aiPrompt}
+                      onChange={e => setAiPrompt(e.target.value)}
+                      placeholder="What would you like to build? (e.g., Create a customer support bot)"
+                      className="w-full h-24 text-sm text-gray-700 bg-transparent resize-none focus:outline-none placeholder:text-gray-400"
+                      autoFocus
+                    />
+                  </div>
+                  <div className="flex items-center justify-between px-4 py-3 bg-gray-50 border-t border-gray-100">
+                    <span className="text-xs text-gray-400 font-medium flex items-center gap-1">
+                      {isGenerating ? <Loader2 size={12} className="animate-spin text-purple-500" /> : <Bot size={12} />}
+                      {isGenerating ? "Thinking..." : "AI Agent"}
+                    </span>
+                    <button
+                      onClick={handleGenerateAI}
+                      disabled={isGenerating || !aiPrompt.trim()}
+                      className="bg-orange-500 text-white px-4 py-1.5 rounded-lg text-xs font-bold hover:bg-orange-600 disabled:opacity-50 transition-colors cursor-pointer flex items-center gap-2"
+                    >
+                      {isGenerating ? "Generating..." : "Generate"}
+                      <ChevronRight size={12} />
+                    </button>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
 
             {/* Transformed layer */}
             <div

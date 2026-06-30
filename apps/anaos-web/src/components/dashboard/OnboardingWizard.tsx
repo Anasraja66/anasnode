@@ -3,7 +3,8 @@
 import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { MessageSquare as Facebook, Camera as Instagram, MessageCircle, ArrowRight, CheckCircle2 } from "lucide-react";
+import { ArrowRight, CheckCircle2 } from "lucide-react";
+import { FaWhatsapp, FaInstagram, FaFacebookMessenger } from "react-icons/fa";
 import { MetaEmbeddedSignup } from "@/components/integrations/MetaEmbeddedSignup";
 
 export function OnboardingWizard() {
@@ -87,9 +88,9 @@ export function OnboardingWizard() {
 
                   <div className="grid grid-cols-1 gap-3 w-full max-w-md mx-auto">
                     {[
-                      { id: "whatsapp" as const, name: "WhatsApp Business", icon: MessageCircle, color: "text-[#25D366]", bg: "bg-[#25D366]/10", border: "border-[#25D366]" },
-                      { id: "instagram" as const, name: "Instagram DM", icon: Instagram, color: "text-[#E4405F]", bg: "bg-[#E4405F]/10", border: "border-[#E4405F]" },
-                      { id: "facebook" as const, name: "Facebook Messenger", icon: Facebook, color: "text-[#1877F2]", bg: "bg-[#1877F2]/10", border: "border-[#1877F2]" },
+                      { id: "whatsapp" as const, name: "WhatsApp Business", icon: FaWhatsapp, color: "text-[#25D366]", bg: "bg-[#25D366]/10", border: "border-[#25D366]" },
+                      { id: "instagram" as const, name: "Instagram DM", icon: FaInstagram, color: "text-[#E4405F]", bg: "bg-[#E4405F]/10", border: "border-[#E4405F]" },
+                      { id: "facebook" as const, name: "Facebook Messenger", icon: FaFacebookMessenger, color: "text-[#1877F2]", bg: "bg-[#1877F2]/10", border: "border-[#1877F2]" },
                     ].map((c) => {
                       const isSelected = selectedChannels.includes(c.id);
                       return (

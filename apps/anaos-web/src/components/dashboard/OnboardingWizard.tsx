@@ -75,12 +75,7 @@ export function OnboardingWizard() {
                   transition={{ duration: 0.3 }}
                   className="flex flex-col items-center text-center"
                 >
-                  <div className="w-16 h-16 bg-gradient-to-tr from-sky-400 to-indigo-500 rounded-2xl flex items-center justify-center mb-6 shadow-lg">
-                    <svg viewBox="0 0 24 24" fill="none" className="w-8 h-8 text-white">
-                      <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                      <path d="M8 12L11 15L16 9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    </svg>
-                  </div>
+
                   <h2 className="text-2xl font-extrabold text-zinc-900 mb-2">Where would you like to start?</h2>
                   <p className="text-zinc-500 mb-8 max-w-sm">
                     Connect your business channels to enable Anaos AI to reply to your customers automatically.

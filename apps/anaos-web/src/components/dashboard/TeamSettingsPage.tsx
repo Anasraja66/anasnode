@@ -224,7 +224,7 @@ export default function TeamSettingsPage() {
                         <td className="px-6 py-4">
                           <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold uppercase tracking-wider ${
                             member.role === "owner" 
-                              ? "bg-zinc-900 text-white" 
+                              ? "bg-[#0A6BFF] hover:bg-blue-600 text-white shadow-sm" 
                               : member.role === "admin" 
                               ? "bg-blue-50 text-blue-700" 
                               : "bg-zinc-100 text-zinc-700"
@@ -431,7 +431,7 @@ export default function TeamSettingsPage() {
                       className={`px-3 py-1.5 rounded-lg text-[11px] font-bold transition-all cursor-pointer ${
                         copied 
                           ? "bg-emerald-600 text-white" 
-                          : "bg-zinc-900 hover:bg-zinc-800 text-white shadow-sm"
+                          : "bg-[#0A6BFF] hover:bg-blue-600 text-white shadow-sm shadow-sm"
                       }`}
                     >
                       {copied ? "Copied!" : "Copy Link"}

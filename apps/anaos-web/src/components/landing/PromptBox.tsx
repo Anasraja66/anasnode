@@ -136,7 +136,7 @@ export function PromptBox({ onGenerate, compact, staticPlaceholder, onSubmitProm
             <button 
               type="button"
               onClick={() => onModeChange("new")}
-              className={`flex items-center gap-2 px-3.5 py-1.5 rounded-full text-[12.5px] font-semibold tracking-wide transition-all ${mode === "new" ? "bg-zinc-900 text-white shadow-sm" : "text-zinc-500 hover:bg-zinc-100 hover:text-zinc-700"}`}
+              className={`flex items-center gap-2 px-3.5 py-1.5 rounded-full text-[12.5px] font-semibold tracking-wide transition-all ${mode === "new" ? "bg-[#0A6BFF] hover:bg-blue-600 text-white shadow-sm shadow-sm" : "text-zinc-500 hover:bg-zinc-100 hover:text-zinc-700"}`}
             >
               <Sparkles className="w-3.5 h-3.5" />
               <span>New Automation</span>

@@ -333,7 +333,7 @@ function DashboardHome({ ws, preset, roiMetrics }: { ws: Workspace; preset: Indu
                     </button>
                     <button 
                       onClick={() => window.dispatchEvent(new Event("anaos-open-onboarding"))}
-                      className="bg-zinc-900 hover:bg-zinc-800 text-white text-[12px] font-semibold px-4 py-1.5 rounded-lg transition-all shadow-sm font-sans"
+                      className="bg-[#0A6BFF] hover:bg-blue-600 text-white shadow-sm text-[12px] font-semibold px-4 py-1.5 rounded-lg transition-all shadow-sm font-sans"
                     >
                       Connect
                     </button>
@@ -893,7 +893,7 @@ function Topbar({ title, ws, preset, waStatus, integrations, onMenuClick }: {
 
       {/* Global OS Alert Banner (Only shows when there's an issue) */}
       {hasIssue && (
-        <div className="bg-zinc-950 text-white px-5 py-2 flex items-center justify-between z-50 animate-in slide-in-from-top duration-300">
+        <div className="bg-[#0A6BFF] text-white shadow-sm px-5 py-2 flex items-center justify-between z-50 animate-in slide-in-from-top duration-300">
           <div className="flex items-center gap-3">
             <div className="w-2 h-2 rounded-full bg-rose-500 animate-pulse shrink-0" />
             <p className="text-[12.5px] font-medium tracking-tight">
@@ -1555,7 +1555,7 @@ function AutomationsPage({ ws, integrations, toggleAutomation, toggleLoading }: 
           </div>
           <a
             href="/dashboard/integrations"
-            className="shrink-0 inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-white text-[12.5px] font-semibold transition-colors shadow-sm whitespace-nowrap"
+            className="shrink-0 inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#0A6BFF] hover:bg-blue-600 text-white shadow-sm text-[12.5px] font-semibold transition-colors shadow-sm whitespace-nowrap"
           >
             Connect now <ArrowRight className="w-3.5 h-3.5" />
           </a>
@@ -1865,7 +1865,7 @@ export default function Dashboard() {
           <button
             type="button"
             onClick={() => window.location.reload()}
-            className="h-9 px-4 rounded-md bg-zinc-900 text-white text-[13px] font-medium"
+            className="h-9 px-4 rounded-md bg-[#0A6BFF] hover:bg-blue-600 text-white shadow-sm text-[13px] font-medium"
           >
             Retry
           </button>

@@ -130,7 +130,7 @@ export function OnboardingWizard() {
                   <button
                     disabled={selectedChannels.length === 0}
                     onClick={() => setStep(2)}
-                    className="mt-8 w-full max-w-md h-12 bg-zinc-900 text-white font-bold rounded-xl flex items-center justify-center gap-2 transition-all hover:bg-zinc-800 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="mt-8 w-full max-w-md h-12 bg-[#0A6BFF] hover:bg-blue-600 text-white shadow-sm font-bold rounded-xl flex items-center justify-center gap-2 transition-all hover:bg-zinc-800 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     Next Step <ArrowRight className="w-4 h-4" />
                   </button>

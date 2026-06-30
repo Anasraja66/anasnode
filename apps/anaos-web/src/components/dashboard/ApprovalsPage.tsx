@@ -154,7 +154,7 @@ export function ApprovalsPage() {
                   <button
                     onClick={() => handleApprove(action.id)}
                     disabled={actioningId === action.id}
-                    className="flex-1 bg-zinc-900 hover:bg-zinc-800 text-white py-2 rounded-xl text-sm font-bold transition-all active:scale-[0.98] flex items-center justify-center gap-2"
+                    className="flex-1 bg-[#0A6BFF] hover:bg-blue-600 text-white shadow-sm py-2 rounded-xl text-sm font-bold transition-all active:scale-[0.98] flex items-center justify-center gap-2"
                   >
                     {actioningId === action.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />}
                     Approve

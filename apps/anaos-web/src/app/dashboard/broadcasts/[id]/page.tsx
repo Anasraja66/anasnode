@@ -210,7 +210,7 @@ export default function BroadcastEditorPage() {
             type="button"
             onClick={sendNow}
             disabled={sending}
-            className="h-9 px-4 rounded-md bg-zinc-900 text-white text-[13px] font-medium disabled:opacity-40 cursor-pointer"
+            className="h-9 px-4 rounded-md bg-[#0A6BFF] hover:bg-blue-600 text-white shadow-sm text-[13px] font-medium disabled:opacity-40 cursor-pointer"
           >
             {sending ? "Sending…" : "Send now"}
           </button>
@@ -316,14 +316,14 @@ export default function BroadcastEditorPage() {
         <button
           type="button"
           onClick={() => setDevMode(false)}
-          className={`px-3 py-1 rounded-md border ${!devMode ? "border-zinc-800 bg-zinc-900 text-white" : "border-zinc-200 text-zinc-600"}`}
+          className={`px-3 py-1 rounded-md border ${!devMode ? "border-zinc-800 bg-[#0A6BFF] hover:bg-blue-600 text-white shadow-sm" : "border-zinc-200 text-zinc-600"}`}
         >
           Owner view
         </button>
         <button
           type="button"
           onClick={() => setDevMode(true)}
-          className={`px-3 py-1 rounded-md border ${devMode ? "border-zinc-800 bg-zinc-900 text-white" : "border-zinc-200 text-zinc-600"}`}
+          className={`px-3 py-1 rounded-md border ${devMode ? "border-zinc-800 bg-[#0A6BFF] hover:bg-blue-600 text-white shadow-sm" : "border-zinc-200 text-zinc-600"}`}
         >
           Developer
         </button>

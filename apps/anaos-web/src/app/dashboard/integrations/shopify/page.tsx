@@ -90,7 +90,7 @@ export default function ShopifyConnectPage() {
             type="button"
             disabled={saving}
             onClick={save}
-            className="w-full py-3 rounded-xl bg-zinc-900 text-white font-bold flex justify-center gap-2"
+            className="w-full py-3 rounded-xl bg-[#0A6BFF] hover:bg-blue-600 text-white shadow-sm font-bold flex justify-center gap-2"
           >
             {saving && <Loader2 className="w-4 h-4 animate-spin" />}
             Connect Shopify

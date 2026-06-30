@@ -46,7 +46,7 @@ export default function WhatsAppSetupPage() {
             </p>
             <Link
               href="/dashboard"
-              className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-zinc-900 text-white font-bold text-[14px] hover:bg-zinc-800 transition-all hover:shadow-md"
+              className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-[#0A6BFF] hover:bg-blue-600 text-white shadow-sm font-bold text-[14px] hover:bg-zinc-800 transition-all hover:shadow-md"
             >
               Back to Dashboard <ArrowRight className="w-4 h-4" />
             </Link>

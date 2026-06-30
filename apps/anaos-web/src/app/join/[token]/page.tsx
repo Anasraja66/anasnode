@@ -78,7 +78,7 @@ export default function JoinTeamPage({ params }: { params: { token: string } }) 
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(59,130,246,0.08)_0%,transparent_70%)]" />
         <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:32px_32px] opacity-20" />
         <div className="z-10 flex flex-col items-center gap-4">
-          <div className="w-12 h-12 rounded-2xl bg-zinc-900 border border-zinc-800 flex items-center justify-center animate-pulse">
+          <div className="w-12 h-12 rounded-2xl bg-white border border-zinc-200 flex items-center shadow-sm justify-center animate-pulse">
             <Zap className="w-6 h-6 text-blue-400 fill-current" />
           </div>
           <p className="text-[14px] font-medium text-zinc-400">Verifying invitation link...</p>
@@ -100,7 +100,7 @@ export default function JoinTeamPage({ params }: { params: { token: string } }) 
       <div className="w-full max-w-[460px] z-10">
         {/* Brand Logo Header */}
         <div className="flex flex-col items-center mb-8">
-          <div className="w-11 h-11 rounded-2xl bg-zinc-900 border border-zinc-800 flex items-center justify-center shadow-lg ring-1 ring-white/10 mb-3">
+          <div className="w-11 h-11 rounded-2xl bg-white border border-zinc-200 flex items-center shadow-sm justify-center shadow-lg ring-1 ring-white/10 mb-3">
             <Zap className="w-5.5 h-5.5 text-blue-400 fill-current" />
           </div>
           <span className="text-[17px] font-bold text-white tracking-tighter">ANASNODE</span>
@@ -147,7 +147,7 @@ export default function JoinTeamPage({ params }: { params: { token: string } }) 
             </div>
           ) : invite ? (
             <div>
-              <div className="mb-6 p-4 rounded-2xl bg-zinc-950/40 border border-zinc-800/50 flex items-center gap-4">
+              <div className="mb-6 p-4 rounded-2xl bg-zinc-50 border border-zinc-200 flex items-center gap-4">
                 <div className="w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400 shrink-0">
                   {invite.role === "admin" ? <Shield className="w-5 h-5" /> : <Users className="w-5 h-5" />}
                 </div>
@@ -180,7 +180,7 @@ export default function JoinTeamPage({ params }: { params: { token: string } }) 
                     placeholder="Enter your name"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="w-full h-11 px-4 rounded-xl bg-zinc-950/60 border border-zinc-850 focus:border-blue-500 focus:bg-zinc-950/90 text-[14px] text-white placeholder-zinc-650 transition-all outline-none"
+                    className="w-full h-11 px-4 rounded-xl bg-white border border-zinc-200 focus:border-blue-500 focus:bg-zinc-950/90 text-[14px] text-white placeholder-zinc-650 transition-all outline-none"
                   />
                 </div>
 
@@ -197,7 +197,7 @@ export default function JoinTeamPage({ params }: { params: { token: string } }) 
                       placeholder="Min. 8 characters"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      className="w-full h-11 pl-11 pr-4 rounded-xl bg-zinc-950/60 border border-zinc-850 focus:border-blue-500 focus:bg-zinc-950/90 text-[14px] text-white placeholder-zinc-650 transition-all outline-none"
+                      className="w-full h-11 pl-11 pr-4 rounded-xl bg-white border border-zinc-200 focus:border-blue-500 focus:bg-zinc-950/90 text-[14px] text-white placeholder-zinc-650 transition-all outline-none"
                     />
                   </div>
                 </div>

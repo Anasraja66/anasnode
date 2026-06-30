@@ -146,6 +146,22 @@ function DashboardHome({ ws, preset, roiMetrics }: { ws: Workspace; preset: Indu
   const [greeting, setGreeting] = useState("");
   const [dateStr, setDateStr] = useState("");
 
+  const [promptMode, setPromptMode] = useState<"new" | "edit">("new");
+  const [recentWorkflow, setRecentWorkflow] = useState<any>(null);
+
+  useEffect(() => {
+    fetch("/api/v1/workflows")
+      .then(res => res.json())
+      .then(data => {
+        if (data.success && data.workflows && data.workflows.length > 0) {
+          const sorted = [...data.workflows].sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+          setRecentWorkflow(sorted[0]);
+          setPromptMode("edit");
+        }
+      })
+      .catch(() => {});
+  }, []);
+
   // Client-only: avoids SSR/client hydration mismatch
   useEffect(() => {
     const hr = new Date().getHours();
@@ -281,6 +297,10 @@ function DashboardHome({ ws, preset, roiMetrics }: { ws: Workspace; preset: Indu
           <h2 className="text-[16px] font-bold text-zinc-900 mb-3 font-display">Ask Anaos AI to build or edit automations</h2>
           <PromptBox 
             staticPlaceholder="e.g. Build a lead qualification agent for WhatsApp and Facebook"
+            mode={promptMode}
+            onModeChange={setPromptMode}
+            automationName={recentWorkflow?.name}
+            initialValue={promptMode === "edit" ? (recentWorkflow?.description || "") : ""}
             onSubmitPrompt={(prompt) => {
               const event = new CustomEvent("anaos-open-onboarding", { detail: { prompt } });
               window.dispatchEvent(event);

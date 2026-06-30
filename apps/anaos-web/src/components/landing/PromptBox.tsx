@@ -15,10 +15,14 @@ interface Props {
   compact?: boolean;
   staticPlaceholder?: string;
   onSubmitPrompt?: (prompt: string) => void;
+  mode?: "new" | "edit";
+  automationName?: string;
+  initialValue?: string;
+  onModeChange?: (mode: "new" | "edit") => void;
 }
 
-export function PromptBox({ onGenerate, compact, staticPlaceholder, onSubmitPrompt }: Props) {
-  const [value, setValue] = useState("");
+export function PromptBox({ onGenerate, compact, staticPlaceholder, onSubmitPrompt, mode = "new", automationName, initialValue, onModeChange }: Props) {
+  const [value, setValue] = useState(initialValue || "");
   const [loading, setLoading] = useState(false);
   const [stage, setStage] = useState(0);
   const [mounted, setMounted] = useState(false);
@@ -27,6 +31,12 @@ export function PromptBox({ onGenerate, compact, staticPlaceholder, onSubmitProm
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  useEffect(() => {
+    if (initialValue !== undefined) {
+      setValue(initialValue);
+    }
+  }, [initialValue]);
 
   // Typewriter effect state
   const placeholders = [
@@ -113,6 +123,24 @@ export function PromptBox({ onGenerate, compact, staticPlaceholder, onSubmitProm
   return (
     <div className={`w-full ${compact ? "max-w-xl" : "max-w-3xl"} mx-auto text-left relative z-10`}>
       <div className="rounded-[32px] border border-zinc-200 bg-white p-2 hover:border-zinc-300 transition-all shadow-[0_8px_30px_rgb(0,0,0,0.04)] relative group/box">
+        {onModeChange && (
+          <div className="flex items-center gap-2 px-4 sm:px-6 pt-2 pb-1 border-b border-zinc-100/50 mb-2">
+            <button 
+              type="button"
+              onClick={() => onModeChange("edit")}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[13px] font-bold transition-all ${mode === "edit" ? "bg-[#0A6BFF]/10 text-[#0A6BFF]" : "text-zinc-500 hover:bg-zinc-100"}`}
+            >
+              <span className="text-[14px]">✏️</span> Editing: {automationName || "Current Automation"}
+            </button>
+            <button 
+              type="button"
+              onClick={() => onModeChange("new")}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[13px] font-bold transition-all ${mode === "new" ? "bg-zinc-900 text-white" : "text-zinc-500 hover:bg-zinc-100"}`}
+            >
+              <span className="text-[14px]">✨</span> New Automation
+            </button>
+          </div>
+        )}
         <textarea
           value={value}
           onChange={(e) => setValue(e.target.value)}
@@ -186,11 +214,12 @@ export function PromptBox({ onGenerate, compact, staticPlaceholder, onSubmitProm
                   disabled={loading || !value.trim()}
                   className="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-zinc-400/80 hover:bg-blue-600 text-white flex items-center justify-center shadow-sm transition-all disabled:opacity-40 disabled:hover:bg-zinc-400/80 disabled:cursor-not-allowed hover:scale-105 active:scale-95 cursor-pointer shrink-0"
                   style={{ backgroundColor: value.trim() ? '#0A6BFF' : undefined }}
+                  title={mode === "edit" ? "Update Automation" : "Build Automation"}
                 >
                   {loading ? (
                     <RefreshCw className="w-5 h-5 animate-spin text-white" />
                   ) : (
-                    <ArrowUp className="w-5 sm:w-5.5 h-5 sm:h-5.5 stroke-[3]" />
+                    mode === "edit" ? <RefreshCw className="w-5 sm:w-5.5 h-5 sm:h-5.5 stroke-[2.5]" /> : <ArrowUp className="w-5 sm:w-5.5 h-5 sm:h-5.5 stroke-[3]" />
                   )}
                 </button>
               </div>

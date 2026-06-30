@@ -730,35 +730,6 @@ function Topbar({ title, ws, preset, waStatus, integrations, onMenuClick }: {
 
   return (
     <div className="flex flex-col shrink-0">
-      {/* Global OS Alert Banner (Only shows when there's an issue) */}
-      {hasIssue && (
-        <div className="bg-zinc-950 text-white px-5 py-2 flex items-center justify-between z-50 animate-in slide-in-from-top duration-300">
-          <div className="flex items-center gap-3">
-            <div className="w-2 h-2 rounded-full bg-rose-500 animate-pulse shrink-0" />
-            <p className="text-[12.5px] font-medium tracking-tight">
-              {alertMessage} <button onClick={() => window.location.href='/dashboard/integrations/whatsapp'} className="underline font-bold hover:text-zinc-300 ml-1">Fix now</button>
-            </p>
-          </div>
-          <div className="flex items-center gap-6">
-            <button className="bg-zinc-800 hover:bg-zinc-700 text-white text-[12px] font-bold px-4 py-1.5 rounded-md flex items-center gap-2 transition-colors">
-              Support <ArrowUpRight className="w-3.5 h-3.5" />
-            </button>
-          </div>
-        </div>
-      )}
-
-      {!hasIssue && (
-        <div className="bg-emerald-600 text-white px-5 py-1.5 flex items-center justify-between z-50">
-          <div className="flex items-center gap-3">
-            <div className="w-1.5 h-1.5 rounded-full bg-white animate-pulse shrink-0" />
-            <p className="text-[11px] font-bold tracking-tight uppercase">System Status: All systems operational</p>
-          </div>
-          <div className="flex items-center gap-4">
-             <span className="text-[10px] font-bold opacity-80 uppercase tracking-widest">WhatsApp Connected</span>
-          </div>
-        </div>
-      )}
-
       <header className="h-16 border-b border-zinc-200 bg-white px-4 md:px-6 flex items-center justify-between shrink-0 relative z-[60]">
         <div className="flex items-center gap-3 text-[13.5px]">
           <button 
@@ -919,6 +890,35 @@ function Topbar({ title, ws, preset, waStatus, integrations, onMenuClick }: {
           </button>
         </div>
       </header>
+
+      {/* Global OS Alert Banner (Only shows when there's an issue) */}
+      {hasIssue && (
+        <div className="bg-zinc-950 text-white px-5 py-2 flex items-center justify-between z-50 animate-in slide-in-from-top duration-300">
+          <div className="flex items-center gap-3">
+            <div className="w-2 h-2 rounded-full bg-rose-500 animate-pulse shrink-0" />
+            <p className="text-[12.5px] font-medium tracking-tight">
+              {alertMessage} <button onClick={() => window.location.href='/dashboard/integrations/whatsapp'} className="underline font-bold hover:text-zinc-300 ml-1">Fix now</button>
+            </p>
+          </div>
+          <div className="flex items-center gap-6">
+            <button className="bg-zinc-800 hover:bg-zinc-700 text-white text-[12px] font-bold px-4 py-1.5 rounded-md flex items-center gap-2 transition-colors">
+              Support <ArrowUpRight className="w-3.5 h-3.5" />
+            </button>
+          </div>
+        </div>
+      )}
+
+      {!hasIssue && (
+        <div className="bg-emerald-600 text-white px-5 py-1.5 flex items-center justify-between z-50 shadow-sm border-b border-emerald-700">
+          <div className="flex items-center gap-3">
+            <div className="w-1.5 h-1.5 rounded-full bg-white animate-pulse shrink-0" />
+            <p className="text-[11px] font-bold tracking-tight uppercase">System Status: All systems operational</p>
+          </div>
+          <div className="flex items-center gap-4">
+             <span className="text-[10px] font-bold opacity-80 uppercase tracking-widest">WhatsApp Connected</span>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

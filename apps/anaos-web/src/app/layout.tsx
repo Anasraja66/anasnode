@@ -21,7 +21,6 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <head>
-        <link href="https://api.fontshare.com/v2/css?f[]=clash-display@200,300,400,500,600,700&f[]=satoshi@300,400,500,700,900&display=swap" rel="stylesheet" />
       </head>
       <body className="min-h-full flex flex-col font-sans" suppressHydrationWarning>
         <AuthProvider>{children}</AuthProvider>

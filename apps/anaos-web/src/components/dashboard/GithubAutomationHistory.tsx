@@ -85,7 +85,7 @@ export function GithubAutomationHistory() {
       <div className="px-10 pt-8 pb-10">
         <div className="flex items-start justify-between mb-8">
           <div>
-            <h1 className="text-[26px] font-black tracking-tight text-[#09090B] mb-1">
+            <h1 className="text-[22px] font-bold tracking-tight text-[#09090B] mb-1">
               Automation History
             </h1>
             <p className="text-[13px] text-[#71717A]">
@@ -115,7 +115,7 @@ export function GithubAutomationHistory() {
               </div>
               <span className="text-[12px] font-medium text-[#71717A]">Total Runs</span>
             </div>
-            <div className="text-[32px] font-black text-[#09090B]">1,247</div>
+            <div className="text-[24px] font-bold text-[#09090B]">1,247</div>
             <div className="text-[11px] text-[#71717A] mt-1">Today: 86 runs</div>
           </div>
 
@@ -126,7 +126,7 @@ export function GithubAutomationHistory() {
               </div>
               <span className="text-[12px] font-medium text-[#71717A]">Success Rate</span>
             </div>
-            <div className="text-[32px] font-black text-[#09090B]">94%</div>
+            <div className="text-[24px] font-bold text-[#09090B]">94%</div>
             <div className="text-[11px] text-[#71717A] mt-1">1,173 successful</div>
           </div>
 
@@ -137,7 +137,7 @@ export function GithubAutomationHistory() {
               </div>
               <span className="text-[12px] font-medium text-[#71717A]">Failed Runs</span>
             </div>
-            <div className="text-[32px] font-black text-[#09090B]">38</div>
+            <div className="text-[24px] font-bold text-[#09090B]">38</div>
             <div className="text-[11px] text-[#71717A] mt-1">3.0% failure rate</div>
           </div>
 
@@ -148,7 +148,7 @@ export function GithubAutomationHistory() {
               </div>
               <span className="text-[12px] font-medium text-[#71717A]">Avg Duration</span>
             </div>
-            <div className="text-[32px] font-black text-[#09090B]">2.4s</div>
+            <div className="text-[24px] font-bold text-[#09090B]">2.4s</div>
             <div className="text-[11px] text-[#71717A] mt-1">-0.3s improvement</div>
           </div>
         </div>

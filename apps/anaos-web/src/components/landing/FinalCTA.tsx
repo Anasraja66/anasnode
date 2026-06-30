@@ -177,7 +177,7 @@ export function FinalCTA() {
 
           {/* Heading */}
           <FadeIn>
-            <h2 className="text-[32px] sm:text-[44px] font-bold text-zinc-900 tracking-tight text-center mb-16">
+            <h2 className="text-[24px] sm:text-[44px] font-bold text-zinc-900 tracking-tight text-center mb-16">
               Deploy your agent for{" "}
               <WordRotator 
                 words={[

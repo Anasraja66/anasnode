@@ -182,7 +182,7 @@ export function Hero() {
             >
               <div className="p-6">
                 <div className="flex justify-between items-center mb-5">
-                  <h3 className="text-[18px] font-bold text-zinc-900 font-display tracking-tight">New Connector</h3>
+                  <h3 className="text-[18px] font-bold text-zinc-900 tracking-tight">New Connector</h3>
                   <button onClick={() => setIsModalOpen(false)} className="text-zinc-400 hover:text-zinc-600 transition-colors">
                     <X className="w-5 h-5" />
                   </button>
@@ -253,7 +253,7 @@ export function Hero() {
           initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.55, delay: 0.05 }}
-          className="text-[32px] sm:text-[48px] lg:text-[56px] font-extrabold text-[#111827] tracking-[-0.03em] leading-[1.1] font-display"
+          className="text-[24px] sm:text-[48px] lg:text-[48px] font-semibold text-[#111827] tracking-[-0.03em] leading-[1.1]"
         >
           <span className="flex flex-col lg:flex-row items-center justify-center lg:gap-x-4 w-full">
             <span>Automate</span>
@@ -383,7 +383,7 @@ export function Hero() {
 
                   {/* Text Content */}
                   <div className="flex-1 text-left w-full text-center sm:text-left">
-                    <h4 className="text-[14px] font-bold text-zinc-900 leading-tight font-display">Connectors are now available.</h4>
+                    <h4 className="text-[14px] font-bold text-zinc-900 leading-tight">Connectors are now available.</h4>
                     <p className="text-[13px] text-zinc-500 mt-0.5 font-medium font-sans">Connectors allow Anaos to interact with apps directly in conversations.</p>
                   </div>
 

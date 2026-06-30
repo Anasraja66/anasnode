@@ -5,7 +5,7 @@ export function GithubAISettings() {
     <div className="flex h-full w-full bg-white rounded-xl overflow-hidden border border-[#E5E7EB] shadow-sm flex-col overflow-y-auto">
       <div className="px-10 pt-8 pb-10">
         <div className="mb-8">
-          <h1 className="text-[26px] font-black tracking-tight text-[#09090B] mb-1">
+          <h1 className="text-[22px] font-bold tracking-tight text-[#09090B] mb-1">
             Anaos AI Settings
           </h1>
           <p className="text-[13px] text-[#71717A]">

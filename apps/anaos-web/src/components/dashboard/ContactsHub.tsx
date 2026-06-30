@@ -187,7 +187,7 @@ export function ContactsHub() {
     <div className="space-y-8 max-w-6xl mx-auto px-6 py-8">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
         <div className="space-y-1">
-          <h1 className="text-2xl font-black text-zinc-950 tracking-tight">CRM Contacts</h1>
+          <h1 className="text-2xl font-bold text-zinc-950 tracking-tight">CRM Contacts</h1>
           <p className="text-[14px] text-zinc-500 font-medium max-w-2xl">
             Import leads from Google Sheets or Excel. Every column becomes a 
             <span className="text-zinc-900 font-bold mx-1">Smart Template Field</span> 
@@ -217,7 +217,7 @@ export function ContactsHub() {
           <button
             type="button"
             onClick={() => setShowAdd(true)}
-            className="inline-flex items-center gap-2 h-10 px-5 rounded-xl bg-[#0A6BFF] text-white text-[13.5px] font-black hover:bg-blue-600 transition-all shadow-sm active:scale-95"
+            className="inline-flex items-center gap-2 h-10 px-5 rounded-xl bg-[#0A6BFF] text-white text-[13.5px] font-bold hover:bg-blue-600 transition-all shadow-sm active:scale-95"
           >
             <Plus className="w-4.5 h-4.5" />
             Add Contact
@@ -476,7 +476,7 @@ export function ContactsHub() {
                       <div className="flex flex-wrap gap-1.5">
                         {c.tags.length > 0 ? (
                           c.tags.map((t) => (
-                            <span key={t} className="text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded-md bg-blue-50 text-blue-600 border border-blue-100">
+                            <span key={t} className="text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-md bg-blue-50 text-blue-600 border border-blue-100">
                               {t}
                             </span>
                           ))

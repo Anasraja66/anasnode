@@ -112,7 +112,7 @@ export default function SetupHelpPage() {
           <ArrowLeft className="w-4 h-4" /> Dashboard
         </Link>
 
-        <h1 className="text-[28px] font-extrabold text-zinc-950 tracking-tight">Setup Help</h1>
+        <h1 className="text-[24px] font-semibold text-zinc-950 tracking-tight">Setup Help</h1>
         <p className="text-[14px] text-zinc-500 mt-2 font-medium">
           Only <strong>one-time setup</strong> — then every client simply clicks Connect. No .env files needed.
         </p>

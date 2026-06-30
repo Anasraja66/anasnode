@@ -614,7 +614,7 @@ export function InboxPage({
             >
               {initials(selected.contactName)}
             </div>
-            <p className="mt-4 text-[16px] font-black text-zinc-950">{selected.contactName}</p>
+            <p className="mt-4 text-[16px] font-bold text-zinc-950">{selected.contactName}</p>
             <p className="text-[13px] font-mono text-zinc-500 mt-1">{selected.contactPhone}</p>
           </div>
 

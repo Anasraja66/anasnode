@@ -81,7 +81,7 @@ export function WorkflowPreviewModal({
               <X className="w-5 h-5" />
             </button>
             
-            <h2 className="text-[32px] font-extrabold text-[#111827] tracking-tight leading-tight font-display mb-1">
+            <h2 className="text-[24px] font-semibold text-[#111827] tracking-tight leading-tight mb-1">
               {previewData.workflowName}
             </h2>
             <p className="text-[15px] text-zinc-500 font-medium">

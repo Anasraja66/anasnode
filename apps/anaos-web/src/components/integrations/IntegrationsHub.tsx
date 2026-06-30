@@ -67,7 +67,7 @@ export function IntegrationsHub() {
                 <Plug className="w-7 h-7 text-white" />
               </div>
               <div>
-                <h1 className="text-[28px] font-extrabold text-zinc-900 tracking-tight">
+                <h1 className="text-[24px] font-semibold text-zinc-900 tracking-tight">
                   Connect your business
                 </h1>
                 <p className="text-[15px] text-zinc-500 mt-1 max-w-xl font-medium">
@@ -116,7 +116,7 @@ export function IntegrationsHub() {
             {/* Native Integrations */}
             <section className="space-y-4">
               <div>
-                <h2 className="text-[13px] font-black uppercase tracking-[0.15em] text-zinc-800">
+                <h2 className="text-[13px] font-bold uppercase tracking-[0.15em] text-zinc-800">
                   Native Integrations
                 </h2>
                 <p className="text-[12.5px] text-zinc-400 font-semibold mt-0.5">
@@ -146,7 +146,7 @@ export function IntegrationsHub() {
             {/* API Workflows */}
             <section className="space-y-4">
               <div>
-                <h2 className="text-[13px] font-black uppercase tracking-[0.15em] text-zinc-800">
+                <h2 className="text-[13px] font-bold uppercase tracking-[0.15em] text-zinc-800">
                   API Workflows
                 </h2>
                 <p className="text-[12.5px] text-zinc-400 font-semibold mt-0.5">
@@ -175,7 +175,7 @@ export function IntegrationsHub() {
             {/* Upcoming */}
             <section className="space-y-4">
               <div>
-                <h2 className="text-[13px] font-black uppercase tracking-[0.15em] text-zinc-800">
+                <h2 className="text-[13px] font-bold uppercase tracking-[0.15em] text-zinc-800">
                   Upcoming
                 </h2>
                 <p className="text-[12.5px] text-zinc-400 font-semibold mt-0.5">

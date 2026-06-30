@@ -82,7 +82,7 @@ export default function GoogleCalendarSetupPage() {
             <Calendar className="w-7 h-7 text-white" />
           </div>
           <div>
-            <h1 className="text-[26px] font-extrabold text-zinc-900">Google Calendar</h1>
+            <h1 className="text-[22px] font-semibold text-zinc-900">Google Calendar</h1>
             <p className="text-[14px] text-zinc-500 font-medium">
               Schedule meetings, viewings, and appointments from conversations automatically.
             </p>

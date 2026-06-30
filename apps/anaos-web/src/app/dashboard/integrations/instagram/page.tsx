@@ -25,7 +25,7 @@ export default function InstagramSetupPage() {
               <Instagram className="w-7 h-7 text-white" />
             </div>
             <div>
-              <h1 className="text-[26px] font-extrabold text-zinc-900">Instagram DM</h1>
+              <h1 className="text-[22px] font-semibold text-zinc-900">Instagram DM</h1>
               <p className="text-[14px] text-zinc-500 font-medium mt-0.5">
                 Connect your Instagram Business account with Anaos in 1-click.
               </p>

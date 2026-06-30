@@ -152,7 +152,7 @@ export function IntegrationsSection() {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-4xl sm:text-5xl font-extrabold text-zinc-900 tracking-tight mb-6 font-sans"
+            className="text-4xl sm:text-5xl font-semibold text-zinc-900 tracking-tight mb-6 font-sans"
           >
             Connect your favorite tools
           </motion.h2>
@@ -175,7 +175,7 @@ export function IntegrationsSection() {
             viewport={{ once: true }}
             className="w-20 h-20 sm:w-24 sm:h-24 rounded-3xl bg-zinc-900 flex items-center justify-center z-20 shadow-2xl shadow-blue-500/20 border border-zinc-800"
           >
-            <span className="text-white font-black text-2xl sm:text-3xl font-sans tracking-tighter italic">A</span>
+            <span className="text-white font-bold text-2xl sm:text-3xl font-sans tracking-tighter italic">A</span>
           </motion.div>
 
           {/* Inner Orbit */}

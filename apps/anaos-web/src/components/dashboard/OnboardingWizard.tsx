@@ -81,7 +81,7 @@ export function OnboardingWizard() {
                   className="flex flex-col items-center text-center"
                 >
 
-                  <h2 className="text-2xl font-extrabold text-zinc-900 mb-2">Where would you like to start?</h2>
+                  <h2 className="text-2xl font-semibold text-zinc-900 mb-2">Where would you like to start?</h2>
                   <p className="text-zinc-500 mb-8 max-w-sm">
                     Connect your business channels to enable Anaos AI to reply to your customers automatically.
                   </p>
@@ -172,7 +172,7 @@ export function OnboardingWizard() {
               <div className="w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center mb-6">
                 <CheckCircle2 className="w-10 h-10 text-emerald-600" />
               </div>
-              <h2 className="text-2xl font-extrabold text-zinc-900 mb-2">Setup Complete!</h2>
+              <h2 className="text-2xl font-semibold text-zinc-900 mb-2">Setup Complete!</h2>
               <p className="text-zinc-500 text-center max-w-xs">
                 Your channels are successfully connected. Let's head to your dashboard!
               </p>

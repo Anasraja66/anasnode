@@ -39,7 +39,7 @@ export function Testimonials() {
       <div className="max-w-6xl mx-auto relative z-10">
         <FadeIn>
           <div className="flex flex-col items-center text-center mb-16">
-            <h2 className="text-[36px] sm:text-[48px] font-bold text-zinc-900 tracking-tight leading-[1.1] max-w-2xl">
+            <h2 className="text-[24px] sm:text-[48px] font-bold text-zinc-900 tracking-tight leading-[1.1] max-w-2xl">
               <Typewriter text="Trusted by business owners." />
               <span className="block text-zinc-400">
                 <Typewriter text="Scaling operations with AI." delay={2} />

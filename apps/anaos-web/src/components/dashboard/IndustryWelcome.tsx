@@ -38,12 +38,12 @@ export function IndustryWelcome({
         </div>
         <div className="flex-1 space-y-3">
           <p
-            className="text-[12px] font-black uppercase tracking-[0.3em] opacity-80"
+            className="text-[12px] font-bold uppercase tracking-[0.3em] opacity-80"
             style={{ color: preset.accent }}
           >
             {preset.label} · ANASNODE OS
           </p>
-          <h2 className="text-4xl sm:text-5xl font-black text-zinc-950 leading-[1.05] tracking-tight">
+          <h2 className="text-4xl sm:text-5xl font-bold text-zinc-950 leading-[1.05] tracking-tight">
             {preset.welcomeTitle}
           </h2>
           <p className="text-[18px] text-zinc-800/70 font-bold max-w-2xl leading-relaxed">
@@ -65,7 +65,7 @@ export function IndustryWelcome({
       <div className="flex flex-wrap gap-5 mt-12 relative z-10">
         <Link
           href="/dashboard/integrations/whatsapp"
-          className="inline-flex items-center gap-3 h-14 px-10 rounded-[20px] text-white text-[15px] font-black shadow-xl hover:scale-105 transition-all active:scale-95 shadow-blue-500/20"
+          className="inline-flex items-center gap-3 h-14 px-10 rounded-[20px] text-white text-[15px] font-bold shadow-xl hover:scale-105 transition-all active:scale-95 shadow-blue-500/20"
           style={{ backgroundColor: preset.primary }}
         >
           {preset.connectWhatsApp}
@@ -73,7 +73,7 @@ export function IndustryWelcome({
         </Link>
         <Link
           href="/dashboard?tab=inbox"
-          className="inline-flex items-center gap-3 h-14 px-10 rounded-[20px] border-2 bg-white/60 backdrop-blur-md text-[15px] font-black text-zinc-900 hover:bg-white transition-all shadow-sm active:scale-95"
+          className="inline-flex items-center gap-3 h-14 px-10 rounded-[20px] border-2 bg-white/60 backdrop-blur-md text-[15px] font-bold text-zinc-900 hover:bg-white transition-all shadow-sm active:scale-95"
           style={{ borderColor: preset.softBorder }}
         >
           Launch Inbox

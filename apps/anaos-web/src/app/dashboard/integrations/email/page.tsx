@@ -48,7 +48,7 @@ export default function EmailConnectPage() {
           <div className="w-12 h-12 rounded-xl bg-blue-500 flex items-center justify-center">
             <Mail className="w-6 h-6 text-white" />
           </div>
-          <h1 className="text-[24px] font-extrabold">Business email</h1>
+          <h1 className="text-[24px] font-semibold">Business email</h1>
         </div>
         <div className="bg-white rounded-2xl border border-zinc-200 p-6 space-y-4 shadow-sm">
           <p className="text-[14px] text-zinc-600">

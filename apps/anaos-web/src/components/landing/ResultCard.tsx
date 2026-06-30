@@ -230,7 +230,7 @@ export function ResultCard({ workspace, prompt = "" }: Props) {
       {/* Main Header */}
       <div className="px-10 pt-8 pb-4">
         <div className="flex items-baseline gap-3 mb-2">
-          <h3 className="text-[28px] font-extrabold text-zinc-900 tracking-[-0.03em]">{workspace.name}</h3>
+          <h3 className="text-[24px] font-semibold text-zinc-900 tracking-[-0.03em]">{workspace.name}</h3>
           <span className="text-zinc-300 text-[20px] font-light">/</span>
           <span className="text-[14px] font-bold text-zinc-400 font-mono tracking-tight">{workspace.slug}</span>
         </div>
@@ -259,7 +259,7 @@ export function ResultCard({ workspace, prompt = "" }: Props) {
             >
               <div className="flex justify-between items-start mb-3">
                 <div className="flex flex-col gap-1">
-                  <span className="text-[11px] font-extrabold text-blue-500 uppercase tracking-widest">{details.label}</span>
+                  <span className="text-[11px] font-semibold text-blue-500 uppercase tracking-widest">{details.label}</span>
                   <p className="text-[15px] font-bold text-zinc-800">{a.name}</p>
                 </div>
                 

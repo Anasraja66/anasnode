@@ -14,7 +14,7 @@ export function HowItWorks() {
 
       <div className="max-w-6xl mx-auto relative z-10">
         {/* Title */}
-        <h2 className="text-[34px] sm:text-[44px] font-extrabold text-[#111827] tracking-[-0.03em] mb-12">
+        <h2 className="text-[24px] sm:text-[44px] font-semibold text-[#111827] tracking-[-0.03em] mb-12">
           <Typewriter text="Meet Anaos" />
         </h2>
 
@@ -56,7 +56,7 @@ export function HowItWorks() {
           <div className="lg:col-span-5 space-y-10">
             {/* Step 1 */}
             <div className="space-y-2">
-              <h3 className="text-[22px] font-extrabold text-[#111827] tracking-tight">Start with an idea</h3>
+              <h3 className="text-[22px] font-semibold text-[#111827] tracking-tight">Start with an idea</h3>
               <p className="text-[14.5px] sm:text-[15px] text-[#4B5563] leading-relaxed font-semibold">
                 Describe the WhatsApp operator or workflow you want to create or drop in templates and docs.
               </p>
@@ -64,7 +64,7 @@ export function HowItWorks() {
 
             {/* Step 2 */}
             <div className="space-y-2">
-              <h3 className="text-[22px] font-extrabold text-[#111827] tracking-tight">Watch it come to life</h3>
+              <h3 className="text-[22px] font-semibold text-[#111827] tracking-tight">Watch it come to life</h3>
               <p className="text-[14.5px] sm:text-[15px] text-[#4B5563] leading-relaxed font-semibold">
                 See your vision transform into active visual workspace nodes in real-time as AI builds it for you.
               </p>
@@ -72,7 +72,7 @@ export function HowItWorks() {
 
             {/* Step 3 */}
             <div className="space-y-2">
-              <h3 className="text-[22px] font-extrabold text-[#111827] tracking-tight">Refine and ship</h3>
+              <h3 className="text-[22px] font-semibold text-[#111827] tracking-tight">Refine and ship</h3>
               <p className="text-[14.5px] sm:text-[15px] text-[#4B5563] leading-relaxed font-semibold">
                 Test your bot instantly inside the live WhatsApp sandbox, toggle connections, and deploy with one click.
               </p>

@@ -501,7 +501,7 @@ function NodePalette({ onDragStart, search, setSearch }: {
       <div className="mb-3 px-1">
         <div className="flex items-center gap-2 mb-1">
           <LayoutGrid size={14} className="text-white/50" />
-          <h3 className="text-[13px] font-black text-white tracking-tight">Node Library</h3>
+          <h3 className="text-[13px] font-bold text-white tracking-tight">Node Library</h3>
         </div>
         <p className="text-[10px] text-white/30 font-medium leading-normal">
           Drag to canvas • All channels included
@@ -539,7 +539,7 @@ function NodePalette({ onDragStart, search, setSearch }: {
                   <div className="w-5 h-5 rounded-md flex items-center justify-center" style={{ background: catColor + "20" }}>
                     <CatIcon size={10} style={{ color: catColor }} />
                   </div>
-                  <span className="text-[11px] font-black text-white/60 uppercase tracking-wider">{cat}</span>
+                  <span className="text-[11px] font-bold text-white/60 uppercase tracking-wider">{cat}</span>
                 </div>
                 <ChevronDown size={10} className={`text-white/30 transition-transform ${isOpen ? "" : "-rotate-90"}`} />
               </button>
@@ -663,8 +663,8 @@ function CanvasNode({
               )}
             </div>
             <div className="min-w-0 flex-1">
-              <p className="text-[8.5px] font-black text-white/35 uppercase tracking-widest leading-none mb-0.5 truncate">{cfg.label}</p>
-              <p className="text-[11.5px] font-black text-white leading-tight truncate max-w-[105px]">{node.label}</p>
+              <p className="text-[8.5px] font-bold text-white/35 uppercase tracking-widest leading-none mb-0.5 truncate">{cfg.label}</p>
+              <p className="text-[11.5px] font-bold text-white leading-tight truncate max-w-[105px]">{node.label}</p>
             </div>
           </div>
 
@@ -786,8 +786,8 @@ function PropertiesPanel({ node, onChange, onDelete, onClose }: {
               : <cfg.icon size={12} style={{ color: cfg.color }} />}
           </div>
           <div>
-            <p className="text-[11px] font-black text-white/40 uppercase tracking-wider leading-none">{cfg.category}</p>
-            <p className="text-[13px] font-black text-white leading-tight">{cfg.label}</p>
+            <p className="text-[11px] font-bold text-white/40 uppercase tracking-wider leading-none">{cfg.category}</p>
+            <p className="text-[13px] font-bold text-white leading-tight">{cfg.label}</p>
           </div>
         </div>
         <button onClick={onClose} className="text-white/30 hover:text-white/70 transition-colors p-1 rounded-lg hover:bg-white/5 cursor-pointer">
@@ -798,7 +798,7 @@ function PropertiesPanel({ node, onChange, onDelete, onClose }: {
       <div className="flex-1 overflow-y-auto p-4 space-y-4" style={{ scrollbarWidth: "none" }}>
         {/* Label */}
         <div>
-          <label className="text-[10px] font-black text-white/35 uppercase tracking-wider block mb-1.5">Node Label</label>
+          <label className="text-[10px] font-bold text-white/35 uppercase tracking-wider block mb-1.5">Node Label</label>
           <input
             value={label}
             onChange={e => { setLabel(e.target.value); onChange(node.id, config, e.target.value); }}
@@ -809,7 +809,7 @@ function PropertiesPanel({ node, onChange, onDelete, onClose }: {
         {/* Dynamic fields */}
         {cfg.fields.map(field => (
           <div key={field.key}>
-            <label className="text-[10px] font-black text-white/35 uppercase tracking-wider block mb-1.5">{field.label}</label>
+            <label className="text-[10px] font-bold text-white/35 uppercase tracking-wider block mb-1.5">{field.label}</label>
             {field.type === "select" ? (
               <select
                 value={config[field.key] || ""}
@@ -885,7 +885,7 @@ function MiniMap({ nodes, pan, zoom, canvasW, canvasH }: {
       className="absolute bottom-6 right-6 rounded-xl overflow-hidden border border-white/8"
       style={{ background: "rgba(8,10,18,0.9)", width: W + 16, height: H + 16, backdropFilter: "blur(12px)" }}
     >
-      <p className="text-[8px] font-black text-white/25 uppercase tracking-widest px-2 pt-1.5">Mini Map</p>
+      <p className="text-[8px] font-bold text-white/25 uppercase tracking-widest px-2 pt-1.5">Mini Map</p>
       <svg width={W} height={H} style={{ display: "block", margin: "0 auto" }}>
         {nodes.map(n => {
           const typeKey = normaliseType(n.type);
@@ -1180,7 +1180,7 @@ export default function WorkflowCanvas({ workflowId, initialData, workflowName =
           <div className="w-6 h-6 rounded-lg bg-blue-600/20 border border-blue-500/30 flex items-center justify-center">
             <Sparkles size={11} className="text-blue-400" />
           </div>
-          <span className="text-[12px] font-black text-white/80 tracking-tight">Anaos Builder</span>
+          <span className="text-[12px] font-bold text-white/80 tracking-tight">Anaos Builder</span>
         </div>
 
         <NodePalette
@@ -1192,11 +1192,11 @@ export default function WorkflowCanvas({ workflowId, initialData, workflowName =
         {/* Stats */}
         <div className="mt-3 pt-3 border-t border-white/5 grid grid-cols-2 gap-2">
           <div className="bg-white/3 rounded-xl p-2 text-center">
-            <p className="text-[16px] font-black text-white">{nodeCount}</p>
+            <p className="text-[16px] font-bold text-white">{nodeCount}</p>
             <p className="text-[9px] text-white/30 font-bold uppercase tracking-wider">Nodes</p>
           </div>
           <div className="bg-white/3 rounded-xl p-2 text-center">
-            <p className="text-[16px] font-black text-white">{edgeCount}</p>
+            <p className="text-[16px] font-bold text-white">{edgeCount}</p>
             <p className="text-[9px] text-white/30 font-bold uppercase tracking-wider">Edges</p>
           </div>
         </div>
@@ -1219,11 +1219,11 @@ export default function WorkflowCanvas({ workflowId, initialData, workflowName =
             <input
               value={name}
               onChange={e => setName(e.target.value)}
-              className="bg-transparent text-[14px] font-black text-white focus:outline-none w-48 placeholder:text-white/30"
+              className="bg-transparent text-[14px] font-bold text-white focus:outline-none w-48 placeholder:text-white/30"
               placeholder="Workflow name..."
             />
             {/* Status badge */}
-            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[9.5px] font-black tracking-widest text-[#25D366] bg-[#25D366]/8 border border-[#25D366]/20">
+            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[9.5px] font-bold tracking-widest text-[#25D366] bg-[#25D366]/8 border border-[#25D366]/20">
               <span className="w-1.5 h-1.5 rounded-full bg-[#25D366] animate-pulse" />
               <span>ACTIVE</span>
             </div>
@@ -1263,7 +1263,7 @@ export default function WorkflowCanvas({ workflowId, initialData, workflowName =
             <button
               onClick={handleSave}
               disabled={saving}
-              className="flex items-center gap-1.5 px-5 py-2 rounded-xl text-[12px] font-black transition-all active:scale-95 disabled:opacity-60 cursor-pointer"
+              className="flex items-center gap-1.5 px-5 py-2 rounded-xl text-[12px] font-bold transition-all active:scale-95 disabled:opacity-60 cursor-pointer"
               style={{ background: saved ? "#10B981" : "#0A6BFF", color: "#fff", boxShadow: saved ? "0 0 20px rgba(16,185,129,0.4)" : "0 0 20px rgba(10,107,255,0.3)" }}
             >
               {saving ? <Loader2 size={12} className="animate-spin" /> : saved ? <CheckCircle2 size={12} /> : <Play size={12} className="fill-white" />}
@@ -1292,7 +1292,7 @@ export default function WorkflowCanvas({ workflowId, initialData, workflowName =
                   <div className="w-16 h-16 rounded-2xl bg-white/3 border border-white/8 flex items-center justify-center mx-auto mb-4">
                     <Sparkles size={24} className="text-white/20" />
                   </div>
-                  <p className="text-[15px] font-black text-white/20">Drag nodes from the left panel</p>
+                  <p className="text-[15px] font-bold text-white/20">Drag nodes from the left panel</p>
                   <p className="text-[12px] text-white/10 font-medium mt-1">or use AI to generate your workflow</p>
                 </div>
               </div>

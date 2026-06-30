@@ -126,7 +126,7 @@ export function AnaosAIHub({ ws }: { ws: Workspace }) {
     <div className="max-w-6xl mx-auto space-y-8 relative z-10 pb-10">
       <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6">
         <div className="space-y-1">
-          <h1 className="text-3xl font-black text-zinc-950 tracking-tight">
+          <h1 className="text-3xl font-bold text-zinc-950 tracking-tight">
             Automate with one prompt
           </h1>
           <p className="text-[15px] text-zinc-500 font-medium max-w-xl leading-relaxed">
@@ -143,7 +143,7 @@ export function AnaosAIHub({ ws }: { ws: Workspace }) {
             role="tab"
             aria-selected={mode === "simple"}
             onClick={() => setMode("simple")}
-            className={`px-5 py-2 rounded-xl text-[13px] transition-all cursor-pointer font-black uppercase tracking-wider ${
+            className={`px-5 py-2 rounded-xl text-[13px] transition-all cursor-pointer font-bold uppercase tracking-wider ${
               mode === "simple"
                 ? "bg-zinc-900 text-white shadow-lg shadow-zinc-200"
                 : "text-zinc-500 hover:text-zinc-900"
@@ -156,7 +156,7 @@ export function AnaosAIHub({ ws }: { ws: Workspace }) {
             role="tab"
             aria-selected={mode === "developer"}
             onClick={() => setMode("developer")}
-            className={`px-5 py-2 rounded-xl text-[13px] transition-all cursor-pointer font-black uppercase tracking-wider ${
+            className={`px-5 py-2 rounded-xl text-[13px] transition-all cursor-pointer font-bold uppercase tracking-wider ${
               mode === "developer"
                 ? "bg-zinc-900 text-white shadow-lg shadow-zinc-200"
                 : "text-zinc-500 hover:text-zinc-900"
@@ -171,7 +171,7 @@ export function AnaosAIHub({ ws }: { ws: Workspace }) {
         <div className="lg:col-span-7 space-y-6">
           <div className="rounded-[28px] border border-zinc-200/50 bg-white/50 backdrop-blur-md overflow-hidden shadow-sm hover:shadow-md transition-shadow">
             <div className="px-6 py-4 border-b border-zinc-100 bg-zinc-50/30">
-              <p className="text-[14px] font-black text-zinc-900 tracking-tight">
+              <p className="text-[14px] font-bold text-zinc-900 tracking-tight">
                 What should happen on WhatsApp?
               </p>
             </div>
@@ -183,7 +183,7 @@ export function AnaosAIHub({ ws }: { ws: Workspace }) {
               placeholder="Example: When someone asks about rent in Dubai, ask their budget, share 2–3 areas, and offer a viewing time."
             />
             <div className="px-6 py-4 border-t border-zinc-100 space-y-3 bg-zinc-50/30">
-              <p className="text-[11px] font-black text-zinc-400 uppercase tracking-[0.2em]">
+              <p className="text-[11px] font-bold text-zinc-400 uppercase tracking-[0.2em]">
                 Quick Examples
               </p>
               <div className="flex flex-wrap gap-2">
@@ -205,7 +205,7 @@ export function AnaosAIHub({ ws }: { ws: Workspace }) {
                 type="button"
                 disabled={building || !prompt.trim()}
                 onClick={() => runBuild(true)}
-                className="h-11 px-6 rounded-xl bg-[#0A6BFF] hover:bg-blue-600 text-white text-[14px] font-black transition-all shadow-sm active:scale-95 disabled:opacity-40 cursor-pointer"
+                className="h-11 px-6 rounded-xl bg-[#0A6BFF] hover:bg-blue-600 text-white text-[14px] font-bold transition-all shadow-sm active:scale-95 disabled:opacity-40 cursor-pointer"
               >
                 {building ? "Saving…" : "Deploy AI Agent"}
               </button>
@@ -222,7 +222,7 @@ export function AnaosAIHub({ ws }: { ws: Workspace }) {
             <div className="rounded-[28px] border border-emerald-100 bg-emerald-50/50 backdrop-blur-md p-6 space-y-3 animate-in zoom-in-95">
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                <p className="text-[16px] font-black text-emerald-950 tracking-tight">
+                <p className="text-[16px] font-bold text-emerald-950 tracking-tight">
                   {result.workflow.name} is live
                 </p>
               </div>
@@ -246,7 +246,7 @@ export function AnaosAIHub({ ws }: { ws: Workspace }) {
                   type="button"
                   onClick={() => runBuild(true)}
                   disabled={building}
-                  className="text-[12px] font-black text-zinc-400 hover:text-white transition-colors cursor-pointer disabled:opacity-40 uppercase tracking-widest"
+                  className="text-[12px] font-bold text-zinc-400 hover:text-white transition-colors cursor-pointer disabled:opacity-40 uppercase tracking-widest"
                 >
                   Re-Compile
                 </button>
@@ -266,8 +266,8 @@ export function AnaosAIHub({ ws }: { ws: Workspace }) {
         <div className="lg:col-span-5 flex justify-center">
           <div className="w-full max-w-[340px] rounded-[3rem] border-[12px] border-zinc-950 bg-white shadow-2xl overflow-hidden flex flex-col h-[560px] relative ring-1 ring-zinc-200">
             <div className="bg-zinc-950 text-white px-6 py-5">
-              <p className="text-[15px] font-black tracking-tight leading-tight">{ws.name}</p>
-              <p className="text-[11px] text-zinc-400 font-black uppercase tracking-[0.2em] mt-1">Live Preview</p>
+              <p className="text-[15px] font-bold tracking-tight leading-tight">{ws.name}</p>
+              <p className="text-[11px] text-zinc-400 font-bold uppercase tracking-[0.2em] mt-1">Live Preview</p>
             </div>
             <div className="flex-1 bg-zinc-50/50 p-4 overflow-y-auto space-y-3 flex flex-col">
               {previewMessages.map((msg, i) => (

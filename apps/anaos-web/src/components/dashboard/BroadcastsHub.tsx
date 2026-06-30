@@ -54,7 +54,7 @@ export function BroadcastsHub({ workspaceName }: { workspaceName: string }) {
     <div className="space-y-10 max-w-6xl mx-auto px-6 py-10 relative z-10 pb-10 font-sans">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
         <div className="space-y-1">
-          <h1 className="text-[26px] font-bold text-zinc-900 tracking-tight leading-tight">Mass Broadcasts</h1>
+          <h1 className="text-[22px] font-bold text-zinc-900 tracking-tight leading-tight">Mass Broadcasts</h1>
           <p className="text-sm text-zinc-500 font-medium max-w-2xl leading-relaxed">
             Send bulk messages via WhatsApp while staying compliant with 
             <span className="text-emerald-600 font-bold mx-1">Meta Business Rules</span>.
@@ -87,14 +87,14 @@ export function BroadcastsHub({ workspaceName }: { workspaceName: string }) {
         </div>
 
         <div className="flex items-center justify-between gap-4">
-           <p className="text-[12px] text-zinc-400 font-black uppercase tracking-[0.2em]">
+           <p className="text-[12px] text-zinc-400 font-bold uppercase tracking-[0.2em]">
              ⚡ Powered by AnasNode AI OS
            </p>
            <button
             type="button"
             disabled={creating || !prompt.trim()}
             onClick={createFromPrompt}
-            className="inline-flex items-center gap-3 h-11 px-8 rounded-xl bg-[#0A6BFF] text-white text-[14px] font-black hover:bg-blue-600 transition-all shadow-sm disabled:opacity-30 active:scale-95 cursor-pointer"
+            className="inline-flex items-center gap-3 h-11 px-8 rounded-xl bg-[#0A6BFF] text-white text-[14px] font-bold hover:bg-blue-600 transition-all shadow-sm disabled:opacity-30 active:scale-95 cursor-pointer"
           >
             {creating ? <Loader2 className="w-5 h-5 animate-spin" /> : <Megaphone className="w-5 h-5" />}
             {creating ? "GENERATING..." : "GENERATE CAMPAIGN"}
@@ -146,7 +146,7 @@ export function BroadcastsHub({ workspaceName }: { workspaceName: string }) {
                 <tr>
                   <td colSpan={5} className="px-8 py-20 text-center">
                     <Loader2 className="w-8 h-8 animate-spin text-zinc-300 mx-auto mb-4" />
-                    <p className="text-[11px] text-zinc-400 font-black uppercase tracking-widest">Fetching Campaigns...</p>
+                    <p className="text-[11px] text-zinc-400 font-bold uppercase tracking-widest">Fetching Campaigns...</p>
                   </td>
                 </tr>
               ) : campaigns.length === 0 ? (

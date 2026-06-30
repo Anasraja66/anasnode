@@ -26,7 +26,7 @@ export function GithubPerformanceInsights() {
     <div className="flex h-full w-full bg-white rounded-xl overflow-hidden border border-[#E5E7EB] shadow-sm flex-col overflow-y-auto">
       <div className="px-10 pt-8 pb-10">
         <div className="mb-8">
-          <h1 className="text-[26px] font-black tracking-tight text-[#09090B] mb-1">
+          <h1 className="text-[22px] font-bold tracking-tight text-[#09090B] mb-1">
             Performance Insights
           </h1>
           <p className="text-[13px] text-[#71717A]">
@@ -43,7 +43,7 @@ export function GithubPerformanceInsights() {
               </div>
               <span className="text-[12px] font-medium text-[#71717A]">Total Messages</span>
             </div>
-            <div className="text-[32px] font-black text-[#09090B]">8,471</div>
+            <div className="text-[24px] font-bold text-[#09090B]">8,471</div>
             <div className="flex items-center gap-1 text-[#059669] mt-1">
               <TrendingUp className="w-3.5 h-3.5" />
               <span className="text-[11px] font-semibold">+18.2%</span>
@@ -57,7 +57,7 @@ export function GithubPerformanceInsights() {
               </div>
               <span className="text-[12px] font-medium text-[#71717A]">Active Users</span>
             </div>
-            <div className="text-[32px] font-black text-[#09090B]">1,847</div>
+            <div className="text-[24px] font-bold text-[#09090B]">1,847</div>
             <div className="flex items-center gap-1 text-[#059669] mt-1">
               <TrendingUp className="w-3.5 h-3.5" />
               <span className="text-[11px] font-semibold">+12.5%</span>
@@ -71,7 +71,7 @@ export function GithubPerformanceInsights() {
               </div>
               <span className="text-[12px] font-medium text-[#71717A]">Avg Response</span>
             </div>
-            <div className="text-[32px] font-black text-[#09090B]">2.3s</div>
+            <div className="text-[24px] font-bold text-[#09090B]">2.3s</div>
             <div className="flex items-center gap-1 text-[#059669] mt-1">
               <TrendingUp className="w-3.5 h-3.5" />
               <span className="text-[11px] font-semibold">-0.4s</span>
@@ -85,7 +85,7 @@ export function GithubPerformanceInsights() {
               </div>
               <span className="text-[12px] font-medium text-[#71717A]">Bookings</span>
             </div>
-            <div className="text-[32px] font-black text-[#09090B]">156</div>
+            <div className="text-[24px] font-bold text-[#09090B]">156</div>
             <div className="flex items-center gap-1 text-[#059669] mt-1">
               <TrendingUp className="w-3.5 h-3.5" />
               <span className="text-[11px] font-semibold">+24.1%</span>

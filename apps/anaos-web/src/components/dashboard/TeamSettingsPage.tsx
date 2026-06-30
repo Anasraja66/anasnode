@@ -139,7 +139,7 @@ export default function TeamSettingsPage() {
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-zinc-100 pb-6">
         <div>
-          <h1 className="text-[24px] font-black text-zinc-900 tracking-tight flex items-center gap-2.5">
+          <h1 className="text-[24px] font-bold text-zinc-900 tracking-tight flex items-center gap-2.5">
             <Users className="w-6.5 h-6.5 text-zinc-800" />
             Team Settings
           </h1>
@@ -352,7 +352,7 @@ export default function TeamSettingsPage() {
             {/* Modal Header */}
             <div className="px-6 py-5 border-b border-zinc-100 flex items-center justify-between">
               <div>
-                <h3 className="font-extrabold text-[17px] text-zinc-900 tracking-tight">Invite Teammate</h3>
+                <h3 className="font-semibold text-[17px] text-zinc-900 tracking-tight">Invite Teammate</h3>
                 <p className="text-[12px] text-zinc-450 mt-0.5">Send a secure registration invite link.</p>
               </div>
               <button 
@@ -413,7 +413,7 @@ export default function TeamSettingsPage() {
                   </div>
                   
                   <div>
-                    <h4 className="font-extrabold text-[15px] text-zinc-900">Invite Link Created!</h4>
+                    <h4 className="font-semibold text-[15px] text-zinc-900">Invite Link Created!</h4>
                     <p className="text-[12px] text-zinc-450 mt-1 max-w-[300px] mx-auto">
                       Share this private registration URL with your teammate. It will expire in 7 days.
                     </p>

@@ -253,7 +253,7 @@ function DashboardHome({ ws, preset, roiMetrics }: { ws: Workspace; preset: Indu
         {/* Welcome Row (SaaS Style) */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-zinc-150 pb-6">
           <div>
-            <h1 className="text-[26px] font-black text-zinc-900 tracking-[-0.02em] leading-tight" suppressHydrationWarning>
+            <h1 className="text-[22px] font-bold text-zinc-900 tracking-[-0.02em] leading-tight" suppressHydrationWarning>
               {greeting ? `${greeting}, Operator` : "Welcome, Operator"}
             </h1>
             <p className="text-[13px] text-zinc-500 font-medium mt-1" suppressHydrationWarning>
@@ -294,7 +294,7 @@ function DashboardHome({ ws, preset, roiMetrics }: { ws: Workspace; preset: Indu
 
         {/* Compact Prompt Input Card */}
         <motion.div variants={itemVariants} className="bg-white border border-zinc-200 rounded-xl p-6 shadow-sm relative z-20">
-          <h2 className="text-[16px] font-bold text-zinc-900 mb-3 font-display">Ask Anaos AI to build or edit automations</h2>
+          <h2 className="text-[16px] font-bold text-zinc-900 mb-3">Ask Anaos AI to build or edit automations</h2>
           <PromptBox 
             staticPlaceholder="e.g. Build a lead qualification agent for WhatsApp and Facebook"
             mode={promptMode}
@@ -321,7 +321,7 @@ function DashboardHome({ ws, preset, roiMetrics }: { ws: Workspace; preset: Indu
                     <Plug className="w-5 h-5" />
                   </div>
                   <div className="flex-1 text-left">
-                    <h4 className="text-[13px] font-bold text-zinc-900 leading-tight font-display">Connectors are now available.</h4>
+                    <h4 className="text-[13px] font-bold text-zinc-900 leading-tight">Connectors are now available.</h4>
                     <p className="text-[12px] text-zinc-500 mt-0.5 font-medium font-sans">Connectors allow Anaos to interact with apps directly in conversations.</p>
                   </div>
                   <div className="flex items-center gap-3 shrink-0">
@@ -606,7 +606,7 @@ function Sidebar({ active, onChange, ws, onWsChange, workspaces, preset, user, o
         {!isAgent && (
           <>
             <div className="pt-6 pb-2 px-3">
-              <span className="text-[9px] font-black tracking-[0.25em] text-zinc-400 uppercase">Insights</span>
+              <span className="text-[9px] font-bold tracking-[0.25em] text-zinc-400 uppercase">Insights</span>
             </div>
             
             <button
@@ -667,7 +667,7 @@ function Sidebar({ active, onChange, ws, onWsChange, workspaces, preset, user, o
             </span>
           </div>
           <div className="min-w-0 flex-1">
-            <p className="text-[13px] font-black text-zinc-800 truncate tracking-tight">{user?.name || "User"}</p>
+            <p className="text-[13px] font-bold text-zinc-800 truncate tracking-tight">{user?.name || "User"}</p>
             <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">
               {user?.role ? `${user.role} OS` : "Agent OS"}
             </p>
@@ -797,7 +797,7 @@ function Topbar({ title, ws, preset, waStatus, integrations, onMenuClick }: {
                     <div className="w-4 h-4 rounded-full bg-sky-500 flex items-center justify-center">
                       <Search className="w-2.5 h-2.5 text-white" />
                     </div>
-                    <span className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">TF-IDF Search</span>
+                    <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">TF-IDF Search</span>
                   </div>
                   <div className="flex items-center gap-2">
                     {searchResults.length > 0 && (
@@ -851,8 +851,8 @@ function Topbar({ title, ws, preset, waStatus, integrations, onMenuClick }: {
                             </p>
                             {score !== null && (
                               <div className="shrink-0 flex flex-col items-end gap-0.5">
-                                <span className="text-[9px] font-black text-sky-600 uppercase tracking-widest">Score</span>
-                                <span className="text-[11px] font-black text-sky-700 tabular-nums">
+                                <span className="text-[9px] font-bold text-sky-600 uppercase tracking-widest">Score</span>
+                                <span className="text-[11px] font-bold text-sky-700 tabular-nums">
                                   {score.toFixed(3)}
                                 </span>
                               </div>
@@ -862,12 +862,12 @@ function Topbar({ title, ws, preset, waStatus, integrations, onMenuClick }: {
                           {/* Tags Row */}
                           <div className="flex flex-wrap gap-1.5 mt-2">
                             {/* Intent */}
-                            <span className="px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-700 text-[9px] font-black uppercase tracking-wider">
+                            <span className="px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-700 text-[9px] font-bold uppercase tracking-wider">
                               ⚡ {data.intent}
                             </span>
 
                             {/* Sentiment */}
-                            <span className={`px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider ${sentimentColor}`}>
+                            <span className={`px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider ${sentimentColor}`}>
                               {data.sentiment === "positive" ? "😊" : data.sentiment === "negative" ? "😠" : "😐"} {data.sentiment}
                               {data.sentimentScore !== undefined && ` (${data.sentimentScore > 0 ? "+" : ""}${data.sentimentScore})`}
                             </span>
@@ -888,7 +888,7 @@ function Topbar({ title, ws, preset, waStatus, integrations, onMenuClick }: {
                             <div className="flex items-center gap-1.5 mt-2">
                               <span className="text-[9px] text-zinc-400 font-bold">MATCHED:</span>
                               {terms.map((t: string) => (
-                                <span key={t} className="text-[9px] font-black text-sky-600 bg-sky-50 border border-sky-200 px-1.5 py-0.5 rounded-md">
+                                <span key={t} className="text-[9px] font-bold text-sky-600 bg-sky-50 border border-sky-200 px-1.5 py-0.5 rounded-md">
                                   {t}
                                 </span>
                               ))}
@@ -934,7 +934,7 @@ function StatusBadge({ status }: { status: Workspace["status"] }) {
   };
   const { bg, text, border, label } = config[status] || config.draft;
   return (
-    <span className={`px-2 py-0.5 rounded-full border ${bg} ${text} ${border} text-[10px] font-black uppercase tracking-widest`}>
+    <span className={`px-2 py-0.5 rounded-full border ${bg} ${text} ${border} text-[10px] font-bold uppercase tracking-widest`}>
       {label}
     </span>
   );
@@ -986,7 +986,7 @@ function AnalyticsPage() {
   return (
     <div className="space-y-10 max-w-5xl relative z-10 pb-10">
       <div className="space-y-1">
-        <h1 className="text-3xl font-black text-zinc-800 tracking-tight">Analytics</h1>
+        <h1 className="text-3xl font-bold text-zinc-800 tracking-tight">Analytics</h1>
         <p className="text-[15px] text-zinc-500 font-medium leading-relaxed">
           Real-time performance from your workflows — last 7 days
         </p>
@@ -1009,7 +1009,7 @@ function AnalyticsPage() {
                 <p className="text-[11px] text-zinc-400 font-bold uppercase tracking-[0.1em]">
                   {s.label}
                 </p>
-                <span className="text-[26px] font-bold text-zinc-900 tabular-nums mt-3 block tracking-tight leading-none">
+                <span className="text-[22px] font-bold text-zinc-900 tabular-nums mt-3 block tracking-tight leading-none">
                   {s.value}
                 </span>
               </div>
@@ -1019,12 +1019,12 @@ function AnalyticsPage() {
           <div className="rounded-xl border border-zinc-200 bg-white overflow-hidden shadow-sm">
             <div className="px-8 py-6 border-b border-zinc-100 flex items-center justify-between bg-zinc-50/30">
               <div>
-                <h2 className="text-[17px] font-black text-zinc-800 tracking-tight">Workflow activity</h2>
+                <h2 className="text-[17px] font-bold text-zinc-800 tracking-tight">Workflow activity</h2>
                 <p className="text-[13px] text-zinc-500 font-bold mt-1">
                   Triggers vs successful runs ({stats.executionsLast7Days} this week)
                 </p>
               </div>
-              <div className="flex items-center gap-6 text-[12px] text-zinc-400 font-black uppercase tracking-wider">
+              <div className="flex items-center gap-6 text-[12px] text-zinc-400 font-bold uppercase tracking-wider">
                 <span className="flex items-center gap-2">
                   <span className="w-3 h-3 rounded-full bg-zinc-200" />
                   Triggered
@@ -1057,7 +1057,7 @@ function AnalyticsPage() {
                           style={{ height: `${(d.automated / max) * 100}%` }}
                         />
                       </div>
-                      <span className="text-[11px] font-black font-mono text-zinc-400 uppercase tracking-tighter">
+                      <span className="text-[11px] font-bold font-mono text-zinc-400 uppercase tracking-tighter">
                         {d.label}
                       </span>
                     </div>
@@ -1327,7 +1327,7 @@ function AutomationsPage({ ws, integrations, toggleAutomation, toggleLoading }: 
       {/* ── Header ── */}
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h1 className="text-[26px] font-black text-zinc-900 tracking-tight leading-none">Automations</h1>
+          <h1 className="text-[22px] font-bold text-zinc-900 tracking-tight leading-none">Automations</h1>
           <p className="text-[13.5px] text-zinc-400 font-medium mt-1.5 leading-snug">
             Describe a flow in plain language — Anaos builds it. Connect the channel to go live.
           </p>
@@ -1416,7 +1416,7 @@ function AutomationsPage({ ws, integrations, toggleAutomation, toggleLoading }: 
       {/* ── All Automations List ── */}
       <div className="space-y-3">
         <div className="flex items-center justify-between px-1">
-          <h2 className="text-[11px] font-black text-zinc-400 uppercase tracking-[0.18em]">All Automations</h2>
+          <h2 className="text-[11px] font-bold text-zinc-400 uppercase tracking-[0.18em]">All Automations</h2>
           <span className="text-[12px] text-zinc-400 font-semibold">{finalList.length} total</span>
         </div>
 

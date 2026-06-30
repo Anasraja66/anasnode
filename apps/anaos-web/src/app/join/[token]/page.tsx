@@ -103,7 +103,7 @@ export default function JoinTeamPage({ params }: { params: { token: string } }) 
           <div className="w-11 h-11 rounded-2xl bg-zinc-900 border border-zinc-800 flex items-center justify-center shadow-lg ring-1 ring-white/10 mb-3">
             <Zap className="w-5.5 h-5.5 text-blue-400 fill-current" />
           </div>
-          <span className="text-[17px] font-black text-white tracking-tighter">ANASNODE</span>
+          <span className="text-[17px] font-bold text-white tracking-tighter">ANASNODE</span>
           <span className="text-[9px] font-bold text-zinc-500 tracking-[0.25em] uppercase mt-1">Invitation Portal</span>
         </div>
 
@@ -140,7 +140,7 @@ export default function JoinTeamPage({ params }: { params: { token: string } }) 
               >
                 <CheckCircle2 className="w-8 h-8 stroke-[2.5]" />
               </motion.div>
-              <h2 className="text-[20px] font-extrabold tracking-tight mb-2 text-white">Invitation Accepted!</h2>
+              <h2 className="text-[20px] font-semibold tracking-tight mb-2 text-white">Invitation Accepted!</h2>
               <p className="text-[14px] text-zinc-400 leading-relaxed max-w-[280px]">
                 Your account has been created. Redirecting you to login portal in a moment...
               </p>
@@ -163,7 +163,7 @@ export default function JoinTeamPage({ params }: { params: { token: string } }) 
               </div>
 
               <div className="mb-6 text-center sm:text-left">
-                <h2 className="text-[18px] font-black tracking-tight mb-1">Setup Your Account</h2>
+                <h2 className="text-[18px] font-bold tracking-tight mb-1">Setup Your Account</h2>
                 <p className="text-[13px] text-zinc-400">
                   Create your password for <span className="text-zinc-200 font-medium">{invite.email}</span>
                 </p>

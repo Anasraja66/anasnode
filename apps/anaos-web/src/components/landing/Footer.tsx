@@ -72,7 +72,7 @@ export function Footer() {
           <div className="shrink-0">
             <a href="#" className="inline-block">
               <span className="w-8 h-8 rounded-xl bg-zinc-900 flex items-center justify-center shadow-lg shadow-zinc-200">
-                <span className="text-white font-black text-sm italic">A</span>
+                <span className="text-white font-bold text-sm italic">A</span>
               </span>
             </a>
           </div>

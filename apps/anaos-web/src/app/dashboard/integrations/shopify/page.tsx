@@ -51,7 +51,7 @@ export default function ShopifyConnectPage() {
           <div className="w-12 h-12 rounded-xl bg-[#96bf48] flex items-center justify-center">
             <Store className="w-6 h-6 text-white" />
           </div>
-          <h1 className="text-[24px] font-extrabold">Shopify store</h1>
+          <h1 className="text-[24px] font-semibold">Shopify store</h1>
         </div>
         <div className="bg-white rounded-2xl border p-6 space-y-4 shadow-sm">
           <p className="text-[14px] text-zinc-600">

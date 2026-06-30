@@ -66,7 +66,7 @@ export function MetaOAuthConnect({ onSuccess, channels }: Props) {
           <FacebookLogo className="w-11 h-11 text-[#1877F2]" />
         </div>
         
-        <h2 className="text-[22px] font-extrabold text-zinc-900 mb-2 tracking-tight">Connect Meta Business</h2>
+        <h2 className="text-[22px] font-semibold text-zinc-900 mb-2 tracking-tight">Connect Meta Business</h2>
         <p className="text-[14.5px] text-zinc-500 mb-8 max-w-[320px] leading-relaxed">
           Link your WhatsApp, Instagram, and Facebook accounts in one click. No coding or Developer App required.
         </p>

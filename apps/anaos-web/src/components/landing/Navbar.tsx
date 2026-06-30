@@ -145,7 +145,7 @@ export function Navbar() {
           <div className="flex items-center gap-8">
             <a href="#" className="flex items-center gap-2.5 group">
               <AnaosLogo className="w-7 h-7 transition-transform duration-300 group-hover:scale-[1.04]" />
-              <span className="font-sans font-extrabold text-[17px] tracking-[0.03em] text-[#111827]">
+              <span className="font-sans font-semibold text-[17px] tracking-[0.03em] text-[#111827]">
                 ANAOS
               </span>
             </a>

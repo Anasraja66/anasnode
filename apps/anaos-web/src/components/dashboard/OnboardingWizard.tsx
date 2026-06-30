@@ -46,14 +46,14 @@ export function OnboardingWizard() {
   if (!show) return null;
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-zinc-900/40 backdrop-blur-sm p-4">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-zinc-900/40 backdrop-blur-sm p-4 sm:p-6">
       <motion.div
         initial={{ opacity: 0, scale: 0.95, y: 10 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.95, y: 10 }}
-        className="w-full max-w-xl bg-white rounded-3xl shadow-2xl overflow-hidden flex flex-col"
+        className="w-full max-w-xl bg-white rounded-3xl shadow-2xl overflow-y-auto max-h-[100vh] sm:max-h-[90vh] flex flex-col relative"
       >
-        <div className="p-8 md:p-10">
+        <div className="p-6 sm:p-8 md:p-10">
           {!completed ? (
             <>
               {step === 1 && (

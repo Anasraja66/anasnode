@@ -11,8 +11,9 @@ import {
   Play, ZoomIn, ZoomOut, Trash2, ChevronRight, X,
   ArrowLeft, Loader2, Sliders, ChevronDown, Plus,
   Phone, Mail, Database, Star, UserPlus, Send, Bell, Filter,
-  Search, Map, LayoutGrid, Sparkles, CheckCircle2, Repeat,
+  Search, Map, LayoutGrid, Sparkles, CheckCircle2, Repeat, History
 } from "lucide-react";
+import ExecutionHistoryPanel from "./ExecutionHistoryPanel";
 
 // ─── WhatsApp SVG Icon ─────────────────────────────────────────────────────────
 const WhatsAppIcon = ({ size = 14, color = "currentColor" }: { size?: number; color?: string }) => (
@@ -1002,6 +1003,9 @@ export default function WorkflowCanvas({ workflowId, initialData, workflowName =
   const [aiModalOpen, setAiModalOpen] = useState(false);
   const [aiPrompt, setAiPrompt] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
+  const [saved, setSaved] = useState(true);
+  const [showHistoryPanel, setShowHistoryPanel] = useState(false);
+
   const canvasRef = useRef<HTMLDivElement>(null);
   const selectedNodeData = nodes.find(n => n.id === selectedNode) || null;
 
@@ -1259,6 +1263,15 @@ export default function WorkflowCanvas({ workflowId, initialData, workflowName =
               Reset
             </button>
 
+            {/* History */}
+            <button
+              onClick={() => setShowHistoryPanel(true)}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/4 border border-white/8 text-[11px] font-bold text-white/50 hover:text-white transition-all cursor-pointer"
+            >
+              <History size={11} />
+              History
+            </button>
+
             {/* Save/Deploy */}
             <button
               onClick={handleSave}
@@ -1414,6 +1427,15 @@ export default function WorkflowCanvas({ workflowId, initialData, workflowName =
                   onClose={() => setSelectedNode(null)}
                 />
               </div>
+            )}
+          </AnimatePresence>
+
+          <AnimatePresence>
+            {showHistoryPanel && (
+              <ExecutionHistoryPanel 
+                workflowId={workflowId} 
+                onClose={() => setShowHistoryPanel(false)} 
+              />
             )}
           </AnimatePresence>
         </div>

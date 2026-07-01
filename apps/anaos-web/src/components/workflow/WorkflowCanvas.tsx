@@ -398,17 +398,33 @@ const NODE_TYPES: Record<string, NodeConfig> = {
   },
   google_calendar: {
     label: "Google Calendar",
-    desc: "Schedule calendar event",
-    icon: Clock,
+    desc: "Create or check events",
+    icon: Calendar,
     color: "#4285F4",
     glow: "rgba(66,133,244,0.35)",
     bg: "rgba(66,133,244,0.12)",
     border: "#4285F4",
-    category: "Actions",
+    category: "Integrations",
     fields: [
-      { key: "summary", label: "Event Title", type: "text", placeholder: "Meeting with {{name}}" },
-      { key: "startTime", label: "Start Time", type: "text", placeholder: "Tomorrow at 2:00 PM" }
-    ]
+      { key: "action", label: "Action", type: "select", options: ["Book Event", "Find Slot"] },
+      { key: "summary", label: "Event Title", type: "text", placeholder: "Consultation Call" },
+      { key: "startTime", label: "Start Time", type: "text", placeholder: "{{$json.date}}" },
+      { key: "duration", label: "Duration (mins)", type: "text", placeholder: "30" },
+    ],
+  },
+  shopify: {
+    label: "Shopify Action",
+    desc: "Manage Shopify orders",
+    icon: ShoppingCart,
+    color: "#96BF48",
+    glow: "rgba(150,191,72,0.35)",
+    bg: "rgba(150,191,72,0.12)",
+    border: "#96BF48",
+    category: "Integrations",
+    fields: [
+      { key: "action", label: "Action", type: "select", options: ["get_order", "create_customer"] },
+      { key: "orderId", label: "Order ID", type: "text", placeholder: "{{$json.orderId}}" },
+    ],
   },
 };
 
@@ -456,6 +472,7 @@ const TYPE_ALIASES: Record<string, string> = {
   anamind_set: "anamind_set",
   anamind_get: "anamind_get",
   google_calendar: "google_calendar",
+  shopify: "shopify",
   shopify_order: "http_request",
   hubspot_contact: "save_lead",
   webhook_send: "http_request",
@@ -466,18 +483,20 @@ function normaliseType(raw: string): string {
 }
 
 // ─── Category grouping ────────────────────────────────────────────────────────
-const CATEGORIES = ["Triggers", "Messages", "AI & Logic", "Actions"];
+const CATEGORIES = ["Triggers", "Messages", "AI & Logic", "Actions", "Integrations"];
 const CATEGORY_ICONS: Record<string, React.ElementType> = {
   Triggers: Zap,
   Messages: Send,
   "AI & Logic": Bot,
   Actions: Star,
+  Integrations: Database,
 };
 const CATEGORY_COLORS: Record<string, string> = {
   Triggers: "#25D366",
   Messages: "#1877F2",
   "AI & Logic": "#10B981",
   Actions: "#EC4899",
+  Integrations: "#96BF48",
 };
 
 // ─── Node Palette ─────────────────────────────────────────────────────────────
@@ -486,7 +505,7 @@ function NodePalette({ onDragStart, search, setSearch }: {
   search: string;
   setSearch: (v: string) => void;
 }) {
-  const [openCats, setOpenCats] = useState<string[]>(["Triggers", "Messages", "AI & Logic", "Actions"]);
+  const [openCats, setOpenCats] = useState<string[]>(["Triggers", "Messages", "AI & Logic", "Actions", "Integrations"]);
 
   const toggleCat = (cat: string) =>
     setOpenCats(prev => prev.includes(cat) ? prev.filter(c => c !== cat) : [...prev, cat]);
@@ -908,6 +927,7 @@ function canvasTypeToDb(type: string): string {
     case "anamind_set": return "anamind_set";
     case "anamind_get": return "anamind_get";
     case "google_calendar": return "google_calendar";
+    case "shopify": return "shopify";
     default: return type;
   }
 }

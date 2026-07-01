@@ -1,4 +1,7 @@
 import { WorkflowNode, ExecutionContext, NodeResult } from "../types";
+import { EmailNodeHandler } from "../nodes/email";
+import { GoogleCalendarNodeHandler } from "../nodes/google_calendar";
+import { ShopifyNodeHandler } from "../nodes/shopify";
 
 export interface INodeHandler {
   execute(node: WorkflowNode, ctx: ExecutionContext): Promise<NodeResult>;
@@ -21,3 +24,9 @@ export class NodeRegistry {
 }
 
 export const globalRegistry = new NodeRegistry();
+
+// Register the new nodes
+globalRegistry.register("send_email", new EmailNodeHandler());
+globalRegistry.register("google_calendar", new GoogleCalendarNodeHandler());
+globalRegistry.register("shopify", new ShopifyNodeHandler());
+

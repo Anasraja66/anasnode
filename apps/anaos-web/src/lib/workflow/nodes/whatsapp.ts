@@ -1,7 +1,7 @@
 import { INodeHandler } from "../engine/registry";
 import { WorkflowNode, ExecutionContext, NodeResult } from "../types";
 import { evaluateExpression } from "../engine/evaluator";
-import { sendMetaTextMessage } from "@/lib/whatsapp/meta";
+import { sendTwilioMessage } from "@/lib/whatsapp/twilio";
 
 export class SendWhatsAppNode implements INodeHandler {
   async execute(node: WorkflowNode, ctx: ExecutionContext): Promise<NodeResult> {
@@ -18,12 +18,12 @@ export class SendWhatsAppNode implements INodeHandler {
       throw new Error("Cannot send WhatsApp message: No phone number found in context.");
     }
     
-    // Call external API (Meta)
+    // Call external API (Twilio)
     try {
-      const responseId = await sendMetaTextMessage(
-        ctx.accountId,
+      const responseId = await sendTwilioMessage(
         phone,
-        resolvedMessage
+        resolvedMessage,
+        true // isWhatsApp = true
       );
       
       return {

@@ -1,70 +1,60 @@
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/db";
 import bcrypt from "bcryptjs";
-import { defaultPlatformLanguageSettingsJson } from "@/lib/i18n/platform";
+import prisma from "@/lib/db";
+
+export const dynamic = "force-dynamic";
 
 export async function POST(request: Request) {
   try {
-    const { email, password, name } = await request.json();
+    const { name, email, password } = await request.json();
 
-    if (!email || !password || !name) {
-      return NextResponse.json({ error: "All fields are required" }, { status: 400 });
+    if (!email || !password) {
+      return NextResponse.json({ error: "Email and password are required" }, { status: 400 });
     }
 
-    // Check if user already exists
     const existingUser = await prisma.user.findUnique({
       where: { email }
     });
 
     if (existingUser) {
-      return NextResponse.json({ error: "User with this email already exists" }, { status: 400 });
+      return NextResponse.json({ error: "Email is already in use" }, { status: 400 });
     }
 
-    // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Create Account first, then link the user to it
-    const account = await prisma.account.create({
+    // 1. Create a Master Account for the new user
+    const newAccount = await prisma.account.create({
       data: {
         email,
-        name: `${name}'s Account`
+        name,
       }
     });
 
-    // Create User linked to the new account
+    // 2. Create a default Workspace for this account
+    await prisma.workspace.create({
+      data: {
+        accountId: newAccount.id,
+        name: "My Workspace",
+        industry: "General",
+        slug: `workspace-${Date.now()}`,
+        status: "active"
+      }
+    });
+
+    // 3. Create the User linked to the account
     const user = await prisma.user.create({
       data: {
         email,
         password: hashedPassword,
         name,
-        accountId: account.id,
-        role: "owner"
+        role: "owner",
+        accountId: newAccount.id
       }
     });
 
-    // Auto-create a default workspace for this new account so they have an initial dashboard
-    await prisma.workspace.create({
-      data: {
-        accountId: account.id,
-        name: "My First Workspace",
-        industry: "General Business",
-        slug: "my-first-workspace",
-        status: "draft",
-        languageSettings: defaultPlatformLanguageSettingsJson(),
-      }
-    });
-
-    return NextResponse.json({
-      success: true,
-      user: {
-        id: user.id,
-        email: user.email,
-        name: user.name,
-        accountId: user.accountId
-      }
-    });
-  } catch (error) {
+    return NextResponse.json({ success: true, message: "Registration successful" }, { status: 201 });
+  } catch (error: any) {
     console.error("Registration error:", error);
-    return NextResponse.json({ error: "Failed to register user" }, { status: 500 });
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

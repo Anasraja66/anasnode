@@ -243,7 +243,7 @@ export function Hero() {
           initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.55, delay: 0.05 }}
-          className="text-[24px] sm:text-[48px] lg:text-[48px] font-semibold text-[#111827] tracking-[-0.03em] leading-[1.1]"
+          className="text-[32px] sm:text-[56px] lg:text-[72px] font-semibold text-[#111827] tracking-tight leading-[1.1]"
         >
           <span className="flex flex-col lg:flex-row items-center justify-center lg:gap-x-4 w-full">
             <span>Automate</span>
@@ -252,7 +252,7 @@ export function Hero() {
               className="text-blue-500 overflow-visible lg:text-left h-[1.2em] flex items-center"
             />
           </span>
-          <span className="mt-1 sm:mt-2 block">Keep control.</span>
+          <span className="mt-1 sm:mt-2 block text-zinc-800">and keep full control.</span>
         </motion.h1>
 
         {/* Subtitle (Lovable Style) */}

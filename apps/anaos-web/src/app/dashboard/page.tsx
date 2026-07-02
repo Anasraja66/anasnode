@@ -543,7 +543,9 @@ function Sidebar({ active, onChange, ws, onWsChange, workspaces, preset, user, o
       {/* Professional Branding Logo */}
       <div className="h-16 px-4 flex items-center justify-between border-b border-zinc-100 relative bg-white overflow-hidden shrink-0">
         <div className={`flex items-center gap-2.5 transition-all ${isCollapsed ? "mx-auto" : ""}`}>
-          <AnaosLogo className="w-8 h-8 shrink-0 cursor-pointer" onClick={() => setIsCollapsed(!isCollapsed)} />
+          <div className="cursor-pointer shrink-0" onClick={() => setIsCollapsed(!isCollapsed)}>
+            <AnaosLogo className="w-8 h-8" />
+          </div>
           {!isCollapsed && <span className="text-[17px] font-bold text-zinc-900 tracking-tight leading-none whitespace-nowrap">AnaOS</span>}
         </div>
         {!isCollapsed && (

@@ -1,12 +1,13 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/db";
-import { auth } from "@/auth";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 
 export async function GET() {
   try {
-    const session = await auth();
+    const session = await getServerSession(authOptions);
     if (!session?.user) {
       // Mock for development if no session
       const broadcasts = await prisma.broadcastCampaign.findMany({
@@ -32,7 +33,7 @@ export async function POST(request: Request) {
     const body = await request.json();
     const { name, channel, audience, bodyText } = body;
 
-    const session = await auth();
+    const session = await getServerSession(authOptions);
     
     // For development fallback to the first account if no session
     let accountId = (session?.user as any)?.accountId;

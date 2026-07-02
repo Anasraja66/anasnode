@@ -573,12 +573,12 @@ function Sidebar({ active, onChange, ws, onWsChange, workspaces, preset, user, o
           }}
           className={`w-full flex items-center rounded-lg hover:bg-zinc-100 transition-all cursor-pointer text-left group ${isCollapsed ? "justify-center p-1.5" : "gap-3 px-2 py-2"}`}
         >
-          <div className="relative shrink-0">
-            <div className={`rounded-full bg-zinc-200 flex items-center justify-center overflow-hidden ${isCollapsed ? "w-8 h-8" : "w-9 h-9"}`}>
-               <Users className={`text-white mt-1.5 ${isCollapsed ? "w-4 h-4" : "w-5 h-5"}`} />
+          <div className="relative shrink-0 flex items-center justify-center">
+            <div className={`rounded-full bg-zinc-200 flex items-center justify-center overflow-hidden border border-zinc-300 ${isCollapsed ? "w-8 h-8" : "w-9 h-9"}`}>
+               <Users className={`text-zinc-500 ${isCollapsed ? "w-4 h-4" : "w-5 h-5"}`} />
             </div>
             {!isCollapsed && (
-              <div className="absolute -bottom-1 -right-2 bg-zinc-500 text-white text-[9px] font-bold px-1 rounded-sm border border-white">
+              <div className="absolute -bottom-1.5 -right-1 bg-zinc-600 text-white text-[8px] font-bold px-1 rounded-[3px] border border-white shadow-sm whitespace-nowrap">
                 FREE
               </div>
             )}
@@ -784,6 +784,7 @@ function Topbar({ title, ws, preset, waStatus, integrations, onMenuClick }: {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const [isSearching, setIsSearching] = useState(false);
+  const [showNotifications, setShowNotifications] = useState(false);
 
   // Determine if we show the alert banner
   const hasIssue = waStatus.tokenExpired || waStatus.phoneNumberIdInvalid || waStatus.needsPublicWebhook || !integrations.fastapi;
@@ -964,13 +965,49 @@ function Topbar({ title, ws, preset, waStatus, integrations, onMenuClick }: {
             )}
           </div>
           <div className="h-6 w-px bg-zinc-200" />
-          <button
-            type="button"
-            className="w-9 h-9 rounded-lg border border-zinc-200 flex items-center justify-center text-zinc-400 hover:bg-zinc-50 hover:text-zinc-700 transition-all cursor-pointer relative group bg-white shadow-sm"
-          >
-            <Bell className="w-4.5 h-4.5 transition-transform group-hover:rotate-12" />
-            <span className="absolute top-2 right-2.5 w-2 h-2 rounded-full bg-rose-500 border-2 border-white" />
-          </button>
+          <div className="relative group z-50">
+            <button
+              type="button"
+              onClick={() => setShowNotifications(!showNotifications)}
+              className="w-9 h-9 rounded-lg border border-zinc-200 flex items-center justify-center text-zinc-400 hover:bg-zinc-50 hover:text-zinc-700 transition-all cursor-pointer bg-white shadow-sm"
+            >
+              <Bell className="w-4.5 h-4.5 transition-transform group-hover:rotate-12" />
+              {hasIssue && <span className="absolute top-2 right-2.5 w-2 h-2 rounded-full bg-rose-500 border-2 border-white" />}
+            </button>
+            
+            {showNotifications && (
+              <div className="absolute top-full right-0 mt-2 w-80 bg-white border border-zinc-200 rounded-xl shadow-2xl overflow-hidden z-50 animate-in fade-in slide-in-from-top-2">
+                <div className="px-4 py-3 border-b border-zinc-100 flex justify-between items-center bg-zinc-50/50">
+                  <h3 className="text-[13px] font-bold text-zinc-900">Notifications</h3>
+                  {hasIssue && <span className="bg-rose-100 text-rose-700 text-[9px] font-bold px-1.5 py-0.5 rounded-sm">1 New</span>}
+                </div>
+                <div className="max-h-[300px] overflow-y-auto">
+                  {hasIssue ? (
+                    <div className="p-4 hover:bg-zinc-50 transition-colors border-b border-zinc-100">
+                      <div className="flex gap-3">
+                        <div className="w-8 h-8 rounded-full bg-rose-100 flex items-center justify-center shrink-0">
+                          <AlertCircle className="w-4 h-4 text-rose-600" />
+                        </div>
+                        <div>
+                          <p className="text-[13px] font-bold text-zinc-900 leading-tight mb-1">CRM System Alert</p>
+                          <p className="text-[12px] text-zinc-500 leading-snug">{alertMessage}</p>
+                          <button onClick={() => window.location.href='/dashboard/integrations/whatsapp'} className="mt-2 text-[11px] font-bold text-sky-600 hover:underline">Fix Issue &rarr;</button>
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="p-8 text-center flex flex-col items-center justify-center">
+                      <div className="w-12 h-12 rounded-full bg-zinc-50 flex items-center justify-center mb-3 border border-zinc-100">
+                        <CheckCircle2 className="w-5 h-5 text-zinc-300" />
+                      </div>
+                      <p className="text-[13px] font-bold text-zinc-900">All caught up!</p>
+                      <p className="text-[12px] text-zinc-500 mt-1">No new issues in your CRM.</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       </header>
 

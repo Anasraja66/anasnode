@@ -54,6 +54,7 @@ import {
   TrendingUp,
   Pin,
   ChevronLeft,
+  PhoneCall,
 } from "lucide-react";
 import { InboxPage } from "@/components/dashboard/InboxPage";
 import { ContactsHub } from "@/components/dashboard/ContactsHub";

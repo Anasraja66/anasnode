@@ -24,14 +24,15 @@ export class GoogleCalendarNodeHandler implements INodeHandler {
     const meetLink = `https://meet.google.com/abc-defg-hij`;
 
     return { 
-      status: "success", 
-      data: { 
-        message: "Event booked successfully", 
-        eventId,
-        meetLink,
-        summary,
-        startTime 
-      } 
+      output: {
+        status: "success", 
+        data: { 
+          message: "Event booked successfully", 
+          eventId,
+          meetLink
+        }
+      },
+      nextNodeIds: node.outputs || []
     };
   }
 }

@@ -14,12 +14,15 @@ export class ShopifyNodeHandler implements INodeHandler {
       console.log(`[Mock Shopify] Action: ${action} | OrderId: ${orderId}`);
       // Mock response
       return { 
-        status: "success", 
-        data: { 
-          orderStatus: "Shipped", 
-          trackingNumber: "TRK123456789", 
-          courier: "FedEx" 
-        } 
+        output: {
+          status: "success", 
+          data: { 
+            orderStatus: "Shipped", 
+            trackingNumber: "TRK123456789", 
+            courier: "FedEx" 
+          } 
+        },
+        nextNodeIds: node.outputs || []
       };
     }
 
@@ -38,7 +41,7 @@ export class ShopifyNodeHandler implements INodeHandler {
       }
 
       const data = await response.json();
-      return { status: "success", data: data.order };
+      return { output: { status: "success", data: data.order }, nextNodeIds: node.outputs || [] };
     }
 
     throw new Error(`Unsupported Shopify action: ${action}`);

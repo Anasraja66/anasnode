@@ -1,10 +1,10 @@
-datasource db {
-  provider = "postgresql"
-}
-
 generator client {
   provider        = "prisma-client-js"
   previewFeatures = ["driverAdapters"]
+}
+
+datasource db {
+  provider = "postgresql"
 }
 
 model Account {
@@ -12,19 +12,19 @@ model Account {
   email              String                  @unique
   name               String?
   createdAt          DateTime                @default(now())
-  workspaces         Workspace[]
-  workflows          Workflow[]
-  credentials        IntegrationCredential[]
-  users              User[]
-  conversations      InboxConversation[]
-  broadcasts         BroadcastCampaign[]
-  invites            TeamInvite[]
   bookingEvents      BookingEvent[]
-  pendingActions     PendingAction[]
-  subscription       Subscription?
+  broadcasts         BroadcastCampaign[]
   creditBalance      CreditBalance?
   creditTransactions CreditTransaction[]
+  conversations      InboxConversation[]
+  credentials        IntegrationCredential[]
+  pendingActions     PendingAction[]
+  subscription       Subscription?
+  invites            TeamInvite[]
   usageLogs          UsageLog[]
+  users              User[]
+  workflows          Workflow[]
+  workspaces         Workspace[]
 
   @@map("accounts")
 }
@@ -53,8 +53,8 @@ model Workspace {
   version          Int        @default(1)
   languageSettings String     @default("")
   createdAt        DateTime   @default(now())
-  account          Account    @relation(fields: [accountId], references: [id], onDelete: Cascade)
   workflows        Workflow[]
+  account          Account    @relation(fields: [accountId], references: [id], onDelete: Cascade)
 
   @@map("workspaces")
 }
@@ -66,21 +66,21 @@ model Workflow {
   name           String
   description    String?
   isActive       Boolean             @default(false)
-  mode           String              @default("draft") // draft|autopilot
   version        Int                 @default(1)
-  nodes          String // Stringified JSON WorkflowNode[]
-  edges          String // Stringified JSON WorkflowEdge[]
-  variables      String              @default("[]") // Stringified JSON string[]
+  nodes          String
+  edges          String
+  variables      String              @default("[]")
   stats          String              @default("{\"runs\":0,\"success\":0,\"failed\":0}")
-  voiceProvider  String?             // "vapi" | "retell"
-  voiceAgentId   String?             // External ID of the agent in Vapi/Retell
   lastRunAt      DateTime?
   createdAt      DateTime            @default(now())
   updatedAt      DateTime            @updatedAt
+  mode           String              @default("draft")
+  voiceAgentId   String?
+  voiceProvider  String?
+  pendingActions PendingAction[]
+  executions     WorkflowExecution[]
   account        Account             @relation(fields: [accountId], references: [id], onDelete: Cascade)
   workspace      Workspace           @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
-  executions     WorkflowExecution[]
-  pendingActions PendingAction[]
 
   @@map("workflows")
 }
@@ -91,13 +91,13 @@ model PendingAction {
   workflowId   String
   contactPhone String?
   channel      String   @default("whatsapp")
-  actionType   String // send_message, book_appointment, etc.
-  payload      String // Stringified JSON of the action payload (e.g. { body: "..." })
-  status       String   @default("pending") // pending|approved|rejected|sent
+  actionType   String
+  payload      String
+  status       String   @default("pending")
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
-  workflow     Workflow @relation(fields: [workflowId], references: [id], onDelete: Cascade)
   account      Account  @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  workflow     Workflow @relation(fields: [workflowId], references: [id], onDelete: Cascade)
 
   @@map("pending_actions")
 }
@@ -106,13 +106,13 @@ model WorkflowExecution {
   id         String    @id @default(uuid())
   workflowId String
   contactId  String?
-  status     String    @default("running") // running|success|failed|timeout
-  input      String    @default("{}") // Stringified JSON
-  output     String    @default("{}") // Stringified JSON
-  logs       String    @default("[]") // Stringified JSON WorkflowExecutionLog[]
+  status     String    @default("running")
+  input      String    @default("{}")
+  output     String    @default("{}")
+  logs       String    @default("[]")
   startedAt  DateTime  @default(now())
   finishedAt DateTime?
-  duration   Int? // milliseconds
+  duration   Int?
   workflow   Workflow  @relation(fields: [workflowId], references: [id], onDelete: Cascade)
 
   @@map("workflow_executions")
@@ -171,9 +171,9 @@ model InboxMessage {
 model IntegrationCredential {
   id          String   @id @default(uuid())
   accountId   String
-  type        String // openai|claude|gemini|custom_llm|google_calendar|shopify|hubspot|whatsapp|instagram|telegram|smtp
-  name        String // user-given name e.g. "My OpenAI Key"
-  credentials String // encrypted JSON key-value pairs
+  type        String
+  name        String
+  credentials String
   isActive    Boolean  @default(true)
   createdAt   DateTime @default(now())
   account     Account  @relation(fields: [accountId], references: [id], onDelete: Cascade)
@@ -243,7 +243,7 @@ model Subscription {
   id                   String    @id @default(uuid())
   accountId            String    @unique
   planId               String    @default("free_trial")
-  status               String    @default("active") // active|past_due|canceled|trialing
+  status               String    @default("active")
   stripeCustomerId     String?   @unique
   stripeSubscriptionId String?   @unique
   trialEndsAt          DateTime?
@@ -270,8 +270,8 @@ model CreditBalance {
 model CreditTransaction {
   id          String   @id @default(uuid())
   accountId   String
-  amount      Int // Positive for top-up, Negative for usage
-  type        String // "top_up" | "usage" | "refund" | "trial_bonus"
+  amount      Int
+  type        String
   description String
   createdAt   DateTime @default(now())
   account     Account  @relation(fields: [accountId], references: [id], onDelete: Cascade)
@@ -282,9 +282,9 @@ model CreditTransaction {
 model UsageLog {
   id              String   @id @default(uuid())
   accountId       String
-  actionType      String // "workflow_execution" | "voice_call_minute" | "prompt_generation"
+  actionType      String
   creditCost      Int
-  relatedEntityId String? // e.g. WorkflowExecution ID
+  relatedEntityId String?
   createdAt       DateTime @default(now())
   account         Account  @relation(fields: [accountId], references: [id], onDelete: Cascade)
 

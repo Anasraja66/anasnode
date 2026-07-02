@@ -1,14 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { ArrowRight, Lock, Mail, User, AlertCircle, CheckCircle } from "lucide-react";
 import { motion } from "framer-motion";
-import { WorkflowBackground } from "@/components/ui/WorkflowBackground";
+import { AnaosLogo } from "@/components/ui/AnaosLogo";
 
-export default function SignupPage() {
+function SignupForm() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -16,6 +16,9 @@ export default function SignupPage() {
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const prompt = searchParams?.get("prompt");
+  const workspace = searchParams?.get("workspace");
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -51,7 +54,11 @@ export default function SignupPage() {
       if (result?.error) {
         router.push("/login");
       } else {
-        router.push("/onboarding");
+        const queryParams = new URLSearchParams();
+        if (prompt) queryParams.set("prompt", prompt);
+        if (workspace) queryParams.set("workspace", workspace);
+        const queryString = queryParams.toString();
+        router.push(queryString ? `/onboarding?${queryString}` : "/onboarding");
         router.refresh();
       }
     } catch (err) {
@@ -98,7 +105,7 @@ export default function SignupPage() {
           className="text-center mb-10 w-full"
         >
           <Link href="/" className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-white shadow-sm border border-zinc-200/80 mb-5 group hover:shadow-md transition-all">
-            <span className="text-[#0A6BFF] text-[20px] font-bold italic transform group-hover:scale-110 transition-transform">A</span>
+            <AnaosLogo className="w-8 h-8 transform group-hover:scale-110 transition-transform" />
           </Link>
           <h1 className="text-[22px] font-semibold tracking-tight text-zinc-900 mb-2">Create your workspace</h1>
           <p className="text-[15px] text-zinc-500 font-medium">Start automating your business in seconds</p>
@@ -232,5 +239,17 @@ export default function SignupPage() {
         </motion.div>
       </div>
     </div>
+  );
+}
+
+export default function SignupPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-[#F8FAFC] flex items-center justify-center">
+        <div className="w-8 h-8 border-4 border-[#0A6BFF]/20 border-t-[#0A6BFF] rounded-full animate-spin" />
+      </div>
+    }>
+      <SignupForm />
+    </Suspense>
   );
 }

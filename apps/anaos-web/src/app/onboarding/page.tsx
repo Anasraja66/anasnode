@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  Zap,
   ArrowRight,
   CheckCircle2,
   Sparkles,
@@ -17,6 +16,7 @@ import {
   getIndustryPreset,
 } from "@/lib/industry/presets";
 import { LANGUAGE_CATALOG } from "@/lib/i18n/languages";
+import { AnaosLogo } from "@/components/ui/AnaosLogo";
 
 export default function OnboardingPage() {
   const { data: session, update: updateSession } = useSession();
@@ -128,9 +128,7 @@ export default function OnboardingPage() {
       <div className="absolute inset-0 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:16px_16px] opacity-60 pointer-events-none" />
 
       <div className="absolute top-8 left-8 flex items-center gap-2.5 z-10">
-        <div className="w-8 h-8 rounded-lg bg-zinc-900 flex items-center justify-center shadow-sm">
-          <Zap className="w-4 h-4 text-white fill-current" />
-        </div>
+        <AnaosLogo className="w-8 h-8" />
         <span className="font-semibold text-[17px] tracking-tight">Anaos</span>
       </div>
 

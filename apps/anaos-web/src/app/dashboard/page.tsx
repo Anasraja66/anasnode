@@ -1779,15 +1779,6 @@ export default function Dashboard() {
           .catch(() => {});
 
         if (data.success && data.workspaces?.length > 0) {
-          const hasDefaultWorkspace = data.workspaces.some(
-            (w: { name: string }) => w.name === "My First Workspace"
-          );
-
-          if (hasDefaultWorkspace) {
-            router.push("/onboarding");
-            return;
-          }
-
           const mapped: Workspace[] = data.workspaces.map((w: {
             id: string;
             name: string;

@@ -1,20 +1,22 @@
 "use client";
 
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { ArrowRight, Lock, Mail, AlertCircle } from "lucide-react";
 import { motion } from "framer-motion";
-import { WorkflowBackground } from "@/components/ui/WorkflowBackground";
 import { AnaosLogo } from "@/components/ui/AnaosLogo";
 
-export default function LoginPage() {
+function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const prompt = searchParams?.get("prompt");
+  const workspace = searchParams?.get("workspace");
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -34,7 +36,14 @@ export default function LoginPage() {
         setError("Invalid email or password");
         setLoading(false);
       } else {
-        router.push("/dashboard");
+        if (prompt) {
+          const queryParams = new URLSearchParams();
+          queryParams.set("prompt", prompt);
+          if (workspace) queryParams.set("workspace", workspace);
+          router.push(`/onboarding?${queryParams.toString()}`);
+        } else {
+          router.push("/dashboard");
+        }
         router.refresh();
       }
     } catch (err) {
@@ -189,5 +198,17 @@ export default function LoginPage() {
         </motion.div>
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-[#F8FAFC] flex items-center justify-center">
+        <div className="w-8 h-8 border-4 border-[#0A6BFF]/20 border-t-[#0A6BFF] rounded-full animate-spin" />
+      </div>
+    }>
+      <LoginForm />
+    </Suspense>
   );
 }

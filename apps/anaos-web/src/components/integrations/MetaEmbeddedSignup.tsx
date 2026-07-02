@@ -26,23 +26,7 @@ type FbLoginResponse = {
   status?: string;
 };
 
-declare global {
-  interface Window {
-    FB?: {
-      init: (opts: {
-        appId: string;
-        autoLogAppEvents?: boolean;
-        xfbml?: boolean;
-        version: string;
-      }) => void;
-      login: (
-        callback: (response: FbLoginResponse) => void,
-        options: Record<string, unknown>
-      ) => void;
-    };
-    fbAsyncInit?: () => void;
-  }
-}
+
 
 type Props = {
   onSuccess?: (message: string) => void;
@@ -175,8 +159,8 @@ export function MetaEmbeddedSignup({
   }, [onError, tryFinish]);
 
   const initSdk = useCallback(() => {
-    if (!config?.configured || !window.FB) return;
-    window.FB.init({
+    if (!config?.configured || !(window as any).FB) return;
+    (window as any).FB.init({
       appId: config.appId,
       autoLogAppEvents: true,
       xfbml: true,
@@ -187,13 +171,13 @@ export function MetaEmbeddedSignup({
 
   useEffect(() => {
     if (config?.configured) {
-      window.fbAsyncInit = initSdk;
-      if (window.FB) initSdk();
+      (window as any).fbAsyncInit = initSdk;
+      if ((window as any).FB) initSdk();
     }
   }, [config, initSdk]);
 
   const launchSignup = () => {
-    if (!config?.configured || !window.FB || !sdkReady) {
+    if (!config?.configured || !(window as any).FB || !sdkReady) {
       onError?.("Meta is not configured yet. Add app ID and config ID to .env.");
       return;
     }
@@ -201,7 +185,7 @@ export function MetaEmbeddedSignup({
     sessionRef.current = {};
     pendingCodeRef.current = null;
 
-    window.FB.login(
+    (window as any).FB.login(
       (response) => {
         if (response.authResponse?.code) {
           pendingCodeRef.current = response.authResponse.code;
@@ -248,7 +232,7 @@ export function MetaEmbeddedSignup({
         src="https://connect.facebook.net/en_US/sdk.js"
         strategy="lazyOnload"
         onLoad={() => {
-          if (window.fbAsyncInit) window.fbAsyncInit();
+          if ((window as any).fbAsyncInit) (window as any).fbAsyncInit();
         }}
       />
       <button

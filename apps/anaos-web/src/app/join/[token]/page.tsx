@@ -51,7 +51,7 @@ export default function JoinTeamPage({ params }: { params: Promise<{ token: stri
     setError(null);
     
     try {
-      const res = await fetch(`/api/team/invite/${params.token}`, {
+      const res = await fetch(`/api/team/invite/${token}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name, password }),

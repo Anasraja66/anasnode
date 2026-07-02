@@ -150,6 +150,7 @@ function DashboardHome({ ws, preset, roiMetrics }: { ws: Workspace; preset: Indu
 
   const [promptMode, setPromptMode] = useState<"new" | "edit">("new");
   const [recentWorkflow, setRecentWorkflow] = useState<any>(null);
+  const [activeChannel, setActiveChannel] = useState<string>("All channels");
 
   useEffect(() => {
     fetch("/api/v1/workflows")
@@ -242,6 +243,17 @@ function DashboardHome({ ws, preset, roiMetrics }: { ws: Workspace; preset: Indu
 
 
 
+  let availableChannels = ["WhatsApp"];
+  if (recentWorkflow?.requiredIntegrations?.length > 0) {
+    availableChannels = recentWorkflow.requiredIntegrations.map((c: string) => {
+      if (c.toLowerCase() === "whatsapp") return "WhatsApp";
+      if (c.toLowerCase() === "facebook") return "Facebook";
+      if (c.toLowerCase() === "instagram") return "Instagram";
+      if (c.toLowerCase() === "voice") return "Voice";
+      return c.charAt(0).toUpperCase() + c.slice(1);
+    });
+  }
+
   return (
     <motion.div 
       initial="hidden"
@@ -269,17 +281,30 @@ function DashboardHome({ ws, preset, roiMetrics }: { ws: Workspace; preset: Indu
           </div>
           
           <div className="flex items-center gap-6 mt-8 border-b border-zinc-200 w-full">
-            <button className="text-[14px] font-bold text-zinc-900 border-b-2 border-zinc-900 pb-3 -mb-[1px]">
+            <button 
+              onClick={() => setActiveChannel("All channels")}
+              className={`text-[14px] transition-colors pb-3 -mb-[1px] ${activeChannel === "All channels" ? "font-bold text-zinc-900 border-b-2 border-zinc-900" : "font-medium text-zinc-500 hover:text-zinc-700"}`}
+            >
               All channels
             </button>
-            <button className="text-[14px] font-medium text-zinc-500 hover:text-zinc-700 pb-3 -mb-[1px] flex items-center gap-1.5">
-              WhatsApp
-              <span className="bg-sky-500 text-white text-[9px] font-bold px-1.5 py-[1px] rounded-[3px] uppercase tracking-wide">Upgrade</span>
-            </button>
+            {availableChannels.map((channel: string) => (
+              <button 
+                key={channel}
+                onClick={() => setActiveChannel(channel)}
+                className={`text-[14px] flex items-center gap-1.5 transition-colors pb-3 -mb-[1px] ${activeChannel === channel ? "font-bold text-zinc-900 border-b-2 border-zinc-900" : "font-medium text-zinc-500 hover:text-zinc-700"}`}
+              >
+                {channel}
+                {channel === "WhatsApp" && <span className="bg-sky-500 text-white text-[9px] font-bold px-1.5 py-[1px] rounded-[3px] uppercase tracking-wide">Upgrade</span>}
+              </button>
+            ))}
           </div>
           
           <div className="mt-8 flex justify-between items-center w-full">
-             <h2 className="text-[20px] font-bold text-zinc-900">Set up WhatsApp basics to drive conversations</h2>
+             <h2 className="text-[20px] font-bold text-zinc-900">
+               {activeChannel === "All channels" 
+                 ? "Set up your connected channels to drive conversations"
+                 : `Set up ${activeChannel} basics to drive conversations`}
+             </h2>
              <div className="flex items-center gap-3">
                <span className="flex items-center gap-1.5 text-[12px] font-medium text-zinc-500">
                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />

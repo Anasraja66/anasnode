@@ -25,7 +25,7 @@ export default function JoinTeamPage({ params }: { params: Promise<{ token: stri
   useEffect(() => {
     async function fetchInvite() {
       try {
-        const res = await fetch(`/api/team/invite/${params.token}`);
+        const res = await fetch(`/api/team/invite/${token}`);
         const data = await res.json();
         
         if (!res.ok) {

@@ -251,7 +251,7 @@ function DashboardHome({ ws, preset, roiMetrics }: { ws: Workspace; preset: Indu
     >
       <OnboardingWizard />
       {/* Background foundation removed for cleaner look */}
-      <div className="relative z-10 space-y-[28px] max-w-6xl mx-auto font-sans">
+      <div className="relative z-10 space-y-[28px] w-full font-sans">
         {/* Welcome Row (ManyChat Exact Style) */}
         <div className="flex flex-col justify-center min-h-[59px] w-full mb-8">
           <h1 className="text-[32px] font-bold text-zinc-900 mb-2 leading-none" suppressHydrationWarning>

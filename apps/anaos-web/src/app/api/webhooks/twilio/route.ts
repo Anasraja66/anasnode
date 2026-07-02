@@ -34,11 +34,11 @@ export async function POST(request: Request) {
     let workflowTriggered = false;
 
     for (const wf of activeWorkflows) {
-      const graph = wf.graph as any;
-      if (!graph || !graph.nodes) continue;
+      const nodes = typeof wf.nodes === 'string' ? JSON.parse(wf.nodes) : wf.nodes || [];
+      if (!nodes || nodes.length === 0) continue;
 
       // Find trigger node
-      const triggerNode = graph.nodes.find((n: any) => n.type === "trigger_whatsapp");
+      const triggerNode = nodes.find((n: any) => n.type === "trigger_whatsapp");
       
       if (triggerNode) {
         console.log(`[Twilio Webhook] Triggering workflow ${wf.id}`);

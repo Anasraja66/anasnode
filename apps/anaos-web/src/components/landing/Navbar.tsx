@@ -23,30 +23,8 @@ import {
   Truck,
   Sparkles
 } from "lucide-react";
+import { AnaosLogo } from "@/components/ui/AnaosLogo";
 
-/* ─── Custom 'A' Logo ─── */
-export function AnaosLogo({ className = "w-7 h-7" }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
-      <defs>
-        <linearGradient id="logoSwoosh" x1="0" y1="50" x2="100" y2="50" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#38bdf8" />
-          <stop offset="1" stopColor="#0ea5e9" />
-        </linearGradient>
-      </defs>
-
-      {/* Main Geometrically Perfect 'A' */}
-      <path d="M38 28 L15 80 L35 80 L50 45 L65 80 L85 80 L62 28 Z" fill="#0284c7" />
-      
-      {/* Two Dots Perfectly Aligned */}
-      <circle cx="38" cy="14" r="6" fill="#0ea5e9" />
-      <circle cx="62" cy="14" r="6" fill="#0ea5e9" />
-      
-      {/* Dynamic Swoosh */}
-      <path d="M5 65 C 30 40, 60 30, 95 42 C 65 46, 40 55, 20 80 Z" fill="url(#logoSwoosh)" />
-    </svg>
-  );
-}
 
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false);

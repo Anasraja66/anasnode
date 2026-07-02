@@ -63,7 +63,7 @@ import { IndustryWelcome } from "@/components/dashboard/IndustryWelcome";
 import { getIndustryPreset, type IndustryPreset } from "@/lib/industry/presets";
 import { AnaosAIHub } from "@/components/dashboard/AnaosAIHub";
 import { BroadcastsHub } from "@/components/dashboard/BroadcastsHub";
-import { AnaosLogo } from "@/components/landing/Navbar";
+import { AnaosLogo } from "@/components/ui/AnaosLogo";
 import TeamSettingsPage from "@/components/dashboard/TeamSettingsPage";
 import TodayBookingsWidget from "@/components/dashboard/TodayBookingsWidget";
 import ChannelStatusWidget from "@/components/dashboard/ChannelStatusWidget";

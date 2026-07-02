@@ -7,6 +7,7 @@ import Link from "next/link";
 import { ArrowRight, Lock, Mail, AlertCircle } from "lucide-react";
 import { motion } from "framer-motion";
 import { WorkflowBackground } from "@/components/ui/WorkflowBackground";
+import { AnaosLogo } from "@/components/ui/AnaosLogo";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -80,7 +81,7 @@ export default function LoginPage() {
           className="text-center mb-10 w-full"
         >
           <Link href="/" className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-white shadow-sm border border-zinc-200/80 mb-5 group hover:shadow-md transition-all">
-            <span className="text-[#0A6BFF] text-[20px] font-bold italic transform group-hover:scale-110 transition-transform">A</span>
+            <AnaosLogo className="w-8 h-8 transform group-hover:scale-110 transition-transform" />
           </Link>
           <h1 className="text-[22px] font-semibold tracking-tight text-zinc-900 mb-2">Welcome back</h1>
           <p className="text-[15px] text-zinc-500 font-medium">Log in to manage your AI workflows</p>

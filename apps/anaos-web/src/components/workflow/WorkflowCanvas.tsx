@@ -11,7 +11,7 @@ import {
   Play, ZoomIn, ZoomOut, Trash2, ChevronRight, X,
   ArrowLeft, Loader2, Sliders, ChevronDown, Plus,
   Phone, Mail, Database, Star, UserPlus, Send, Bell, Filter,
-  Search, Map, LayoutGrid, Sparkles, CheckCircle2, Repeat, History, Calendar
+  Search, Map, LayoutGrid, Sparkles, CheckCircle2, Repeat, History, Calendar, ShoppingCart
 } from "lucide-react";
 import ExecutionHistoryPanel from "./ExecutionHistoryPanel";
 

@@ -254,7 +254,7 @@ function DashboardHome({ ws, preset, roiMetrics }: { ws: Workspace; preset: Indu
         {/* Welcome Row (ManyChat Exact Style) */}
         <div className="flex flex-col justify-center min-h-[59px] w-full mb-8">
           <h1 className="text-[32px] font-bold text-zinc-900 mb-2 leading-none" suppressHydrationWarning>
-            {greeting ? `${greeting}, ${user?.name ? user.name.split(' ')[0] : 'Operator'}!` : `Welcome, ${user?.name ? user.name.split(' ')[0] : 'Operator'}!`}
+            {greeting ? `${greeting}, Operator!` : `Welcome, Operator!`}
           </h1>
           <div className="flex items-center gap-3 text-[13px] text-zinc-600 font-medium" suppressHydrationWarning>
             <span>1 connected channel</span>

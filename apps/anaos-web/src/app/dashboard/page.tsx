@@ -72,7 +72,7 @@ import { ApprovalsPage } from "@/components/dashboard/ApprovalsPage";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
-type Tab = "ai_agent" | "overview" | "inbox" | "approvals" | "contacts" | "automations" | "broadcasts" | "analytics" | "team";
+type Tab = "ai_agent" | "voice_agent" | "overview" | "inbox" | "approvals" | "contacts" | "automations" | "broadcasts" | "analytics" | "team";
 
 type Workspace = {
   id: string;
@@ -532,6 +532,7 @@ function Sidebar({ active, onChange, ws, onWsChange, workspaces, preset, user, o
     NAV_ITEMS.push({ id: "broadcasts",  label: "Broadcasts", icon: Megaphone });
   }
 
+  NAV_ITEMS.push({ id: "voice_agent", label: "Voice Agent",       icon: PhoneCall });
   NAV_ITEMS.push({ id: "ai_agent",    label: "Knowledge Base",    icon: FileText });
 
   return (
@@ -544,7 +545,7 @@ function Sidebar({ active, onChange, ws, onWsChange, workspaces, preset, user, o
       <div className="h-16 px-4 flex items-center justify-between border-b border-zinc-100 relative bg-white overflow-hidden shrink-0">
         <div className={`flex items-center gap-2.5 transition-all ${isCollapsed ? "mx-auto" : ""}`}>
           <div className="cursor-pointer shrink-0" onClick={() => setIsCollapsed(!isCollapsed)}>
-            <AnaosLogo className="w-8 h-8" />
+            <img src="/logo.jpg" alt="AnaOS Logo" className="w-8 h-8 rounded shadow-sm object-cover" />
           </div>
           {!isCollapsed && <span className="text-[17px] font-bold text-zinc-900 tracking-tight leading-none whitespace-nowrap">AnaOS</span>}
         </div>
@@ -2031,6 +2032,16 @@ export default function Dashboard() {
             <div className={tab === "inbox" || tab === "ai_agent" || tab === "contacts" ? "" : "px-4 py-6 md:px-10 md:pt-8 md:pb-8"}>
               {tab === "ai_agent"    && <AIAgentPage     ws={ws} />}
               {tab === "overview"    && <DashboardHome ws={ws} preset={industryPreset} roiMetrics={roiMetrics} />}
+              {tab === "voice_agent" && (
+                <div className="bg-white border border-zinc-200 rounded-xl p-8 shadow-sm h-full flex flex-col items-center justify-center text-center">
+                   <PhoneCall className="w-12 h-12 text-sky-500 mb-4" />
+                   <h2 className="text-2xl font-bold text-zinc-900 mb-2">AnaOS Voice Calling Agent</h2>
+                   <p className="text-zinc-500 max-w-md">Configure your AI voice agent here. Set up phone numbers, conversational logic, and greeting prompts.</p>
+                   <button className="mt-6 bg-[#0A6BFF] text-white px-6 py-2 rounded-lg font-semibold shadow-sm hover:bg-blue-600 transition-colors">
+                     Connect Voice Agent
+                   </button>
+                </div>
+              )}
               {tab === "inbox"       && <InboxPage initialConversationId={inboxChatId} preset={industryPreset} />}
               {tab === "contacts"    && <ContactsHub />}
               {tab === "automations" && <AutomationsPage ws={ws} integrations={integrations} toggleAutomation={toggleAutomation} toggleLoading={toggleLoading} />}

@@ -27,25 +27,23 @@ import {
 /* ─── Custom 'A' Logo ─── */
 export function AnaosLogo({ className = "w-7 h-7" }: { className?: string }) {
   return (
-    <svg
-      viewBox="0 0 100 100"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      className={className}
-    >
-      {/* Left Dot */}
-      <circle cx="34" cy="20" r="7.5" fill="#24A1DE" />
-      {/* Right Dot */}
-      <circle cx="56" cy="20" r="7.5" fill="#3AB2F9" />
+    <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+      <defs>
+        <linearGradient id="logoSwoosh" x1="0" y1="50" x2="100" y2="50" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#38bdf8" />
+          <stop offset="1" stopColor="#0ea5e9" />
+        </linearGradient>
+      </defs>
+
+      {/* Main Geometrically Perfect 'A' */}
+      <path d="M38 28 L15 80 L35 80 L50 45 L65 80 L85 80 L62 28 Z" fill="#0284c7" />
       
-      {/* Left Leg of A */}
-      <path d="M45 28 L15 80 L35 80 L44 55 Z" fill="#24A1DE" />
+      {/* Two Dots Perfectly Aligned */}
+      <circle cx="38" cy="14" r="6" fill="#0ea5e9" />
+      <circle cx="62" cy="14" r="6" fill="#0ea5e9" />
       
-      {/* Right Leg of A */}
-      <path d="M45 28 L75 80 L90 80 L56 32 Z" fill="#3AB2F9" />
-      
-      {/* The swooping crossbar */}
-      <path d="M16 71 C 35 45, 65 40, 95 48 C 65 48, 45 55, 30 80 Z" fill="#58C6FF" />
+      {/* Dynamic Swoosh */}
+      <path d="M5 65 C 30 40, 60 30, 95 42 C 65 46, 40 55, 20 80 Z" fill="url(#logoSwoosh)" />
     </svg>
   );
 }

@@ -545,16 +545,7 @@ function Sidebar({ active, onChange, ws, onWsChange, workspaces, preset, user, o
       <div className="h-16 px-4 flex items-center justify-between border-b border-zinc-100 relative bg-white overflow-hidden shrink-0">
         <div className={`flex items-center gap-2.5 transition-all ${isCollapsed ? "mx-auto" : ""}`}>
           <div className="cursor-pointer shrink-0" onClick={() => setIsCollapsed(!isCollapsed)}>
-            <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-8 h-8">
-              {/* Main A shape */}
-              <path d="M48.5 25 L20 85 L35 85 L50 50 L65 85 L80 85 Z" fill="#0284c7" />
-              {/* Left dot */}
-              <circle cx="38" cy="16" r="6" fill="#0ea5e9" />
-              {/* Right dot */}
-              <circle cx="62" cy="16" r="6" fill="#0ea5e9" />
-              {/* Swoosh */}
-              <path d="M15 65 Q 50 25 90 45 Q 60 40 25 75 Z" fill="#38bdf8" />
-            </svg>
+            <AnaosLogo className="w-8 h-8" />
           </div>
           {!isCollapsed && <span className="text-[17px] font-bold text-zinc-900 tracking-tight leading-none whitespace-nowrap">AnaOS</span>}
         </div>

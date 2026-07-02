@@ -52,7 +52,8 @@ import {
   Megaphone,
   Plug,
   TrendingUp,
-  PhoneCall,
+  Pin,
+  ChevronLeft,
 } from "lucide-react";
 import { InboxPage } from "@/components/dashboard/InboxPage";
 import { ContactsHub } from "@/components/dashboard/ContactsHub";
@@ -499,6 +500,7 @@ function Sidebar({ active, onChange, ws, onWsChange, workspaces, preset, user, o
   setOpen: (o: boolean) => void;
 }) {
   const [wsOpen, setWsOpen] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(true);
 
   const isAgent = user?.role === "agent";
 
@@ -517,77 +519,115 @@ function Sidebar({ active, onChange, ws, onWsChange, workspaces, preset, user, o
   NAV_ITEMS.push({ id: "ai_agent",    label: "Knowledge Base",    icon: FileText });
 
   return (
-    <aside className={`dashboard-sidebar w-[260px] shrink-0 border-r border-zinc-200 bg-white flex flex-col h-full z-40 transition-transform duration-300 md:translate-x-0 md:static fixed inset-y-0 left-0 ${open ? "translate-x-0" : "-translate-x-full"}`}>
+    <aside 
+      onMouseEnter={() => setIsCollapsed(false)}
+      onMouseLeave={() => { setIsCollapsed(true); setWsOpen(false); }}
+      className={`dashboard-sidebar shrink-0 border-r border-zinc-200 bg-white flex flex-col h-full z-40 transition-all duration-300 md:translate-x-0 md:static fixed inset-y-0 left-0 ${open ? "translate-x-0" : "-translate-x-full"} ${isCollapsed ? "w-[68px]" : "w-[260px]"}`}
+    >
       {/* Professional Branding Logo */}
-      <div className="h-16 px-6 flex items-center justify-between border-b border-zinc-100 relative bg-white">
-        <div className="flex items-center gap-2.5">
-          <AnaosLogo className="w-8 h-8" />
-          <span className="text-[17px] font-bold text-zinc-900 tracking-tight leading-none">AnaOS</span>
+      <div className="h-16 px-4 flex items-center justify-between border-b border-zinc-100 relative bg-white overflow-hidden shrink-0">
+        <div className={`flex items-center gap-2.5 transition-all ${isCollapsed ? "mx-auto" : ""}`}>
+          <AnaosLogo className="w-8 h-8 shrink-0 cursor-pointer" onClick={() => setIsCollapsed(!isCollapsed)} />
+          {!isCollapsed && <span className="text-[17px] font-bold text-zinc-900 tracking-tight leading-none whitespace-nowrap">AnaOS</span>}
         </div>
-        <button
-          type="button"
-          onClick={() => setOpen(false)}
-          className="md:hidden p-1 rounded-lg hover:bg-zinc-100 text-zinc-500 transition-colors cursor-pointer"
-        >
-          <X className="w-5 h-5" />
-        </button>
+        {!isCollapsed && (
+          <button
+            type="button"
+            onClick={() => {
+               setIsCollapsed(true);
+               setOpen(false);
+            }}
+            className="p-1.5 rounded-lg hover:bg-zinc-100 text-zinc-400 transition-colors cursor-pointer shrink-0 md:hidden"
+          >
+            <ChevronLeft className="w-4 h-4" />
+          </button>
+        )}
       </div>
 
       {/* Workspace switcher */}
-      <div className="px-3 py-4 border-b border-zinc-100 relative">
+      <div className={`py-4 border-b border-zinc-100 relative shrink-0 ${isCollapsed ? "px-2" : "px-3"}`}>
         <button
           type="button"
-          onClick={() => setWsOpen(!wsOpen)}
-          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-zinc-100 transition-all cursor-pointer text-left border border-transparent hover:border-zinc-200 group"
+          onClick={() => {
+            if (isCollapsed) setIsCollapsed(false);
+            else setWsOpen(!wsOpen);
+          }}
+          className={`w-full flex items-center rounded-lg hover:bg-zinc-100 transition-all cursor-pointer text-left group ${isCollapsed ? "justify-center p-1.5" : "gap-3 px-2 py-2"}`}
         >
-          <div className="w-8 h-8 rounded-md bg-zinc-100 flex items-center justify-center shrink-0 text-[13px] font-semibold text-zinc-800">
-            {ws.name[0]}
+          <div className="relative shrink-0">
+            <div className={`rounded-full bg-zinc-200 flex items-center justify-center overflow-hidden ${isCollapsed ? "w-8 h-8" : "w-9 h-9"}`}>
+               <Users className={`text-white mt-1.5 ${isCollapsed ? "w-4 h-4" : "w-5 h-5"}`} />
+            </div>
+            {!isCollapsed && (
+              <div className="absolute -bottom-1 -right-2 bg-zinc-500 text-white text-[9px] font-bold px-1 rounded-sm border border-white">
+                FREE
+              </div>
+            )}
           </div>
-          <div className="min-w-0 flex-1">
-            <p className="text-[13px] font-bold text-zinc-800 truncate leading-snug">
-              {ws.name}
-            </p>
-            <p className="text-[11px] font-medium text-zinc-400 truncate">{preset.label}</p>
-          </div>
-          <ChevronDown
-            className={`w-4 h-4 text-zinc-300 shrink-0 transition-transform ${wsOpen ? "rotate-180" : ""}`}
-          />
+          {!isCollapsed && (
+            <>
+              <div className="min-w-0 flex-1 flex items-center">
+                <p className="text-[14px] font-medium text-zinc-900 truncate">
+                  {ws.name}
+                </p>
+              </div>
+              <ChevronDown
+                className={`w-4 h-4 text-zinc-400 shrink-0 transition-transform ${wsOpen ? "rotate-180" : ""}`}
+              />
+            </>
+          )}
         </button>
 
-        {wsOpen && (
-          <div className="absolute left-3 right-3 top-full mt-1 rounded-xl border border-zinc-200 bg-white shadow-xl overflow-hidden z-20 animate-in fade-in slide-in-from-top-2">
+        {wsOpen && !isCollapsed && (
+          <div className="absolute left-3 right-3 top-full mt-1 rounded-lg border border-zinc-200 bg-white shadow-xl overflow-hidden z-20 animate-in fade-in slide-in-from-top-2 py-1">
             {workspaces.map((w) => (
               <button
                 key={w.id}
                 onClick={() => { onWsChange(w); setWsOpen(false); }}
-                className={`w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-zinc-50 transition-colors cursor-pointer ${ws.id === w.id ? "bg-zinc-50" : ""}`}
+                className={`w-full flex items-center gap-3 px-3 py-2 text-left hover:bg-[#f4f6fb] transition-colors cursor-pointer ${ws.id === w.id ? "bg-[#f4f6fb]" : ""}`}
               >
-                <div className="w-6 h-6 rounded bg-zinc-100 border border-zinc-200 flex items-center justify-center shrink-0">
-                  <span className="text-[10px] font-bold text-zinc-600">{w.name[0]}</span>
+                <div className="relative shrink-0">
+                  <div className="w-8 h-8 rounded-full bg-[#dbe1ea] flex items-center justify-center overflow-hidden">
+                     <Users className="w-4 h-4 text-white mt-1.5" />
+                  </div>
                 </div>
-                <div className="min-w-0 flex-1">
-                  <p className="text-[12px] font-bold text-zinc-700 truncate">{w.name}</p>
-                  <p className="text-[10px] text-zinc-400">{w.industry}</p>
+                <div className="min-w-0 flex-1 flex items-center justify-between">
+                  <p className="text-[13px] text-zinc-700 truncate mr-2">{w.name}</p>
+                  <div className="flex items-center gap-2 shrink-0">
+                    <span className="bg-zinc-500 text-white text-[10px] font-bold px-1.5 py-[1px] rounded-sm">
+                      FREE
+                    </span>
+                    <Pin className="w-3.5 h-3.5 text-zinc-400" />
+                  </div>
                 </div>
-                {ws.id === w.id && (
-                  <Check className="w-4 h-4 shrink-0 text-zinc-800" />
-                )}
               </button>
             ))}
+            <div className="px-3 pt-2 pb-1 mt-1 border-t border-zinc-100">
+              <button className="w-full py-1.5 rounded-md border border-zinc-200 text-[13px] text-zinc-600 flex items-center justify-center gap-1.5 hover:bg-zinc-50 transition-colors font-medium cursor-pointer">
+                <Plus className="w-3.5 h-3.5" />
+                New Account
+              </button>
+            </div>
           </div>
         )}
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 px-3 pt-4 space-y-1 overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+      <nav className={`flex-1 pt-4 space-y-1 overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] ${isCollapsed ? "px-2" : "px-3"}`}>
         {NAV_ITEMS.map(({ id, label, icon: Icon }) => {
           const isActive = active === id;
           return (
             <button
               key={id}
               type="button"
-              onClick={() => onChange(id)}
-              className={`w-full flex items-center gap-3 h-10 px-3.5 rounded-[8px] text-[13px] transition-all cursor-pointer group ${
+              onClick={() => {
+                onChange(id);
+                if (window.innerWidth < 768) setOpen(false);
+              }}
+              title={isCollapsed ? label : undefined}
+              className={`w-full flex items-center h-10 rounded-[8px] transition-all cursor-pointer group ${
+                isCollapsed ? "justify-center px-0" : "gap-3 px-3.5"
+              } ${
                 isActive
                   ? "bg-[#0A6BFF]/10 text-[#0A6BFF] font-semibold"
                   : "text-zinc-500 font-medium hover:bg-zinc-100 hover:text-zinc-900"
@@ -598,21 +638,30 @@ function Sidebar({ active, onChange, ws, onWsChange, workspaces, preset, user, o
                   isActive ? "text-[#0A6BFF] stroke-[2]" : "text-zinc-400 group-hover:text-zinc-600 stroke-[2]"
                 }`}
               />
-              {label}
+              {!isCollapsed && <span className="whitespace-nowrap">{label}</span>}
             </button>
           );
         })}
 
         {!isAgent && (
           <>
-            <div className="pt-6 pb-2 px-3">
-              <span className="text-[10px] font-semibold tracking-widest text-zinc-400 uppercase">Insights</span>
-            </div>
+            {!isCollapsed && (
+              <div className="pt-6 pb-2 px-3">
+                <span className="text-[10px] font-semibold tracking-widest text-zinc-400 uppercase">Insights</span>
+              </div>
+            )}
+            {isCollapsed && <div className="h-4" />}
             
             <button
               type="button"
-              onClick={() => onChange("analytics")}
-              className={`w-full flex items-center gap-3 h-10 px-3.5 rounded-[8px] text-[13px] transition-all cursor-pointer group ${
+              onClick={() => {
+                 onChange("analytics");
+                 if (window.innerWidth < 768) setOpen(false);
+              }}
+              title={isCollapsed ? "Analytics" : undefined}
+              className={`w-full flex items-center h-10 rounded-[8px] transition-all cursor-pointer group ${
+                isCollapsed ? "justify-center px-0" : "gap-3 px-3.5"
+              } ${
                 active === "analytics"
                   ? "bg-[#0A6BFF]/10 text-[#0A6BFF] font-semibold"
                   : "text-zinc-500 font-medium hover:bg-zinc-100 hover:text-zinc-900"
@@ -623,55 +672,70 @@ function Sidebar({ active, onChange, ws, onWsChange, workspaces, preset, user, o
                   active === "analytics" ? "text-[#0A6BFF] stroke-[2]" : "text-zinc-400 group-hover:text-zinc-600 stroke-[2]"
                 }`}
               />
-              Analytics
+              {!isCollapsed && <span className="whitespace-nowrap">Analytics</span>}
             </button>
           </>
         )}
       </nav>
 
       {/* Sidebar Footer */}
-      <div className="px-3 py-4 border-t border-zinc-100 space-y-1 bg-transparent">
+      <div className={`py-4 border-t border-zinc-100 space-y-1 bg-transparent shrink-0 ${isCollapsed ? "px-2" : "px-3"}`}>
         {!isAgent && (
           <button
             type="button"
-            onClick={() => onChange("team")}
-            className={`w-full flex items-center gap-3 h-10 px-3.5 rounded-[8px] text-[13px] transition-all cursor-pointer group ${
+            onClick={() => {
+              onChange("team");
+              if (window.innerWidth < 768) setOpen(false);
+            }}
+            title={isCollapsed ? "Team Settings" : undefined}
+            className={`w-full flex items-center h-10 rounded-[8px] transition-all cursor-pointer group ${
+              isCollapsed ? "justify-center px-0" : "gap-3 px-3.5"
+            } ${
               active === "team"
                 ? "bg-[#0A6BFF]/10 text-[#0A6BFF] font-semibold"
                 : "text-zinc-500 font-medium hover:bg-zinc-100 hover:text-zinc-900"
             }`}
           >
             <Users className={`w-[18px] h-[18px] shrink-0 transition-colors ${active === "team" ? "text-[#0A6BFF]" : "text-zinc-400 group-hover:text-zinc-600"} stroke-[2]`} />
-            Team Settings
+            {!isCollapsed && <span className="whitespace-nowrap">Team Settings</span>}
           </button>
         )}
         <a
           href="/dashboard/integrations"
-          className="w-full flex items-center gap-3 h-10 px-3.5 rounded-[8px] text-[13px] text-zinc-500 font-medium hover:bg-zinc-100 hover:text-zinc-900 transition-all cursor-pointer group"
+          title={isCollapsed ? "Integrations" : undefined}
+          className={`w-full flex items-center h-10 rounded-[8px] text-zinc-500 font-medium hover:bg-zinc-100 hover:text-zinc-900 transition-all cursor-pointer group ${
+            isCollapsed ? "justify-center px-0" : "gap-3 px-3.5"
+          }`}
         >
-          <Plug className="w-[18px] h-[18px] text-zinc-400 group-hover:text-zinc-600 stroke-[2] shrink-0 transition-colors" />
-          Integrations
+          <Plug className="w-[18px] h-[18px] shrink-0 transition-colors text-zinc-400 group-hover:text-zinc-600 stroke-[2]" />
+          {!isCollapsed && <span className="whitespace-nowrap">Integrations</span>}
         </a>
         <button 
           onClick={() => signOut({ callbackUrl: "/" })}
-          className="w-full flex items-center gap-3 h-10 px-3.5 rounded-[8px] text-[13px] text-zinc-500 font-medium hover:bg-zinc-100 hover:text-zinc-900 transition-all cursor-pointer group"
+          title={isCollapsed ? "Log out" : undefined}
+          className={`w-full flex items-center h-10 rounded-[8px] text-zinc-500 font-medium hover:bg-zinc-100 hover:text-zinc-900 transition-all cursor-pointer group ${
+            isCollapsed ? "justify-center px-0" : "gap-3 px-3.5"
+          }`}
         >
-          <LogOut className="w-[18px] h-[18px] text-zinc-400 group-hover:text-zinc-600 stroke-[2] shrink-0 transition-colors" />
-          Log out
+          <LogOut className="w-[18px] h-[18px] shrink-0 transition-colors text-zinc-400 group-hover:text-zinc-600 stroke-[2]" />
+          {!isCollapsed && <span className="whitespace-nowrap">Log out</span>}
         </button>
         
-        <div className="flex items-center gap-3 px-3 pt-4 mt-3 border-t border-zinc-100">
+        {/* User Profile Footer */}
+        <div className={`mt-3 border-t border-zinc-100 ${isCollapsed ? "pt-3 flex justify-center" : "pt-4 px-3 flex items-center gap-3"}`}>
           <div className="w-9 h-9 rounded-lg bg-zinc-800 flex items-center justify-center shrink-0 shadow-lg ring-2 ring-white/10">
             <span className="text-[13px] font-bold text-white uppercase text-center w-full">
               {user?.name ? user.name.slice(0, 2) : (user?.email ? user.email.slice(0, 2) : "UN")}
             </span>
           </div>
-          <div className="min-w-0 flex-1">
-            <p className="text-[13px] font-bold text-zinc-800 truncate tracking-tight">{user?.name || "User"}</p>
-            <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">
-              {user?.role ? `${user.role} OS` : "Agent OS"}
-            </p>
-          </div>
+          {!isCollapsed && (
+            <div className="min-w-0 flex-1">
+              <p className="text-[13px] font-bold text-zinc-800 truncate tracking-tight">{user?.name || "User"}</p>
+              <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">
+                {user?.role ? `${user.role} OS` : "Agent OS"}
+              </p>
+            </div>
+          )}
         </div>
       </div>
     </aside>

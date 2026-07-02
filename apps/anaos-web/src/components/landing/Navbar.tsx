@@ -24,7 +24,7 @@ import {
   Sparkles
 } from "lucide-react";
 
-/* ─── Anaos SVG Logo (Recreated from image) ─── */
+/* ─── Custom 'A' Logo ─── */
 export function AnaosLogo({ className = "w-7 h-7" }: { className?: string }) {
   return (
     <svg
@@ -33,42 +33,19 @@ export function AnaosLogo({ className = "w-7 h-7" }: { className?: string }) {
       xmlns="http://www.w3.org/2000/svg"
       className={className}
     >
-      {/* Rounded Triangle Base */}
-      <path
-        d="M44.8 11.5C47.1 7.6 52.9 7.6 55.2 11.5L92.7 74.5C95 78.4 92.1 83.3 87.5 83.3H12.5C7.9 83.3 5 78.4 7.3 74.5L44.8 11.5Z"
-        fill="#00B0FF"
-      />
-      {/* Left trace */}
-      <path
-        d="M30 71L46.5 24"
-        stroke="white"
-        strokeWidth="5"
-        strokeLinecap="round"
-      />
-      <circle cx="30" cy="71" r="5" fill="white" />
-      <circle cx="46.5" cy="24" r="5" fill="white" />
-
-      {/* Middle trace */}
-      <path
-        d="M48 71L58.5 41"
-        stroke="white"
-        strokeWidth="5"
-        strokeLinecap="round"
-      />
-      <circle cx="48" cy="71" r="5" fill="white" />
-      <circle cx="58.5" cy="41" r="5" fill="white" />
-
-      {/* Right trace */}
-      <path
-        d="M66 71L73.5 52L81 71"
-        stroke="white"
-        strokeWidth="5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <circle cx="66" cy="71" r="5" fill="white" />
-      <circle cx="73.5" cy="52" r="5" fill="white" />
-      <circle cx="81" cy="71" r="5" fill="white" />
+      {/* Left Dot */}
+      <circle cx="34" cy="20" r="7.5" fill="#24A1DE" />
+      {/* Right Dot */}
+      <circle cx="56" cy="20" r="7.5" fill="#3AB2F9" />
+      
+      {/* Left Leg of A */}
+      <path d="M45 28 L15 80 L35 80 L44 55 Z" fill="#24A1DE" />
+      
+      {/* Right Leg of A */}
+      <path d="M45 28 L75 80 L90 80 L56 32 Z" fill="#3AB2F9" />
+      
+      {/* The swooping crossbar */}
+      <path d="M16 71 C 35 45, 65 40, 95 48 C 65 48, 45 55, 30 80 Z" fill="#58C6FF" />
     </svg>
   );
 }

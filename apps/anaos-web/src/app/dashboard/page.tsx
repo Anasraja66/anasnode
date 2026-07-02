@@ -1912,16 +1912,17 @@ export default function Dashboard() {
           <div className="w-16 h-16 bg-blue-50 text-[#0A6BFF] rounded-2xl flex items-center justify-center mb-6 shadow-inner border border-blue-100/50">
             {isDeployingAgent ? <Activity className="w-8 h-8 animate-bounce" /> : <Loader2 className="w-8 h-8 animate-spin" />}
           </div>
-          
-          <h2 className="text-xl font-bold text-zinc-900 mb-2">
-            {isDeployingAgent ? "Deploying Your AI Agent..." : "Loading Dashboard..."}
-          </h2>
-          
-          <p className="text-[13px] text-zinc-500 font-medium mb-8">
-            {isDeployingAgent 
-              ? "We are building your workspace and wiring up your automations to the AI engine." 
-              : "Syncing your secure workspace data."}
-          </p>
+          {isDeployingAgent && (
+            <>
+              <h2 className="text-xl font-bold text-zinc-900 mb-2">
+                Deploying Your AI Agent...
+              </h2>
+              
+              <p className="text-[13px] text-zinc-500 font-medium mb-8">
+                We are building your workspace and wiring up your automations to the AI engine.
+              </p>
+            </>
+          )}
 
           {/* Loading bar */}
           <div className="w-full h-1.5 bg-zinc-100 rounded-full overflow-hidden">

@@ -1,10 +1,11 @@
 import { INodeHandler } from "../engine/registry";
 import { WorkflowNode, ExecutionContext, NodeResult } from "../types";
+import { evaluateExpression } from "../engine/evaluator";
 
 export class GoogleCalendarNodeHandler implements INodeHandler {
   async execute(node: WorkflowNode, ctx: ExecutionContext): Promise<NodeResult> {
-    const summary = ctx.evaluate(node.config.summary || "New Booking");
-    const startTime = ctx.evaluate(node.config.startTime || "");
+    const summary = evaluateExpression(node.config.summary || "New Booking", ctx);
+    const startTime = evaluateExpression(node.config.startTime || "", ctx);
     const durationMins = parseInt(node.config.duration || "30", 10);
 
     if (!startTime) {

@@ -1,10 +1,11 @@
 import { INodeHandler } from "../engine/registry";
 import { WorkflowNode, ExecutionContext, NodeResult } from "../types";
+import { evaluateExpression } from "../engine/evaluator";
 
 export class ShopifyNodeHandler implements INodeHandler {
   async execute(node: WorkflowNode, ctx: ExecutionContext): Promise<NodeResult> {
     const action = node.config.action || "get_order";
-    const orderId = ctx.evaluate(node.config.orderId || "");
+    const orderId = evaluateExpression(node.config.orderId || "", ctx);
 
     const shopifyStoreUrl = process.env.SHOPIFY_STORE_URL;
     const shopifyAccessToken = process.env.SHOPIFY_ACCESS_TOKEN;

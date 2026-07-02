@@ -1,11 +1,12 @@
 import { INodeHandler } from "../engine/registry";
 import { WorkflowNode, ExecutionContext, NodeResult } from "../types";
+import { evaluateExpression } from "../engine/evaluator";
 
 export class EmailNodeHandler implements INodeHandler {
   async execute(node: WorkflowNode, ctx: ExecutionContext): Promise<NodeResult> {
-    const to = ctx.evaluate(node.config.to || "");
-    const subject = ctx.evaluate(node.config.subject || "");
-    const body = ctx.evaluate(node.config.body || "");
+    const to = evaluateExpression(node.config.to || "", ctx);
+    const subject = evaluateExpression(node.config.subject || "", ctx);
+    const body = evaluateExpression(node.config.body || "", ctx);
 
     if (!to || !subject) {
       throw new Error("Email 'to' and 'subject' are required.");

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { 
-  ArrowLeft, Check, ChevronRight, MessageSquare, Plus, Loader2, Sparkles, Image as ImageIcon, Video, FileText, Send, Zap
+  ArrowLeft, Check, ChevronRight, MessageSquare, Plus, Loader2, Sparkles, Image as ImageIcon, Video, FileText, Send, Zap, Megaphone
 } from "lucide-react";
 
 interface BroadcastFormProps {

@@ -186,7 +186,7 @@ export function MetaEmbeddedSignup({
     pendingCodeRef.current = null;
 
     (window as any).FB.login(
-      (response) => {
+      (response: FbLoginResponse) => {
         if (response.authResponse?.code) {
           pendingCodeRef.current = response.authResponse.code;
           tryFinish();

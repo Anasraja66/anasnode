@@ -251,28 +251,43 @@ function DashboardHome({ ws, preset, roiMetrics }: { ws: Workspace; preset: Indu
       <OnboardingWizard />
       {/* Background foundation removed for cleaner look */}
       <div className="relative z-10 space-y-[28px] max-w-6xl mx-auto font-sans">
-        {/* Welcome Row (SaaS Style) */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-zinc-150 pb-6">
-          <div>
-            <h1 className="text-[22px] font-bold text-zinc-900 tracking-[-0.02em] leading-tight" suppressHydrationWarning>
-              {greeting ? `${greeting}, Operator` : "Welcome, Operator"}
-            </h1>
-            <p className="text-[13px] text-zinc-500 font-medium mt-1" suppressHydrationWarning>
-              Workspace: <span className="font-bold text-zinc-700">{ws.name}</span>{dateStr ? ` · ${dateStr}` : ""}
-            </p>
+        {/* Welcome Row (ManyChat Exact Style) */}
+        <div className="flex flex-col justify-center min-h-[59px] w-full mb-8">
+          <h1 className="text-[32px] font-bold text-zinc-900 mb-2 leading-none" suppressHydrationWarning>
+            {greeting ? `${greeting}, ${user?.name ? user.name.split(' ')[0] : 'Operator'}!` : `Welcome, ${user?.name ? user.name.split(' ')[0] : 'Operator'}!`}
+          </h1>
+          <div className="flex items-center gap-3 text-[13px] text-zinc-600 font-medium" suppressHydrationWarning>
+            <span>1 connected channel</span>
+            <span className="text-zinc-300">·</span>
+            <span>Workspace: <span className="font-bold text-zinc-800">{ws.name}</span></span>
           </div>
-          <div className="flex items-center gap-3">
-            <span className="flex items-center gap-1.5 text-[12px] font-medium text-zinc-550 mr-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-              Production Workspace
-            </span>
-            <button
-              onClick={() => window.location.reload()}
-              className="flex items-center gap-1.5 h-9 px-4 rounded-xl bg-white border border-zinc-200 text-zinc-700 text-[12.5px] font-bold hover:bg-zinc-50 transition-colors shadow-sm cursor-pointer"
-            >
-              <RefreshCw className="w-3.5 h-3.5" />
-              <span>Refresh</span>
+          <div className="mt-3">
+            <button className="text-[13px] font-semibold text-sky-500 hover:underline cursor-pointer">
+              See Insights
             </button>
+          </div>
+          
+          <div className="flex items-center gap-6 mt-8 border-b border-zinc-200 w-full">
+            <button className="text-[14px] font-bold text-zinc-900 border-b-2 border-zinc-900 pb-3 -mb-[1px]">
+              All channels
+            </button>
+            <button className="text-[14px] font-medium text-zinc-500 hover:text-zinc-700 pb-3 -mb-[1px] flex items-center gap-1.5">
+              WhatsApp
+              <span className="bg-sky-500 text-white text-[9px] font-bold px-1.5 py-[1px] rounded-[3px] uppercase tracking-wide">Upgrade</span>
+            </button>
+          </div>
+          
+          <div className="mt-8 flex justify-between items-center w-full">
+             <h2 className="text-[20px] font-bold text-zinc-900">Set up WhatsApp basics to drive conversations</h2>
+             <div className="flex items-center gap-3">
+               <span className="flex items-center gap-1.5 text-[12px] font-medium text-zinc-500">
+                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                 Production
+               </span>
+               <button onClick={() => window.location.reload()} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-zinc-200 text-zinc-600 text-[12px] font-bold hover:bg-zinc-50 transition-colors shadow-sm cursor-pointer">
+                 <RefreshCw className="w-3.5 h-3.5" /> Refresh
+               </button>
+             </div>
           </div>
         </div>
 

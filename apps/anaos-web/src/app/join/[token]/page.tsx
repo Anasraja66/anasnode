@@ -41,7 +41,7 @@ export default function JoinTeamPage({ params }: { params: Promise<{ token: stri
     }
     
     fetchInvite();
-  }, [params.token]);
+  }, [token]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

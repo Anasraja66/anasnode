@@ -1,9 +1,9 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import Link from "next/link";
-import { ChevronRight, Loader2, Megaphone, MoreHorizontal, Plus, Shield, Zap } from "lucide-react";
+import { ChevronRight, Loader2, Megaphone, MoreHorizontal, Plus, Shield } from "lucide-react";
 import { META_BROADCAST_RULES } from "@/lib/broadcast/meta-policy";
+import BroadcastForm from "@/components/broadcasts/BroadcastForm";
 
 type Campaign = {
   id: string;
@@ -17,6 +17,7 @@ type Campaign = {
 export function BroadcastsHub({ workspaceName }: { workspaceName: string }) {
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isCreating, setIsCreating] = useState(false);
   const [prompt, setPrompt] = useState("");
   const [creating, setCreating] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -24,7 +25,7 @@ export function BroadcastsHub({ workspaceName }: { workspaceName: string }) {
   const load = useCallback(async () => {
     const res = await fetch("/api/broadcasts");
     const data = await res.json();
-    if (data.success) setCampaigns(data.campaigns || []);
+    if (data.broadcasts) setCampaigns(data.broadcasts || []);
     setLoading(false);
   }, []);
 
@@ -34,46 +35,51 @@ export function BroadcastsHub({ workspaceName }: { workspaceName: string }) {
 
   const createFromPrompt = async () => {
     if (!prompt.trim()) return;
-    setCreating(true);
-    setError(null);
-    const res = await fetch("/api/broadcasts/from-prompt", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ prompt, workspaceName }),
-    });
-    const data = await res.json();
-    setCreating(false);
-    if (!res.ok) {
-      setError(data.error || "Could not create");
-      return;
-    }
-    window.location.href = `/dashboard/broadcasts/${data.campaign.id}`;
+    setIsCreating(true); // Open the ManyChat UI with the prompt context!
   };
+
+  if (isCreating) {
+    return (
+      <div className="fixed inset-0 z-50 bg-white overflow-y-auto">
+        <BroadcastForm 
+          onBack={() => setIsCreating(false)} 
+          onSaved={() => {
+            load();
+            setIsCreating(false);
+          }} 
+          initialPrompt={prompt}
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-10 max-w-6xl mx-auto px-6 py-10 relative z-10 pb-10 font-sans">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
         <div className="space-y-1">
-          <h1 className="text-[22px] font-bold text-zinc-900 tracking-tight leading-tight">Mass Broadcasts</h1>
-          <p className="text-sm text-zinc-500 font-medium max-w-2xl leading-relaxed">
-            Send bulk messages via WhatsApp while staying compliant with 
+          <h1 className="text-[22px] font-bold text-zinc-900 tracking-tight leading-tight flex items-center gap-2">
+            <Megaphone className="text-[#0A6BFF]" size={24} />
+            Bulk Broadcasts
+          </h1>
+          <p className="text-[14px] text-zinc-500 font-medium max-w-2xl leading-relaxed mt-2">
+            Send bulk messages via WhatsApp, Voice Calls, or Emails to your real estate leads while staying compliant with 
             <span className="text-emerald-600 font-bold mx-1">Meta Business Rules</span>.
           </p>
         </div>
-        <Link
-          href="/dashboard/broadcasts/new"
-          className="inline-flex items-center gap-2 h-10 px-5 rounded-xl bg-[#0A6BFF] text-white text-[13px] font-semibold hover:bg-blue-600 transition-all shadow-sm active:scale-95"
+        <button
+          onClick={() => setIsCreating(true)}
+          className="inline-flex items-center gap-2 h-11 px-6 rounded-xl bg-[#0A6BFF] text-white text-[14px] font-bold hover:bg-blue-600 transition-all shadow-lg shadow-blue-500/20 active:scale-95"
         >
           <Plus className="w-5 h-5" />
-          Create Draft
-        </Link>
+          New Broadcast
+        </button>
       </div>
 
       {/* AI OS: Prompt to Campaign */}
       <div className="rounded-xl border border-zinc-200 bg-white p-6 space-y-4 shadow-sm">
         <div>
-          <h2 className="text-[15px] font-bold text-zinc-900 tracking-tight">Create Campaign</h2>
-          <p className="text-[12.5px] text-zinc-500 mt-0.5">Describe your target audience and goal to compose a new broadcast campaign draft.</p>
+          <h2 className="text-[15px] font-bold text-zinc-900 tracking-tight">Create Campaign via AI</h2>
+          <p className="text-[12.5px] text-zinc-500 mt-0.5">Describe your target audience and goal to instantly generate a ManyChat-style broadcast template.</p>
         </div>
         
         <div className="relative group">
@@ -81,23 +87,23 @@ export function BroadcastsHub({ workspaceName }: { workspaceName: string }) {
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
             rows={3}
-            placeholder="Describe your goal (e.g., 'Send 50 leads a morning update about Marina apartments with an opt-out option')..."
-            className="w-full text-sm border border-zinc-200 rounded-xl px-4 py-3 focus:outline-none focus:border-zinc-900 focus:ring-4 focus:ring-zinc-100 transition-all resize-none bg-white"
+            placeholder="Describe your goal (e.g., 'Send 50 leads a morning update about Marina apartments with an opt-out option')... (You can paste anything here)"
+            className="w-full text-sm border border-zinc-200 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all resize-none bg-white"
           />
         </div>
 
         <div className="flex items-center justify-between gap-4">
-           <p className="text-[12px] text-zinc-400 font-bold uppercase tracking-[0.2em]">
-             ⚡ Powered by AnasNode AI OS
+           <p className="text-[12px] text-zinc-400 font-bold uppercase tracking-[0.2em] flex items-center gap-1.5">
+             <span className="text-yellow-500 text-[14px]">⚡</span> Powered by AnaOS AI Engine
            </p>
            <button
             type="button"
             disabled={creating || !prompt.trim()}
             onClick={createFromPrompt}
-            className="inline-flex items-center gap-3 h-11 px-8 rounded-xl bg-[#0A6BFF] text-white text-[14px] font-bold hover:bg-blue-600 transition-all shadow-sm disabled:opacity-30 active:scale-95 cursor-pointer"
+            className="inline-flex items-center gap-3 h-11 px-8 rounded-xl bg-[#0A6BFF] text-white text-[14px] font-bold hover:bg-blue-600 transition-all shadow-sm shadow-blue-500/20 disabled:opacity-50 active:scale-95 cursor-pointer"
           >
             {creating ? <Loader2 className="w-5 h-5 animate-spin" /> : <Megaphone className="w-5 h-5" />}
-            {creating ? "GENERATING..." : "GENERATE CAMPAIGN"}
+            {creating ? "GENERATING..." : "GENERATE IN BUILDER"}
           </button>
         </div>
         {error && <p className="text-[13px] text-red-600 font-bold bg-red-50 p-4 rounded-xl border border-red-100">{error}</p>}
@@ -152,23 +158,20 @@ export function BroadcastsHub({ workspaceName }: { workspaceName: string }) {
               ) : campaigns.length === 0 ? (
                 <tr>
                   <td colSpan={5} className="px-8 py-20 text-center text-zinc-400 font-bold text-[15px]">
-                    No broadcasts found. Start with the AI generator above.
+                    No broadcasts found. Click "New Broadcast" to start marketing.
                   </td>
                 </tr>
               ) : (
                 campaigns.map((c) => (
                   <tr key={c.id} className="hover:bg-zinc-50 transition-colors group">
                     <td className="px-6 py-4">
-                      <Link
-                        href={`/dashboard/broadcasts/${c.id}`}
-                        className="text-[13px] font-semibold text-zinc-900 hover:text-blue-600 transition-colors tracking-tight"
-                      >
+                      <span className="text-[13px] font-semibold text-zinc-900 hover:text-purple-600 transition-colors tracking-tight">
                         {c.name}
-                      </Link>
+                      </span>
                     </td>
                     <td className="px-6 py-4">
                       <span className={`text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-md border ${
-                        c.status === 'live' 
+                        c.status === 'sent' || c.status === 'live' 
                           ? 'bg-emerald-50 text-emerald-700 border-emerald-100' 
                           : 'bg-zinc-100 text-zinc-500 border-zinc-200'
                       }`}>
@@ -178,7 +181,7 @@ export function BroadcastsHub({ workspaceName }: { workspaceName: string }) {
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-2">
                         <span className="text-[13px] font-semibold text-zinc-900 tabular-nums">{c.sentCount}</span>
-                        <span className="text-[11px] text-zinc-400 font-semibold uppercase">/ {c.dailyCap} SENT</span>
+                        <span className="text-[11px] text-zinc-400 font-semibold uppercase">SENT</span>
                       </div>
                     </td>
                     <td className="px-6 py-4 text-[13px] text-zinc-500 font-medium">

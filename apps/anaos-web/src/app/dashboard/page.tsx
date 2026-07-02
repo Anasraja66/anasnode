@@ -387,7 +387,7 @@ function DashboardHome({ ws, preset, roiMetrics }: { ws: Workspace; preset: Indu
                  <PhoneCall className="w-6 h-6" />
               </div>
               <div className="space-y-1">
-                <h3 className="text-[16px] font-semibold text-zinc-900">Vapi Voice AI</h3>
+                <h3 className="text-[16px] font-semibold text-zinc-900">AnaOS Voice Calling Agent</h3>
                 <div className="flex items-center justify-center gap-1.5 mt-1">
                   <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
                   <p className="text-[11px] font-medium text-emerald-600 uppercase tracking-wider">

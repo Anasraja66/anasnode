@@ -36,18 +36,20 @@ export default function BrandIcon({ id, className = "w-5 h-5" }: BrandIconProps)
       return <SiWhatsapp className={className} style={{ color: "#25D366" }} />;
     case "instagram":
       return (
-        <svg viewBox="0 0 24 24" className={className}>
-          <defs>
-            <radialGradient id="ig-grad" cx="30%" cy="107%" r="130%">
-              <stop offset="0%" stopColor="#fdf497" />
-              <stop offset="5%" stopColor="#fdf497" />
-              <stop offset="45%" stopColor="#fd5949" />
-              <stop offset="60%" stopColor="#d6249f" />
-              <stop offset="90%" stopColor="#285AEB" />
-            </radialGradient>
-          </defs>
-          <SiInstagram style={{ fill: "url(#ig-grad)" }} className="w-full h-full" />
-        </svg>
+        <>
+          <svg width="0" height="0" className="absolute">
+            <defs>
+              <radialGradient id="ig-grad" cx="30%" cy="107%" r="130%">
+                <stop offset="0%" stopColor="#fdf497" />
+                <stop offset="5%" stopColor="#fdf497" />
+                <stop offset="45%" stopColor="#fd5949" />
+                <stop offset="60%" stopColor="#d6249f" />
+                <stop offset="90%" stopColor="#285AEB" />
+              </radialGradient>
+            </defs>
+          </svg>
+          <SiInstagram className={className} style={{ fill: "url(#ig-grad)" }} />
+        </>
       );
     case "facebook":
       return <SiFacebook className={className} style={{ color: "#1877F2" }} />;

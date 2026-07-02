@@ -98,6 +98,14 @@
   --sidebar-ring: #3B82F6;
   --background: #F8FAFC; /* Clean light background #F8FAFC */
   --foreground: #111827;
+
+  /* ManyChat Custom Variables */
+  --font-stack: var(--font-inter), sans-serif;
+  --color-text-default: #1f2937;
+  --color-text-subtle: #6b7280;
+  --color-border-default: #e5e7eb;
+  --simui-color-blue-primary: #0084ff;
+  --simui-color-blue-secondary: #80c2ff;
 }
 
 .dark {

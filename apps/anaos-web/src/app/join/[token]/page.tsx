@@ -1,11 +1,13 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, use } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { Zap, Shield, Users, Key, CheckCircle2, AlertCircle } from "lucide-react";
 
-export default function JoinTeamPage({ params }: { params: { token: string } }) {
+export default function JoinTeamPage({ params }: { params: Promise<{ token: string }> }) {
+  const resolvedParams = use(params);
+  const token = resolvedParams.token;
   const router = useRouter();
   const [invite, setInvite] = useState<{
     email: string;

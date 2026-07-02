@@ -6,10 +6,10 @@ export const dynamic = "force-dynamic";
 
 export async function POST(
   request: Request,
-  { params }: { params: { workflowId: string } }
+  { params }: { params: Promise<{ workflowId: string }> }
 ) {
   try {
-    const { workflowId } = params;
+    const { workflowId } = await params;
     
     let bodyData: any = {};
     const contentType = request.headers.get("content-type") || "";

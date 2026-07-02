@@ -1898,6 +1898,7 @@ export default function Dashboard() {
 
   const tabLabel: Record<Tab, string> = {
     ai_agent:    "Automate",
+    voice_agent: "Voice Agent",
     overview:    "Home",
     inbox:       "Inbox",
     approvals:   "Approvals",

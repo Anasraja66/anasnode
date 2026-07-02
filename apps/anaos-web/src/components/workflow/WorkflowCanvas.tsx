@@ -1023,7 +1023,6 @@ export default function WorkflowCanvas({ workflowId, initialData, workflowName =
   const [aiModalOpen, setAiModalOpen] = useState(false);
   const [aiPrompt, setAiPrompt] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
-  const [saved, setSaved] = useState(true);
   const [showHistoryPanel, setShowHistoryPanel] = useState(false);
 
   const canvasRef = useRef<HTMLDivElement>(null);

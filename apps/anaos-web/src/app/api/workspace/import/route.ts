@@ -15,7 +15,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "No workspaces provided" }, { status: 400 });
     }
 
-    const accountId = (session.user as any).accountId;
+    const accountId = (session?.user as any)?.accountId;
     if (!accountId) {
       return NextResponse.json({ error: "Account ID missing" }, { status: 400 });
     }

@@ -28,6 +28,16 @@ export default function OnboardingPage() {
   const [fullName, setFullName] = useState("");
   const [companyName, setCompanyName] = useState("");
   const [industryId, setIndustryId] = useState<IndustryId | "">("");
+  const [pendingWorkflow, setPendingWorkflow] = useState<any>(null);
+
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem("anaos_pending_workflow");
+      if (stored) {
+        setPendingWorkflow(JSON.parse(stored));
+      }
+    } catch (e) {}
+  }, []);
 
   useEffect(() => {
     if (session?.user?.name && !fullName) {
@@ -270,18 +280,39 @@ export default function OnboardingPage() {
                           Your AI Operations Layer is Ready
                         </h2>
                         <p className="text-[15px] text-zinc-500">
-                          Based on your industry, we will install the following workflows automatically:
+                          {pendingWorkflow 
+                            ? "Based on your prompt, we are installing the following workflow:"
+                            : "Based on your industry, we will install the following workflows automatically:"}
                         </p>
                       </div>
 
                       <div className="bg-zinc-50 border border-zinc-200 rounded-xl p-5 mb-8">
                         <ul className="space-y-4">
-                          {recommendedWorkflows().map((workflow, idx) => (
-                            <li key={idx} className="flex items-center gap-3">
-                              <CheckCircle2 className="w-5 h-5 text-emerald-500" />
-                              <span className="text-[15px] font-medium text-zinc-800">{workflow}</span>
-                            </li>
-                          ))}
+                          {pendingWorkflow ? (
+                            <>
+                              <li className="flex items-center gap-3">
+                                <CheckCircle2 className="w-5 h-5 text-emerald-500" />
+                                <span className="text-[15px] font-medium text-zinc-800">
+                                  Trigger: {pendingWorkflow.trigger?.label || "New Message"}
+                                </span>
+                              </li>
+                              {pendingWorkflow.steps?.map((step: any, idx: number) => (
+                                <li key={idx} className="flex items-center gap-3">
+                                  <CheckCircle2 className="w-5 h-5 text-emerald-500" />
+                                  <span className="text-[15px] font-medium text-zinc-800">
+                                    {step.label || step.pluginId}
+                                  </span>
+                                </li>
+                              ))}
+                            </>
+                          ) : (
+                            recommendedWorkflows().map((workflow, idx) => (
+                              <li key={idx} className="flex items-center gap-3">
+                                <CheckCircle2 className="w-5 h-5 text-emerald-500" />
+                                <span className="text-[15px] font-medium text-zinc-800">{workflow}</span>
+                              </li>
+                            ))
+                          )}
                         </ul>
                       </div>
 

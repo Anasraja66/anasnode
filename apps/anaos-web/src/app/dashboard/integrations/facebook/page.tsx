@@ -34,7 +34,18 @@ export default function FacebookSetupPage() {
         </div>
 
         {!connected ? (
-          <MetaEmbeddedSignup onSuccess={() => setConnected(true)} />
+          <div className="bg-white rounded-2xl border border-zinc-200 p-8 shadow-sm flex flex-col items-center text-center max-w-lg mx-auto">
+            <h2 className="text-[20px] font-bold text-zinc-900 mb-2">Connect Facebook Page</h2>
+            <p className="text-[14px] text-zinc-500 mb-8 max-w-sm">
+              Authorize AnaOS to access your Facebook Page to automatically reply to Messenger conversations.
+            </p>
+            <a
+              href="/api/auth/meta/login?state=facebook"
+              className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-[#0A6BFF] text-white shadow-sm font-bold text-[14px] hover:bg-blue-600 transition-all"
+            >
+              Connect with Facebook
+            </a>
+          </div>
         ) : (
           <div className="bg-white rounded-2xl border border-zinc-200 p-8 shadow-sm flex flex-col items-center text-center max-w-lg mx-auto">
             <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mb-6">

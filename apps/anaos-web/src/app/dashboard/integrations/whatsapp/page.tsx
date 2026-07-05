@@ -34,7 +34,15 @@ export default function WhatsAppSetupPage() {
         </div>
 
         {!connected ? (
-          <MetaEmbeddedSignup onSuccess={() => setConnected(true)} />
+          <div className="bg-white rounded-2xl border border-zinc-200 p-8 shadow-sm flex flex-col items-center text-center max-w-lg mx-auto">
+            <h2 className="text-[20px] font-bold text-zinc-900 mb-2">Connect WhatsApp</h2>
+            <p className="text-[14px] text-zinc-500 mb-8 max-w-sm">
+              Authorize AnaOS to access your WhatsApp Business Account to automatically reply to conversations.
+            </p>
+            <div className="w-full">
+              <MetaEmbeddedSignup onSuccess={() => setConnected(true)} />
+            </div>
+          </div>
         ) : (
           <div className="bg-white rounded-2xl border border-zinc-200 p-8 shadow-sm flex flex-col items-center text-center max-w-lg mx-auto">
             <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mb-6">

@@ -178,6 +178,7 @@ export function MetaEmbeddedSignup({
 
   const launchSignup = () => {
     if (!config?.configured || !(window as any).FB || !sdkReady) {
+      alert("Meta is not configured yet, or FB SDK is missing.");
       onError?.("Meta is not configured yet. Add app ID and config ID to .env.");
       return;
     }
@@ -185,22 +186,32 @@ export function MetaEmbeddedSignup({
     sessionRef.current = {};
     pendingCodeRef.current = null;
 
-    (window as any).FB.login(
-      (response: FbLoginResponse) => {
-        if (response.authResponse?.code) {
-          pendingCodeRef.current = response.authResponse.code;
-          tryFinish();
-        } else if (response.status === "not_authorized") {
-          onError?.("Meta permission was not granted.");
+    try {
+      console.log("Calling FB.login with configId:", config.configId);
+      (window as any).FB.login(
+        (response: FbLoginResponse) => {
+          console.log("FB Login Response:", response);
+          if (response.authResponse?.code) {
+            pendingCodeRef.current = response.authResponse.code;
+            tryFinish();
+          } else if (response.status === "not_authorized") {
+            alert("Meta permission was not granted or window closed.");
+            onError?.("Meta permission was not granted.");
+          } else {
+            alert("FB Login failed. Status: " + response.status);
+          }
+        },
+        {
+          config_id: config.configId,
+          response_type: "code",
+          override_default_response_type: true,
+          extras: { setup: {} },
         }
-      },
-      {
-        config_id: config.configId,
-        response_type: "code",
-        override_default_response_type: true,
-        extras: { setup: {} },
-      }
-    );
+      );
+    } catch (err: any) {
+      alert("FB login error: " + err.message);
+      console.error(err);
+    }
   };
 
   if (!config) {
@@ -230,16 +241,22 @@ export function MetaEmbeddedSignup({
     <>
       <Script
         src="https://connect.facebook.net/en_US/sdk.js"
-        strategy="lazyOnload"
+        strategy="afterInteractive"
         onLoad={() => {
           if ((window as any).fbAsyncInit) (window as any).fbAsyncInit();
         }}
       />
       <button
         type="button"
-        disabled={loading || !sdkReady}
-        onClick={launchSignup}
-        className="w-full flex items-center justify-center gap-3 py-3.5 rounded-xl bg-[#1877F2] text-white font-bold text-[15px] hover:bg-[#166FE5] disabled:opacity-60 transition-colors"
+        disabled={loading}
+        onClick={() => {
+          if (!sdkReady) {
+            alert("Facebook SDK is still loading or was blocked by an Ad-blocker (e.g. Brave, uBlock). Please disable Ad-blockers for this site and refresh.");
+            return;
+          }
+          launchSignup();
+        }}
+        className={`w-full flex items-center justify-center gap-3 py-3.5 rounded-xl bg-[#1877F2] text-white font-bold text-[15px] hover:bg-[#166FE5] transition-colors ${!sdkReady || loading ? "opacity-60 cursor-not-allowed" : ""}`}
       >
         {loading ? (
           <Loader2 className="w-5 h-5 animate-spin" />

@@ -60,6 +60,7 @@ import { InboxPage } from "@/components/dashboard/InboxPage";
 import { ContactsHub } from "@/components/dashboard/ContactsHub";
 import { IndustryShell } from "@/components/dashboard/IndustryShell";
 import { IndustryWelcome } from "@/components/dashboard/IndustryWelcome";
+import { CallsPage } from "@/components/dashboard/CallsPage";
 import { getIndustryPreset, type IndustryPreset } from "@/lib/industry/presets";
 import { AnaosAIHub } from "@/components/dashboard/AnaosAIHub";
 import { BroadcastsHub } from "@/components/dashboard/BroadcastsHub";
@@ -72,7 +73,7 @@ import { ApprovalsPage } from "@/components/dashboard/ApprovalsPage";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
-type Tab = "ai_agent" | "voice_agent" | "overview" | "inbox" | "approvals" | "contacts" | "automations" | "broadcasts" | "analytics" | "team";
+type Tab = "ai_agent" | "calls" | "overview" | "inbox" | "approvals" | "contacts" | "automations" | "broadcasts" | "analytics" | "team";
 
 type Workspace = {
   id: string;
@@ -557,7 +558,7 @@ function Sidebar({ active, onChange, ws, onWsChange, workspaces, preset, user, o
     NAV_ITEMS.push({ id: "broadcasts",  label: "Broadcasts", icon: Megaphone });
   }
 
-  NAV_ITEMS.push({ id: "voice_agent", label: "Voice Agent",       icon: PhoneCall });
+  NAV_ITEMS.push({ id: "calls",       label: "Call Logs",         icon: PhoneCall });
   NAV_ITEMS.push({ id: "ai_agent",    label: "Knowledge Base",    icon: FileText });
 
   return (
@@ -1951,7 +1952,7 @@ export default function Dashboard() {
 
   const tabLabel: Record<Tab, string> = {
     ai_agent:    "Automate",
-    voice_agent: "Voice Agent",
+    calls: "Call Logs",
     overview:    "Home",
     inbox:       "Inbox",
     approvals:   "Approvals",
@@ -2084,19 +2085,10 @@ export default function Dashboard() {
               tab === "inbox" ? "overflow-hidden p-0" : "bg-[#F8F9FA]"
             }`}
           >
-            <div className={tab === "inbox" || tab === "ai_agent" || tab === "contacts" ? "" : "px-4 py-6 md:px-10 md:pt-8 md:pb-8"}>
+            <div className={tab === "inbox" || tab === "calls" || tab === "ai_agent" || tab === "contacts" ? "" : "px-4 py-6 md:px-10 md:pt-8 md:pb-8"}>
               {tab === "ai_agent"    && <AIAgentPage     ws={ws} />}
               {tab === "overview"    && <DashboardHome ws={ws} preset={industryPreset} roiMetrics={roiMetrics} />}
-              {tab === "voice_agent" && (
-                <div className="bg-white border border-zinc-200 rounded-xl p-8 shadow-sm h-full flex flex-col items-center justify-center text-center">
-                   <PhoneCall className="w-12 h-12 text-sky-500 mb-4" />
-                   <h2 className="text-2xl font-bold text-zinc-900 mb-2">AnaOS Voice Calling Agent</h2>
-                   <p className="text-zinc-500 max-w-md">Configure your AI voice agent here. Set up phone numbers, conversational logic, and greeting prompts.</p>
-                   <button className="mt-6 bg-[#0A6BFF] text-white px-6 py-2 rounded-lg font-semibold shadow-sm hover:bg-blue-600 transition-colors">
-                     Connect Voice Agent
-                   </button>
-                </div>
-              )}
+              {tab === "calls"       && <CallsPage />}
               {tab === "inbox"       && <InboxPage initialConversationId={inboxChatId} preset={industryPreset} />}
               {tab === "contacts"    && <ContactsHub />}
               {tab === "automations" && <AutomationsPage ws={ws} integrations={integrations} toggleAutomation={toggleAutomation} toggleLoading={toggleLoading} />}

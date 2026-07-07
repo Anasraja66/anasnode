@@ -9,6 +9,9 @@ import {
   CheckCircle2,
   Sparkles,
   Loader2,
+  BrainCircuit,
+  MessageSquare,
+  Phone,
 } from "lucide-react";
 import {
   INDUSTRY_OPTIONS,
@@ -271,53 +274,79 @@ export default function OnboardingPage() {
                   )}
 
                   {step === 3 && (
-                    <div className="flex flex-col h-full">
-                      <div className="text-center mb-8 flex flex-col items-center">
-                        <div className="w-12 h-12 bg-zinc-100 rounded-2xl flex items-center justify-center mb-4 border border-zinc-200 shadow-sm">
-                          <Sparkles className="w-6 h-6" style={{ color: accent }} />
+                    <div className="flex flex-col h-full animate-in fade-in zoom-in-95 duration-500">
+                      <div className="text-center mb-6 flex flex-col items-center">
+                        <div className="w-12 h-12 bg-zinc-900 rounded-2xl flex items-center justify-center mb-4 shadow-lg shadow-zinc-200">
+                          <Sparkles className="w-6 h-6 text-white" />
                         </div>
-                        <h2 className="text-2xl font-semibold text-zinc-900 tracking-tight mb-2">
-                          Your AI Operations Layer is Ready
+                        <h2 className="text-2xl font-bold text-zinc-900 tracking-tight mb-2">
+                          AnaOS AI Analysis Complete
                         </h2>
-                        <p className="text-[15px] text-zinc-500">
-                          {pendingWorkflow 
-                            ? "Based on your prompt, we are installing the following workflow:"
-                            : "Based on your industry, we will install the following workflows automatically:"}
+                        <p className="text-[14px] text-zinc-500 max-w-sm mx-auto leading-relaxed">
+                          We've analyzed your prompt and structured your operational layer. Here is your custom workspace blueprint.
                         </p>
                       </div>
 
-                      <div className="bg-zinc-50 border border-zinc-200 rounded-xl p-5 mb-8">
-                        <ul className="space-y-4">
-                          {pendingWorkflow ? (
-                            <>
-                              <li className="flex items-center gap-3">
-                                <CheckCircle2 className="w-5 h-5 text-emerald-500" />
-                                <span className="text-[15px] font-medium text-zinc-800">
-                                  Trigger: {pendingWorkflow.trigger?.label || "New Message"}
-                                </span>
-                              </li>
-                              {pendingWorkflow.steps?.map((step: any, idx: number) => (
-                                <li key={idx} className="flex items-center gap-3">
-                                  <CheckCircle2 className="w-5 h-5 text-emerald-500" />
-                                  <span className="text-[15px] font-medium text-zinc-800">
-                                    {step.label || step.pluginId}
-                                  </span>
-                                </li>
-                              ))}
-                            </>
-                          ) : (
-                            recommendedWorkflows().map((workflow, idx) => (
-                              <li key={idx} className="flex items-center gap-3">
-                                <CheckCircle2 className="w-5 h-5 text-emerald-500" />
-                                <span className="text-[15px] font-medium text-zinc-800">{workflow}</span>
-                              </li>
-                            ))
-                          )}
-                        </ul>
+                      {/* The Analysis Card */}
+                      <div className="bg-white border border-zinc-200 shadow-xl shadow-zinc-100/50 rounded-2xl overflow-hidden mb-6">
+                        <div className="bg-zinc-50 border-b border-zinc-200 px-5 py-3 flex justify-between items-center">
+                          <div className="flex items-center gap-2">
+                            <div className="flex gap-1.5">
+                              <div className="w-2.5 h-2.5 rounded-full bg-red-400"></div>
+                              <div className="w-2.5 h-2.5 rounded-full bg-amber-400"></div>
+                              <div className="w-2.5 h-2.5 rounded-full bg-emerald-400"></div>
+                            </div>
+                            <span className="text-[11px] font-mono text-zinc-400 ml-2">system_build.log</span>
+                          </div>
+                          <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full uppercase tracking-wider border border-emerald-100">Ready to deploy</span>
+                        </div>
+                        
+                        <div className="p-5 space-y-5">
+                          <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-1.5">
+                               <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">Detected Intent</p>
+                               <p className="text-[13px] font-semibold text-zinc-900 flex items-center gap-1.5">
+                                 <BrainCircuit className="w-4 h-4 text-sky-500" /> {pendingWorkflow?.name || "Lead Gen & Booking"}
+                               </p>
+                            </div>
+                            <div className="space-y-1.5">
+                               <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">Primary Channels</p>
+                               <div className="flex flex-wrap gap-2">
+                                 <span className="inline-flex items-center gap-1 bg-[#25D366]/10 text-[#25D366] px-2 py-0.5 rounded text-[11px] font-bold"><MessageSquare className="w-3 h-3" /> WhatsApp</span>
+                                 <span className="inline-flex items-center gap-1 bg-zinc-100 text-zinc-600 px-2 py-0.5 rounded text-[11px] font-bold"><Phone className="w-3 h-3" /> Voice</span>
+                               </div>
+                            </div>
+                          </div>
+
+                          <div className="border-t border-zinc-100 pt-5">
+                             <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider mb-3">Provisioned Nodes</p>
+                             <div className="space-y-2.5">
+                               {pendingWorkflow ? (
+                                 pendingWorkflow.steps?.map((step: any, idx: number) => (
+                                   <div key={idx} className="flex items-center gap-3 bg-zinc-50 border border-zinc-200/60 p-2.5 rounded-xl">
+                                     <div className="w-8 h-8 rounded-lg bg-white border border-zinc-200 flex items-center justify-center shrink-0 shadow-sm">
+                                       <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+                                     </div>
+                                     <span className="text-[13px] font-medium text-zinc-800">{step.label || step.pluginId}</span>
+                                   </div>
+                                 ))
+                               ) : (
+                                 recommendedWorkflows().map((workflow, idx) => (
+                                   <div key={idx} className="flex items-center gap-3 bg-zinc-50 border border-zinc-200/60 p-2.5 rounded-xl">
+                                     <div className="w-8 h-8 rounded-lg bg-white border border-zinc-200 flex items-center justify-center shrink-0 shadow-sm">
+                                       <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+                                     </div>
+                                     <span className="text-[13px] font-medium text-zinc-800">{workflow}</span>
+                                   </div>
+                                 ))
+                               )}
+                             </div>
+                          </div>
+                        </div>
                       </div>
 
                       <div className="mt-auto">
-                        <p className="text-center text-[13px] text-zinc-500">
+                        <p className="text-center text-[12px] text-zinc-400 font-medium">
                           You can always customize these workflows later in your dashboard.
                         </p>
                       </div>

@@ -749,7 +749,96 @@ export const TEMPLATES: WorkflowTemplate[] = [
       { id: "e4", source: "node-4", target: "node-5" },
     ],
   },
-];
+
+  // -- AI COLD CALLING TEMPLATE --------------------------------------
+  {
+    id: "cold-calling",
+    name: "AI Cold Calling Campaign",
+    description: "Outbound AI voice calls to contacts. After each call, sends a WhatsApp follow-up and books a meeting automatically.",
+    industry: "General Business",
+    nodes: [
+      {
+        id: "node-1",
+        type: NodeType.TRIGGER_SCHEDULE,
+        name: "Call Campaign Start",
+        position: { x: 50, y: 150 },
+        config: { cron: "0 10 * * 1-5" },
+        inputs: [],
+        outputs: ["node-2"],
+      },
+      {
+        id: "node-2",
+        type: NodeType.ANAMIND_SET,
+        name: "Tag as Cold Call Lead",
+        position: { x: 250, y: 150 },
+        config: { variableKey: "LEAD_SOURCE", variableValue: "cold_call_campaign" },
+        inputs: ["node-1"],
+        outputs: ["node-3"],
+      },
+      {
+        id: "node-3",
+        type: NodeType.SEND_VOICE_CALL,
+        name: "AI Outbound Voice Call",
+        position: { x: 450, y: 150 },
+        config: {
+          voiceProvider: "eleven_labs",
+          firstMessage: "Hi, this is an AI assistant. Do you have 2 minutes?",
+          prompt: "You are a professional AI calling agent. Introduce the business, qualify interest, and book a meeting. Keep it under 3 minutes. Be respectful.",
+        },
+        inputs: ["node-2"],
+        outputs: ["node-4"],
+      },
+      {
+        id: "node-4",
+        type: NodeType.WAIT,
+        name: "Wait 5 Minutes After Call",
+        position: { x: 650, y: 150 },
+        config: { minutes: 5 },
+        inputs: ["node-3"],
+        outputs: ["node-5"],
+      },
+      {
+        id: "node-5",
+        type: NodeType.AI_RESPOND,
+        name: "Write WhatsApp Follow-Up",
+        position: { x: 850, y: 150 },
+        config: {
+          provider: "claude",
+          model: "claude-3-5-sonnet",
+          systemPrompt: "Write a short WhatsApp follow-up after a cold call. Thank them for their time. Include a soft call to action. Under 4 lines.",
+          userMessage: "Contact: {{contactName}}. Just completed cold call.",
+        },
+        inputs: ["node-4"],
+        outputs: ["node-6"],
+      },
+      {
+        id: "node-6",
+        type: NodeType.SEND_WHATSAPP,
+        name: "Send WhatsApp Follow-Up",
+        position: { x: 1050, y: 150 },
+        config: { template: "{{AI_RESPONSE}}" },
+        inputs: ["node-5"],
+        outputs: ["node-7"],
+      },
+      {
+        id: "node-7",
+        type: NodeType.GOOGLE_CALENDAR,
+        name: "Book Meeting Slot",
+        position: { x: 1250, y: 150 },
+        config: { summary: "Meeting with {{contactName}}", startTime: "Tomorrow 11:00 AM" },
+        inputs: ["node-6"],
+        outputs: [],
+      },
+    ],
+    edges: [
+      { id: "e1", source: "node-1", target: "node-2" },
+      { id: "e2", source: "node-2", target: "node-3" },
+      { id: "e3", source: "node-3", target: "node-4" },
+      { id: "e4", source: "node-4", target: "node-5" },
+      { id: "e5", source: "node-5", target: "node-6" },
+      { id: "e6", source: "node-6", target: "node-7" },
+    ],
+  },];
 
 export async function createWorkflowFromTemplate(
   templateId: string,

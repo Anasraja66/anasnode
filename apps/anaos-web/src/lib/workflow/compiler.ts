@@ -26,6 +26,12 @@ const INDUSTRY_TEMPLATE_MAP: Record<string, string> = {
   fitness: "restaurant-order-bot",
   "gym & fitness": "restaurant-order-bot",
   "general business": "lead-followup-sequence",
+  // Cold calling intents
+  "cold calling": "cold-calling",
+  "cold call": "cold-calling",
+  "ai calling": "cold-calling",
+  "voice agent": "cold-calling",
+  "outbound calling": "cold-calling",
 
   // U.S. Market Verticals
   hvac: "missed-call-textback",
@@ -76,6 +82,16 @@ export function pickTemplateId(industry: string, prompt: string): string {
   if (INDUSTRY_TEMPLATE_MAP[key]) return INDUSTRY_TEMPLATE_MAP[key];
 
   const p = prompt.toLowerCase();
+
+  // Cold Calling / AI Voice (check this FIRST — before other keyword matches)
+  if (
+    p.includes("cold call") || p.includes("cold calling") ||
+    p.includes("calling krni") || p.includes("call krna") ||
+    p.includes("voice agent") || p.includes("voice bot") ||
+    p.includes("outbound call") || p.includes("ai call")
+  ) {
+    return "cold-calling";
+  }
 
   // E-commerce
   if (p.includes("shopify") || p.includes("cart") || p.includes("ecommerce") || p.includes("abandoned")) {

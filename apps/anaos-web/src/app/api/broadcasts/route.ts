@@ -1,66 +1,121 @@
-import { NextResponse } from "next/server";
-import prisma from "@/lib/db";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+/**
+ * GET/POST /api/broadcasts
+ *
+ * GET  — List all broadcast campaigns for the authenticated account
+ * POST — Create a new campaign and immediately trigger message delivery
+ *
+ * Both routes require authentication.
+ * Unauthenticated requests always get 401 — no dev fallbacks.
+ */
+
+import { after, NextResponse } from "next/server";
+import { prisma } from "@/lib/db";
+import { requireAuth, AuthError } from "@/lib/api/auth-helper";
+import { sendBroadcastCampaign } from "@/lib/broadcast/send-campaign";
 
 export const dynamic = "force-dynamic";
 
-export async function GET() {
-  try {
-    const session = await getServerSession(authOptions);
-    if (!session?.user) {
-      // Mock for development if no session
-      const broadcasts = await prisma.broadcastCampaign.findMany({
-        orderBy: { createdAt: "desc" }
-      });
-      return NextResponse.json({ broadcasts });
-    }
+// ── Types ─────────────────────────────────────────────────────────────────────
 
-    const broadcasts = await prisma.broadcastCampaign.findMany({
-      where: { accountId: (session.user as any).accountId },
-      orderBy: { createdAt: "desc" }
+interface CreateBroadcastBody {
+  name?: string;
+  bodyText: string;
+  footerText?: string;
+  optOutLine?: string;
+  category?: string;
+  audienceFilter?: Record<string, any>;
+  dailyCap?: number;
+  workspaceId?: string;
+}
+
+// ── GET — List campaigns ──────────────────────────────────────────────────────
+
+export async function GET(): Promise<NextResponse> {
+  try {
+    const { accountId } = await requireAuth();
+
+    const campaigns = await prisma.broadcastCampaign.findMany({
+      where: { accountId },
+      orderBy: { createdAt: "desc" },
     });
 
-    return NextResponse.json({ broadcasts });
-  } catch (error) {
-    console.error("Broadcasts GET Error:", error);
+    return NextResponse.json({ broadcasts: campaigns });
+  } catch (err) {
+    if (err instanceof AuthError) return err.response;
+    console.error("[Broadcasts GET]", err);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
 
-export async function POST(request: Request) {
-  try {
-    const body = await request.json();
-    const { name, channel, audience, bodyText } = body;
+// ── POST — Create + send campaign ────────────────────────────────────────────
 
-    const session = await getServerSession(authOptions);
-    
-    // For development fallback to the first account if no session
-    let accountId = (session?.user as any)?.accountId;
-    if (!accountId) {
-      const firstAccount = await prisma.account.findFirst();
-      if (!firstAccount) throw new Error("No account found");
-      accountId = firstAccount.id;
+export async function POST(request: Request): Promise<NextResponse> {
+  try {
+    const { accountId } = await requireAuth();
+
+    const body: CreateBroadcastBody = await request.json();
+
+    if (!body.bodyText?.trim()) {
+      return NextResponse.json(
+        { error: "bodyText is required" },
+        { status: 400 }
+      );
     }
 
+    // 1. Create the campaign record
     const campaign = await prisma.broadcastCampaign.create({
       data: {
         accountId,
-        name: name || "Untitled Campaign",
-        bodyText,
-        category: channel || "marketing",
-        status: "sent",
-        sentCount: Math.floor(Math.random() * 500) + 50, // Simulated count for now
-        failedCount: 0,
+        workspaceId: body.workspaceId || null,
+        name: body.name || "Untitled Campaign",
+        bodyText: body.bodyText,
+        footerText: body.footerText || "",
+        optOutLine: body.optOutLine || "Reply STOP to opt out.",
+        category: body.category || "marketing",
+        audienceFilter: body.audienceFilter
+          ? JSON.stringify(body.audienceFilter)
+          : "{}",
+        dailyCap: body.dailyCap || 250,
+        status: "sending",
+      },
+    });
+
+    console.log(`[Broadcasts] Campaign "${campaign.name}" (${campaign.id}) created`);
+
+    // 2. Send messages in background — do not block the HTTP response
+    after(async () => {
+      try {
+        const result = await sendBroadcastCampaign({
+          campaignId: campaign.id,
+          accountId,
+        });
+
+        console.log(
+          `[Broadcasts] Campaign ${campaign.id} complete: sent=${result.sent} failed=${result.failed}`
+        );
+      } catch (err: any) {
+        console.error(`[Broadcasts] Campaign ${campaign.id} send failed:`, err.message);
+
+        // Mark campaign as failed
+        await prisma.broadcastCampaign.update({
+          where: { id: campaign.id },
+          data: { status: "failed" },
+        }).catch(() => null);
       }
     });
 
-    // In a real scenario, this is where we would map over all InboxConversations
-    // and dispatch Twilio / SendGrid messages asynchronously using BullMQ or Vercel waitUntil.
-
-    return NextResponse.json({ success: true, campaign });
-  } catch (error) {
-    console.error("Broadcasts POST Error:", error);
+    return NextResponse.json({
+      success: true,
+      campaign: {
+        id: campaign.id,
+        name: campaign.name,
+        status: campaign.status,
+      },
+      message: "Campaign created and sending started",
+    });
+  } catch (err) {
+    if (err instanceof AuthError) return err.response;
+    console.error("[Broadcasts POST]", err);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

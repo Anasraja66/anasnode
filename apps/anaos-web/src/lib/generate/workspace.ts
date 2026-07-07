@@ -21,6 +21,7 @@ import { DecisionEngine } from "@/lib/ai/pipeline/DecisionEngine";
 import { NeuralClassifier } from "@/lib/ai/pipeline/NeuralEmbedding";
 import { FeedbackLearner } from "@/lib/ai/pipeline/FeedbackLearner";
 import { Autoencoder } from "@/lib/ai/pipeline/Autoencoder";
+import { ChannelIntentDetector, ChannelIntentResult } from "@/lib/ai/pipeline/ChannelIntentDetector";
 
 export type GeneratedWorkspace = {
   id: string;
@@ -31,6 +32,13 @@ export type GeneratedWorkspace = {
   version: number;
   automations: GeneratedAutomation[];
   variables: GeneratedVariable[];
+  // ── Channel Intent (what user wants to DO) ──
+  intentType: ChannelIntentResult["intent"];
+  primaryChannel: ChannelIntentResult["primaryChannel"];
+  automationType: ChannelIntentResult["automationType"];
+  dashboardRoute: ChannelIntentResult["dashboardRoute"];
+  channelConfidence: number;
+  channelExplanation: string;
 };
 
 // ── Helper: Extract business name from prompt ─────────────────────────────────
@@ -243,8 +251,26 @@ export function generateWorkspaceFromPrompt(prompt: string): GeneratedWorkspace 
     });
 
   // ── Stage 5: Remember this valid prompt in Autoencoder memory ─────────────
-  // Next time a similar prompt comes → we can recall it instantly!
   Autoencoder.remember(prompt, neuralResult.industry);
+
+  // ── Stage 6: Channel Intent Detection ────────────────────────────────────
+  const channelIntent = ChannelIntentDetector.detect(prompt);
+
+  // Merge channel-specific automations with industry automations
+  const mergedAutomations = [
+    ...automations,
+    ...channelIntent.suggestedAutomations
+      .filter(name => !automations.some(a => a.name === name))
+      .map((name, i) => ({
+        id: `a-ch-${i + 1}`,
+        name,
+        description: `Auto-generated from intent: ${channelIntent.intent}`,
+        type: channelIntent.primaryChannel === "voice" ? "voice_flow" : "whatsapp_flow",
+        enabled: i < 2,
+        runs: 0,
+        lastRun: "Never",
+      })),
+  ];
 
   return {
     id: `ws-custom-${Date.now()}`,
@@ -256,8 +282,14 @@ export function generateWorkspaceFromPrompt(prompt: string): GeneratedWorkspace 
       .replace(/(^-|-$)/g, ""),
     status: "draft",
     version: 1,
-    automations,
+    automations: mergedAutomations,
     variables,
+    intentType: channelIntent.intent,
+    primaryChannel: channelIntent.primaryChannel,
+    automationType: channelIntent.automationType,
+    dashboardRoute: channelIntent.dashboardRoute,
+    channelConfidence: channelIntent.confidence,
+    channelExplanation: channelIntent.explanation,
   };
 }
 
@@ -384,6 +416,9 @@ Rules:
       ttl: "session",
     });
 
+    // Channel intent detection for AI path
+    const channelIntent = ChannelIntentDetector.detect(prompt);
+
     return {
       id: `ws-custom-${Date.now()}`,
       name,
@@ -396,6 +431,12 @@ Rules:
       version: 1,
       automations,
       variables,
+      intentType: channelIntent.intent,
+      primaryChannel: channelIntent.primaryChannel,
+      automationType: channelIntent.automationType,
+      dashboardRoute: channelIntent.dashboardRoute,
+      channelConfidence: channelIntent.confidence,
+      channelExplanation: channelIntent.explanation,
     };
   } catch {
     return null;

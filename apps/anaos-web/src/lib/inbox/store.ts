@@ -1,31 +1,40 @@
 import { prisma } from "@/lib/db";
 import { decrypt } from "@/lib/crypto";
 
-/** Match Meta webhook phone_number_id to the right Anaos account. */
+/**
+ * Match Meta webhook phone_number_id to the right Anaos account.
+ *
+ * Returns the accountId that owns this phoneNumberId,
+ * or undefined if no match is found.
+ *
+ * IMPORTANT: Never falls back to "first account in DB" —
+ * that would silently route messages to the wrong tenant.
+ */
 export async function resolveAccountIdFromWhatsApp(
   phoneNumberId?: string
 ): Promise<string | undefined> {
+  if (!phoneNumberId) return undefined;
+
   const creds = await prisma.integrationCredential.findMany({
     where: { type: "whatsapp", isActive: true },
     orderBy: { createdAt: "desc" },
   });
 
-  if (phoneNumberId) {
-    for (const cred of creds) {
-      try {
-        const parsed = JSON.parse(decrypt(cred.credentials)) as {
-          phoneNumberId?: string;
-        };
-        if (parsed.phoneNumberId === phoneNumberId) {
-          return cred.accountId;
-        }
-      } catch {
-        /* skip bad credential */
+  for (const cred of creds) {
+    try {
+      const parsed = JSON.parse(decrypt(cred.credentials)) as {
+        phoneNumberId?: string;
+      };
+      if (parsed.phoneNumberId === phoneNumberId) {
+        return cred.accountId;
       }
+    } catch {
+      /* skip rows with bad/corrupt credential JSON */
     }
   }
 
-  return creds[0]?.accountId;
+  // No match — caller handles gracefully (log warning, return 200 to Meta)
+  return undefined;
 }
 
 export async function upsertInboxConversation(params: {

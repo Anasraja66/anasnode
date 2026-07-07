@@ -104,13 +104,52 @@ export class WorkflowExecutor {
       logs: [],
     };
 
-    // 5. Load AnasMind context for contact if available
-    if (ctx.contactId) {
-      // Simulate loading contact profile / context variables
-      ctx.anamind = {
-        name: triggerData.contactName || "Customer",
-        phone: triggerData.contactPhone || "+1234567890",
-      };
+    // 5. Load real contact context from DB (AnasMind profile)
+    // Always seed with trigger data first, then enrich from DB if available
+    ctx.anamind = {
+      name: triggerData.contactName || "Customer",
+      phone: triggerData.contactPhone || triggerData.phone || "",
+    };
+
+    const contactPhone = triggerData.contactPhone || triggerData.phone;
+    if (contactPhone) {
+      try {
+        const conversation = await prisma.inboxConversation.findFirst({
+          where: { accountId: workflow.accountId, contactPhone },
+          select: {
+            contactName: true,
+            contactPhone: true,
+            firstName: true,
+            lastName: true,
+            email: true,
+            gender: true,
+            customFields: true,
+            tags: true,
+          },
+        });
+
+        if (conversation) {
+          // Parse custom fields (stored as JSON string)
+          let custom: Record<string, any> = {};
+          try {
+            custom = JSON.parse(conversation.customFields || "{}");
+          } catch { /* ignore bad JSON */ }
+
+          ctx.anamind = {
+            name: conversation.contactName || ctx.anamind.name,
+            phone: conversation.contactPhone,
+            firstName: conversation.firstName,
+            lastName: conversation.lastName,
+            email: conversation.email,
+            gender: conversation.gender,
+            tags: JSON.parse(conversation.tags || "[]"),
+            ...custom, // Spread custom fields so {{BUDGET}}, {{VISIT_REASON}} etc. resolve
+          };
+        }
+      } catch (err) {
+        // Non-fatal: log and continue with trigger data
+        console.warn("[Executor] Could not load AnasMind contact context:", err);
+      }
     }
 
     try {

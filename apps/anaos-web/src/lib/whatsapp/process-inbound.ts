@@ -78,7 +78,7 @@ export async function processInboundWhatsAppMessage(
   // STEP 1: WORKFLOW-FIRST
   // Try to find and run an active workflow with a WhatsApp trigger.
   // ─────────────────────────────────────────────────────────────────
-  const workflowResult = await handleInboundWhatsApp(message);
+  const workflowResult = await handleInboundWhatsApp(message, accountId);
 
   if (workflowResult.handled) {
     console.log(

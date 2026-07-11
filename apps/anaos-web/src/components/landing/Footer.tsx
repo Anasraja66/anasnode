@@ -5,56 +5,45 @@ const footerColumns = [
   {
     title: "Company",
     links: [
-      "About",
-      "Careers",
-      "Press & Media",
-      "Contact",
-      "Security",
-      "Partners",
+      { label: "About", href: "#" },
+      { label: "Careers", href: "#" },
+      { label: "Press & Media", href: "#" },
+      { label: "Contact", href: "#" },
     ],
   },
   {
     title: "Product",
     links: [
-      "Workflow Builder",
-      "WhatsApp Agents",
-      "AI Automation",
-      "Integrations",
-      "Templates",
-      "Pricing",
+      { label: "Workflow Builder", href: "#" },
+      { label: "WhatsApp Agents", href: "#" },
+      { label: "AI Automation", href: "#" },
+      { label: "Integrations", href: "#" },
     ],
   },
   {
     title: "Resources",
     links: [
-      "Documentation",
-      "API Reference",
-      "Tutorials",
-      "Blog",
-      "Case Studies",
-      "Community",
+      { label: "Documentation", href: "#" },
+      { label: "API Reference", href: "#" },
+      { label: "Tutorials", href: "#" },
+      { label: "Community", href: "#" },
     ],
   },
   {
     title: "Legal",
     links: [
-      "Privacy Policy",
-      "Terms of Service",
-      "Cookie Policy",
-      "GDPR Compliance",
-      "DPA",
-      "Security Policy",
+      { label: "Privacy Policy", href: "/privacy" },
+      { label: "Terms of Service", href: "/terms" },
+      { label: "Data Deletion", href: "/data-deletion" },
+      { label: "Security Policy", href: "#" },
     ],
   },
   {
     title: "Connect",
     links: [
-      "Discord",
-      "X / Twitter",
-      "LinkedIn",
-      "YouTube",
-      "GitHub",
-      "Reddit",
+      { label: "X / Twitter", href: "#" },
+      { label: "LinkedIn", href: "#" },
+      { label: "GitHub", href: "#" },
     ],
   },
 ];
@@ -85,13 +74,13 @@ export function Footer() {
                   {col.title}
                 </h5>
                 <ul className="space-y-3">
-                  {col.links.map((label) => (
-                    <li key={label}>
+                  {col.links.map((link) => (
+                    <li key={link.label}>
                       <a
-                        href="#"
+                        href={link.href}
                         className="text-[13.5px] text-zinc-500 hover:text-blue-600 font-medium transition-colors duration-200"
                       >
-                        {label}
+                        {link.label}
                       </a>
                     </li>
                   ))}

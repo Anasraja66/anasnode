@@ -7,6 +7,9 @@ export enum NodeType {
   TRIGGER_FORM          = 'trigger_form',
   TRIGGER_SHOPIFY       = 'trigger_shopify',
   TRIGGER_EMAIL         = 'trigger_email',
+  TRIGGER_LEAD_CREATED  = 'trigger_lead_created',
+  TRIGGER_STAGE_CHANGED = 'trigger_stage_changed',
+  TRIGGER_PROPERTY_LISTED = 'trigger_property_listed',
 
   // ── AI NODES ──
   AI_RESPOND            = 'ai_respond',
@@ -38,6 +41,8 @@ export enum NodeType {
   CRM_CREATE_CONTACT    = 'crm_create_contact',
   CRM_UPDATE_CONTACT    = 'crm_update_contact',
   CRM_CREATE_DEAL       = 'crm_create_deal',
+  CRM_UPDATE_LEAD_STAGE = 'crm_update_lead_stage',
+  CRM_ASSIGN_AGENT      = 'crm_assign_agent',
 
   // ── INTEGRATIONS ──
   GOOGLE_CALENDAR       = 'google_calendar',

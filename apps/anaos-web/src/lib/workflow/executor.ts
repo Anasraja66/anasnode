@@ -682,6 +682,50 @@ export class WorkflowExecutor {
           break;
         }
 
+        case NodeType.CRM_ASSIGN_AGENT: {
+          const agentId = resolveTemplate(node.config.agentId || "", ctx);
+          const leadId = ctx.triggerData.leadId || ctx.contactId || "";
+          let success = false;
+          if (leadId && agentId) {
+            try {
+              await prisma.lead.update({
+                where: { id: leadId },
+                data: { assignedTo: agentId },
+              });
+              success = true;
+            } catch (e) {
+              console.error("[ACTION] [CRM_ASSIGN_AGENT] Failed:", e);
+            }
+          }
+          result = {
+            output: { ASSIGNED_AGENT: agentId, status: success ? "assigned" : "failed" },
+            nextNodeIds: node.outputs,
+          };
+          break;
+        }
+
+        case NodeType.CRM_UPDATE_LEAD_STAGE: {
+          const stage = resolveTemplate(node.config.stage || "", ctx);
+          const leadId = ctx.triggerData.leadId || ctx.contactId || "";
+          let success = false;
+          if (leadId && stage) {
+            try {
+              await prisma.lead.update({
+                where: { id: leadId },
+                data: { status: stage },
+              });
+              success = true;
+            } catch (e) {
+              console.error("[ACTION] [CRM_UPDATE_LEAD_STAGE] Failed:", e);
+            }
+          }
+          result = {
+            output: { NEW_STAGE: stage, status: success ? "updated" : "failed" },
+            nextNodeIds: node.outputs,
+          };
+          break;
+        }
+
         default: {
           // Standard placeholder fallback
           console.log(`[ACTION] Executed placeholder node type: ${node.type}`);

@@ -1,4 +1,4 @@
-generator client {
+﻿generator client {
   provider        = "prisma-client-js"
   previewFeatures = ["driverAdapters"]
 }
@@ -379,3 +379,4 @@ model LeadActivity {
 
   @@map("lead_activities")
 }
+

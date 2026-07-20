@@ -12,7 +12,7 @@
  */
 
 import { NextResponse } from "next/server";
-import { requireAuth, AuthError } from "@/lib/api/auth-helper";
+import { requireAccountId } from "@/lib/auth/session";
 import { executeLLMCompletion } from "@/lib/workflow/ai-client";
 
 export const dynamic = "force-dynamic";
@@ -29,7 +29,7 @@ Schema:
   "nodes": [
     {
       "id": "string",
-      "type": "trigger_whatsapp" | "trigger_schedule" | "trigger_webhook" | "send_whatsapp" | "send_voice_call" | "send_sms" | "ai_respond" | "ai_classify" | "ai_extract" | "condition" | "wait" | "anamind_set" | "anamind_get" | "google_calendar" | "http_request",
+      "type": "trigger_whatsapp" | "trigger_lead_created" | "trigger_stage_changed" | "trigger_property_listed" | "send_whatsapp" | "send_email" | "ai_respond" | "ai_classify" | "condition" | "wait" | "crm_update_lead_stage" | "crm_assign_agent",
       "name": "string",
       "position": { "x": number, "y": number },
       "config": {},
@@ -55,7 +55,7 @@ Rules:
 export async function POST(request: Request): Promise<NextResponse> {
   try {
     // Auth required — not a public endpoint
-    const { accountId } = await requireAuth();
+    const accountId = await requireAccountId();
 
     const body = await request.json();
     const { prompt } = body;
@@ -96,7 +96,7 @@ export async function POST(request: Request): Promise<NextResponse> {
 
     return NextResponse.json({ workflow });
   } catch (err) {
-    if (err instanceof AuthError) return err.response;
+    if (err instanceof Error && err.message === "Unauthorized") return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     const message = err instanceof Error ? err.message : "Unknown error";
     console.error("[Workflow Generate]", message);
     return NextResponse.json(

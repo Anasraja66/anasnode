@@ -135,6 +135,12 @@ export function generateWorkspaceFromPrompt(prompt: string): GeneratedWorkspace 
           ttl: "session",
         },
       ],
+      intentType: "general",
+      primaryChannel: "whatsapp",
+      automationType: "inbound_chat",
+      dashboardRoute: "/dashboard/inbox",
+      channelConfidence: 100,
+      channelExplanation: "Anomaly detected",
     };
   }
 

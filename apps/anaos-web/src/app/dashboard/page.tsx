@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
@@ -70,10 +70,11 @@ import TodayBookingsWidget from "@/components/dashboard/TodayBookingsWidget";
 import ChannelStatusWidget from "@/components/dashboard/ChannelStatusWidget";
 import BrandIcon from "@/components/ui/BrandIcon";
 import { ApprovalsPage } from "@/components/dashboard/ApprovalsPage";
+import { PropertiesEmbedPage, LeadsEmbedPage } from "@/components/dashboard/RealEstatePages";
 
-// ─── Types ───────────────────────────────────────────────────────────────────
+// â”€â”€â”€ Types â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
-type Tab = "ai_agent" | "calls" | "overview" | "inbox" | "approvals" | "contacts" | "automations" | "broadcasts" | "analytics" | "team";
+type Tab = "ai_agent" | "calls" | "overview" | "inbox" | "approvals" | "contacts" | "automations" | "broadcasts" | "analytics" | "team" | "properties" | "leads";
 
 type Workspace = {
   id: string;
@@ -133,13 +134,13 @@ import {
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 
-// ─── OS Home Component (Manychat-inspired but Industry-Aware) ───────────
+// â”€â”€â”€ OS Home Component (Manychat-inspired but Industry-Aware) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 import { PromptBox } from "@/components/landing/PromptBox";
 import { Typewriter } from "@/components/landing/Typewriter";
 import { WordRotator } from "@/components/landing/WordRotator";
 
-// ─── OS Home Component (Premium SaaS - Business Owner Focus) ──────────
+// â”€â”€â”€ OS Home Component (Premium SaaS - Business Owner Focus) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 import { OnboardingWizard } from "@/components/dashboard/OnboardingWizard";
 
@@ -272,7 +273,7 @@ function DashboardHome({ ws, preset, roiMetrics }: { ws: Workspace; preset: Indu
           </h1>
           <div className="flex items-center gap-3 text-[13px] text-zinc-600 font-medium" suppressHydrationWarning>
             <span>1 connected channel</span>
-            <span className="text-zinc-300">·</span>
+            <span className="text-zinc-300">Â·</span>
             <span>Workspace: <span className="font-bold text-zinc-800">{ws.name}</span></span>
           </div>
           <div className="mt-3">
@@ -528,7 +529,7 @@ function DashboardHome({ ws, preset, roiMetrics }: { ws: Workspace; preset: Indu
   );
 }
 
-// ─── Left Sidebar Component ──────────────────────────────────────────────────
+// â”€â”€â”€ Left Sidebar Component â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 function Sidebar({ active, onChange, ws, onWsChange, workspaces, preset, user, open, setOpen }: {
   active: Tab;
@@ -551,6 +552,8 @@ function Sidebar({ active, onChange, ws, onWsChange, workspaces, preset, user, o
     { id: "inbox",       label: "Inbox",          icon: Inbox },
     { id: "approvals",   label: "Approvals",      icon: CheckSquare },
     { id: "contacts",    label: "Contacts",       icon: Users },
+    { id: "properties",  label: "Properties",     icon: Building2 },
+    { id: "leads",       label: "Lead Pipeline",  icon: LayoutDashboard },
   ];
 
   if (!isAgent) {
@@ -786,7 +789,7 @@ function Sidebar({ active, onChange, ws, onWsChange, workspaces, preset, user, o
     </aside>
   );
 }
-// ─── Topbar Component ─────────────────────────────────────────────────────────
+// â”€â”€â”€ Topbar Component â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 type WAStatus = {
   needsPublicWebhook?: boolean;
@@ -816,10 +819,10 @@ function Topbar({ title, ws, preset, waStatus, integrations, onMenuClick }: {
   const hasIssue = waStatus.tokenExpired || waStatus.phoneNumberIdInvalid || waStatus.needsPublicWebhook || !integrations.fastapi;
   
   let alertMessage = "";
-  if (waStatus.tokenExpired) alertMessage = "Meta token expired — reconnect WhatsApp in Integrations.";
+  if (waStatus.tokenExpired) alertMessage = "Meta token expired â€” reconnect WhatsApp in Integrations.";
   else if (waStatus.phoneNumberIdInvalid) alertMessage = `Phone ID Error: ${waStatus.phoneNumberIdError || "Check settings"}`;
-  else if (waStatus.needsPublicWebhook) alertMessage = "Public webhook missing — use tunnel for local testing.";
-  else if (!integrations.fastapi) alertMessage = "AI Engine (FastAPI) is offline — run 'fastapi dev main.py' in backend.";
+  else if (waStatus.needsPublicWebhook) alertMessage = "Public webhook missing â€” use tunnel for local testing.";
+  else if (!integrations.fastapi) alertMessage = "AI Engine (FastAPI) is offline â€” run 'fastapi dev main.py' in backend.";
 
   useEffect(() => {
     if (!searchQuery.trim()) {
@@ -869,7 +872,7 @@ function Topbar({ title, ws, preset, waStatus, integrations, onMenuClick }: {
               className="h-9 pl-9 pr-4 rounded-lg border border-zinc-200 text-[13px] bg-zinc-50/50 focus:outline-none focus:border-sky-300 focus:bg-white focus:ring-4 focus:ring-sky-100 transition-all w-64 md:w-80"
             />
             
-            {/* Search Results Dropdown — TF-IDF Powered */}
+            {/* Search Results Dropdown â€” TF-IDF Powered */}
             {searchQuery && (
               <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-zinc-200 rounded-xl shadow-2xl overflow-hidden max-h-[420px] overflow-y-auto">
                 {/* Header */}
@@ -944,12 +947,12 @@ function Topbar({ title, ws, preset, waStatus, integrations, onMenuClick }: {
                           <div className="flex flex-wrap gap-1.5 mt-2">
                             {/* Intent */}
                             <span className="px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-700 text-[9px] font-bold uppercase tracking-wider">
-                              ⚡ {data.intent}
+                              âš¡ {data.intent}
                             </span>
 
                             {/* Sentiment */}
                             <span className={`px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider ${sentimentColor}`}>
-                              {data.sentiment === "positive" ? "😊" : data.sentiment === "negative" ? "😠" : "😐"} {data.sentiment}
+                              {data.sentiment === "positive" ? "ðŸ˜Š" : data.sentiment === "negative" ? "ðŸ˜ " : "ðŸ˜"} {data.sentiment}
                               {data.sentimentScore !== undefined && ` (${data.sentimentScore > 0 ? "+" : ""}${data.sentimentScore})`}
                             </span>
 
@@ -1070,7 +1073,7 @@ function Topbar({ title, ws, preset, waStatus, integrations, onMenuClick }: {
 }
 
 
-// ─── Status Badge Component ────────────────────────────────────────────────
+// â”€â”€â”€ Status Badge Component â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 function StatusBadge({ status }: { status: Workspace["status"] }) {
   const config = {
@@ -1094,7 +1097,7 @@ function BroadcastsPage({ ws }: { ws: Workspace }) {
   return <BroadcastsHub workspaceName={ws.name} />;
 }
 
-// ─── Page: Analytics ──────────────────────────────────────────────────────────
+// â”€â”€â”€ Page: Analytics â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 function AnalyticsPage() {
   const [loading, setLoading] = useState(true);
@@ -1134,7 +1137,7 @@ function AnalyticsPage() {
       <div className="space-y-1">
         <h1 className="text-3xl font-bold text-zinc-800 tracking-tight">Analytics</h1>
         <p className="text-[15px] text-zinc-500 font-medium leading-relaxed">
-          Real-time performance from your workflows — last 7 days
+          Real-time performance from your workflows â€” last 7 days
         </p>
       </div>
 
@@ -1218,7 +1221,7 @@ function AnalyticsPage() {
   );
 }
 
-// ─── Page: Automations (Channel-Aware State Machine) ──────────────────────────
+// â”€â”€â”€ Page: Automations (Channel-Aware State Machine) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 type AutomationChannelState = "live" | "draft" | "needs_connection";
 
@@ -1414,7 +1417,7 @@ function AutomationsPage({ ws, integrations, toggleAutomation, toggleLoading }: 
       setGenerated((prev) => [{
         id: data.workflow?.id || `local-${Date.now()}`,
         name: data.workflow?.name || "New Automation",
-        description: prompt.slice(0, 90) + (prompt.length > 90 ? "…" : ""),
+        description: prompt.slice(0, 90) + (prompt.length > 90 ? "â€¦" : ""),
         channels,
         state: allConn ? "live" : "needs_connection",
         requiredProvider,
@@ -1426,7 +1429,7 @@ function AutomationsPage({ ws, integrations, toggleAutomation, toggleLoading }: 
       }, ...prev]);
       setPrompt("");
     } catch {
-      setError("Network error — check your connection and try again.");
+      setError("Network error â€” check your connection and try again.");
     } finally {
       setBuilding(false);
     }
@@ -1470,12 +1473,12 @@ function AutomationsPage({ ws, integrations, toggleAutomation, toggleLoading }: 
   return (
     <div className="space-y-6 max-w-3xl pb-10">
 
-      {/* ── Header ── */}
+      {/* â”€â”€ Header â”€â”€ */}
       <div className="flex items-start justify-between gap-4">
         <div>
           <h1 className="text-[22px] font-bold text-zinc-900 tracking-tight leading-none">Automations</h1>
           <p className="text-[13.5px] text-zinc-400 font-medium mt-1.5 leading-snug">
-            Describe a flow in plain language — Anaos builds it. Connect the channel to go live.
+            Describe a flow in plain language â€” Anaos builds it. Connect the channel to go live.
           </p>
         </div>
         <div className="flex items-center gap-2 shrink-0 flex-wrap justify-end pt-1">
@@ -1494,12 +1497,12 @@ function AutomationsPage({ ws, integrations, toggleAutomation, toggleLoading }: 
         </div>
       </div>
 
-      {/* ── Build with Prompt Card ── */}
+      {/* â”€â”€ Build with Prompt Card â”€â”€ */}
       <div className="rounded-xl border border-zinc-200 bg-white shadow-sm overflow-hidden">
         <div className="px-5 pt-5 pb-4 border-b border-zinc-100">
           <p className="text-[15px] font-semibold text-zinc-900 leading-snug">Build with prompt</p>
           <p className="text-[13px] text-zinc-500 font-medium mt-0.5">
-            Describe your flow — Anaos detects the channel automatically
+            Describe your flow â€” Anaos detects the channel automatically
           </p>
         </div>
 
@@ -1526,11 +1529,11 @@ function AutomationsPage({ ws, integrations, toggleAutomation, toggleLoading }: 
               <div className="flex items-center gap-2.5">
                 <AlertCircle className="w-4 h-4 text-amber-500 shrink-0" />
                 <p className="text-[12.5px] font-medium text-amber-800">
-                  Some channels aren&apos;t connected — automation will be saved as <span className="italic font-bold">Needs Connection</span>.
+                  Some channels aren&apos;t connected â€” automation will be saved as <span className="italic font-bold">Needs Connection</span>.
                 </p>
               </div>
               <a href="/dashboard/integrations" className="shrink-0 text-[11.5px] font-bold text-amber-700 bg-amber-100 border border-amber-200 px-3 py-1.5 rounded-lg hover:bg-amber-200 transition-colors whitespace-nowrap">
-                Connect now →
+                Connect now â†’
               </a>
             </div>
           )}
@@ -1545,7 +1548,7 @@ function AutomationsPage({ ws, integrations, toggleAutomation, toggleLoading }: 
               className="inline-flex items-center gap-1.5 h-9 px-5 rounded-xl bg-[#0A6BFF] hover:bg-blue-600 text-white text-[13px] font-semibold transition-all disabled:opacity-40 shadow-sm disabled:cursor-not-allowed cursor-pointer"
             >
               {building
-                ? <><RefreshCw className="w-3.5 h-3.5 animate-spin" /> Building…</>
+                ? <><RefreshCw className="w-3.5 h-3.5 animate-spin" /> Buildingâ€¦</>
                 : <><Plus className="w-3.5 h-3.5" /> Generate automation</>
               }
             </button>
@@ -1559,7 +1562,7 @@ function AutomationsPage({ ws, integrations, toggleAutomation, toggleLoading }: 
         )}
       </div>
 
-      {/* ── All Automations List ── */}
+      {/* â”€â”€ All Automations List â”€â”€ */}
       <div className="space-y-3">
         <div className="flex items-center justify-between px-1">
           <h2 className="text-[11px] font-bold text-zinc-400 uppercase tracking-[0.18em]">All Automations</h2>
@@ -1579,7 +1582,7 @@ function AutomationsPage({ ws, integrations, toggleAutomation, toggleLoading }: 
             </div>
             <p className="text-[14px] font-bold text-zinc-700">No automations yet</p>
             <p className="text-[13px] text-zinc-400 mt-1">
-              Use the prompt above to create your first flow — takes 30 seconds.
+              Use the prompt above to create your first flow â€” takes 30 seconds.
             </p>
           </div>
         ) : (
@@ -1636,8 +1639,8 @@ function AutomationsPage({ ws, integrations, toggleAutomation, toggleLoading }: 
                         {a.channels.map((c) => (
                           <ChannelBadge key={c} channelId={c} connected={isConnected(c)} />
                         ))}
-                        <span className="text-[11.5px] text-zinc-300">·</span>
-                        <span className="text-[12px] text-zinc-400">{a.runs} runs · {a.lastRun}</span>
+                        <span className="text-[11.5px] text-zinc-300">Â·</span>
+                        <span className="text-[12px] text-zinc-400">{a.runs} runs Â· {a.lastRun}</span>
                       </div>
                     </div>
 
@@ -1685,7 +1688,7 @@ function AutomationsPage({ ws, integrations, toggleAutomation, toggleLoading }: 
         )}
       </div>
 
-      {/* ── Bottom CTA ── */}
+      {/* â”€â”€ Bottom CTA â”€â”€ */}
       {needsCount > 0 && (
         <div className="rounded-xl border border-zinc-200 bg-zinc-50 p-4.5 flex items-center justify-between gap-6">
           <div className="flex items-center gap-3">
@@ -1695,7 +1698,7 @@ function AutomationsPage({ ws, integrations, toggleAutomation, toggleLoading }: 
                 {needsCount} automation{needsCount > 1 ? "s" : ""} waiting for connection
               </p>
               <p className="text-[12.5px] text-zinc-500 font-medium mt-0.5">
-                Connect your channels once — automations go live instantly.
+                Connect your channels once â€” automations go live instantly.
               </p>
             </div>
           </div>
@@ -1711,7 +1714,7 @@ function AutomationsPage({ ws, integrations, toggleAutomation, toggleLoading }: 
   );
 }
 
-// ─── Main Root Dashboard ──────────────────────────────────────────────────────
+// â”€â”€â”€ Main Root Dashboard â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export default function Dashboard() {
   const router = useRouter();
@@ -1961,6 +1964,8 @@ export default function Dashboard() {
     broadcasts:  "Broadcasts",
     analytics:   "Analytics",
     team:        "Team Settings",
+    properties:  "Properties",
+    leads:       "Lead Pipeline",
   };
 
   if (!mounted || loadingData || isDeployingAgent) {
@@ -2019,7 +2024,7 @@ export default function Dashboard() {
         <div className="max-w-md text-center">
           <h1 className="text-2xl font-bold text-zinc-900">No automation yet</h1>
           <p className="text-zinc-500 mt-2 text-[15px]">
-            Describe your business on the home page or finish onboarding — Anaos will compile your first workflow.
+            Describe your business on the home page or finish onboarding â€” Anaos will compile your first workflow.
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center mt-6">
             <a
@@ -2085,7 +2090,7 @@ export default function Dashboard() {
               tab === "inbox" ? "overflow-hidden p-0" : "bg-[#F8F9FA]"
             }`}
           >
-            <div className={tab === "inbox" || tab === "calls" || tab === "ai_agent" || tab === "contacts" ? "" : "px-4 py-6 md:px-10 md:pt-8 md:pb-8"}>
+            <div className={tab === "inbox" || tab === "calls" || tab === "ai_agent" || tab === "contacts" || tab === "properties" || tab === "leads" ? "" : "px-4 py-6 md:px-10 md:pt-8 md:pb-8"}>
               {tab === "ai_agent"    && <AIAgentPage     ws={ws} />}
               {tab === "overview"    && <DashboardHome ws={ws} preset={industryPreset} roiMetrics={roiMetrics} />}
               {tab === "calls"       && <CallsPage />}
@@ -2095,6 +2100,8 @@ export default function Dashboard() {
               {tab === "broadcasts"  && <BroadcastsPage ws={ws} />}
               {tab === "analytics"   && <AnalyticsPage />}
               {tab === "team"        && <TeamSettingsPage />}
+              {tab === "properties"  && <PropertiesEmbedPage />}
+              {tab === "leads"       && <LeadsEmbedPage />}
             </div>
           </main>
       </div>
@@ -2102,3 +2109,4 @@ export default function Dashboard() {
     </IndustryShell>
   );
 }
+

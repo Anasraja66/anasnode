@@ -25,6 +25,8 @@ model Account {
   users              User[]
   workflows          Workflow[]
   workspaces         Workspace[]
+  properties         Property[]
+  leads              Lead[]
 
   @@map("accounts")
 }
@@ -289,4 +291,91 @@ model UsageLog {
   account         Account  @relation(fields: [accountId], references: [id], onDelete: Cascade)
 
   @@map("usage_logs")
+}
+
+// ─── REAL ESTATE MODULES ──────────────────────────────────────────────────────
+
+model Property {
+  id              String   @id @default(uuid())
+  accountId       String
+  workspaceId     String?
+  title           String
+  description     String   @default("")
+  type            String   @default("apartment") // apartment | villa | plot | commercial | office | townhouse
+  status          String   @default("available") // available | under_offer | sold | rented
+  price           Float    @default(0)
+  currency        String   @default("AED") // AED | GBP | USD | PKR
+  priceType       String   @default("sale") // sale | rent_monthly | rent_yearly
+  bedrooms        Int      @default(0)
+  bathrooms       Int      @default(0)
+  size            Float    @default(0)
+  sizeUnit        String   @default("sqft") // sqft | sqm
+  city            String   @default("")
+  area            String   @default("")
+  country         String   @default("UAE") // UAE | UK | USA | PK
+  address         String   @default("")
+  latitude        Float?
+  longitude       Float?
+  images          String   @default("[]") // JSON array of image URLs
+  amenities       String   @default("[]") // JSON array of amenity strings
+  floorPlan       String?  // URL
+  permitNumber    String   @default("") // RERA Dubai
+  referenceNumber String   @default("")
+  featured        Boolean  @default(false)
+  viewCount       Int      @default(0)
+  slug            String   @default("")
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  account         Account  @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  leads           Lead[]
+
+  @@map("properties")
+}
+
+model Lead {
+  id              String         @id @default(uuid())
+  accountId       String
+  workspaceId     String?
+  name            String
+  phone           String         @default("")
+  email           String         @default("")
+  source          String         @default("manual") // whatsapp | instagram | facebook | manual | website | referral
+  stage           String         @default("new") // new | contacted | viewing_scheduled | offer_made | negotiating | closed_won | closed_lost
+  budgetMin       Float          @default(0)
+  budgetMax       Float          @default(0)
+  currency        String         @default("AED")
+  preferredArea   String         @default("")
+  preferredType   String         @default("") // apartment | villa etc
+  preferredAction String         @default("buy") // buy | rent
+  notes           String         @default("")
+  tags            String         @default("[]") // JSON array
+  assignedTo      String?        // User id
+  conversationId  String?        // Link to InboxConversation
+  interestedIn    String?        // Property id
+  priority        String         @default("medium") // low | medium | high
+  nextFollowUpAt  DateTime?
+  closedAt        DateTime?
+  dealValue       Float?
+  commission      Float?
+  lostReason      String?
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+  account         Account        @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  property        Property?      @relation(fields: [interestedIn], references: [id])
+  activities      LeadActivity[]
+
+  @@map("leads")
+}
+
+model LeadActivity {
+  id        String   @id @default(uuid())
+  leadId    String
+  type      String   // note | call | viewing | stage_change | message_sent | email_sent
+  content   String   @default("")
+  createdBy String?  // User id or "system"
+  metadata  String   @default("{}")
+  createdAt DateTime @default(now())
+  lead      Lead     @relation(fields: [leadId], references: [id], onDelete: Cascade)
+
+  @@map("lead_activities")
 }

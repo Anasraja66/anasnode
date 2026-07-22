@@ -18,6 +18,7 @@ export enum NodeType {
   AI_GENERATE_CONTENT   = 'ai_generate_content',
   AI_SENTIMENT          = 'ai_sentiment',
   AI_TRANSLATE          = 'ai_translate',
+  AI_MATCH_PROPERTIES   = 'ai_match_properties',
 
   // ── MESSAGING ──
   SEND_WHATSAPP         = 'send_whatsapp',

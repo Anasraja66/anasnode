@@ -1,4 +1,4 @@
-﻿generator client {
+generator client {
   provider        = "prisma-client-js"
   previewFeatures = ["driverAdapters"]
 }
@@ -25,8 +25,7 @@ model Account {
   users              User[]
   workflows          Workflow[]
   workspaces         Workspace[]
-  properties         Property[]
-  leads              Lead[]
+  parties            Party[]
 
   @@map("accounts")
 }
@@ -69,8 +68,7 @@ model Workflow {
   description    String?
   isActive       Boolean             @default(false)
   version        Int                 @default(1)
-  nodes          String
-  edges          String
+  definition     String              @default("{}") // React Flow JSON
   variables      String              @default("[]")
   stats          String              @default("{\"runs\":0,\"success\":0,\"failed\":0}")
   lastRunAt      DateTime?
@@ -184,27 +182,28 @@ model IntegrationCredential {
 }
 
 model BroadcastCampaign {
-  id               String    @id @default(uuid())
+  id               String              @id @default(uuid())
   accountId        String
   workspaceId      String?
   name             String
-  status           String    @default("draft")
-  category         String    @default("marketing")
-  languageCode     String    @default("en")
+  status           String              @default("draft")
+  category         String              @default("marketing")
+  languageCode     String              @default("en")
   bodyText         String
-  footerText       String    @default("")
-  optOutLine       String    @default("Reply STOP to opt out.")
-  outside24h       Boolean   @default(true)
-  audienceFilter   String    @default("{}")
+  footerText       String              @default("")
+  optOutLine       String              @default("Reply STOP to opt out.")
+  outside24h       Boolean             @default(true)
+  audienceFilter   String              @default("{}")
   scheduleAt       DateTime?
-  dailyCap         Int       @default(250)
-  sentCount        Int       @default(0)
-  failedCount      Int       @default(0)
+  dailyCap         Int                 @default(250)
+  sentCount        Int                 @default(0)
+  failedCount      Int                 @default(0)
   promptSource     String?
   metaTemplateName String?
-  createdAt        DateTime  @default(now())
-  updatedAt        DateTime  @updatedAt
-  account          Account   @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  createdAt        DateTime            @default(now())
+  updatedAt        DateTime            @updatedAt
+  account          Account             @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  recipients       CampaignRecipient[]
 
   @@map("broadcast_campaigns")
 }
@@ -293,90 +292,102 @@ model UsageLog {
   @@map("usage_logs")
 }
 
-// ─── REAL ESTATE MODULES ──────────────────────────────────────────────────────
+// ─── UNIVERSAL BUSINESS MODULES (V1 CORE) ───────────────────────────────────
 
-model Property {
-  id              String   @id @default(uuid())
-  accountId       String
-  workspaceId     String?
+model Party {
+  id             String   @id @default(uuid())
+  accountId      String
+  workspaceId    String?
+  type           String   @default("person") // person | company | vendor
+  name           String
+  phone          String   @default("")
+  email          String   @default("")
+  source         String   @default("manual") // whatsapp | instagram | facebook | manual | website | referral
+  metadata       String   @default("{}") // JSON for custom fields
+  tags           String   @default("[]") // JSON array
+  assignedTo     String? // User id
+  conversationId String? // Link to InboxConversation
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  account        Account  @relation(fields: [accountId], references: [id], onDelete: Cascade)
+
+  @@map("parties")
+}
+
+model CampaignRecipient {
+  id           String            @id @default(uuid())
+  campaignId   String
+  partyId      String?
+  phone        String
+  status       String            @default("pending") // pending | sent | delivered | failed | replied
+  errorMessage String?
+  sentAt       DateTime?
+  deliveredAt  DateTime?
+  createdAt    DateTime          @default(now())
+  campaign     BroadcastCampaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+
+  @@map("campaign_recipients")
+}
+
+model KnowledgeBase {
+  id          String     @id @default(uuid())
+  accountId   String
+  workspaceId String?
+  name        String
+  description String?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  documents   Document[]
+
+  @@map("knowledge_bases")
+}
+
+model Document {
+  id              String        @id @default(uuid())
+  knowledgeBaseId String
   title           String
-  description     String   @default("")
-  type            String   @default("apartment") // apartment | villa | plot | commercial | office | townhouse
-  status          String   @default("available") // available | under_offer | sold | rented
-  price           Float    @default(0)
-  currency        String   @default("AED") // AED | GBP | USD | PKR
-  priceType       String   @default("sale") // sale | rent_monthly | rent_yearly
-  bedrooms        Int      @default(0)
-  bathrooms       Int      @default(0)
-  size            Float    @default(0)
-  sizeUnit        String   @default("sqft") // sqft | sqm
-  city            String   @default("")
-  area            String   @default("")
-  country         String   @default("UAE") // UAE | UK | USA | PK
-  address         String   @default("")
-  latitude        Float?
-  longitude       Float?
-  images          String   @default("[]") // JSON array of image URLs
-  amenities       String   @default("[]") // JSON array of amenity strings
-  floorPlan       String?  // URL
-  permitNumber    String   @default("") // RERA Dubai
-  referenceNumber String   @default("")
-  featured        Boolean  @default(false)
-  viewCount       Int      @default(0)
-  slug            String   @default("")
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-  account         Account  @relation(fields: [accountId], references: [id], onDelete: Cascade)
-  leads           Lead[]
+  content         String        @db.Text
+  metadata        String        @default("{}")
+  createdAt       DateTime      @default(now())
+  knowledgeBase   KnowledgeBase @relation(fields: [knowledgeBaseId], references: [id], onDelete: Cascade)
 
-  @@map("properties")
+  @@map("documents")
 }
 
-model Lead {
-  id              String         @id @default(uuid())
-  accountId       String
-  workspaceId     String?
-  name            String
-  phone           String         @default("")
-  email           String         @default("")
-  source          String         @default("manual") // whatsapp | instagram | facebook | manual | website | referral
-  stage           String         @default("new") // new | contacted | viewing_scheduled | offer_made | negotiating | closed_won | closed_lost
-  budgetMin       Float          @default(0)
-  budgetMax       Float          @default(0)
-  currency        String         @default("AED")
-  preferredArea   String         @default("")
-  preferredType   String         @default("") // apartment | villa etc
-  preferredAction String         @default("buy") // buy | rent
-  notes           String         @default("")
-  tags            String         @default("[]") // JSON array
-  assignedTo      String?        // User id
-  conversationId  String?        // Link to InboxConversation
-  interestedIn    String?        // Property id
-  priority        String         @default("medium") // low | medium | high
-  nextFollowUpAt  DateTime?
-  closedAt        DateTime?
-  dealValue       Float?
-  commission      Float?
-  lostReason      String?
-  createdAt       DateTime       @default(now())
-  updatedAt       DateTime       @updatedAt
-  account         Account        @relation(fields: [accountId], references: [id], onDelete: Cascade)
-  property        Property?      @relation(fields: [interestedIn], references: [id])
-  activities      LeadActivity[]
+model AIAgent {
+  id          String   @id @default(uuid())
+  accountId   String
+  workspaceId String?
+  name        String
+  persona     String   @db.Text
+  model       String   @default("gpt-4o")
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
-  @@map("leads")
+  @@map("ai_agents")
 }
 
-model LeadActivity {
-  id        String   @id @default(uuid())
-  leadId    String
-  type      String   // note | call | viewing | stage_change | message_sent | email_sent
-  content   String   @default("")
-  createdBy String?  // User id or "system"
-  metadata  String   @default("{}")
-  createdAt DateTime @default(now())
-  lead      Lead     @relation(fields: [leadId], references: [id], onDelete: Cascade)
+model Template {
+  id         String   @id @default(uuid())
+  name       String
+  category   String
+  definition String   @db.Text // Complete Workspace Blueprint (JSON)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
-  @@map("lead_activities")
+  @@map("templates")
 }
 
+model AuditLog {
+  id         String   @id @default(uuid())
+  accountId  String
+  userId     String?
+  action     String
+  entityType String
+  entityId   String
+  details    String   @default("{}")
+  createdAt  DateTime @default(now())
+
+  @@map("audit_logs")
+}

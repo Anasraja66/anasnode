@@ -386,6 +386,35 @@ export class WorkflowExecutor {
           break;
         }
 
+        case NodeType.AI_MATCH_PROPERTIES: {
+          const userMessage = resolveTemplate(node.config.userMessage || "{{message}}", ctx);
+          const limit = Number(node.config.limit || 3);
+          
+          // Deprecated: Moving to Universal Module System
+          /*
+          // 1. Extract preferences from natural language
+          const { extractLeadPreferences } = await import("../ai/pipeline/LeadExtractor");
+          const preferences = await extractLeadPreferences(userMessage, ctx.accountId);
+
+          // 2. Query properties from DB
+          const { matchPropertiesForLead, formatPropertiesForWhatsApp } = await import("../matching/engine");
+          const matches = await matchPropertiesForLead(ctx.accountId, preferences, limit);
+
+          // 3. Format output
+          const formattedText = formatPropertiesForWhatsApp(matches);
+          */
+
+          result = {
+            output: { 
+              MATCHED_PROPERTIES_TEXT: "Deprecated node", 
+              MATCH_COUNT: 0,
+              EXTRACTED_PREFERENCES: {}
+            },
+            nextNodeIds: node.outputs,
+          };
+          break;
+        }
+
         case NodeType.SEND_WHATSAPP: {
           const template = resolveTemplate(
             node.config.template || "{{AI_RESPONSE}}",
@@ -684,12 +713,12 @@ export class WorkflowExecutor {
 
         case NodeType.CRM_ASSIGN_AGENT: {
           const agentId = resolveTemplate(node.config.agentId || "", ctx);
-          const leadId = ctx.triggerData.leadId || ctx.contactId || "";
+          const partyId = ctx.triggerData.partyId || ctx.contactId || "";
           let success = false;
-          if (leadId && agentId) {
+          if (partyId && agentId) {
             try {
-              await prisma.lead.update({
-                where: { id: leadId },
+              await prisma.party.update({
+                where: { id: partyId },
                 data: { assignedTo: agentId },
               });
               success = true;
@@ -705,22 +734,22 @@ export class WorkflowExecutor {
         }
 
         case NodeType.CRM_UPDATE_LEAD_STAGE: {
+          // TODO: Migrate to Deal/Opportunity stage or Custom Field EAV update
+          /*
           const stage = resolveTemplate(node.config.stage || "", ctx);
           const leadId = ctx.triggerData.leadId || ctx.contactId || "";
           let success = false;
           if (leadId && stage) {
             try {
-              await prisma.lead.update({
-                where: { id: leadId },
-                data: { status: stage },
-              });
+              // await prisma.party.update(...) // Stage depends on Deal table now
               success = true;
             } catch (e) {
               console.error("[ACTION] [CRM_UPDATE_LEAD_STAGE] Failed:", e);
             }
           }
+          */
           result = {
-            output: { NEW_STAGE: stage, status: success ? "updated" : "failed" },
+            output: { NEW_STAGE: "skipped", status: "failed_deprecated_node" },
             nextNodeIds: node.outputs,
           };
           break;

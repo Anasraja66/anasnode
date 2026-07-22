@@ -1,8 +1,16 @@
 import { IndustryPlaybook } from "./types";
 import { baseRealEstate, realEstatePlaybooks } from "./real-estate";
+import { cleaningPlaybook } from "./heavy/cleaning";
+import { maintenancePlaybook } from "./heavy/maintenance";
+import { fencingPlaybook } from "./heavy/fencing";
+import { itPlaybook } from "./tech/it";
 
 const ALL_PLAYBOOKS: IndustryPlaybook[] = [
   ...realEstatePlaybooks,
+  cleaningPlaybook,
+  maintenancePlaybook,
+  fencingPlaybook,
+  itPlaybook,
   baseRealEstate,
 ];
 

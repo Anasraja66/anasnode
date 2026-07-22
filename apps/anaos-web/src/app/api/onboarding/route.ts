@@ -1,13 +1,8 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/db";
+import { generateBlueprint } from "@/lib/ai/blueprint/generator";
 import { saveCompiledAutomation } from "@/lib/workflow/compiler";
-import { getIndustryPreset } from "@/lib/industry/presets";
-import {
-  serializeLanguageSettings,
-  type WorkspaceLanguageSettings,
-} from "@/lib/i18n/settings";
-import { defaultPlatformLanguageSettings } from "@/lib/i18n/platform";
 
 export async function POST(request: Request) {
   try {
@@ -16,18 +11,16 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { name, industry, industryId, ownerRole, workspaceName, languageSettings } =
-      await request.json();
+    const { prompt, workspaceName: fallbackName, name } = await request.json();
 
-    const preset = getIndustryPreset(industryId || industry);
-    const role = ownerRole || "owner";
-
-    if (!name || !workspaceName || (!industry && !industryId)) {
-      return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
+    if (!prompt) {
+      return NextResponse.json(
+        { error: "Missing required prompt" },
+        { status: 400 }
+      );
     }
 
     const email = session.user.email;
-
     const user = await prisma.user.findUnique({
       where: { email },
     });
@@ -36,25 +29,23 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    await prisma.user.update({
-      where: { id: user.id },
-      data: {
-        name,
-        role: String(role).toLowerCase(),
-      },
-    });
+    if (name) {
+      await prisma.user.update({
+        where: { id: user.id },
+        data: { name },
+      });
+    }
 
+    // 1. Generate the AI Workspace Blueprint
+    const blueprint = await generateBlueprint(prompt);
+
+    const workspaceName = fallbackName || `${blueprint.industryName} Workspace`;
     const slug = workspaceName
       .toLowerCase()
       .replace(/[^a-z0-9]+/g, "-")
       .replace(/(^-|-$)/g, "");
 
-    const langJson = languageSettings
-      ? serializeLanguageSettings(
-          languageSettings as WorkspaceLanguageSettings
-        )
-      : serializeLanguageSettings(defaultPlatformLanguageSettings());
-
+    // 2. Create or Update Workspace
     let workspace = await prisma.workspace.findFirst({
       where: { accountId: user.accountId },
       orderBy: { createdAt: "asc" },
@@ -66,9 +57,8 @@ export async function POST(request: Request) {
         data: {
           name: workspaceName,
           slug,
-          industry: preset.label,
+          industry: blueprint.industryName,
           status: "live",
-          languageSettings: langJson,
         },
       });
     } else {
@@ -77,13 +67,48 @@ export async function POST(request: Request) {
           accountId: user.accountId,
           name: workspaceName,
           slug,
-          industry: preset.label,
+          industry: blueprint.industryName,
           status: "live",
-          languageSettings: langJson,
         },
       });
     }
 
+    // 3. Provision AI Agent Persona
+    const existingAgent = await prisma.aIAgent.findFirst({
+      where: { workspaceId: workspace.id },
+    });
+
+    if (!existingAgent) {
+      await prisma.aIAgent.create({
+        data: {
+          accountId: user.accountId,
+          workspaceId: workspace.id,
+          name: "Main Consultant",
+          persona: blueprint.agentPersona,
+          model: "gpt-4o",
+        },
+      });
+    }
+
+    // 4. Provision Knowledge Base Categories
+    for (const category of blueprint.knowledgeBaseCategories) {
+      const existingKb = await prisma.knowledgeBase.findFirst({
+        where: { workspaceId: workspace.id, name: category },
+      });
+      if (!existingKb) {
+        await prisma.knowledgeBase.create({
+          data: {
+            accountId: user.accountId,
+            workspaceId: workspace.id,
+            name: category,
+            description: `Auto-generated folder for ${category}`,
+          },
+        });
+      }
+    }
+
+    // 5. Generate Default Workflow (fallback to existing compiler for React Flow structure)
+    // We pass the prompt to saveCompiledAutomation so it picks the closest template based on their words
     const existingWorkflow = await prisma.workflow.findFirst({
       where: { workspaceId: workspace.id },
     });
@@ -91,7 +116,6 @@ export async function POST(request: Request) {
     let workflowId = existingWorkflow?.id;
 
     if (!existingWorkflow) {
-      const prompt = `I run ${workspaceName} (${preset.label}). Automate WhatsApp: ${preset.automationHint}. Keep replies natural for customers.`;
       const result = await saveCompiledAutomation(user.accountId, prompt, {
         activate: true,
         workspaceId: workspace.id,
@@ -109,9 +133,13 @@ export async function POST(request: Request) {
       success: true,
       workspaceId: workspace.id,
       workflowId,
+      blueprint,
     });
   } catch (error) {
     console.error("Onboarding API error:", error);
-    return NextResponse.json({ error: "Failed to complete onboarding" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to generate workspace" },
+      { status: 500 }
+    );
   }
 }

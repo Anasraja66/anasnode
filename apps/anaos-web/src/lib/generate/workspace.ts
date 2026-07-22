@@ -22,6 +22,7 @@ import { NeuralClassifier } from "@/lib/ai/pipeline/NeuralEmbedding";
 import { FeedbackLearner } from "@/lib/ai/pipeline/FeedbackLearner";
 import { Autoencoder } from "@/lib/ai/pipeline/Autoencoder";
 import { ChannelIntentDetector, ChannelIntentResult } from "@/lib/ai/pipeline/ChannelIntentDetector";
+import { getPlaybookForPrompt } from "@/lib/ai/blueprint/industries/registry";
 
 export type GeneratedWorkspace = {
   id: string;
@@ -317,6 +318,12 @@ export async function generateWorkspaceWithAI(
   // Run neural classification first to give Grok context
   const neuralResult = NeuralClassifier.classify(prompt);
   const nlpResult = AnaosNLP.processText(prompt, "general" as any);
+  
+  // Find specific modular industry playbook
+  const playbook = getPlaybookForPrompt(prompt);
+  const industrySpecificRules = playbook 
+    ? `\\n## SPECIFIC INDUSTRY RULES (${playbook.name})\\n${playbook.systemPromptAddition}\\n` 
+    : "";
 
   try {
     const response = await fetch(
@@ -341,7 +348,7 @@ Your task: Analyze a business description and design the PERFECT automation work
 - User Intent: ${nlpResult.intent}
 - Sentiment: ${nlpResult.sentiment}
 - Key Entities: ${JSON.stringify(nlpResult.summary)}
-
+${industrySpecificRules}
 ## Think Step by Step (Chain-of-Thought):
 1. IDENTIFY the exact business type and its core daily operations
 2. FIND the 3 biggest pain points for this business
@@ -354,7 +361,7 @@ Your task: Analyze a business description and design the PERFECT automation work
   "name": "Business Name",
   "industry": "Industry Label",
   "automations": [
-    {"id":"a1","name":"Specific Name","type":"whatsapp_flow|instagram_flow|facebook_flow|calendar|campaign","enabled":true,"runs":0,"lastRun":"Never"}
+    {"id":"a1","name":"Specific Name","type":"whatsapp_flow|instagram_flow|facebook_flow|calendar|campaign|voice_flow|email_sequence","enabled":true,"runs":0,"lastRun":"Never"}
   ],
   "variables": [
     {"key":"UPPER_SNAKE_CASE","value":"value","confidence":90,"ttl":"30 days"}
@@ -364,7 +371,8 @@ Your task: Analyze a business description and design the PERFECT automation work
 Rules:
 - 5-7 automations ordered by business impact
 - 3-5 variables specific to THIS business type
-- Automation names must be specific (e.g. "Pizza Order Tracker" not "Order Bot")
+- Automation names must be specific (e.g. "Property Owner Outreach" not "Message Bot")
+- Automation types must be selected from the valid list above
 - No markdown, no text outside JSON`,
             },
             {

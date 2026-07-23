@@ -1,10 +1,19 @@
 import { Queue } from "bullmq";
 import { connection } from "./connection";
 
-export const workflowQueue = new Queue("workflow-execution", { connection: connection as any });
+export let workflowQueue: Queue;
+
+// Lazy initialize to prevent Redis connection during Next.js build
+function getQueue() {
+  if (!workflowQueue) {
+    workflowQueue = new Queue("workflow-execution", { connection: connection as any });
+  }
+  return workflowQueue;
+}
 
 export async function enqueueWorkflow(workflowId: string, triggerData: any) {
-  return await workflowQueue.add(
+  const q = getQueue();
+  return await q.add(
     "execute",
     { workflowId, triggerData },
     { 

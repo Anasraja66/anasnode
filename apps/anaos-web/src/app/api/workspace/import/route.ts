@@ -72,8 +72,7 @@ export async function POST(request: Request) {
             name: auto.name || "AI Automation",
             description: auto.description || `Auto-generated ${auto.type} workflow`,
             isActive: true,
-            nodes: JSON.stringify(nodes),
-            edges: JSON.stringify(edges),
+            definition: JSON.stringify({ nodes, edges, viewport: { x: 0, y: 0, zoom: 1 } }),
             variables: JSON.stringify(ws.variables?.map((v: any) => v.key) || []),
           }
         });

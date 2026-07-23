@@ -117,7 +117,7 @@ export async function GET(request: Request) {
         orderBy: { createdAt: "desc" },
       });
 
-      const automations = dbWorkflows.map((wf: { id: string; name: string; description: string | null; stats: string; isActive: boolean; lastRunAt: Date | null; updatedAt: Date; nodes: string; edges: string }) => {
+      const automations = dbWorkflows.map((wf: { id: string; name: string; description: string | null; stats: string; isActive: boolean; lastRunAt: Date | null; updatedAt: Date; definition: string; nodes?: string; edges?: string }) => {
         let stats = { runs: 0, success: 0, failed: 0 };
         try {
           stats = JSON.parse(wf.stats);
@@ -126,8 +126,16 @@ export async function GET(request: Request) {
         let nodes: any[] = [];
         let edges: any[] = [];
         try {
-          nodes = JSON.parse(wf.nodes || "[]");
-          edges = JSON.parse(wf.edges || "[]");
+          if (wf.definition) {
+            const def = JSON.parse(wf.definition);
+            nodes = Array.isArray(def.nodes) ? def.nodes : [];
+            edges = Array.isArray(def.edges) ? def.edges : [];
+          } else {
+            const parsedNodes = JSON.parse(wf.nodes || "[]");
+            nodes = Array.isArray(parsedNodes) ? parsedNodes : [];
+            const parsedEdges = JSON.parse(wf.edges || "[]");
+            edges = Array.isArray(parsedEdges) ? parsedEdges : [];
+          }
         } catch {}
 
         const lastRunAt = wf.lastRunAt ? formatRelativeTime(wf.lastRunAt) : "Never";

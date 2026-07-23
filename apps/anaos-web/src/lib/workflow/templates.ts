@@ -857,8 +857,7 @@ export async function createWorkflowFromTemplate(
       workspaceId,
       name: customizations?.name || template.name,
       description: customizations?.description || template.description,
-      nodes: JSON.stringify(template.nodes),
-      edges: JSON.stringify(template.edges),
+      definition: JSON.stringify({ nodes: template.nodes, edges: template.edges, viewport: { x: 0, y: 0, zoom: 1 } }),
       variables: JSON.stringify(template.nodes.filter(n => n.type === NodeType.ANAMIND_SET).map(n => n.config.variableKey || "")),
       stats: JSON.stringify({ runs: 0, success: 0, failed: 0 }),
       isActive: false

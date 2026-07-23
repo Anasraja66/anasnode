@@ -55,8 +55,9 @@ class WorkflowSchedulerService {
       return;
     }
 
-    const nodes: WorkflowNode[] = JSON.parse(workflow.nodes || "[]");
-    const edges: any[] = JSON.parse(workflow.edges || "[]");
+    const def = JSON.parse(workflow.definition || "{}");
+    const nodes: WorkflowNode[] = Array.isArray(def.nodes) ? def.nodes : [];
+    const edges: any[] = Array.isArray(def.edges) ? def.edges : [];
     const nextNode = nodes.find(n => n.id === nextNodeId);
 
     if (!nextNode) {

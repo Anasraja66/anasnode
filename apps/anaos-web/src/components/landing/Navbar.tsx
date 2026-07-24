@@ -86,25 +86,23 @@ export function Navbar() {
     <>
       <header
         suppressHydrationWarning
-        className={`sticky top-0 z-50 transition-all duration-300 ${
-          scrolled
-            ? "glass-strong border-b border-zinc-200 shadow-sm"
-            : "bg-white/50 backdrop-blur-md border-b border-transparent"
-        }`}
+        className={`fixed top-4 sm:top-6 left-1/2 -translate-x-1/2 z-50 transition-all duration-300 w-[96%] max-w-[1200px]`}
       >
-        <div suppressHydrationWarning className="max-w-[1200px] mx-auto px-6 h-14 flex items-center justify-between">
+        <div suppressHydrationWarning className={`w-full h-14 sm:h-16 rounded-[2rem] flex items-center justify-between shadow-[0_8px_30px_rgb(0,0,0,0.08)] transition-all duration-300 ${scrolled ? 'bg-white/95 backdrop-blur-md border border-zinc-200/80' : 'bg-white/90 backdrop-blur-sm border border-zinc-200/50'}`}>
           
-          {/* Logo & Name */}
-          <div className="flex items-center gap-8">
-            <a href="#" className="flex items-center gap-2.5 group">
-              <AnaosLogo className="w-7 h-7 transition-transform duration-300 group-hover:scale-[1.04]" />
-              <span className="font-sans font-semibold text-[17px] tracking-[0.03em] text-[#111827]">
-                ANAOS
+          {/* Logo Section */}
+          <div className="relative flex items-center h-full rounded-l-[2rem] pl-6 sm:pl-8 pr-4">
+            <a href="#" className="flex items-center gap-2.5 group z-10">
+              <AnaosLogo className="w-10 h-10 sm:w-11 sm:h-11 transition-transform duration-300 group-hover:scale-[1.04]" />
+              <span className="font-sans font-bold text-[18px] tracking-[0.02em] text-zinc-900 hidden sm:block">
+                AnaOS
               </span>
             </a>
+          </div>
 
+          <div className="flex flex-1 items-center justify-between pl-4 sm:pl-8 pr-2 sm:pr-3">
             {/* Desktop Navigation Links */}
-            <nav className="hidden md:flex items-center gap-6 text-[13.5px] text-[#4B5563] font-medium">
+            <nav className="hidden md:flex items-center gap-8 text-[14px] text-zinc-600 font-medium">
               
               {/* Automations Dropdown */}
               <div 
@@ -112,7 +110,7 @@ export function Navbar() {
                 onMouseEnter={() => setActiveDropdown("automations")}
                 onMouseLeave={() => setActiveDropdown(null)}
               >
-                <button className="flex items-center gap-1.5 hover:text-[#111827] transition-colors focus:outline-none">
+                <button className="flex items-center gap-1.5 hover:text-[#0A6BFF] transition-colors focus:outline-none">
                   Automations
                   <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${activeDropdown === "automations" ? "rotate-180" : ""}`} />
                 </button>
@@ -124,7 +122,7 @@ export function Navbar() {
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: 10 }}
                       transition={{ duration: 0.15 }}
-                      className="absolute left-0 top-[44px] w-[560px] bg-white rounded-xl border border-zinc-200/80 shadow-lg p-3.5 z-50 grid grid-cols-2 gap-2"
+                      className="absolute left-0 top-[44px] w-[560px] bg-white rounded-xl border border-zinc-200/80 shadow-xl p-3.5 z-50 grid grid-cols-2 gap-2"
                     >
                       {automations.map((item) => (
                         <a
@@ -152,7 +150,7 @@ export function Navbar() {
                 onMouseEnter={() => setActiveDropdown("industries")}
                 onMouseLeave={() => setActiveDropdown(null)}
               >
-                <button className="flex items-center gap-1.5 hover:text-[#111827] transition-colors focus:outline-none">
+                <button className="flex items-center gap-1.5 hover:text-[#0A6BFF] transition-colors focus:outline-none">
                   Industries
                   <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${activeDropdown === "industries" ? "rotate-180" : ""}`} />
                 </button>
@@ -164,7 +162,7 @@ export function Navbar() {
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: 10 }}
                       transition={{ duration: 0.15 }}
-                      className="absolute left-0 top-[44px] w-[560px] bg-white rounded-xl border border-zinc-200/80 shadow-lg p-3.5 z-50 grid grid-cols-2 gap-2"
+                      className="absolute left-0 top-[44px] w-[560px] bg-white rounded-xl border border-zinc-200/80 shadow-xl p-3.5 z-50 grid grid-cols-2 gap-2"
                     >
                       {industries.map((item) => (
                         <a
@@ -192,7 +190,7 @@ export function Navbar() {
                 onMouseEnter={() => setActiveDropdown("resources")}
                 onMouseLeave={() => setActiveDropdown(null)}
               >
-                <button className="flex items-center gap-1.5 hover:text-[#111827] transition-colors focus:outline-none">
+                <button className="flex items-center gap-1.5 hover:text-[#0A6BFF] transition-colors focus:outline-none">
                   Resources
                   <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${activeDropdown === "resources" ? "rotate-180" : ""}`} />
                 </button>
@@ -204,7 +202,7 @@ export function Navbar() {
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: 10 }}
                       transition={{ duration: 0.15 }}
-                      className="absolute left-0 top-[44px] w-[280px] bg-white rounded-xl border border-zinc-200/80 shadow-lg p-2.5 z-50 grid gap-1"
+                      className="absolute left-0 top-[44px] w-[280px] bg-white rounded-xl border border-zinc-200/80 shadow-xl p-2.5 z-50 grid gap-1"
                     >
                       {resources.map((item) => (
                         <a
@@ -226,38 +224,38 @@ export function Navbar() {
                 </AnimatePresence>
               </div>
 
-              <a href="#" className="hover:text-[#111827] transition-colors">
+              <a href="#" className="hover:text-[#0A6BFF] transition-colors">
                 Community
               </a>
-              <a href="#" className="hover:text-[#111827] transition-colors">
+              <a href="#" className="hover:text-[#0A6BFF] transition-colors">
                 Pricing
               </a>
             </nav>
-          </div>
 
-          {/* Right actions */}
-          <div className="flex items-center gap-2.5">
-            <a 
-              href="/login" 
-              className="hidden sm:inline-flex h-8 px-4 items-center text-[13.5px] font-semibold text-[#4B5563] hover:text-[#111827] transition-colors cursor-pointer"
-            >
-              Log in
-            </a>
-            <a 
-              href="/signup" 
-              className="hidden sm:inline-flex h-8.5 px-4.5 rounded-lg bg-[#0A6BFF] text-white text-[13.5px] font-semibold hover:bg-blue-600 transition-colors cursor-pointer flex items-center justify-center shadow-sm"
-            >
-              Get started
-            </a>
+            {/* Right actions */}
+            <div className="flex items-center gap-5 ml-auto">
+              <a 
+                href="/login" 
+                className="hidden sm:inline-flex items-center text-[14px] font-semibold text-zinc-600 hover:text-zinc-900 transition-colors cursor-pointer"
+              >
+                Log in
+              </a>
+              <a 
+                href="/signup" 
+                className="hidden sm:inline-flex h-[40px] px-6 rounded-[20px] bg-[#0A6BFF] text-white text-[14px] font-semibold hover:bg-blue-600 transition-colors cursor-pointer flex items-center justify-center shadow-sm"
+              >
+                Get started
+              </a>
 
-            {/* Mobile hamburger */}
-            <button
-              onClick={() => setMobileOpen(true)}
-              className="md:hidden flex items-center justify-center w-8 h-8 text-foreground cursor-pointer focus:outline-none"
-              aria-label="Open menu"
-            >
-              <Menu className="w-5 h-5" />
-            </button>
+              {/* Mobile hamburger */}
+              <button
+                onClick={() => setMobileOpen(true)}
+                className="md:hidden flex items-center justify-center w-10 h-10 text-zinc-900 cursor-pointer focus:outline-none"
+                aria-label="Open menu"
+              >
+                <Menu className="w-6 h-6" />
+              </button>
+            </div>
           </div>
         </div>
       </header>

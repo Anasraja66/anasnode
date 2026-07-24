@@ -59,27 +59,40 @@ export async function POST(request: Request) {
     let updated = 0;
     const errors: string[] = [];
 
-    for (const row of parsed.rows.slice(0, 5000)) {
-      try {
-        const existing = await prisma.inboxConversation.findUnique({
-          where: {
-            accountId_channel_contactPhone: {
-              accountId,
-              channel: "whatsapp",
-              contactPhone: row.phone,
-            },
-          },
-        });
-        await upsertImportedContact({
-          accountId,
-          workspaceId: workspace?.id,
-          row,
-        });
-        if (existing) updated++;
-        else created++;
-      } catch {
-        if (errors.length < 8) errors.push(row.phone);
+    const rows = parsed.rows.slice(0, 5000);
+    const BATCH_SIZE = 50;
+    const startTime = Date.now();
+    const MAX_DURATION_MS = 7500; // 7.5 seconds (Vercel hobby limit is 10s)
+
+    for (let i = 0; i < rows.length; i += BATCH_SIZE) {
+      if (Date.now() - startTime > MAX_DURATION_MS) {
+        break;
       }
+      const batch = rows.slice(i, i + BATCH_SIZE);
+      await Promise.all(
+        batch.map(async (row) => {
+          try {
+            const existing = await prisma.inboxConversation.findUnique({
+              where: {
+                accountId_channel_contactPhone: {
+                  accountId,
+                  channel: "whatsapp",
+                  contactPhone: row.phone,
+                },
+              },
+            });
+            await upsertImportedContact({
+              accountId,
+              workspaceId: workspace?.id,
+              row,
+            });
+            if (existing) updated++;
+            else created++;
+          } catch {
+            if (errors.length < 8) errors.push(row.phone);
+          }
+        })
+      );
     }
 
     return NextResponse.json({

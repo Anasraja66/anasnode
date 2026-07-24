@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
@@ -55,6 +55,7 @@ import {
   Pin,
   ChevronLeft,
   PhoneCall,
+  Calendar,
 } from "lucide-react";
 import { InboxPage } from "@/components/dashboard/InboxPage";
 import { ContactsHub } from "@/components/dashboard/ContactsHub";
@@ -70,11 +71,17 @@ import TodayBookingsWidget from "@/components/dashboard/TodayBookingsWidget";
 import ChannelStatusWidget from "@/components/dashboard/ChannelStatusWidget";
 import BrandIcon from "@/components/ui/BrandIcon";
 import { ApprovalsPage } from "@/components/dashboard/ApprovalsPage";
-import { PropertiesEmbedPage, LeadsEmbedPage } from "@/components/dashboard/RealEstatePages";
+import { PropertiesEmbedPage, LeadsEmbedPage } from "@/components/dashboard/industries/real-estate/RealEstatePages";
+import { CleaningBookingsPage } from "@/components/dashboard/industries/cleaning/CleaningBookingsPage";
+import { ConstructionProjectsPage } from "@/components/dashboard/industries/construction/ConstructionProjectsPage";
+import { MaintenanceOrdersPage } from "@/components/dashboard/industries/maintenance/MaintenanceOrdersPage";
+import { ITTicketsPage } from "@/components/dashboard/industries/it/ITTicketsPage";
+import { FencingEstimatesPage } from "@/components/dashboard/industries/fencing/FencingEstimatesPage";
+import { BookingsHub } from "@/components/dashboard/BookingsHub";
 
 // â”€â”€â”€ Types â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
-type Tab = "ai_agent" | "calls" | "overview" | "inbox" | "approvals" | "contacts" | "automations" | "broadcasts" | "analytics" | "team" | "properties" | "leads";
+type Tab = "ai_agent" | "calls" | "overview" | "inbox" | "approvals" | "contacts" | "bookings" | "automations" | "broadcasts" | "analytics" | "team" | "properties" | "leads" | "cleaning_bookings" | "construction_projects" | "maintenance_orders" | "it_tickets" | "fencing_estimates";
 
 type Workspace = {
   id: string;
@@ -552,9 +559,23 @@ function Sidebar({ active, onChange, ws, onWsChange, workspaces, preset, user, o
     { id: "inbox",       label: "Inbox",          icon: Inbox },
     { id: "approvals",   label: "Approvals",      icon: CheckSquare },
     { id: "contacts",    label: "Contacts",       icon: Users },
-    { id: "properties",  label: "Properties",     icon: Building2 },
-    { id: "leads",       label: "Lead Pipeline",  icon: LayoutDashboard },
+    { id: "bookings",    label: "Calendar",       icon: Calendar },
   ];
+
+  if (preset.id === "real-estate") {
+    NAV_ITEMS.push({ id: "properties",  label: "Properties",     icon: Building2 });
+    NAV_ITEMS.push({ id: "leads",       label: "Lead Pipeline",  icon: LayoutDashboard });
+  } else if (preset.id === "cleaning") {
+    NAV_ITEMS.push({ id: "cleaning_bookings", label: "Bookings", icon: Calendar });
+  } else if (preset.id === "construction") {
+    NAV_ITEMS.push({ id: "construction_projects", label: "Projects & Bids", icon: Building2 });
+  } else if (preset.id === "maintenance") {
+    NAV_ITEMS.push({ id: "maintenance_orders", label: "Work Orders", icon: Scissors });
+  } else if (preset.id === "it") {
+    NAV_ITEMS.push({ id: "it_tickets", label: "Support Tickets", icon: Briefcase });
+  } else if (preset.id === "fencing") {
+    NAV_ITEMS.push({ id: "fencing_estimates", label: "Estimates", icon: Building2 });
+  }
 
   if (!isAgent) {
     NAV_ITEMS.push({ id: "automations", label: "Workflows", icon: GitBranch });
@@ -572,11 +593,11 @@ function Sidebar({ active, onChange, ws, onWsChange, workspaces, preset, user, o
     >
       {/* Professional Branding Logo */}
       <div className="h-16 px-4 flex items-center justify-between border-b border-zinc-100 relative bg-white overflow-hidden shrink-0">
-        <div className={`flex items-center gap-2.5 transition-all ${isCollapsed ? "mx-auto" : ""}`}>
+        <div className={`flex items-center gap-3 transition-all ${isCollapsed ? "mx-auto" : ""}`}>
           <div className="cursor-pointer shrink-0" onClick={() => setIsCollapsed(!isCollapsed)}>
-            <AnaosLogo className="w-8 h-8" />
+            <AnaosLogo className="w-11 h-11 sm:w-12 sm:h-12 text-[#0A6BFF]" />
           </div>
-          {!isCollapsed && <span className="text-[17px] font-bold text-zinc-900 tracking-tight leading-none whitespace-nowrap">AnaOS</span>}
+          {!isCollapsed && <span className="text-[20px] font-bold text-zinc-900 tracking-tight leading-none whitespace-nowrap">AnaOS</span>}
         </div>
         {!isCollapsed && (
           <button
@@ -661,7 +682,7 @@ function Sidebar({ active, onChange, ws, onWsChange, workspaces, preset, user, o
       </div>
 
       {/* Navigation */}
-      <nav className={`flex-1 pt-4 space-y-1 overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] ${isCollapsed ? "px-2" : "px-3"}`}>
+      <nav className={`flex-1 pt-4 space-y-1 overflow-y-auto custom-scrollbar ${isCollapsed ? "px-2" : "px-3"}`}>
         {NAV_ITEMS.map(({ id, label, icon: Icon }) => {
           const isActive = active === id;
           return (
@@ -819,10 +840,10 @@ function Topbar({ title, ws, preset, waStatus, integrations, onMenuClick }: {
   const hasIssue = waStatus.tokenExpired || waStatus.phoneNumberIdInvalid || waStatus.needsPublicWebhook || !integrations.fastapi;
   
   let alertMessage = "";
-  if (waStatus.tokenExpired) alertMessage = "Meta token expired â€” reconnect WhatsApp in Integrations.";
+  if (waStatus.tokenExpired) alertMessage = "Meta token expired — reconnect WhatsApp in Integrations.";
   else if (waStatus.phoneNumberIdInvalid) alertMessage = `Phone ID Error: ${waStatus.phoneNumberIdError || "Check settings"}`;
-  else if (waStatus.needsPublicWebhook) alertMessage = "Public webhook missing â€” use tunnel for local testing.";
-  else if (!integrations.fastapi) alertMessage = "AI Engine (FastAPI) is offline â€” run 'fastapi dev main.py' in backend.";
+  else if (waStatus.needsPublicWebhook) alertMessage = "Public webhook missing — use tunnel for local testing.";
+  else if (!integrations.fastapi) alertMessage = "AI Engine (FastAPI) is offline — run 'fastapi dev main.py' in backend.";
 
   useEffect(() => {
     if (!searchQuery.trim()) {
@@ -2090,18 +2111,24 @@ export default function Dashboard() {
               tab === "inbox" ? "overflow-hidden p-0" : "bg-[#F8F9FA]"
             }`}
           >
-            <div className={tab === "inbox" || tab === "calls" || tab === "ai_agent" || tab === "contacts" || tab === "properties" || tab === "leads" ? "" : "px-4 py-6 md:px-10 md:pt-8 md:pb-8"}>
+            <div className={tab === "inbox" || tab === "calls" || tab === "ai_agent" || tab === "contacts" || tab === "bookings" || tab === "properties" || tab === "leads" || tab === "cleaning_bookings" || tab === "construction_projects" || tab === "maintenance_orders" || tab === "it_tickets" || tab === "fencing_estimates" ? "" : "px-4 py-6 md:px-10 md:pt-8 md:pb-8"}>
               {tab === "ai_agent"    && <AIAgentPage     ws={ws} />}
               {tab === "overview"    && <DashboardHome ws={ws} preset={industryPreset} roiMetrics={roiMetrics} />}
               {tab === "calls"       && <CallsPage />}
               {tab === "inbox"       && <InboxPage initialConversationId={inboxChatId} preset={industryPreset} />}
               {tab === "contacts"    && <ContactsHub />}
+              {tab === "bookings"    && <BookingsHub />}
               {tab === "automations" && <AutomationsPage ws={ws} integrations={integrations} toggleAutomation={toggleAutomation} toggleLoading={toggleLoading} />}
               {tab === "broadcasts"  && <BroadcastsPage ws={ws} />}
               {tab === "analytics"   && <AnalyticsPage />}
               {tab === "team"        && <TeamSettingsPage />}
               {tab === "properties"  && <PropertiesEmbedPage />}
               {tab === "leads"       && <LeadsEmbedPage />}
+              {tab === "cleaning_bookings" && <CleaningBookingsPage />}
+              {tab === "construction_projects" && <ConstructionProjectsPage />}
+              {tab === "maintenance_orders" && <MaintenanceOrdersPage />}
+              {tab === "it_tickets" && <ITTicketsPage />}
+              {tab === "fencing_estimates" && <FencingEstimatesPage />}
             </div>
           </main>
       </div>

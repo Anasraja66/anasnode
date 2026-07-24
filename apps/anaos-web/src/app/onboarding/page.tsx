@@ -274,10 +274,16 @@ export default function OnboardingPage() {
                   )}
 
                   {step === 3 && (
-                    <div className="flex flex-col h-full animate-in fade-in zoom-in-95 duration-500">
-                      <div className="text-center mb-6 flex flex-col items-center">
-                        <div className="w-12 h-12 bg-zinc-900 rounded-2xl flex items-center justify-center mb-4 shadow-lg shadow-zinc-200">
-                          <Sparkles className="w-6 h-6 text-white" />
+                    <div className="flex flex-col h-full animate-in fade-in zoom-in-95 duration-500 relative">
+                      {/* AI Glowing Background */}
+                      <div className="absolute inset-0 bg-gradient-to-tr from-[#0A6BFF]/10 via-indigo-500/5 to-transparent blur-3xl pointer-events-none" />
+                      
+                      <div className="text-center mb-6 flex flex-col items-center relative z-10">
+                        <div className="relative mb-4">
+                          <div className="absolute inset-0 bg-[#0A6BFF] blur-xl opacity-30 animate-pulse rounded-full" />
+                          <div className="w-14 h-14 bg-gradient-to-br from-zinc-900 to-black rounded-2xl flex items-center justify-center relative shadow-lg ring-1 ring-white/10">
+                            <Sparkles className="w-6 h-6 text-[#0A6BFF] animate-pulse" />
+                          </div>
                         </div>
                         <h2 className="text-2xl font-bold text-zinc-900 tracking-tight mb-2">
                           AnaOS AI Analysis Complete
@@ -287,56 +293,66 @@ export default function OnboardingPage() {
                         </p>
                       </div>
 
-                      {/* The Analysis Card */}
-                      <div className="bg-white border border-zinc-200 shadow-xl shadow-zinc-100/50 rounded-2xl overflow-hidden mb-6">
-                        <div className="bg-zinc-50 border-b border-zinc-200 px-5 py-3 flex justify-between items-center">
+                      {/* The Analysis Card - Dark Premium AI Feel */}
+                      <div className="bg-[#09090b] border border-zinc-800/80 shadow-[0_0_40px_-10px_rgba(10,107,255,0.15)] rounded-2xl overflow-hidden mb-6 relative z-10">
+                        {/* Terminal Header */}
+                        <div className="bg-zinc-900/80 border-b border-zinc-800 px-5 py-3 flex justify-between items-center backdrop-blur-md">
                           <div className="flex items-center gap-2">
                             <div className="flex gap-1.5">
-                              <div className="w-2.5 h-2.5 rounded-full bg-red-400"></div>
-                              <div className="w-2.5 h-2.5 rounded-full bg-amber-400"></div>
-                              <div className="w-2.5 h-2.5 rounded-full bg-emerald-400"></div>
+                              <div className="w-2.5 h-2.5 rounded-full bg-red-500/80"></div>
+                              <div className="w-2.5 h-2.5 rounded-full bg-amber-500/80"></div>
+                              <div className="w-2.5 h-2.5 rounded-full bg-emerald-500/80"></div>
                             </div>
                             <span className="text-[11px] font-mono text-zinc-400 ml-2">system_build.log</span>
                           </div>
-                          <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full uppercase tracking-wider border border-emerald-100">Ready to deploy</span>
+                          <span className="text-[10px] font-bold text-emerald-400 bg-emerald-400/10 px-2 py-0.5 rounded-full uppercase tracking-wider border border-emerald-400/20 shadow-[0_0_10px_rgba(52,211,153,0.1)] flex items-center gap-1.5">
+                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                            Ready to deploy
+                          </span>
                         </div>
                         
-                        <div className="p-5 space-y-5">
-                          <div className="grid grid-cols-2 gap-4">
-                            <div className="space-y-1.5">
-                               <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">Detected Intent</p>
-                               <p className="text-[13px] font-semibold text-zinc-900 flex items-center gap-1.5">
-                                 <BrainCircuit className="w-4 h-4 text-sky-500" /> {pendingWorkflow?.name || "Lead Gen & Booking"}
+                        <div className="p-5 space-y-6 relative overflow-hidden">
+                          {/* Inner glowing grid */}
+                          <div className="absolute inset-0 bg-[linear-gradient(to_right,#4f4f4f1a_1px,transparent_1px),linear-gradient(to_bottom,#4f4f4f1a_1px,transparent_1px)] bg-[size:14px_24px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] pointer-events-none" />
+                          
+                          <div className="grid grid-cols-2 gap-4 relative z-10">
+                            <div className="space-y-1.5 bg-zinc-900/60 p-3.5 rounded-xl border border-zinc-800/50 hover:border-zinc-700/50 transition-colors">
+                               <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider">Detected Intent</p>
+                               <p className="text-[13px] font-semibold text-zinc-100 flex items-center gap-2">
+                                 <BrainCircuit className="w-4 h-4 text-[#0A6BFF]" /> {pendingWorkflow?.name || "Lead Gen & Booking"}
                                </p>
                             </div>
-                            <div className="space-y-1.5">
-                               <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">Primary Channels</p>
+                            <div className="space-y-1.5 bg-zinc-900/60 p-3.5 rounded-xl border border-zinc-800/50 hover:border-zinc-700/50 transition-colors">
+                               <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider">Primary Channels</p>
                                <div className="flex flex-wrap gap-2">
-                                 <span className="inline-flex items-center gap-1 bg-[#25D366]/10 text-[#25D366] px-2 py-0.5 rounded text-[11px] font-bold"><MessageSquare className="w-3 h-3" /> WhatsApp</span>
-                                 <span className="inline-flex items-center gap-1 bg-zinc-100 text-zinc-600 px-2 py-0.5 rounded text-[11px] font-bold"><Phone className="w-3 h-3" /> Voice</span>
+                                 <span className="inline-flex items-center gap-1.5 bg-[#25D366]/10 text-[#25D366] px-2 py-1 rounded-md text-[11px] font-bold ring-1 ring-[#25D366]/30"><MessageSquare className="w-3.5 h-3.5" /> WhatsApp</span>
+                                 <span className="inline-flex items-center gap-1.5 bg-zinc-800/50 text-zinc-300 px-2 py-1 rounded-md text-[11px] font-bold ring-1 ring-zinc-700"><Phone className="w-3.5 h-3.5" /> Voice</span>
                                </div>
                             </div>
                           </div>
 
-                          <div className="border-t border-zinc-100 pt-5">
-                             <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider mb-3">Provisioned Nodes</p>
+                          <div className="pt-2 relative z-10">
+                             <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider mb-3 flex items-center gap-2">
+                               <span className="w-1.5 h-1.5 rounded-full bg-[#0A6BFF] animate-pulse shadow-[0_0_8px_#0A6BFF]"></span>
+                               Provisioned Nodes
+                             </p>
                              <div className="space-y-2.5">
                                {pendingWorkflow ? (
                                  pendingWorkflow.steps?.map((step: any, idx: number) => (
-                                   <div key={idx} className="flex items-center gap-3 bg-zinc-50 border border-zinc-200/60 p-2.5 rounded-xl">
-                                     <div className="w-8 h-8 rounded-lg bg-white border border-zinc-200 flex items-center justify-center shrink-0 shadow-sm">
-                                       <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+                                   <div key={idx} className="flex items-center gap-3 bg-zinc-900/80 border border-zinc-800/80 p-3 rounded-xl hover:border-[#0A6BFF]/40 transition-colors group">
+                                     <div className="w-8 h-8 rounded-lg bg-black/60 border border-zinc-800 flex items-center justify-center shrink-0 group-hover:border-[#0A6BFF]/50 transition-colors">
+                                       <CheckCircle2 className="w-4 h-4 text-emerald-400 drop-shadow-[0_0_8px_rgba(52,211,153,0.5)]" />
                                      </div>
-                                     <span className="text-[13px] font-medium text-zinc-800">{step.label || step.pluginId}</span>
+                                     <span className="text-[13px] font-medium text-zinc-300 group-hover:text-white transition-colors font-mono">{step.label || step.pluginId}</span>
                                    </div>
                                  ))
                                ) : (
                                  recommendedWorkflows().map((workflow, idx) => (
-                                   <div key={idx} className="flex items-center gap-3 bg-zinc-50 border border-zinc-200/60 p-2.5 rounded-xl">
-                                     <div className="w-8 h-8 rounded-lg bg-white border border-zinc-200 flex items-center justify-center shrink-0 shadow-sm">
-                                       <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+                                   <div key={idx} className="flex items-center gap-3 bg-zinc-900/80 border border-zinc-800/80 p-3 rounded-xl hover:border-[#0A6BFF]/40 transition-colors group">
+                                     <div className="w-8 h-8 rounded-lg bg-black/60 border border-zinc-800 flex items-center justify-center shrink-0 group-hover:border-[#0A6BFF]/50 transition-colors">
+                                       <CheckCircle2 className="w-4 h-4 text-emerald-400 drop-shadow-[0_0_8px_rgba(52,211,153,0.5)]" />
                                      </div>
-                                     <span className="text-[13px] font-medium text-zinc-800">{workflow}</span>
+                                     <span className="text-[13px] font-medium text-zinc-300 group-hover:text-white transition-colors font-mono">{workflow}</span>
                                    </div>
                                  ))
                                )}
@@ -345,7 +361,7 @@ export default function OnboardingPage() {
                         </div>
                       </div>
 
-                      <div className="mt-auto">
+                      <div className="mt-auto relative z-10">
                         <p className="text-center text-[12px] text-zinc-400 font-medium">
                           You can always customize these workflows later in your dashboard.
                         </p>

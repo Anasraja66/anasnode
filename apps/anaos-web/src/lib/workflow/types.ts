@@ -28,6 +28,7 @@ export enum NodeType {
   SEND_INSTAGRAM_DM     = 'send_instagram_dm',
   SEND_VOICE_CALL       = 'send_voice_call',
   SEND_SMS              = 'send_sms',
+  NOTIFY_TEAM           = 'notify_team',
 
   // ── LOGIC ──
   CONDITION             = 'condition',

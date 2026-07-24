@@ -63,9 +63,27 @@ const GENDER = new Set(["gender", "sex"]);
 
 function splitRow(line: string): string[] {
   if (line.includes("\t")) return line.split("\t").map((c) => c.trim());
-  const m = line.match(/("([^"]|"")*"|[^,]+)/g);
-  if (m) return m.map((c) => c.replace(/^"|"$/g, "").replace(/""/g, '"').trim());
-  return line.split(",").map((c) => c.trim());
+  const result: string[] = [];
+  let current = "";
+  let inQuotes = false;
+  for (let i = 0; i < line.length; i++) {
+    const char = line[i];
+    if (char === '"') {
+      if (inQuotes && line[i + 1] === '"') {
+        current += '"';
+        i++;
+      } else {
+        inQuotes = !inQuotes;
+      }
+    } else if (char === ',' && !inQuotes) {
+      result.push(current.trim());
+      current = "";
+    } else {
+      current += char;
+    }
+  }
+  result.push(current.trim());
+  return result;
 }
 
 function mapColumns(headers: string[]): {

@@ -11,11 +11,13 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { prompt, workspaceName: fallbackName, name } = await request.json();
+    const { prompt, industry, workspaceName: fallbackName, name } = await request.json();
 
-    if (!prompt) {
+    const finalPrompt = prompt || (industry ? `Create a workspace for a ${industry} business.` : null);
+
+    if (!finalPrompt) {
       return NextResponse.json(
-        { error: "Missing required prompt" },
+        { error: "Missing required prompt or industry" },
         { status: 400 }
       );
     }
@@ -37,7 +39,7 @@ export async function POST(request: Request) {
     }
 
     // 1. Generate the AI Workspace Blueprint
-    const blueprint = await generateBlueprint(prompt);
+    const blueprint = await generateBlueprint(finalPrompt);
 
     const workspaceName = fallbackName || `${blueprint.industryName} Workspace`;
     const slug = workspaceName

@@ -389,16 +389,24 @@ export function ContactsHub() {
 
           {preview && (
             <div className="rounded-md border border-zinc-100 overflow-hidden">
-              <p className="px-3 py-2 text-[12px] bg-zinc-50 border-b border-zinc-100">
-                <span className="font-medium">{preview.count}</span> contacts · columns:{" "}
-                {preview.columns.join(", ")}
-              </p>
+              <div className="px-3 py-2.5 bg-zinc-50 border-b border-zinc-100">
+                <p className="text-[12px] text-zinc-600 mb-2">
+                  <span className="font-medium text-zinc-900">{preview.count}</span> contacts found. Mapped columns:
+                </p>
+                <div className="flex flex-wrap gap-1.5">
+                  {preview.columns.map((c, i) => (
+                    <span key={i} className="px-2 py-0.5 bg-blue-50 border border-blue-100 text-blue-600 rounded-md text-[10px] font-bold uppercase tracking-wider">
+                      {c}
+                    </span>
+                  ))}
+                </div>
+              </div>
               <table className="w-full text-[12px]">
                 <thead>
-                  <tr className="text-zinc-500 border-b border-zinc-100">
-                    <th className="text-left px-3 py-1.5">Name</th>
-                    <th className="text-left px-3 py-1.5">Phone</th>
-                    <th className="text-left px-3 py-1.5">Email</th>
+                  <tr className="text-zinc-500 border-b border-zinc-100 bg-white">
+                    <th className="text-left px-3 py-2 font-medium">Name</th>
+                    <th className="text-left px-3 py-2 font-medium">Phone</th>
+                    <th className="text-left px-3 py-2 font-medium">Email</th>
                   </tr>
                 </thead>
                 <tbody>

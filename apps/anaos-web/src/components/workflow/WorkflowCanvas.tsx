@@ -11,8 +11,9 @@ import {
   Play, ZoomIn, ZoomOut, Trash2, ChevronRight, X,
   ArrowLeft, Loader2, Sliders, ChevronDown, Plus,
   Phone, Mail, Database, Star, UserPlus, Send, Bell, Filter,
-  Search, Map, LayoutGrid, Sparkles, CheckCircle2, Repeat, History, Calendar, ShoppingCart
+  Search, Map, LayoutGrid, Sparkles, CheckCircle2, Repeat, History, Calendar, ShoppingCart, BookOpen
 } from "lucide-react";
+import { TEMPLATES } from "@/lib/workflow/templates";
 import ExecutionHistoryPanel from "./ExecutionHistoryPanel";
 
 // ─── WhatsApp SVG Icon ─────────────────────────────────────────────────────────
@@ -43,7 +44,7 @@ const FacebookIcon = ({ size = 14, color = "currentColor" }: { size?: number; co
 export type NodeType =
   | "trigger_whatsapp" | "trigger_instagram" | "trigger_facebook"
   | "trigger_schedule" | "trigger_webhook"
-  | "send_whatsapp" | "send_instagram" | "send_facebook" | "send_email"
+  | "send_whatsapp" | "send_instagram" | "send_facebook" | "send_email" | "send_voice_call"
   | "ai_reply" | "condition" | "wait" | "http_request"
   | "add_tag" | "remove_tag" | "save_lead" | "notify_team"
   | "end";
@@ -223,6 +224,20 @@ const NODE_TYPES: Record<string, NodeConfig> = {
       { key: "to", label: "To Email", type: "text", placeholder: "{{email}}" },
       { key: "subject", label: "Subject", type: "text", placeholder: "Your booking confirmation" },
       { key: "body", label: "Email Body", type: "textarea", placeholder: "Dear {{name}}, ..." },
+    ],
+  },
+  send_voice_call: {
+    label: "Send Voice Call",
+    desc: "Trigger an AI Voice Call",
+    icon: Phone,
+    color: "#8B5CF6",
+    glow: "rgba(139,92,246,0.35)",
+    bg: "rgba(139,92,246,0.12)",
+    border: "#8B5CF6",
+    category: "Messages",
+    fields: [
+      { key: "phone", label: "To Phone", type: "text", placeholder: "{{phone}}" },
+      { key: "prompt", label: "AI Prompt", type: "textarea", placeholder: "Call this customer to confirm their booking..." },
     ],
   },
 
@@ -426,6 +441,76 @@ const NODE_TYPES: Record<string, NodeConfig> = {
       { key: "orderId", label: "Order ID", type: "text", placeholder: "{{$json.orderId}}" },
     ],
   },
+  ai_extract: {
+    label: "AI Extract Data",
+    desc: "Extract info from text",
+    icon: Sparkles,
+    color: "#10B981",
+    glow: "rgba(16,185,129,0.35)",
+    bg: "rgba(16,185,129,0.12)",
+    border: "#10B981",
+    category: "AI & Logic",
+    fields: [
+      { key: "schema", label: "Extract Schema (JSON)", type: "textarea", placeholder: "[\"BUDGET\", \"LOCATION\"]" },
+    ],
+  },
+  ai_generate_content: {
+    label: "AI Generate Content",
+    desc: "Write personalized copy",
+    icon: Sparkles,
+    color: "#10B981",
+    glow: "rgba(16,185,129,0.35)",
+    bg: "rgba(16,185,129,0.12)",
+    border: "#10B981",
+    category: "AI & Logic",
+    fields: [
+      { key: "systemPrompt", label: "System Prompt", type: "textarea", placeholder: "Draft an offer..." },
+      { key: "userMessage", label: "User Input", type: "text", placeholder: "{{contactName}}" },
+    ],
+  },
+  crm_create_contact: {
+    label: "CRM Create Contact",
+    desc: "Save lead to CRM",
+    icon: UserPlus,
+    color: "#6366F1",
+    glow: "rgba(99,102,241,0.35)",
+    bg: "rgba(99,102,241,0.12)",
+    border: "#6366F1",
+    category: "Actions",
+    fields: [
+      { key: "name_field", label: "Name", type: "text", placeholder: "{{name}}" },
+      { key: "phone_field", label: "Phone", type: "text", placeholder: "{{phone}}" },
+    ],
+  },
+  crm_create_deal: {
+    label: "CRM Create Deal",
+    desc: "Start a sales deal",
+    icon: Database,
+    color: "#6366F1",
+    glow: "rgba(99,102,241,0.35)",
+    bg: "rgba(99,102,241,0.12)",
+    border: "#6366F1",
+    category: "Actions",
+    fields: [
+      { key: "stage", label: "Pipeline Stage", type: "text", placeholder: "New Lead" },
+      { key: "amount", label: "Amount", type: "text", placeholder: "$100" },
+    ],
+  },
+  send_whatsapp_buttons: {
+    label: "WhatsApp Buttons",
+    desc: "Send interactive buttons",
+    icon: WhatsAppIcon,
+    isCustomIcon: true,
+    color: "#25D366",
+    glow: "rgba(37,211,102,0.35)",
+    bg: "rgba(37,211,102,0.12)",
+    border: "#25D366",
+    category: "Messages",
+    fields: [
+      { key: "content", label: "Message Content", type: "textarea", placeholder: "Please select an option" },
+      { key: "buttons", label: "Buttons (Comma separated)", type: "text", placeholder: "Yes, No, Maybe" },
+    ],
+  }
 };
 
 // ─── Type normaliser ──────────────────────────────────────────────────────────
@@ -443,19 +528,20 @@ const TYPE_ALIASES: Record<string, string> = {
   ai_reply: "ai_reply",
   ai_respond: "ai_reply",
   ai_classify: "ai_reply",
-  ai_extract: "ai_reply",
-  ai_generate_content: "ai_reply",
+  ai_extract: "ai_extract",
+  ai_generate_content: "ai_generate_content",
   ai_sentiment: "ai_reply",
   ai_translate: "ai_reply",
   message: "send_whatsapp",
   send_message: "send_whatsapp",
   send_whatsapp: "send_whatsapp",
-  send_whatsapp_buttons: "send_whatsapp",
+  send_whatsapp_buttons: "send_whatsapp_buttons",
   send_whatsapp_list: "send_whatsapp",
   send_instagram: "send_instagram",
   send_instagram_dm: "send_instagram",
   send_facebook: "send_facebook",
   send_email: "send_email",
+  send_voice_call: "send_voice_call",
   http: "http_request",
   http_call: "http_request",
   http_request: "http_request",
@@ -466,6 +552,8 @@ const TYPE_ALIASES: Record<string, string> = {
   add_tag: "add_tag",
   tag: "add_tag",
   save_lead: "save_lead",
+  crm_create_contact: "crm_create_contact",
+  crm_create_deal: "crm_create_deal",
   notify_team: "notify_team",
   end: "end",
   stop: "end",
@@ -473,7 +561,7 @@ const TYPE_ALIASES: Record<string, string> = {
   anamind_get: "anamind_get",
   google_calendar: "google_calendar",
   shopify: "shopify",
-  shopify_order: "http_request",
+  shopify_order: "shopify",
   hubspot_contact: "save_lead",
   webhook_send: "http_request",
 };
@@ -1024,6 +1112,7 @@ export default function WorkflowCanvas({ workflowId, initialData, workflowName =
   const [aiPrompt, setAiPrompt] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
   const [showHistoryPanel, setShowHistoryPanel] = useState(false);
+  const [showTemplates, setShowTemplates] = useState(false);
 
   const canvasRef = useRef<HTMLDivElement>(null);
   const selectedNodeData = nodes.find(n => n.id === selectedNode) || null;
@@ -1165,12 +1254,32 @@ export default function WorkflowCanvas({ workflowId, initialData, workflowName =
         })));
         setAiModalOpen(false);
         setAiPrompt("");
+      } else {
+        alert("Failed to load AI workflow");
       }
     } catch (e) {
-      console.error("AI Generation failed:", e);
+      alert("Error generating workflow");
     } finally {
       setIsGenerating(false);
     }
+  };
+
+  const loadTemplate = (templateId: string) => {
+    const t = TEMPLATES.find(x => x.id === templateId);
+    if (!t) return;
+    
+    // Map db nodes to canvas nodes
+    const canvasNodes = t.nodes.map(dbNodeToCanvas);
+    const canvasEdges = t.edges.map(e => ({
+      id: e.id,
+      from: e.source,
+      to: e.target
+    }));
+    
+    setNodes(canvasNodes);
+    setEdges(canvasEdges);
+    setSaved(false);
+    setShowTemplates(false);
   };
 
   // Zoom with scroll
@@ -1332,6 +1441,18 @@ export default function WorkflowCanvas({ workflowId, initialData, workflowName =
                   </button>
 
                   <span className="text-sm font-medium text-gray-400">or</span>
+                  
+                  <button 
+                    onClick={() => setShowTemplates(true)}
+                    className="flex flex-col items-center justify-center w-[120px] h-[120px] bg-white border border-dashed border-gray-300 rounded-xl hover:border-blue-500 hover:text-blue-500 transition-colors cursor-pointer group shadow-[0_0_15px_rgba(59,130,246,0.1)]"
+                  >
+                    <div className="text-blue-400 group-hover:text-blue-500 mb-2">
+                      <LayoutGrid size={24} />
+                    </div>
+                    <span className="text-xs font-semibold text-gray-500 group-hover:text-blue-500">Browse Templates</span>
+                  </button>
+
+                  <span className="text-sm font-medium text-gray-400">or</span>
 
                   <button 
                     onClick={() => setAiModalOpen(true)}
@@ -1345,6 +1466,53 @@ export default function WorkflowCanvas({ workflowId, initialData, workflowName =
                 </div>
               </div>
             )}
+
+            {/* Templates Modal */}
+            <AnimatePresence>
+              {showTemplates && (
+                <motion.div 
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  className="absolute inset-4 bg-white rounded-3xl shadow-[0_20px_60px_rgba(0,0,0,0.15)] border border-gray-200 overflow-hidden z-50 flex flex-col pointer-events-auto"
+                >
+                  <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 bg-gray-50">
+                    <div className="flex items-center gap-3">
+                      <div className="p-2 bg-blue-100 text-blue-600 rounded-xl">
+                        <LayoutGrid size={20} />
+                      </div>
+                      <div>
+                        <h2 className="text-lg font-bold text-gray-900 leading-tight">Template Gallery</h2>
+                        <p className="text-xs text-gray-500 font-medium">Start building faster with pre-made awesome workflows</p>
+                      </div>
+                    </div>
+                    <button onClick={() => setShowTemplates(false)} className="p-2 text-gray-400 hover:text-gray-600 bg-white border border-gray-200 rounded-xl shadow-sm hover:shadow-md transition-all cursor-pointer">
+                      <X size={18} />
+                    </button>
+                  </div>
+                  
+                  <div className="flex-1 overflow-y-auto p-6 bg-gray-50/50">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                      {TEMPLATES.map(t => (
+                        <div key={t.id} className="bg-white border border-gray-200 rounded-2xl p-5 hover:border-blue-300 hover:shadow-lg transition-all flex flex-col group cursor-pointer" onClick={() => loadTemplate(t.id)}>
+                          <div className="flex items-center gap-2 mb-3">
+                            <span className="px-2.5 py-1 bg-gray-100 text-gray-600 text-[10px] font-bold uppercase tracking-wider rounded-lg">
+                              {t.industry}
+                            </span>
+                            <span className="text-[10px] text-gray-400 font-medium">{t.nodes.length} steps</span>
+                          </div>
+                          <h3 className="text-sm font-bold text-gray-900 mb-2 leading-snug group-hover:text-blue-600 transition-colors">{t.name}</h3>
+                          <p className="text-xs text-gray-500 line-clamp-3 mb-4 flex-1 leading-relaxed">{t.description}</p>
+                          <button className="w-full py-2 bg-gray-50 text-gray-600 text-xs font-bold rounded-xl border border-gray-200 group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600 transition-all cursor-pointer">
+                            Use Template
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
 
             {/* AI Modal Overlay */}
             <AnimatePresence>

@@ -233,72 +233,44 @@ function DashboardHome({ ws, preset, roiMetrics }: { ws: Workspace; preset: Indu
       <OnboardingWizard />
       {/* Background foundation removed for cleaner look */}
       <div className="relative z-10 space-y-[28px] w-full font-sans">
-        {/* Welcome Row (ManyChat Exact Style) */}
-        <div className="flex flex-col justify-center min-h-[59px] w-full mb-8">
-          <h1 className="text-[32px] font-bold text-zinc-900 mb-2 leading-none" suppressHydrationWarning>
-            {greeting ? `${greeting}, Operator!` : `Welcome, Operator!`}
-          </h1>
-          <div className="flex items-center gap-3 text-[13px] text-zinc-600 font-medium" suppressHydrationWarning>
-            <span>1 connected channel</span>
-            <span className="text-zinc-300">Â·</span>
-            <span>Workspace: <span className="font-bold text-zinc-800">{ws.name}</span></span>
+        {/* Welcome Row (New Design) */}
+        <div className="flex flex-col md:flex-row md:items-end md:justify-between min-h-[59px] w-full mb-8 pt-4">
+          <div>
+            <h1 className="text-[32px] font-bold text-zinc-900 mb-1.5 leading-tight" suppressHydrationWarning>
+              {greeting ? `${greeting}, ${user?.name || "Guest"}!` : `Welcome, ${user?.name || "Guest"}!`}
+            </h1>
+            <div className="flex items-center gap-3 text-[13px] text-zinc-500 font-medium" suppressHydrationWarning>
+              <span>1 connected channel</span>
+              <span className="text-zinc-300">·</span>
+              <span className="flex items-center gap-1.5 text-emerald-600 font-bold uppercase tracking-wide text-[11px]">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                SYSTEM STATUS: ALL SYSTEMS OPERATIONAL
+              </span>
+            </div>
           </div>
-          <div className="mt-3">
-            <button className="text-[13px] font-semibold text-sky-500 hover:underline cursor-pointer">
-              See Insights
-            </button>
-          </div>
-          
-          <div className="flex items-center gap-6 mt-8 border-b border-zinc-200 w-full">
+          <div className="mt-4 md:mt-0 shrink-0">
             <button 
-              onClick={() => setActiveChannel("All channels")}
-              className={`text-[14px] transition-colors pb-3 -mb-[1px] ${activeChannel === "All channels" ? "font-bold text-zinc-900 border-b-2 border-zinc-900" : "font-medium text-zinc-500 hover:text-zinc-700"}`}
+              onClick={() => window.location.reload()} 
+              className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#DDEBFF] text-[#0A6BFF] text-[13px] font-bold hover:bg-blue-100 transition-colors shadow-sm cursor-pointer"
             >
-              All channels
+              <RefreshCw className="w-4 h-4" /> Refresh Data
             </button>
-            {availableChannels.map((channel: string) => (
-              <button 
-                key={channel}
-                onClick={() => setActiveChannel(channel)}
-                className={`text-[14px] flex items-center gap-1.5 transition-colors pb-3 -mb-[1px] ${activeChannel === channel ? "font-bold text-zinc-900 border-b-2 border-zinc-900" : "font-medium text-zinc-500 hover:text-zinc-700"}`}
-              >
-                {channel}
-                {channel === "WhatsApp" && <span className="bg-sky-500 text-white text-[9px] font-bold px-1.5 py-[1px] rounded-[3px] uppercase tracking-wide">Upgrade</span>}
-              </button>
-            ))}
-          </div>
-          
-          <div className="mt-8 flex justify-between items-center w-full">
-             <h2 className="text-[20px] font-bold text-zinc-900">
-               {activeChannel === "All channels" 
-                 ? "Set up your connected channels to drive conversations"
-                 : `Set up ${activeChannel} basics to drive conversations`}
-             </h2>
-             <div className="flex items-center gap-3">
-               <span className="flex items-center gap-1.5 text-[12px] font-medium text-zinc-500">
-                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                 Production
-               </span>
-               <button onClick={() => window.location.reload()} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-zinc-200 text-zinc-600 text-[12px] font-bold hover:bg-zinc-50 transition-colors shadow-sm cursor-pointer">
-                 <RefreshCw className="w-3.5 h-3.5" /> Refresh
-               </button>
-             </div>
           </div>
         </div>
 
-        {/* V2 ROI Analytics Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+        {/* V2 ROI Analytics Grid (New Design) */}
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-5 mb-8">
           {[
-            { title: "Leads Captured", value: roiMetrics?.leadsThisWeek || "0", sub: "Last 7 days" },
-            { title: "Missed Calls Recovered", value: roiMetrics?.leadsRecovered || "0", sub: "AI assisted" },
-            { title: "Appointments Booked", value: roiMetrics?.appointmentsBooked || "0", sub: "Via WhatsApp" },
-            { title: "AI Replies", value: roiMetrics?.aiReplies || "0", sub: "Auto-pilot tasks" },
-            { title: "Avg Response Time", value: roiMetrics?.avgResponseSec ? `${roiMetrics.avgResponseSec}s` : "0s", sub: "Instant AI" }
+            { title: "LEADS CAPTURED", value: roiMetrics?.leadsThisWeek || "0", sub: "Last 7 days" },
+            { title: "MISSED CALLS RECOVERED", value: roiMetrics?.leadsRecovered || "0", sub: "AI assisted" },
+            { title: "APPOINTMENTS BOOKED", value: roiMetrics?.appointmentsBooked || "0", sub: "Via WhatsApp" },
+            { title: "AI REPLIES", value: roiMetrics?.aiReplies || "0", sub: "Auto-pilot tasks" },
+            { title: "AVG RESPONSE TIME", value: roiMetrics?.avgResponseSec ? `${roiMetrics.avgResponseSec}s` : "0s", sub: "Instant AI" }
           ].map((stat, i) => (
-            <div key={i} className="bg-white border border-zinc-200 rounded-xl p-4 shadow-sm hover:border-zinc-300 transition-all duration-300">
-              <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-[0.05em] mb-1 truncate">{stat.title}</p>
-              <div className="text-[24px] font-bold text-zinc-900 leading-none">{stat.value}</div>
-              <p className="text-[11px] text-zinc-500 mt-2 font-medium">{stat.sub}</p>
+            <div key={i} className="bg-[#CBE1FF] border-none rounded-2xl p-5 shadow-sm transition-all duration-300 flex flex-col">
+              <p className="text-[10px] text-zinc-700 font-bold tracking-[0.05em] mb-2 truncate">{stat.title}</p>
+              <div className="text-[28px] font-bold text-zinc-900 leading-none my-1">{stat.value}</div>
+              <p className="text-[11px] text-zinc-600 mt-2 font-medium">{stat.sub}</p>
             </div>
           ))}
         </div>

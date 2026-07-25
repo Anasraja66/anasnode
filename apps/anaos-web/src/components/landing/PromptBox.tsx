@@ -121,24 +121,24 @@ export function PromptBox({ onGenerate, compact, staticPlaceholder, onSubmitProm
   };
 
   return (
-    <div className={`w-full ${compact ? "max-w-xl" : "max-w-3xl"} mx-auto text-left relative z-10`}>
-      <div className="rounded-[32px] border border-zinc-200 bg-white p-2 hover:border-zinc-300 transition-all shadow-[0_8px_30px_rgb(0,0,0,0.04)] relative group/box">
+    <div className={`w-full ${compact ? "max-w-xl" : "max-w-4xl"} mx-auto text-left relative z-10`}>
+      <div className="rounded-[24px] border border-zinc-200/60 bg-[#F8F9FA] p-3 transition-all relative group/box">
         {onModeChange && (
-          <div className="flex items-center gap-2 px-4 sm:px-6 pt-3 pb-2 border-b border-zinc-100/60 mb-2">
+          <div className="flex items-center gap-2 px-3 sm:px-4 pt-2 pb-1 mb-1">
             <button 
               type="button"
               onClick={() => onModeChange("edit")}
-              className={`flex items-center gap-2 px-3.5 py-1.5 rounded-full text-[12.5px] font-semibold tracking-wide transition-all ${mode === "edit" ? "bg-[#0A6BFF]/10 text-[#0A6BFF] shadow-sm" : "text-zinc-500 hover:bg-zinc-100 hover:text-zinc-700"}`}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-bold tracking-wide transition-all ${mode === "edit" ? "bg-[#0A6BFF] text-white shadow-sm" : "bg-zinc-200/50 text-zinc-600 hover:bg-zinc-200"}`}
             >
-              <Edit2 className="w-3.5 h-3.5" /> 
+              <Edit2 className="w-3 h-3" /> 
               <span>Editing: {automationName || "Current Automation"}</span>
             </button>
             <button 
               type="button"
               onClick={() => onModeChange("new")}
-              className={`flex items-center gap-2 px-3.5 py-1.5 rounded-full text-[12.5px] font-semibold tracking-wide transition-all ${mode === "new" ? "bg-[#0A6BFF] hover:bg-blue-600 text-white shadow-sm shadow-sm" : "text-zinc-500 hover:bg-zinc-100 hover:text-zinc-700"}`}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-bold tracking-wide transition-all ${mode === "new" ? "bg-[#0A6BFF] text-white shadow-sm" : "bg-zinc-200/50 text-zinc-600 hover:bg-zinc-200"}`}
             >
-              <Sparkles className="w-3.5 h-3.5" />
+              <Plus className="w-3 h-3" />
               <span>New Automation</span>
             </button>
           </div>
@@ -147,81 +147,70 @@ export function PromptBox({ onGenerate, compact, staticPlaceholder, onSubmitProm
           value={value}
           onChange={(e) => setValue(e.target.value)}
           placeholder={mounted && !value ? (staticPlaceholder || placeholderText) : (staticPlaceholder || "Describe your business automation...")}
-          rows={3}
+          rows={4}
           disabled={loading}
-          className="w-full resize-none bg-transparent px-4 sm:px-6 pt-4 sm:pt-5 pb-2 text-[15px] sm:text-[16px] text-zinc-800 placeholder:text-zinc-400 focus:outline-none leading-relaxed"
+          className="w-full resize-none bg-transparent px-3 sm:px-4 pt-3 pb-2 text-[14px] sm:text-[15px] font-medium text-zinc-700 placeholder:text-zinc-400 focus:outline-none leading-relaxed"
         />
         
         {mounted && (
-          <div className="flex flex-col md:flex-row md:items-center justify-between px-2 sm:px-3 pb-2.5 pt-1 gap-4 md:gap-0">
-            {/* Left circular plus button & Presets */}
-            <div className="flex items-center gap-2 md:gap-3 w-full md:w-auto overflow-hidden">
-              <button
-                type="button"
-                className="w-9 h-9 sm:w-10 sm:h-10 shrink-0 rounded-full border border-zinc-200 bg-white hover:border-zinc-300 hover:shadow-sm flex items-center justify-center text-zinc-400 hover:text-zinc-800 transition-all cursor-pointer"
-              >
-                <Plus className="w-5 h-5" />
-              </button>
-              
+          <div className="flex flex-col md:flex-row md:items-center justify-between px-2 sm:px-3 pb-2 pt-2 gap-4 md:gap-0">
+            {/* Left Presets & Action pill */}
+            <div className="flex items-center gap-2 md:gap-2.5 w-full md:w-auto overflow-x-auto scrollbar-hide whitespace-nowrap" style={{ msOverflowStyle: 'none', scrollbarWidth: 'none' }}>
               {!loading && (
-                <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide whitespace-nowrap pr-2 pb-1 md:pb-0" style={{ msOverflowStyle: 'none', scrollbarWidth: 'none' }}>
-                  <span className="text-[10px] sm:text-[11px] font-bold text-zinc-400 uppercase tracking-widest mr-1 shrink-0">Try Presets:</span>
+                <>
                   {EXAMPLES.map((chip) => (
                     <button
                       key={chip.label}
                       type="button"
                       onClick={() => setValue(chip.text)}
-                      className="text-[11px] sm:text-[12px] font-bold px-3 py-1.5 md:px-4 md:py-1.5 rounded-full bg-white hover:bg-zinc-50 text-zinc-700 border border-zinc-200 transition-all cursor-pointer shadow-sm active:scale-95 shrink-0"
+                      className="text-[11px] font-bold px-3.5 py-1.5 rounded-full bg-transparent hover:bg-zinc-200/50 text-zinc-600 border border-zinc-200/80 transition-all cursor-pointer shrink-0"
                     >
                       {chip.label}
                     </button>
                   ))}
-                </div>
+                  <div className="h-4 w-[1px] bg-zinc-200 mx-1"></div>
+                  <button
+                    type="button"
+                    className="flex items-center gap-1.5 text-[11px] font-bold text-white bg-[#1A1A1A] hover:bg-black transition-all px-3.5 py-1.5 rounded-full cursor-pointer shrink-0 shadow-sm"
+                  >
+                    <span>Build</span>
+                    <ChevronDown className="w-3 h-3 opacity-80" />
+                  </button>
+                </>
               )}
             </div>
 
             {/* Right-aligned action controls */}
-            <div className="flex items-center justify-between md:justify-end w-full md:w-auto gap-2 md:gap-4 shrink-0 border-t border-zinc-100 md:border-none pt-2 md:pt-0">
-              {/* Dropdown Action Selector */}
-              <div className="relative">
-                <button
-                  type="button"
-                  className="flex items-center gap-1.5 text-[14px] font-bold text-zinc-600 hover:text-zinc-900 transition-all px-3 py-1.5 rounded-xl hover:bg-zinc-200/50 cursor-pointer"
-                >
-                  <span>{selectedAction}</span>
-                  <ChevronDown className="w-4 h-4 opacity-60" />
-                </button>
-              </div>
-
-              <div className="flex items-center gap-2 md:gap-4">
+            <div className="flex items-center justify-end w-full md:w-auto gap-1 md:gap-2 shrink-0 pt-2 md:pt-0">
+              <div className="flex items-center gap-1 md:gap-2">
                 {/* File Upload icon */}
                 <button
                   type="button"
-                  className="w-10 h-10 flex items-center justify-center text-zinc-400 hover:text-zinc-900 transition-all cursor-pointer hover:bg-zinc-200/40 rounded-full"
+                  className="w-8 h-8 flex items-center justify-center text-zinc-400 hover:text-zinc-700 transition-all cursor-pointer hover:bg-zinc-200/50 rounded-full"
                 >
-                  <Paperclip className="w-5 h-5" />
+                  <Paperclip className="w-4 h-4" />
                 </button>
 
                 {/* Voice icon */}
                 <button
                   type="button"
-                  className="w-10 h-10 flex items-center justify-center text-zinc-400 hover:text-zinc-900 transition-all cursor-pointer hover:bg-zinc-200/40 rounded-full"
+                  className="w-8 h-8 flex items-center justify-center text-zinc-400 hover:text-zinc-700 transition-all cursor-pointer hover:bg-zinc-200/50 rounded-full mr-1"
                 >
-                  <Mic className="w-5 h-5" />
+                  <Mic className="w-4 h-4" />
                 </button>
 
                 {/* Send Button */}
                 <button
                   onClick={handleGenerate}
                   disabled={loading || !value.trim()}
-                  className="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-zinc-400/80 hover:bg-blue-600 text-white flex items-center justify-center shadow-sm transition-all disabled:opacity-40 disabled:hover:bg-zinc-400/80 disabled:cursor-not-allowed hover:scale-105 active:scale-95 cursor-pointer shrink-0"
+                  className="w-9 h-9 rounded-full bg-zinc-300 hover:bg-[#0A6BFF] text-white flex items-center justify-center shadow-sm transition-all disabled:opacity-40 disabled:hover:bg-zinc-300 disabled:cursor-not-allowed hover:scale-105 active:scale-95 cursor-pointer shrink-0"
                   style={{ backgroundColor: value.trim() ? '#0A6BFF' : undefined }}
                   title={mode === "edit" ? "Update Automation" : "Build Automation"}
                 >
                   {loading ? (
-                    <RefreshCw className="w-5 h-5 animate-spin text-white" />
+                    <RefreshCw className="w-4 h-4 animate-spin text-white" />
                   ) : (
-                    mode === "edit" ? <RefreshCw className="w-5 sm:w-5.5 h-5 sm:h-5.5 stroke-[2.5]" /> : <ArrowUp className="w-5 sm:w-5.5 h-5 sm:h-5.5 stroke-[3]" />
+                    mode === "edit" ? <RefreshCw className="w-4 h-4 stroke-[2.5]" /> : <ArrowUp className="w-4 h-4 stroke-[3]" />
                   )}
                 </button>
               </div>

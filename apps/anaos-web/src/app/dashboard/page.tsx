@@ -65,6 +65,7 @@ import { IndustryWelcome } from "@/components/dashboard/IndustryWelcome";
 import { CallsPage } from "@/components/dashboard/CallsPage";
 import { getIndustryPreset, type IndustryPreset } from "@/lib/industry/presets";
 import { AnaosAIHub } from "@/components/dashboard/AnaosAIHub";
+import { VoiceAgentHub } from "@/components/dashboard/VoiceAgentHub";
 import { BroadcastsHub } from "@/components/dashboard/BroadcastsHub";
 import { AnaosLogo } from "@/components/ui/AnaosLogo";
 import TeamSettingsPage from "@/components/dashboard/TeamSettingsPage";
@@ -82,7 +83,7 @@ import { BookingsHub } from "@/components/dashboard/BookingsHub";
 
 // â”€â”€â”€ Types â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
-type Tab = "ai_agent" | "calls" | "overview" | "inbox" | "approvals" | "contacts" | "bookings" | "automations" | "broadcasts" | "analytics" | "team" | "properties" | "leads" | "cleaning_bookings" | "construction_projects" | "maintenance_orders" | "it_tickets" | "fencing_estimates";
+type Tab = "voice_agent" | "ai_agent" | "calls" | "overview" | "inbox" | "approvals" | "contacts" | "bookings" | "automations" | "broadcasts" | "analytics" | "team" | "properties" | "leads" | "cleaning_bookings" | "construction_projects" | "maintenance_orders" | "it_tickets" | "fencing_estimates";
 
 type Workspace = {
   id: string;
@@ -585,6 +586,7 @@ function Sidebar({ active, onChange, ws, onWsChange, workspaces, preset, user, o
   }
 
   NAV_ITEMS.push({ id: "calls",       label: "Call Logs",         icon: PhoneCall });
+  NAV_ITEMS.push({ id: "voice_agent", label: "Voice AI",        icon: PhoneCall });
   NAV_ITEMS.push({ id: "ai_agent",    label: "Knowledge Base",    icon: FileText });
 
   return (
@@ -1793,6 +1795,7 @@ export default function Dashboard() {
       q === "contacts" ||
       q === "automations" ||
       q === "broadcasts" ||
+      q === "voice_agent" ||
       q === "ai_agent" ||
       q === "team"
     ) {
@@ -1977,6 +1980,7 @@ export default function Dashboard() {
   };
 
   const tabLabel: Record<Tab, string> = {
+    voice_agent: "Voice AI",
     ai_agent:    "Automate",
     calls: "Call Logs",
     overview:    "Home",
@@ -2113,7 +2117,8 @@ export default function Dashboard() {
               tab === "inbox" ? "overflow-hidden p-0" : "bg-[#F8F9FA]"
             }`}
           >
-            <div className={tab === "inbox" || tab === "calls" || tab === "ai_agent" || tab === "contacts" || tab === "bookings" || tab === "properties" || tab === "leads" || tab === "cleaning_bookings" || tab === "construction_projects" || tab === "maintenance_orders" || tab === "it_tickets" || tab === "fencing_estimates" ? "" : "px-4 py-6 md:px-10 md:pt-8 md:pb-8"}>
+            <div className={tab === "inbox" || tab === "voice_agent" || tab === "calls" || tab === "ai_agent" || tab === "contacts" || tab === "bookings" || tab === "properties" || tab === "leads" || tab === "cleaning_bookings" || tab === "construction_projects" || tab === "maintenance_orders" || tab === "it_tickets" || tab === "fencing_estimates" ? "" : "px-4 py-6 md:px-10 md:pt-8 md:pb-8"}>
+              {tab === "voice_agent" && <VoiceAgentHub />}
               {tab === "ai_agent"    && <AIAgentPage     ws={ws} />}
               {tab === "overview"    && <DashboardHome ws={ws} preset={industryPreset} roiMetrics={roiMetrics} />}
               {tab === "calls"       && <CallsPage />}

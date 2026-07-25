@@ -26,6 +26,7 @@ model Account {
   workflows          Workflow[]
   workspaces         Workspace[]
   parties            Party[]
+  voiceAgents        VoiceAgent[]
 
   @@map("accounts")
 }
@@ -390,4 +391,22 @@ model AuditLog {
   createdAt  DateTime @default(now())
 
   @@map("audit_logs")
+}
+
+model VoiceAgent {
+  id              String   @id @default(uuid())
+  accountId       String
+  name            String   @default("AnaOS Voice Agent")
+  systemPrompt    String   @db.Text
+  firstMessage    String   @default("Hello, how can I help you today?")
+  voiceId         String   @default("elevenlabs_default")
+  provider        String   @default("anaos") // anaos | vapi | bland
+  customApiKey    String?  // For BYOK
+  twilioNumberId  String?
+  isActive        Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  account         Account  @relation(fields: [accountId], references: [id], onDelete: Cascade)
+
+  @@map("voice_agents")
 }

@@ -9,6 +9,7 @@ import { X, Search, Plus } from "lucide-react";
 import { Typewriter } from "./Typewriter";
 import { WordRotator } from "./WordRotator";
 import { WorkflowPreviewModal } from "./WorkflowPreviewModal";
+import BrandIcon from "@/components/ui/BrandIcon";
 
 export function Hero() {
   const [workspace, setWorkspace] = useState<any>(null);
@@ -379,7 +380,7 @@ export function Hero() {
                         className="w-9 h-9 rounded-full bg-white flex items-center justify-center shadow-sm border-2 border-white overflow-hidden relative"
                         style={{ zIndex: 60 - index }}
                       >
-                        {businessConnectors.find(c => c.name === name)?.icon}
+                        <BrandIcon id={name} className="w-5 h-5" />
                       </div>
                     ))}
                   </div>

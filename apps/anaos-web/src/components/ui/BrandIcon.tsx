@@ -58,7 +58,7 @@ export default function BrandIcon({ id, className = "w-5 h-5" }: BrandIconProps)
   const url = getIconUrl(normId);
 
   if (url) {
-    return <img src={url} alt={normId} className={`${className} object-contain`} crossOrigin="anonymous" />;
+    return <img src={url} alt={normId} className={`${className} object-contain`} />;
   }
 
   return <Layers className={`${className} text-zinc-400`} />;

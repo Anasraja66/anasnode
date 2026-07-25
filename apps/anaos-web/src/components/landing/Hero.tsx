@@ -260,7 +260,7 @@ export function Hero() {
           initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.55, delay: 0.15 }}
-          className="text-[15px] sm:text-[16px] text-[#4B5563] mt-6 leading-relaxed max-w-[700px] mx-auto font-medium font-sans"
+          className="text-[15px] sm:text-[16px] text-[#4B5563] mt-4 leading-relaxed max-w-[850px] mx-auto font-medium font-sans"
         >
           Anaos gives small businesses an AI operations layer that captures leads, follows up with customers, books appointments, sends reminders, and keeps you in control — without needing to build workflows or hire an automation expert.
         </motion.p>
@@ -270,7 +270,7 @@ export function Hero() {
           initial={{ opacity: 0, y: 18 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.55, delay: 0.18 }}
-          className="mt-6"
+          className="mt-4"
         >
           <div className="relative w-full z-20">
             <PromptBox 

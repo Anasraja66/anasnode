@@ -1,8 +1,22 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { Search, Phone, User, Send, Loader2, Bot, Clock, Tag, MessageSquare } from "lucide-react";
+import { Search, Phone, User, Send, Loader2, Bot, Clock, Tag, MessageSquare, Mail, Zap } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
+
+const InstagramIcon = ({ size = 8 }: { size?: number }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+    <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+    <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
+  </svg>
+);
+
+const FacebookIcon = ({ size = 8 }: { size?: number }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
+    <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+  </svg>
+);
 
 export default function InboxPage() {
   const [conversations, setConversations] = useState<any[]>([]);
@@ -146,9 +160,49 @@ export default function InboxPage() {
                 </div>
                 <p className="text-xs text-gray-500 truncate">{conv.lastMessage || "No messages yet"}</p>
                 <div className="flex items-center gap-2 mt-2">
-                  <span className="px-2 py-0.5 bg-gray-100 text-gray-600 rounded-md text-[9px] font-bold uppercase flex items-center gap-1">
-                    <Phone size={8} /> {conv.channel}
-                  </span>
+                  {(() => {
+                    const chan = String(conv.channel || "").toLowerCase();
+                    if (chan === "whatsapp") {
+                      return (
+                        <span className="px-2 py-0.5 bg-emerald-50 text-emerald-600 border border-emerald-100 rounded-md text-[9px] font-bold uppercase flex items-center gap-1">
+                          <MessageSquare size={8} /> WhatsApp
+                        </span>
+                      );
+                    }
+                    if (chan === "instagram") {
+                      return (
+                        <span className="px-2 py-0.5 bg-pink-50 text-pink-600 border border-pink-100 rounded-md text-[9px] font-bold uppercase flex items-center gap-1">
+                          <InstagramIcon size={8} /> Instagram
+                        </span>
+                      );
+                    }
+                    if (chan === "facebook" || chan === "messenger") {
+                      return (
+                        <span className="px-2 py-0.5 bg-blue-50 text-blue-600 border border-blue-100 rounded-md text-[9px] font-bold uppercase flex items-center gap-1">
+                          <FacebookIcon size={8} /> Messenger
+                        </span>
+                      );
+                    }
+                    if (chan === "email" || chan === "mail") {
+                      return (
+                        <span className="px-2 py-0.5 bg-cyan-50 text-cyan-600 border border-cyan-100 rounded-md text-[9px] font-bold uppercase flex items-center gap-1">
+                          <Mail size={8} /> Email
+                        </span>
+                      );
+                    }
+                    if (chan === "sms") {
+                      return (
+                        <span className="px-2 py-0.5 bg-rose-50 text-rose-600 border border-rose-100 rounded-md text-[9px] font-bold uppercase flex items-center gap-1">
+                          <Phone size={8} /> SMS
+                        </span>
+                      );
+                    }
+                    return (
+                      <span className="px-2 py-0.5 bg-zinc-100 text-zinc-600 border border-zinc-200 rounded-md text-[9px] font-bold uppercase flex items-center gap-1">
+                        <Zap size={8} /> {conv.channel || "webhook"}
+                      </span>
+                    );
+                  })()}
                   {conv.aiEnabled && (
                     <span className="px-2 py-0.5 bg-green-50 text-green-600 rounded-md text-[9px] font-bold uppercase flex items-center gap-1">
                       <Bot size={8} /> AI Active

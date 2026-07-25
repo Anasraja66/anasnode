@@ -153,7 +153,7 @@ import { WordRotator } from "@/components/landing/WordRotator";
 
 import { OnboardingWizard } from "@/components/dashboard/OnboardingWizard";
 
-function DashboardHome({ ws, preset, roiMetrics }: { ws: Workspace; preset: IndustryPreset; roiMetrics?: any }) {
+function DashboardHome({ ws, preset, roiMetrics, user }: { ws: Workspace; preset: IndustryPreset; roiMetrics?: any; user?: any }) {
   const Icon = preset.icon;
   const [showConnectors, setShowConnectors] = useState(true);
   const [greeting, setGreeting] = useState("");
@@ -2041,7 +2041,7 @@ export default function Dashboard() {
             <div className={tab === "inbox" || tab === "voice_agent" || tab === "calls" || tab === "ai_agent" || tab === "contacts" || tab === "bookings" || tab === "properties" || tab === "leads" || tab === "cleaning_bookings" || tab === "construction_projects" || tab === "maintenance_orders" || tab === "it_tickets" || tab === "fencing_estimates" ? "" : "px-4 py-6 md:px-10 md:pt-8 md:pb-8"}>
               {tab === "voice_agent" && <VoiceAgentHub />}
               {tab === "ai_agent"    && <AIAgentPage     ws={ws} />}
-              {tab === "overview"    && <DashboardHome ws={ws} preset={industryPreset} roiMetrics={roiMetrics} />}
+              {tab === "overview"    && <DashboardHome ws={ws} preset={industryPreset} roiMetrics={roiMetrics} user={user} />}
               {tab === "calls"       && <CallsPage />}
               {tab === "inbox"       && <InboxPage initialConversationId={inboxChatId} preset={industryPreset} />}
               {tab === "contacts"    && <ContactsHub />}

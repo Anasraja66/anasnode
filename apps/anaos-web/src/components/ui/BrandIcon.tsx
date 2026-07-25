@@ -9,6 +9,9 @@ type BrandIconProps = {
 };
 
 export default function BrandIcon({ id, className = "w-5 h-5" }: BrandIconProps) {
+  if (!id) {
+    return <Layers className={`${className} text-zinc-400`} />;
+  }
   const normId = id.toLowerCase().replace(/[\s_-]+/g, "");
 
   const getIconUrl = (id: string) => {

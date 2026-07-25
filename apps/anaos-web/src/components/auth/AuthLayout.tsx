@@ -29,9 +29,23 @@ export function AuthLayout({
 }: AuthLayoutProps) {
   return (
     <div className="min-h-screen bg-[#F8FAFC] text-zinc-900 flex flex-col items-center justify-center p-4 sm:p-6 relative overflow-hidden font-sans">
-      {/* Premium minimal background */}
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,#e2e8f0_1px,transparent_1px),linear-gradient(to_bottom,#e2e8f0_1px,transparent_1px)] bg-[size:3rem_3rem] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_0%,#000_70%,transparent_100%)] opacity-40 pointer-events-none" />
-      <div className="absolute top-[-10%] left-1/2 -translate-x-1/2 w-[800px] h-[400px] rounded-full bg-[#0A6BFF] opacity-[0.04] blur-[120px] pointer-events-none" />
+      {/* Background Video Layer */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="absolute inset-0 w-full h-full object-cover opacity-25"
+          src="/hero-video-25.mp4"
+        />
+        {/* Soft overlay to ensure readability */}
+        <div className="absolute inset-0 bg-white/30 backdrop-blur-[1px]" />
+      </div>
+
+      {/* Premium minimal background grid over video */}
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,#e2e8f0_1px,transparent_1px),linear-gradient(to_bottom,#e2e8f0_1px,transparent_1px)] bg-[size:3rem_3rem] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_0%,#000_70%,transparent_100%)] opacity-60 pointer-events-none" />
+      <div className="absolute top-[-10%] left-1/2 -translate-x-1/2 w-[800px] h-[400px] rounded-full bg-[#0A6BFF] opacity-[0.08] blur-[120px] pointer-events-none" />
 
       <motion.div
         initial={{ opacity: 0, y: -16 }}

@@ -152,7 +152,7 @@ export function Hero() {
   ];
 
   return (
-    <section className="pt-36 sm:pt-48 pb-20 px-6 relative overflow-hidden">
+    <section className="pt-24 sm:pt-32 pb-20 px-6 relative overflow-hidden">
       {/* Modal Overlay */}
       <AnimatePresence>
         {isModalOpen && (

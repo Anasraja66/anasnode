@@ -13,7 +13,7 @@ import {
   Phone, Mail, Database, Star, UserPlus, Send, Bell, Filter,
   Search, Map, LayoutGrid, Sparkles, CheckCircle2, Repeat, History, Calendar, ShoppingCart, BookOpen
 } from "lucide-react";
-import { TEMPLATES } from "@/lib/workflow/templates";
+import { TEMPLATES } from "@/lib/workflow/template-data";
 import ExecutionHistoryPanel from "./ExecutionHistoryPanel";
 
 // ─── WhatsApp SVG Icon ─────────────────────────────────────────────────────────

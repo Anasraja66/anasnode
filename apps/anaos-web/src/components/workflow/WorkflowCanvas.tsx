@@ -587,13 +587,27 @@ const CATEGORY_COLORS: Record<string, string> = {
   Integrations: "#96BF48",
 };
 
-// ─── Node Palette ─────────────────────────────────────────────────────────────
-function NodePalette({ onDragStart, search, setSearch }: {
-  onDragStart: (type: string) => void;
+// ─── Node Selector Modal ──────────────────────────────────────────────────────
+function NodeSelectorModal({ isOpen, onClose, onSelect, search, setSearch }: {
+  isOpen: boolean;
+  onClose: () => void;
+  onSelect: (type: string) => void;
   search: string;
   setSearch: (v: string) => void;
 }) {
   const [openCats, setOpenCats] = useState<string[]>(["Triggers", "Messages", "AI & Logic", "Actions", "Integrations"]);
+
+  // Close on esc key
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, onClose]);
+
+  if (!isOpen) return null;
 
   const toggleCat = (cat: string) =>
     setOpenCats(prev => prev.includes(cat) ? prev.filter(c => c !== cat) : [...prev, cat]);
@@ -604,100 +618,100 @@ function NodePalette({ onDragStart, search, setSearch }: {
   );
 
   return (
-    <div className="flex flex-col gap-1 w-full h-full">
-      {/* Header */}
-      <div className="mb-3 px-1">
-        <div className="flex items-center gap-2 mb-1">
-          <LayoutGrid size={14} className="text-white/50" />
-          <h3 className="text-[13px] font-bold text-white tracking-tight">Node Library</h3>
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      {/* Backdrop */}
+      <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={onClose} />
+      
+      {/* Modal */}
+      <motion.div 
+        initial={{ opacity: 0, scale: 0.95, y: 10 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.95, y: 10 }}
+        className="relative w-full max-w-2xl max-h-[85vh] flex flex-col rounded-2xl overflow-hidden border"
+        style={{ background: "#0F172A", borderColor: "#1E293B", boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.5)" }}
+      >
+        {/* Header & Search */}
+        <div className="p-4 border-b border-white/10 shrink-0 bg-white/5">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-lg bg-blue-600/20 border border-blue-500/30 flex items-center justify-center">
+                <LayoutGrid size={16} className="text-blue-400" />
+              </div>
+              <div>
+                <h3 className="text-[16px] font-bold text-white tracking-tight">Add Node</h3>
+                <p className="text-[12px] text-white/50">Select a node to add to your workflow</p>
+              </div>
+            </div>
+            <button onClick={onClose} className="p-2 rounded-lg hover:bg-white/10 text-white/50 hover:text-white transition-colors cursor-pointer">
+              <X size={20} />
+            </button>
+          </div>
+          
+          <div className="relative">
+            <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30" />
+            <input
+              autoFocus
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+              placeholder="Search nodes..."
+              className="w-full bg-[#1E293B] border border-white/10 rounded-xl pl-11 pr-4 py-3 text-[14px] text-white placeholder:text-white/40 focus:outline-none focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/50 transition-all"
+            />
+          </div>
         </div>
-        <p className="text-[10px] text-white/30 font-medium leading-normal">
-          Drag to canvas • All channels included
-        </p>
-      </div>
 
-      {/* Search */}
-      <div className="relative mb-3">
-        <Search size={11} className="absolute left-3 top-1/2 -translate-y-1/2 text-white/30" />
-        <input
-          value={search}
-          onChange={e => setSearch(e.target.value)}
-          placeholder="Search nodes..."
-          className="w-full bg-white/5 border border-white/8 rounded-xl pl-8 pr-3 py-2 text-[11.5px] text-white placeholder:text-white/25 focus:outline-none focus:border-white/20"
-        />
-      </div>
-
-      {/* Categories */}
-      <div className="flex flex-col gap-1 overflow-y-auto flex-1 pr-0.5" style={{ scrollbarWidth: "none" }}>
-        {CATEGORIES.map(cat => {
-          const CatIcon = CATEGORY_ICONS[cat];
-          const catColor = CATEGORY_COLORS[cat];
-          const catNodes = filtered.filter(([, cfg]) => cfg.category === cat);
-          if (catNodes.length === 0) return null;
-          const isOpen = openCats.includes(cat);
-
-          return (
-            <div key={cat} className="mb-1">
-              {/* Category header */}
-              <button
-                onClick={() => toggleCat(cat)}
-                className="flex items-center justify-between w-full px-2 py-1.5 rounded-lg hover:bg-white/5 transition-colors mb-1 cursor-pointer"
-              >
-                <div className="flex items-center gap-2">
-                  <div className="w-5 h-5 rounded-md flex items-center justify-center" style={{ background: catColor + "20" }}>
-                    <CatIcon size={10} style={{ color: catColor }} />
+        {/* Categories Grid */}
+        <div className="flex-1 overflow-y-auto p-4" style={{ scrollbarWidth: "none" }}>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
+            {CATEGORIES.map(cat => {
+              const CatIcon = CATEGORY_ICONS[cat];
+              const catColor = CATEGORY_COLORS[cat];
+              const catNodes = filtered.filter(([, cfg]) => cfg.category === cat);
+              if (catNodes.length === 0) return null;
+              
+              return (
+                <div key={cat} className="mb-2">
+                  <div className="flex items-center gap-2 mb-3 px-1">
+                    <CatIcon size={14} style={{ color: catColor }} />
+                    <span className="text-[12px] font-bold text-white/70 uppercase tracking-wider">{cat}</span>
                   </div>
-                  <span className="text-[11px] font-bold text-white/60 uppercase tracking-wider">{cat}</span>
-                </div>
-                <ChevronDown size={10} className={`text-white/30 transition-transform ${isOpen ? "" : "-rotate-90"}`} />
-              </button>
-
-              {/* Nodes */}
-              <AnimatePresence>
-                {isOpen && (
-                  <motion.div
-                    initial={{ height: 0, opacity: 0 }}
-                    animate={{ height: "auto", opacity: 1 }}
-                    exit={{ height: 0, opacity: 0 }}
-                    transition={{ duration: 0.2 }}
-                    className="flex flex-col gap-1.5 overflow-hidden"
-                  >
+                  <div className="flex flex-col gap-2">
                     {catNodes.map(([type, cfg]) => {
                       const Icon = cfg.icon;
                       return (
                         <div
                           key={type}
-                          draggable
-                          onDragStart={() => onDragStart(type)}
-                          className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl cursor-grab active:cursor-grabbing select-none transition-all hover:scale-[1.02] border border-transparent hover:border-white/8 group"
-                          style={{ background: "rgba(255,255,255,0.03)" }}
-                          title={cfg.desc}
+                          onClick={() => { onSelect(type); onClose(); }}
+                          className="flex items-center gap-3 p-3 rounded-xl cursor-pointer select-none transition-all hover:-translate-y-0.5 border border-white/5 hover:border-white/20 group bg-white/5 hover:bg-white/10"
                         >
                           <div
-                            className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0 transition-all group-hover:scale-110"
-                            style={{ background: cfg.color + "18", border: `1px solid ${cfg.color}30` }}
+                            className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-transform group-hover:scale-110 shadow-sm"
+                            style={{ background: cfg.color + "15", border: `1px solid ${cfg.color}30` }}
                           >
                             {cfg.isCustomIcon ? (
-                              <Icon size={13} color={cfg.color} />
+                              <Icon size={18} color={cfg.color} />
                             ) : (
-                              <Icon size={13} style={{ color: cfg.color }} />
+                              <Icon size={18} style={{ color: cfg.color }} />
                             )}
                           </div>
                           <div className="min-w-0 flex-1">
-                            <p className="text-[11.5px] font-bold text-white/85 leading-tight truncate">{cfg.label}</p>
-                            <p className="text-[9.5px] text-white/30 font-medium mt-0.5 truncate">{cfg.desc}</p>
+                            <p className="text-[14px] font-bold text-white/90 leading-tight truncate">{cfg.label}</p>
+                            <p className="text-[11px] text-white/40 mt-1 truncate">{cfg.desc}</p>
                           </div>
-                          <ChevronRight size={9} className="text-white/20 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity" />
                         </div>
                       );
                     })}
-                  </motion.div>
-                )}
-              </AnimatePresence>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+          {filtered.length === 0 && (
+            <div className="py-12 text-center text-white/40">
+              <p>No nodes found matching "{search}"</p>
             </div>
-          );
-        })}
-      </div>
+          )}
+        </div>
+      </motion.div>
     </div>
   );
 }

@@ -3,30 +3,39 @@ import { AnaosLogo } from "@/components/ui/AnaosLogo";
 /* ─── Footer link columns data ─── */
 const footerColumns = [
   {
-    title: "Company",
+    title: "Product",
     links: [
-      { label: "About", href: "#" },
-      { label: "Careers", href: "#" },
-      { label: "Press & Media", href: "#" },
-      { label: "Contact", href: "#" },
+      { label: "Workflow Builder", href: "/dashboard/automations" },
+      { label: "Integrations", href: "/dashboard/integrations" },
+      { label: "AI Automation", href: "/automations/ai-helpdesk-support-bot" },
+      { label: "Pricing", href: "/pricing" },
     ],
   },
   {
-    title: "Product",
+    title: "Automations",
     links: [
-      { label: "Workflow Builder", href: "#" },
-      { label: "WhatsApp Agents", href: "#" },
-      { label: "AI Automation", href: "#" },
-      { label: "Integrations", href: "#" },
+      { label: "WhatsApp Responder", href: "/automations/whatsapp-lead-responder" },
+      { label: "Cart Recovery", href: "/automations/abandoned-cart-recoverer" },
+      { label: "Appointment Reminders", href: "/automations/appointment-reminders" },
+      { label: "Google Reviews", href: "/automations/google-reviews-collector" },
+    ],
+  },
+  {
+    title: "Industries",
+    links: [
+      { label: "E-commerce & Retail", href: "/industries/e-commerce-and-retail" },
+      { label: "Real Estate", href: "/industries/real-estate-and-agencies" },
+      { label: "Healthcare", href: "/industries/healthcare-and-wellness" },
+      { label: "Restaurants", href: "/industries/restaurants-and-food" },
     ],
   },
   {
     title: "Resources",
     links: [
-      { label: "Documentation", href: "#" },
-      { label: "API Reference", href: "#" },
-      { label: "Tutorials", href: "#" },
-      { label: "Community", href: "#" },
+      { label: "Documentation", href: "/resources/documentation" },
+      { label: "API Reference", href: "/resources/api-reference" },
+      { label: "Templates", href: "/resources/templates" },
+      { label: "Community", href: "/community" },
     ],
   },
   {
@@ -35,18 +44,10 @@ const footerColumns = [
       { label: "Privacy Policy", href: "/privacy" },
       { label: "Terms of Service", href: "/terms" },
       { label: "Data Deletion", href: "/data-deletion" },
-      { label: "Security Policy", href: "#" },
-    ],
-  },
-  {
-    title: "Connect",
-    links: [
-      { label: "X / Twitter", href: "#" },
-      { label: "LinkedIn", href: "#" },
-      { label: "GitHub", href: "#" },
     ],
   },
 ];
+
 
 export function Footer() {
   return (

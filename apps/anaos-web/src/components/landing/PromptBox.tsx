@@ -145,7 +145,7 @@ export function PromptBox({ onGenerate, compact, staticPlaceholder, onSubmitProm
     }, 600);
 
     try {
-      const response = await fetch("/api/generate", {
+      const response = await fetch("/api/generate/workflow", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ prompt: value }),

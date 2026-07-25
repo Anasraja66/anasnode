@@ -152,7 +152,7 @@ export function Hero() {
   ];
 
   return (
-    <section className="pt-24 sm:pt-32 pb-20 px-6 relative overflow-hidden">
+    <section className="pt-24 sm:pt-32 pb-10 sm:pb-16 px-6 relative overflow-hidden">
       {/* Modal Overlay */}
       <AnimatePresence>
         {isModalOpen && (
@@ -353,8 +353,8 @@ export function Hero() {
             </div>
         </motion.div>
 
-        {/* Stable container to prevent layout jumping when ResultCard appears */}
-        <div className="min-h-[500px] w-full flex flex-col items-center">
+        {/* Stable container for ResultCard */}
+        <div className="w-full flex flex-col items-center pb-4">
           {/* Grok-style Connectors Banner */}
           <AnimatePresence>
             {showConnectors && !workspace && (

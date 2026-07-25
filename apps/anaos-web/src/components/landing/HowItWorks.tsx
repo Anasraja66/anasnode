@@ -5,7 +5,7 @@ import { Typewriter } from "./Typewriter";
 
 export function HowItWorks() {
   return (
-    <section id="how-it-works" className="py-20 sm:py-28 px-6 bg-white border-t border-[#E5E5E0] z-10 relative overflow-hidden">
+    <section id="how-it-works" className="pt-12 sm:pt-16 pb-20 sm:pb-28 px-6 bg-white border-t border-[#E5E5E0] z-10 relative overflow-hidden">
       {/* Background Glow Blobs to match Hero */}
       <div className="absolute top-0 left-0 right-0 h-full pointer-events-none z-0">
         <div className="absolute top-[10%] left-[-10%] w-[40%] h-[50%] bg-[#0A6BFF] blur-[120px] rounded-full opacity-5 mix-blend-multiply animate-blob" />

@@ -235,7 +235,7 @@ export function Hero() {
           transition={{ duration: 0.55 }}
           className="text-[13px] sm:text-[14px] font-bold text-zinc-500 tracking-[0.2em] uppercase mb-4 font-sans"
         >
-          All-In-One Automation OS
+          AI Operations Layer
         </motion.p>
 
         {/* Heading (Lovable Style) */}
@@ -260,12 +260,9 @@ export function Hero() {
           initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.55, delay: 0.15 }}
-          className="text-[15px] sm:text-[16px] text-[#4B5563] mt-6 leading-relaxed max-w-[540px] mx-auto font-medium font-sans"
+          className="text-[15px] sm:text-[16px] text-[#4B5563] mt-6 leading-relaxed max-w-[700px] mx-auto font-medium font-sans"
         >
-          Build <WordRotator 
-            words={["lead capture", "customer support", "appointment booking", "sales outreach"]} 
-            className="text-blue-500 font-bold overflow-visible inline-flex items-center justify-center mx-1"
-          /> agents for your business — without hiring an automation expert.
+          Anaos gives small businesses an AI operations layer that captures leads, follows up with customers, books appointments, sends reminders, and keeps you in control — without needing to build workflows or hire an automation expert.
         </motion.p>
 
         {/* PromptBox and Industry Selector */}

@@ -995,31 +995,22 @@ function Topbar({ title, ws, preset, waStatus, integrations, onMenuClick }: {
         </div>
       </header>
 
-      {/* Global OS Alert Banner (Only shows when there's an issue) */}
+      {/* Global OS Alert Banner (Only shows when there's an error/issue) */}
       {hasIssue && (
-        <div className="bg-[#0A6BFF] text-white shadow-sm px-5 py-2 flex items-center justify-between z-50 animate-in slide-in-from-top duration-300">
-          <div className="flex items-center gap-3">
-            <div className="w-2 h-2 rounded-full bg-rose-500 animate-pulse shrink-0" />
-            <p className="text-[12.5px] font-medium tracking-tight">
-              {alertMessage} <button onClick={() => window.location.href='/dashboard/integrations/whatsapp'} className="underline font-bold hover:text-zinc-300 ml-1">Fix now</button>
+        <div className="bg-rose-500 text-white shadow-md px-6 py-3 flex flex-col md:flex-row md:items-center justify-between z-50 animate-in slide-in-from-top duration-300 border-b border-rose-600">
+          <div className="flex items-center gap-3 mb-3 md:mb-0">
+            <div className="w-2.5 h-2.5 rounded-full bg-white animate-pulse shrink-0 shadow-sm" />
+            <p className="text-[14px] font-bold tracking-wide">
+              System Error: {alertMessage} 
             </p>
           </div>
-          <div className="flex items-center gap-6">
-            <button className="bg-zinc-800 hover:bg-zinc-700 text-white text-[12px] font-bold px-4 py-1.5 rounded-md flex items-center gap-2 transition-colors">
-              Support <ArrowUpRight className="w-3.5 h-3.5" />
-            </button>
-          </div>
-        </div>
-      )}
-
-      {!hasIssue && (
-        <div className="bg-emerald-600 text-white px-5 py-1.5 flex items-center justify-between z-50 shadow-sm border-b border-emerald-700">
-          <div className="flex items-center gap-3">
-            <div className="w-1.5 h-1.5 rounded-full bg-white animate-pulse shrink-0" />
-            <p className="text-[11px] font-bold tracking-tight uppercase">System Status: All systems operational</p>
-          </div>
           <div className="flex items-center gap-4">
-             <span className="text-[10px] font-bold opacity-80 uppercase tracking-widest">WhatsApp Connected</span>
+            <button onClick={() => window.location.href='/dashboard/integrations/whatsapp'} className="bg-white text-rose-600 hover:bg-rose-50 text-[13px] font-bold px-5 py-2 rounded-lg transition-colors shadow-sm">
+              Fix Issue Now
+            </button>
+            <button className="text-white hover:text-rose-100 text-[13px] font-bold px-2 py-2 flex items-center gap-1.5 transition-colors">
+              Support <ArrowUpRight className="w-4 h-4" />
+            </button>
           </div>
         </div>
       )}

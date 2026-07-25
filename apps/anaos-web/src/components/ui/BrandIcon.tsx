@@ -39,6 +39,13 @@ export default function BrandIcon({ id, className = "w-5 h-5" }: BrandIconProps)
       case "tiktokads": return "https://img.icons8.com/color/96/tiktok--v1.png";
       case "youtube": return "https://img.icons8.com/color/96/youtube-play.png";
       case "linkedin": return "https://img.icons8.com/color/96/linkedin.png";
+      case "telegram": return "https://img.icons8.com/color/96/telegram-app.png";
+      case "woocommerce": return "https://img.icons8.com/color/96/woocommerce.png";
+      case "paypal": return "https://img.icons8.com/color/96/paypal.png";
+      case "slack": return "https://img.icons8.com/color/96/slack-new.png";
+      case "notion": return "https://img.icons8.com/color/96/notion--v1.png";
+      case "airtable": return "https://img.icons8.com/fluency/96/airtable.png";
+      case "salesforce": return "https://img.icons8.com/color/96/salesforce.png";
       case "blog":
       case "blogposts": return "https://img.icons8.com/color/96/wordpress.png";
       default: return null;

@@ -270,7 +270,7 @@ export function Hero() {
           initial={{ opacity: 0, y: 18 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.55, delay: 0.18 }}
-          className="mt-10"
+          className="mt-6"
         >
           <div className="relative w-full z-20">
             <PromptBox 

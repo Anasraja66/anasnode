@@ -23,6 +23,7 @@ import {
   Truck,
   Sparkles
 } from "lucide-react";
+import Link from "next/link";
 import { AnaosLogo } from "@/components/ui/AnaosLogo";
 
 
@@ -56,30 +57,30 @@ export function Navbar() {
 
   // Automations data (Directly maps to the templates in Industries.tsx)
   const automations = [
-    { label: "WhatsApp Lead Responder", desc: "Qualify leads & sync to Sheets/CRM", icon: <Database className="w-4 h-4 text-sky-500" /> },
-    { label: "Abandoned Cart Recoverer", desc: "WhatsApp & SMS checkout reminders", icon: <ShoppingCart className="w-4 h-4 text-rose-500" /> },
-    { label: "Google Reviews Collector", desc: "Auto-request post-purchase 5-star ratings", icon: <Star className="w-4 h-4 text-amber-500" /> },
-    { label: "AI Helpdesk Support Bot", desc: "24/7 automated FAQ response on WhatsApp", icon: <MessageSquare className="w-4 h-4 text-emerald-500" /> },
-    { label: "Billing & Stripe Sync", desc: "Auto-send PDF invoices to paid clients", icon: <FileText className="w-4 h-4 text-indigo-500" /> },
-    { label: "Appointment Reminders", desc: "Reduce no-shows with scheduling alerts", icon: <Bell className="w-4 h-4 text-pink-500" /> },
+    { label: "WhatsApp Lead Responder", desc: "Qualify leads & sync to Sheets/CRM", icon: <Database className="w-4 h-4 text-sky-500" />, href: "/automations/whatsapp-lead-responder" },
+    { label: "Abandoned Cart Recoverer", desc: "WhatsApp & SMS checkout reminders", icon: <ShoppingCart className="w-4 h-4 text-rose-500" />, href: "/automations/abandoned-cart-recoverer" },
+    { label: "Google Reviews Collector", desc: "Auto-request post-purchase 5-star ratings", icon: <Star className="w-4 h-4 text-amber-500" />, href: "/automations/google-reviews-collector" },
+    { label: "AI Helpdesk Support Bot", desc: "24/7 automated FAQ response on WhatsApp", icon: <MessageSquare className="w-4 h-4 text-emerald-500" />, href: "/automations/ai-helpdesk-support-bot" },
+    { label: "Billing & Stripe Sync", desc: "Auto-send PDF invoices to paid clients", icon: <FileText className="w-4 h-4 text-indigo-500" />, href: "/automations/billing-stripe-sync" },
+    { label: "Appointment Reminders", desc: "Reduce no-shows with scheduling alerts", icon: <Bell className="w-4 h-4 text-pink-500" />, href: "/automations/appointment-reminders" },
   ];
 
   // Industries data
   const industries = [
-    { label: "E-commerce & Retail", desc: "Checkout drops & review boosters", icon: <ShoppingBag className="w-4 h-4 text-rose-500" /> },
-    { label: "Real Estate & Agencies", desc: "Buyer prequalification & touring schedules", icon: <Building2 className="w-4 h-4 text-amber-500" /> },
-    { label: "Healthcare & Wellness", desc: "Patient reminders & followup campaigns", icon: <Heart className="w-4 h-4 text-emerald-500" /> },
-    { label: "Restaurants & Food", desc: "Digital interactive menus & table bookings", icon: <Coffee className="w-4 h-4 text-sky-500" /> },
-    { label: "Logistics & Dispatch", desc: "Shipping alerts & instant invoice triggers", icon: <Truck className="w-4 h-4 text-indigo-500" /> },
-    { label: "SaaS & Tech Startups", desc: "Onboarding workflows & webhook routing", icon: <Sparkles className="w-4 h-4 text-purple-500" /> },
+    { label: "E-commerce & Retail", desc: "Checkout drops & review boosters", icon: <ShoppingBag className="w-4 h-4 text-rose-500" />, href: "/industries/e-commerce-and-retail" },
+    { label: "Real Estate & Agencies", desc: "Buyer prequalification & touring schedules", icon: <Building2 className="w-4 h-4 text-amber-500" />, href: "/industries/real-estate-and-agencies" },
+    { label: "Healthcare & Wellness", desc: "Patient reminders & followup campaigns", icon: <Heart className="w-4 h-4 text-emerald-500" />, href: "/industries/healthcare-and-wellness" },
+    { label: "Restaurants & Food", desc: "Digital interactive menus & table bookings", icon: <Coffee className="w-4 h-4 text-sky-500" />, href: "/industries/restaurants-and-food" },
+    { label: "Logistics & Dispatch", desc: "Shipping alerts & instant invoice triggers", icon: <Truck className="w-4 h-4 text-indigo-500" />, href: "/industries/logistics-and-dispatch" },
+    { label: "SaaS & Tech Startups", desc: "Onboarding workflows & webhook routing", icon: <Sparkles className="w-4 h-4 text-purple-500" />, href: "/industries/saas-and-tech-startups" },
   ];
 
   // Resources data
   const resources = [
-    { label: "Documentation", desc: "Quickstart guides & workflow setups", icon: <BookOpen className="w-4 h-4 text-zinc-500" /> },
-    { label: "API Reference", desc: "Integrate Anaos into your systems", icon: <Terminal className="w-4 h-4 text-blue-500" /> },
-    { label: "Templates", desc: "Pre-built WhatsApp & CRM automation flows", icon: <Layers className="w-4 h-4 text-purple-500" /> },
-    { label: "Help Center", desc: "FAQs, chat support, and documentation", icon: <HelpCircle className="w-4 h-4 text-teal-500" /> },
+    { label: "Documentation", desc: "Quickstart guides & workflow setups", icon: <BookOpen className="w-4 h-4 text-zinc-500" />, href: "/resources/documentation" },
+    { label: "API Reference", desc: "Integrate Anaos into your systems", icon: <Terminal className="w-4 h-4 text-blue-500" />, href: "/resources/api-reference" },
+    { label: "Templates", desc: "Pre-built WhatsApp & CRM automation flows", icon: <Layers className="w-4 h-4 text-purple-500" />, href: "/resources/templates" },
+    { label: "Help Center", desc: "FAQs, chat support, and documentation", icon: <HelpCircle className="w-4 h-4 text-teal-500" />, href: "/resources/help-center" },
   ];
 
   return (
@@ -92,12 +93,12 @@ export function Navbar() {
           
           {/* Logo Section */}
           <div className="relative flex items-center h-full rounded-l-[2rem] pl-6 sm:pl-8 pr-4">
-            <a href="#" className="flex items-center gap-2.5 group z-10">
+            <Link href="/" className="flex items-center gap-2.5 group z-10">
               <AnaosLogo className="w-10 h-10 sm:w-11 sm:h-11 transition-transform duration-300 group-hover:scale-[1.04]" />
               <span className="font-sans font-bold text-[18px] tracking-[0.02em] text-zinc-900 hidden sm:block">
                 AnaOS
               </span>
-            </a>
+            </Link>
           </div>
 
           <div className="flex flex-1 items-center justify-between pl-4 sm:pl-8 pr-2 sm:pr-3">
@@ -125,9 +126,9 @@ export function Navbar() {
                       className="absolute left-0 top-[44px] w-[560px] bg-white rounded-xl border border-zinc-200/80 shadow-xl p-3.5 z-50 grid grid-cols-2 gap-2"
                     >
                       {automations.map((item) => (
-                        <a
+                        <Link
                           key={item.label}
-                          href="#"
+                          href={item.href}
                           className="flex items-start gap-3 p-2 rounded-lg hover:bg-zinc-50 transition-colors"
                         >
                           <span className="mt-0.5 p-1 rounded-md bg-zinc-50 border border-zinc-200/40">
@@ -137,7 +138,7 @@ export function Navbar() {
                             <div className="text-[13px] font-semibold text-[#111827]">{item.label}</div>
                             <div className="text-[11px] text-zinc-500 leading-normal mt-0.5">{item.desc}</div>
                           </div>
-                        </a>
+                        </Link>
                       ))}
                     </motion.div>
                   )}
@@ -165,9 +166,9 @@ export function Navbar() {
                       className="absolute left-0 top-[44px] w-[560px] bg-white rounded-xl border border-zinc-200/80 shadow-xl p-3.5 z-50 grid grid-cols-2 gap-2"
                     >
                       {industries.map((item) => (
-                        <a
+                        <Link
                           key={item.label}
-                          href="#industries"
+                          href={item.href}
                           className="flex items-start gap-3 p-2 rounded-lg hover:bg-zinc-50 transition-colors"
                         >
                           <span className="mt-0.5 p-1 rounded-md bg-zinc-50 border border-zinc-200/40">
@@ -177,7 +178,7 @@ export function Navbar() {
                             <div className="text-[13px] font-semibold text-[#111827]">{item.label}</div>
                             <div className="text-[11px] text-zinc-500 leading-normal mt-0.5">{item.desc}</div>
                           </div>
-                        </a>
+                        </Link>
                       ))}
                     </motion.div>
                   )}
@@ -205,9 +206,9 @@ export function Navbar() {
                       className="absolute left-0 top-[44px] w-[280px] bg-white rounded-xl border border-zinc-200/80 shadow-xl p-2.5 z-50 grid gap-1"
                     >
                       {resources.map((item) => (
-                        <a
+                        <Link
                           key={item.label}
-                          href="#"
+                          href={item.href}
                           className="flex items-start gap-3 p-2 rounded-lg hover:bg-zinc-50 transition-colors"
                         >
                           <span className="mt-0.5 p-1 rounded-md bg-zinc-50 border border-zinc-200/40">
@@ -217,35 +218,35 @@ export function Navbar() {
                             <div className="text-[13px] font-semibold text-[#111827]">{item.label}</div>
                             <div className="text-[11px] text-zinc-500 mt-0.5 leading-normal">{item.desc}</div>
                           </div>
-                        </a>
+                        </Link>
                       ))}
                     </motion.div>
                   )}
                 </AnimatePresence>
               </div>
 
-              <a href="#" className="hover:text-[#0A6BFF] transition-colors">
+              <Link href="/community" className="hover:text-[#0A6BFF] transition-colors">
                 Community
-              </a>
-              <a href="#" className="hover:text-[#0A6BFF] transition-colors">
+              </Link>
+              <Link href="/pricing" className="hover:text-[#0A6BFF] transition-colors">
                 Pricing
-              </a>
+              </Link>
             </nav>
 
             {/* Right actions */}
             <div className="flex items-center gap-5 ml-auto">
-              <a 
+              <Link 
                 href="/login" 
                 className="hidden sm:inline-flex items-center text-[14px] font-semibold text-zinc-600 hover:text-zinc-900 transition-colors cursor-pointer"
               >
                 Log in
-              </a>
-              <a 
+              </Link>
+              <Link 
                 href="/signup" 
                 className="hidden sm:inline-flex h-[40px] px-6 rounded-[20px] bg-[#0A6BFF] text-white text-[14px] font-semibold hover:bg-blue-600 transition-colors cursor-pointer flex items-center justify-center shadow-sm"
               >
                 Get started
-              </a>
+              </Link>
 
               {/* Mobile hamburger */}
               <button
@@ -313,15 +314,15 @@ export function Navbar() {
                           className="overflow-hidden bg-zinc-50/50 rounded-lg px-2 py-1.5 mt-1 grid gap-1.5"
                         >
                           {automations.map((item) => (
-                            <a
+                            <Link
                               key={item.label}
-                              href="#"
+                              href={item.href}
                               onClick={() => setMobileOpen(false)}
                               className="flex items-center gap-2.5 py-1.5 px-2 text-[13px] text-zinc-600 font-medium"
                             >
                               {item.icon}
                               {item.label}
-                            </a>
+                            </Link>
                           ))}
                         </motion.div>
                       )}
@@ -346,15 +347,15 @@ export function Navbar() {
                           className="overflow-hidden bg-zinc-50/50 rounded-lg px-2 py-1.5 mt-1 grid gap-1.5"
                         >
                           {industries.map((item) => (
-                            <a
+                            <Link
                               key={item.label}
-                              href="#industries"
+                              href={item.href}
                               onClick={() => setMobileOpen(false)}
                               className="flex items-center gap-2.5 py-1.5 px-2 text-[13px] text-zinc-600 font-medium"
                             >
                               {item.icon}
                               {item.label}
-                            </a>
+                            </Link>
                           ))}
                         </motion.div>
                       )}
@@ -379,54 +380,54 @@ export function Navbar() {
                           className="overflow-hidden bg-zinc-50/50 rounded-lg px-2 py-1.5 mt-1 grid gap-1.5"
                         >
                           {resources.map((item) => (
-                            <a
+                            <Link
                               key={item.label}
-                              href="#"
+                              href={item.href}
                               onClick={() => setMobileOpen(false)}
                               className="flex items-center gap-2.5 py-1.5 px-2 text-[13px] text-zinc-600 font-medium"
                             >
                               {item.icon}
                               {item.label}
-                            </a>
+                            </Link>
                           ))}
                         </motion.div>
                       )}
                     </AnimatePresence>
                   </div>
 
-                  <a
-                    href="#"
+                  <Link
+                    href="/community"
                     onClick={() => setMobileOpen(false)}
                     className="py-3.5 text-[14.5px] font-semibold text-zinc-800 border-b border-zinc-50"
                   >
                     Community
-                  </a>
-                  <a
-                    href="#"
+                  </Link>
+                  <Link
+                    href="/pricing"
                     onClick={() => setMobileOpen(false)}
                     className="py-3.5 text-[14.5px] font-semibold text-zinc-800 border-b border-zinc-50"
                   >
                     Pricing
-                  </a>
+                  </Link>
                 </nav>
               </div>
 
               {/* Actions Mobile */}
               <div className="px-6 py-6 border-t border-zinc-100 flex flex-col gap-2.5 bg-zinc-50/30">
-                <a
+                <Link
                   href="/login"
                   onClick={() => setMobileOpen(false)}
                   className="h-10 rounded-lg border border-zinc-200 bg-white text-[14px] font-semibold text-zinc-700 hover:bg-zinc-50 transition-colors flex items-center justify-center cursor-pointer"
                 >
                   Log in
-                </a>
-                <a
+                </Link>
+                <Link
                   href="/signup"
                   onClick={() => setMobileOpen(false)}
                   className="h-10 rounded-lg bg-[#0A6BFF] text-white text-[14px] font-semibold hover:bg-blue-600 transition-colors flex items-center justify-center cursor-pointer shadow-sm"
                 >
                   Get started
-                </a>
+                </Link>
               </div>
             </motion.div>
           </>

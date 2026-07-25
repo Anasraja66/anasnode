@@ -11,6 +11,7 @@ export function VoiceAgentHub() {
   const [prompt, setPrompt] = useState("You are an AI assistant for a real estate agency. You answer calls, ask about their budget, and schedule viewings.");
   const [firstMessage, setFirstMessage] = useState("Hello! This is AnaOS Real Estate. How can I help you today?");
   const [voiceId, setVoiceId] = useState("eleven_rachel");
+  const [showAdvancedPrompt, setShowAdvancedPrompt] = useState(false);
   
   // Advanced State
   const [provider, setProvider] = useState("anaos");
@@ -69,29 +70,31 @@ export function VoiceAgentHub() {
   return (
     <div className="max-w-6xl mx-auto font-sans pb-12">
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-8">
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6 mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
-            <Mic className="text-purple-600" size={32} />
+          <h1 className="text-2xl font-bold text-zinc-900 flex items-center gap-3">
+            <div className="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center text-purple-600">
+              <Mic size={20} />
+            </div>
             Voice AI Agent
           </h1>
-          <p className="text-gray-500 mt-2 max-w-2xl text-[15px]">
-            Deploy a human-like AI caller to answer inbound phone calls or make outbound sales calls. Powered by ElevenLabs and OpenAI.
+          <p className="text-zinc-500 mt-2 text-[14px]">
+            Deploy a human-like AI caller for inbound & outbound. Powered by ElevenLabs.
           </p>
         </div>
         
-        <div className="flex bg-gray-100 p-1 rounded-xl shrink-0">
+        <div className="flex bg-zinc-100/80 p-1 rounded-xl shrink-0 border border-zinc-200/50">
           <button 
             onClick={() => setTab("native")}
-            className={`px-5 py-2 rounded-lg text-sm font-semibold transition-all ${tab === "native" ? "bg-white text-purple-600 shadow-sm" : "text-gray-500 hover:text-gray-900"}`}
+            className={`px-5 py-2 rounded-lg text-[13px] font-bold transition-all ${tab === "native" ? "bg-white text-purple-600 shadow-sm" : "text-zinc-500 hover:text-zinc-800"}`}
           >
             AnaOS Voice
           </button>
           <button 
             onClick={() => setTab("advanced")}
-            className={`px-5 py-2 rounded-lg text-sm font-semibold transition-all flex items-center gap-2 ${tab === "advanced" ? "bg-white text-gray-900 shadow-sm" : "text-gray-500 hover:text-gray-900"}`}
+            className={`px-5 py-2 rounded-lg text-[13px] font-bold transition-all flex items-center gap-2 ${tab === "advanced" ? "bg-white text-zinc-900 shadow-sm" : "text-zinc-500 hover:text-zinc-800"}`}
           >
-            <Settings size={16} /> Advanced (BYOK)
+            <Settings size={14} /> Advanced (BYOK)
           </button>
         </div>
       </div>
@@ -103,45 +106,56 @@ export function VoiceAgentHub() {
           {tab === "native" ? (
             <>
               {/* Native Voice Config */}
-              <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
-                <div className="flex items-center gap-2 mb-6 border-b border-gray-100 pb-4">
-                  <Sparkles className="text-amber-500" size={20} />
-                  <h2 className="text-lg font-bold text-gray-900">Agent Persona & Behavior</h2>
+              <div className="bg-white border border-zinc-200/60 rounded-2xl p-6 shadow-sm">
+                <div className="flex items-center gap-2 mb-6 border-b border-zinc-100 pb-4">
+                  <Sparkles className="text-amber-500" size={18} />
+                  <h2 className="text-[15px] font-bold text-zinc-900">Agent Persona & Behavior</h2>
                 </div>
                 
                 <div className="space-y-5">
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-1.5">First Message (Greeting)</label>
+                    <label className="block text-[13px] font-bold text-zinc-700 mb-2">First Message (Greeting)</label>
                     <input 
                       type="text" 
                       value={firstMessage}
                       onChange={e => setFirstMessage(e.target.value)}
-                      className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition-all"
+                      className="w-full px-4 py-3 bg-zinc-50 border border-zinc-200/80 rounded-xl text-[13px] focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition-all font-medium text-zinc-800"
                     />
-                    <p className="text-xs text-gray-400 mt-1.5">What the AI says immediately when the call connects.</p>
+                    <p className="text-[11px] text-zinc-400 mt-2 font-medium">What the AI says immediately when the call connects.</p>
                   </div>
                   
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-1.5">System Prompt</label>
-                    <textarea 
-                      value={prompt}
-                      onChange={e => setPrompt(e.target.value)}
-                      rows={6}
-                      className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition-all resize-none"
-                    />
-                    <p className="text-xs text-gray-400 mt-1.5">Instruct the AI on how to behave, what questions to ask, and its overall tone.</p>
+                    <button 
+                      onClick={() => setShowAdvancedPrompt(!showAdvancedPrompt)}
+                      className="text-[12px] font-bold text-purple-600 hover:text-purple-700 transition-colors flex items-center gap-1.5"
+                    >
+                      {showAdvancedPrompt ? "Hide Advanced Prompting" : "Show Advanced Prompting"}
+                    </button>
+                    
+                    {showAdvancedPrompt && (
+                      <div className="mt-3 animate-in fade-in slide-in-from-top-2">
+                        <label className="block text-[13px] font-bold text-zinc-700 mb-2">System Prompt</label>
+                        <textarea 
+                          value={prompt}
+                          onChange={e => setPrompt(e.target.value)}
+                          rows={4}
+                          className="w-full px-4 py-3 bg-zinc-50 border border-zinc-200/80 rounded-xl text-[13px] focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition-all resize-none font-medium text-zinc-800"
+                        />
+                        <p className="text-[11px] text-zinc-400 mt-2 font-medium">Instruct the AI on how to behave, what questions to ask, and its overall tone.</p>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
 
               {/* Voice Selection */}
-              <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
-                <div className="flex items-center gap-2 mb-6 border-b border-gray-100 pb-4">
-                  <Volume2 className="text-blue-500" size={20} />
-                  <h2 className="text-lg font-bold text-gray-900">Voice Selection (ElevenLabs)</h2>
+              <div className="bg-white border border-zinc-200/60 rounded-2xl p-6 shadow-sm">
+                <div className="flex items-center gap-2 mb-6 border-b border-zinc-100 pb-4">
+                  <Volume2 className="text-sky-500" size={18} />
+                  <h2 className="text-[15px] font-bold text-zinc-900">Voice Selection</h2>
                 </div>
                 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   {[
                     { id: "eleven_rachel", name: "Rachel", desc: "Professional, Female, American" },
                     { id: "eleven_drew", name: "Drew", desc: "Energetic, Male, American" },
@@ -151,14 +165,14 @@ export function VoiceAgentHub() {
                     <div 
                       key={voice.id}
                       onClick={() => setVoiceId(voice.id)}
-                      className={`p-4 rounded-xl border-2 cursor-pointer transition-all flex items-start gap-3 ${voiceId === voice.id ? "border-purple-500 bg-purple-50/50" : "border-gray-100 hover:border-gray-200 bg-white"}`}
+                      className={`p-3.5 rounded-xl border cursor-pointer transition-all flex items-center gap-3 ${voiceId === voice.id ? "border-purple-500 bg-purple-50/30 shadow-sm" : "border-zinc-200/80 hover:border-zinc-300 bg-white"}`}
                     >
-                      <button className={`p-2 rounded-full shrink-0 ${voiceId === voice.id ? "bg-purple-100 text-purple-600" : "bg-gray-100 text-gray-500"}`}>
-                        <Play size={16} fill="currentColor" />
+                      <button className={`w-8 h-8 flex items-center justify-center rounded-full shrink-0 transition-colors ${voiceId === voice.id ? "bg-purple-100 text-purple-600" : "bg-zinc-100 text-zinc-400"}`}>
+                        <Play size={12} fill="currentColor" />
                       </button>
                       <div>
-                        <p className={`font-bold text-sm ${voiceId === voice.id ? "text-purple-900" : "text-gray-900"}`}>{voice.name}</p>
-                        <p className="text-xs text-gray-500 mt-0.5">{voice.desc}</p>
+                        <p className={`font-bold text-[13px] ${voiceId === voice.id ? "text-purple-900" : "text-zinc-900"}`}>{voice.name}</p>
+                        <p className="text-[11px] text-zinc-500 font-medium">{voice.desc}</p>
                       </div>
                     </div>
                   ))}
@@ -224,16 +238,16 @@ export function VoiceAgentHub() {
           )}
 
           {/* Action Bar */}
-          <div className="flex justify-end gap-3 pt-4 border-t border-gray-200">
-            <button className="px-5 py-2.5 border border-gray-200 text-gray-700 font-semibold rounded-xl hover:bg-gray-50 transition-colors text-sm">
+          <div className="flex justify-end gap-3 pt-2">
+            <button className="px-5 py-2.5 border border-zinc-200 text-zinc-700 font-bold rounded-xl hover:bg-zinc-50 transition-colors text-[13px]">
               Cancel
             </button>
             <button 
               onClick={handleSave}
               disabled={saving}
-              className="px-6 py-2.5 bg-gray-900 text-white font-bold rounded-xl hover:bg-black transition-colors flex items-center gap-2 text-sm shadow-md shadow-gray-900/20 disabled:opacity-70"
+              className="px-6 py-2.5 bg-[#0A6BFF] hover:bg-blue-600 text-white font-bold rounded-xl transition-all flex items-center gap-2 text-[13px] shadow-sm disabled:opacity-70"
             >
-              <Save size={16} />
+              <Save size={14} />
               {saving ? "Saving..." : "Save Configuration"}
             </button>
           </div>
@@ -241,53 +255,60 @@ export function VoiceAgentHub() {
 
         {/* Sidebar: Telephony & Status */}
         <div className="lg:col-span-4 space-y-6">
-          <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-green-50 to-emerald-100 rounded-bl-full -z-10 opacity-50"></div>
+          <div className="bg-white border border-zinc-200/60 rounded-2xl p-6 shadow-sm relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-emerald-50 to-emerald-100/50 rounded-bl-[100px] -z-10 opacity-70"></div>
             
-            <div className="flex items-center gap-3 mb-6 border-b border-gray-100 pb-4">
-              <div className="p-2.5 bg-green-100 text-green-600 rounded-xl">
-                <PhoneCall size={20} />
-              </div>
-              <div>
-                <h3 className="font-bold text-gray-900">Phone Number</h3>
-                <p className="text-[11px] text-gray-500 uppercase tracking-widest font-semibold mt-0.5">Inbound Line</p>
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center">
+                  <PhoneCall size={18} />
+                </div>
+                <div>
+                  <h3 className="font-bold text-[14px] text-zinc-900">Phone Number</h3>
+                  <p className="text-[10px] text-zinc-500 uppercase tracking-widest font-bold mt-0.5">Inbound Line</p>
+                </div>
               </div>
             </div>
 
-            <div className="bg-gray-50 border border-gray-200 rounded-xl p-4 text-center mb-4">
-              <p className="text-xl font-mono font-bold text-gray-900 tracking-wider">+1 (555) 019-8472</p>
-              <p className="text-xs text-gray-500 mt-1 flex items-center justify-center gap-1">
-                <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span> Active via Twilio
-              </p>
+            <div className="bg-zinc-50/80 border border-zinc-200/80 rounded-xl p-4 text-center mb-4 relative">
+              <p className="text-[18px] font-mono font-bold text-zinc-900 tracking-wider">+1 (555) 019-8472</p>
+              <div className="flex items-center justify-center gap-1.5 mt-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> 
+                <span className="text-[11px] font-bold text-zinc-500">Active via Twilio</span>
+              </div>
             </div>
 
-            <button className="w-full py-2 border border-gray-200 bg-white text-gray-700 text-sm font-semibold rounded-xl hover:bg-gray-50 transition-colors">
+            <button className="w-full py-2.5 border border-zinc-200/80 bg-white text-zinc-800 text-[12px] font-bold rounded-xl hover:bg-zinc-50 hover:border-zinc-300 transition-colors shadow-sm">
               Buy New Number
             </button>
           </div>
 
-          <div className="bg-gradient-to-br from-purple-600 to-indigo-700 rounded-2xl p-6 text-white shadow-lg shadow-purple-500/20">
-            <div className="flex items-center gap-2 mb-2 opacity-80">
-              <Globe size={16} />
-              <span className="text-xs font-bold uppercase tracking-widest">Pricing & Billing</span>
+          <div className="bg-[#6B21A8] rounded-2xl p-6 text-white shadow-lg relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-full h-full bg-gradient-to-br from-white/10 to-transparent pointer-events-none"></div>
+            <div className="flex items-center gap-2 mb-3 opacity-90 relative z-10">
+              <Globe size={14} />
+              <span className="text-[10px] font-bold uppercase tracking-widest">Pricing & Billing</span>
             </div>
-            {tab === "native" ? (
-              <>
-                <h3 className="text-2xl font-bold mb-1">$0.10 <span className="text-sm font-medium opacity-70">/ minute</span></h3>
-                <p className="text-sm opacity-80 leading-relaxed mb-4">
-                  Using AnaOS Native Voice guarantees you get the exact same industry rates as Vapi or Retell, but fully integrated into your CRM. Powered by ElevenLabs and GPT-4o.
-                </p>
-              </>
-            ) : (
-              <>
-                <h3 className="text-xl font-bold mb-1">Provider Billed</h3>
-                <p className="text-sm opacity-80 leading-relaxed mb-4">
-                  You are bypassing the AnaOS Native Voice engine. You will be billed directly by {provider.toUpperCase()} at their rates (~$0.12/min).
-                </p>
-              </>
-            )}
-            <div className="bg-white/10 rounded-xl p-3 text-xs font-medium border border-white/20">
-              Current Balance: $45.00
+            
+            <div className="relative z-10">
+              {tab === "native" ? (
+                <>
+                  <h3 className="text-3xl font-bold mb-2">$0.10 <span className="text-[13px] font-medium opacity-80">/ minute</span></h3>
+                  <p className="text-[12px] opacity-85 leading-relaxed mb-5 font-medium">
+                    Using AnaOS Native Voice guarantees you get the exact same industry rates as Vapi or Retell, but fully integrated into your CRM. Powered by ElevenLabs and GPT-4o.
+                  </p>
+                </>
+              ) : (
+                <>
+                  <h3 className="text-xl font-bold mb-2">Provider Billed</h3>
+                  <p className="text-[12px] opacity-85 leading-relaxed mb-5 font-medium">
+                    You are bypassing the AnaOS Native Voice engine. You will be billed directly by {provider.toUpperCase()} at their rates.
+                  </p>
+                </>
+              )}
+              <div className="bg-white/10 backdrop-blur-md rounded-xl p-3 text-[12px] font-bold border border-white/20">
+                Current Balance: $45.00
+              </div>
             </div>
           </div>
         </div>

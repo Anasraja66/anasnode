@@ -350,7 +350,7 @@ export function Hero() {
                         className="w-9 h-9 rounded-full bg-white flex items-center justify-center shadow-sm border-2 border-white overflow-hidden relative"
                         style={{ zIndex: 60 - index }}
                       >
-                        <BrandIcon id={name} className="w-5 h-5" />
+                        <BrandIcon id={name} className="w-7 h-7" />
                       </div>
                     ))}
                   </div>

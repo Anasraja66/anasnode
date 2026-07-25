@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Plus, Play, Pause, Trash2, Edit2, Zap, History } from "lucide-react";
+import { Plus, Play, Pause, Trash2, Edit2, Zap, History, LayoutTemplate } from "lucide-react";
 
 export default function AutomationsPage() {
   const router = useRouter();
@@ -50,13 +50,22 @@ export default function AutomationsPage() {
           </h1>
           <p className="text-gray-500">Native workflows to completely automate your Real Estate operations</p>
         </div>
-        <button 
-          onClick={createNew}
-          className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition flex items-center gap-2 font-medium"
-        >
-          <Plus size={18} />
-          Create Automation
-        </button>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => router.push("/dashboard/automations/templates")}
+            className="border border-zinc-200 text-zinc-700 px-4 py-2 rounded-lg hover:bg-zinc-50 transition flex items-center gap-2 font-medium"
+          >
+            <LayoutTemplate size={18} />
+            Browse Templates
+          </button>
+          <button 
+            onClick={createNew}
+            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition flex items-center gap-2 font-medium"
+          >
+            <Plus size={18} />
+            Create Automation
+          </button>
+        </div>
       </div>
 
       {loading ? (

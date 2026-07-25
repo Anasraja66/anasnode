@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { ArrowUp, Plus, Mic, ChevronDown, RefreshCw, Paperclip, Edit2, Sparkles } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -27,6 +27,54 @@ export function PromptBox({ onGenerate, compact, staticPlaceholder, onSubmitProm
   const [stage, setStage] = useState(0);
   const [mounted, setMounted] = useState(false);
   const [selectedAction, setSelectedAction] = useState("Build");
+
+  const [isRecording, setIsRecording] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const startRecording = () => {
+    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      alert("Voice recognition is not supported in your browser. Please use Chrome or Edge.");
+      return;
+    }
+    const recognition = new SpeechRecognition();
+    recognition.continuous = false;
+    recognition.interimResults = false;
+    recognition.lang = 'en-US';
+
+    recognition.onstart = () => setIsRecording(true);
+    recognition.onresult = (event: any) => {
+      const transcript = Array.from(event.results)
+        .map((result: any) => result[0])
+        .map((result) => result.transcript)
+        .join('');
+      setValue(prev => (prev + " " + transcript).trim());
+    };
+    recognition.onerror = (event: any) => {
+      console.error("Speech recognition error", event.error);
+      setIsRecording(false);
+    };
+    recognition.onend = () => {
+      setIsRecording(false);
+    };
+
+    recognition.start();
+  };
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const text = e.target?.result as string;
+      if (text) {
+         setValue(prev => (prev + `\n\n[Attached Document: ${file.name}]\n${text.substring(0, 5000)}`).trim());
+      }
+    };
+    reader.readAsText(file);
+    if (fileInputRef.current) fileInputRef.current.value = '';
+  };
 
   useEffect(() => {
     setMounted(true);
@@ -184,9 +232,18 @@ export function PromptBox({ onGenerate, compact, staticPlaceholder, onSubmitProm
             <div className="flex items-center justify-end w-full md:w-auto gap-1 md:gap-2 shrink-0 pt-2 md:pt-0">
               <div className="flex items-center gap-1 md:gap-2">
                 {/* File Upload icon */}
+                <input 
+                  type="file" 
+                  ref={fileInputRef} 
+                  className="hidden" 
+                  accept=".txt,.md,.csv,.json"
+                  onChange={handleFileUpload} 
+                />
                 <button
                   type="button"
+                  onClick={() => fileInputRef.current?.click()}
                   className="w-8 h-8 flex items-center justify-center text-zinc-400 hover:text-zinc-700 transition-all cursor-pointer hover:bg-zinc-200/50 rounded-full"
+                  title="Upload a document for AI analysis"
                 >
                   <Paperclip className="w-4 h-4" />
                 </button>
@@ -194,7 +251,9 @@ export function PromptBox({ onGenerate, compact, staticPlaceholder, onSubmitProm
                 {/* Voice icon */}
                 <button
                   type="button"
-                  className="w-8 h-8 flex items-center justify-center text-zinc-400 hover:text-zinc-700 transition-all cursor-pointer hover:bg-zinc-200/50 rounded-full mr-1"
+                  onClick={startRecording}
+                  className={`w-8 h-8 flex items-center justify-center transition-all cursor-pointer rounded-full mr-1 ${isRecording ? 'text-rose-500 bg-rose-50 animate-pulse' : 'text-zinc-400 hover:text-zinc-700 hover:bg-zinc-200/50'}`}
+                  title="Speak your prompt"
                 >
                   <Mic className="w-4 h-4" />
                 </button>

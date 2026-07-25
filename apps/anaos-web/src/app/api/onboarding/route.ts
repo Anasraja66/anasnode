@@ -1,13 +1,13 @@
 import { NextResponse } from "next/server";
-import { auth } from "@/auth";
+import { getSessionUser } from "@/lib/auth/session";
 import { prisma } from "@/lib/db";
 import { generateBlueprint } from "@/lib/ai/blueprint/generator";
 import { saveCompiledAutomation } from "@/lib/workflow/compiler";
 
 export async function POST(request: Request) {
   try {
-    const session = await auth();
-    if (!session?.user?.email) {
+    const sessionUser = await getSessionUser();
+    if (!sessionUser?.email) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -22,7 +22,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const email = session.user.email;
+    const email = sessionUser.email;
     const user = await prisma.user.findUnique({
       where: { email },
     });

@@ -1,11 +1,11 @@
 import { NextResponse } from "next/server";
-import { auth } from "@/auth";
+import { getSessionUser } from "@/lib/auth/session";
 import { prisma } from "@/lib/db";
 
 export async function POST(request: Request) {
   try {
-    const session = await auth();
-    if (!(session?.user as any)?.id) {
+    const sessionUser = await getSessionUser();
+    if (!sessionUser?.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -15,7 +15,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "No workspaces provided" }, { status: 400 });
     }
 
-    const accountId = (session?.user as any)?.accountId;
+    const accountId = sessionUser?.accountId;
     if (!accountId) {
       return NextResponse.json({ error: "Account ID missing" }, { status: 400 });
     }

@@ -3,7 +3,8 @@
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { signOut } from "next-auth/react";
+import { auth } from "@/lib/firebase";
+import { signOut as firebaseSignOut } from "firebase/auth";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   LayoutDashboard,
@@ -714,7 +715,11 @@ function Sidebar({ active, onChange, ws, onWsChange, workspaces, preset, user, o
           {!isCollapsed && <span className="whitespace-nowrap">Integrations</span>}
         </a>
         <button 
-          onClick={() => signOut({ callbackUrl: "/" })}
+          onClick={async () => {
+            await firebaseSignOut(auth);
+            await fetch("/api/auth/session", { method: "DELETE" });
+            router.push("/");
+          }}
           title={isCollapsed ? "Log out" : undefined}
           className={`w-full flex items-center h-10 rounded-[8px] text-zinc-500 font-medium hover:bg-zinc-100 hover:text-zinc-900 transition-all cursor-pointer group ${
             isCollapsed ? "justify-center px-0" : "gap-3 px-3.5"

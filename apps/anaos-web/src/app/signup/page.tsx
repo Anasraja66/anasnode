@@ -1,12 +1,14 @@
 "use client";
 
 import { useState, Suspense } from "react";
-import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ArrowRight, Lock, Mail, User, AlertCircle, CheckCircle, Eye, EyeOff } from "lucide-react";
 import { AuthLayout } from "@/components/auth/AuthLayout";
 import { AuthSocialButtons } from "@/components/auth/AuthSocialButtons";
 import { PasswordStrength } from "@/components/auth/PasswordStrength";
+
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import { auth } from "@/lib/firebase";
 
 function SignupForm() {
   const [name, setName] = useState("");
@@ -29,40 +31,47 @@ function SignupForm() {
     setLoading(true);
 
     try {
-      const response = await fetch("/api/auth/register", {
+      // 1. Create user in Firebase
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      
+      // 2. Update display name in Firebase
+      await updateProfile(userCredential.user, { displayName: name });
+      
+      // 3. Get ID token
+      const idToken = await userCredential.user.getIdToken();
+
+      // 4. Send to backend to set session cookie and create Postgres Workspace
+      const res = await fetch("/api/auth/session", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, password }),
+        body: JSON.stringify({ idToken }),
       });
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        setError(data.error || "Failed to register. Please try again.");
+      if (!res.ok) {
+        setError("Failed to initialize workspace. Please try again.");
         setLoading(false);
         return;
       }
 
       setSuccess(true);
 
-      const result = await signIn("credentials", {
-        redirect: false,
-        email,
-        password,
-      });
-
-      if (result?.error) {
-        router.push("/login");
+      // Redirect
+      const queryParams = new URLSearchParams();
+      if (prompt) queryParams.set("prompt", prompt);
+      if (workspace) queryParams.set("workspace", workspace);
+      const queryString = queryParams.toString();
+      router.push(queryString ? `/onboarding?${queryString}` : "/onboarding");
+      router.refresh();
+      
+    } catch (err: any) {
+      console.error("Signup Error:", err);
+      if (err.code === "auth/email-already-in-use") {
+        setError("An account with this email already exists.");
+      } else if (err.code === "auth/weak-password") {
+        setError("Password is too weak. Please use a stronger password.");
       } else {
-        const queryParams = new URLSearchParams();
-        if (prompt) queryParams.set("prompt", prompt);
-        if (workspace) queryParams.set("workspace", workspace);
-        const queryString = queryParams.toString();
-        router.push(queryString ? `/onboarding?${queryString}` : "/onboarding");
-        router.refresh();
+        setError("An unexpected error occurred. Please try again.");
       }
-    } catch (err) {
-      setError("An unexpected error occurred. Please try again.");
       setLoading(false);
     }
   };

@@ -1,14 +1,13 @@
 import { NextResponse } from "next/server";
-import { auth } from "@/auth";
+import { getSessionUser } from "@/lib/auth/session";
 import { loadKnowledgeDocs, buildKnowledgeContext } from "@/lib/knowledge/store";
 
 export const dynamic = "force-dynamic";
 
 export async function GET(request: Request) {
   try {
-    const session = await auth();
-    const user = session?.user as any;
-    const accountId = user?.accountId as string | undefined;
+    const user = await getSessionUser();
+    const accountId = user?.accountId;
     if (!accountId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const { searchParams } = new URL(request.url);

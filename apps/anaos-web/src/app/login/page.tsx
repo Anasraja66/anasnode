@@ -1,11 +1,13 @@
 "use client";
 
 import { useState, Suspense } from "react";
-import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ArrowRight, Lock, Mail, AlertCircle, Eye, EyeOff } from "lucide-react";
 import { AuthLayout } from "@/components/auth/AuthLayout";
 import { AuthSocialButtons } from "@/components/auth/AuthSocialButtons";
+
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "@/lib/firebase";
 
 function LoginForm() {
   const [email, setEmail] = useState("");
@@ -26,16 +28,17 @@ function LoginForm() {
     setLoading(true);
 
     try {
-      const result = await signIn("credentials", {
-        redirect: false,
-        email,
-        password,
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const idToken = await userCredential.user.getIdToken();
+
+      // Send to backend to set session cookie
+      const res = await fetch("/api/auth/session", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ idToken }),
       });
 
-      if (result?.error) {
-        setError("Invalid email or password");
-        setLoading(false);
-      } else {
+      if (res.ok) {
         if (prompt) {
           const queryParams = new URLSearchParams();
           queryParams.set("prompt", prompt);
@@ -45,9 +48,13 @@ function LoginForm() {
           router.push("/dashboard");
         }
         router.refresh();
+      } else {
+        setError("Invalid email or password");
+        setLoading(false);
       }
     } catch (err) {
-      setError("An unexpected error occurred. Please try again.");
+      console.error("Login Error:", err);
+      setError("Invalid email or password");
       setLoading(false);
     }
   };

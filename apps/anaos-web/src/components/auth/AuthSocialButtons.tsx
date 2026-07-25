@@ -1,20 +1,45 @@
 "use client";
 
-import { Mail } from "lucide-react";
-import { signIn } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
+import { auth } from "@/lib/firebase";
+import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { useRouter } from "next/navigation";
 
 export function AuthSocialButtons() {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const prompt = searchParams?.get("prompt");
   const workspace = searchParams?.get("workspace");
 
-  const handleProvider = (provider: string) => {
-    const callbackUrl = prompt 
-      ? `/onboarding?prompt=${prompt}${workspace ? `&workspace=${workspace}` : ""}`
-      : "/dashboard";
-    
-    signIn(provider, { callbackUrl });
+  const handleGoogleLogin = async () => {
+    try {
+      const provider = new GoogleAuthProvider();
+      const result = await signInWithPopup(auth, provider);
+      const idToken = await result.user.getIdToken();
+
+      // Send to backend to set session cookie
+      const res = await fetch("/api/auth/session", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ idToken }),
+      });
+
+      if (res.ok) {
+        if (prompt) {
+          const queryParams = new URLSearchParams();
+          queryParams.set("prompt", prompt);
+          if (workspace) queryParams.set("workspace", workspace);
+          router.push(`/onboarding?${queryParams.toString()}`);
+        } else {
+          router.push("/dashboard");
+        }
+        router.refresh();
+      } else {
+        console.error("Failed to create session");
+      }
+    } catch (error) {
+      console.error("Google sign in error", error);
+    }
   };
 
   return (
@@ -28,7 +53,7 @@ export function AuthSocialButtons() {
       <div className="flex flex-col gap-3">
         <button
           type="button"
-          onClick={() => handleProvider("google")}
+          onClick={handleGoogleLogin}
           className="w-full h-11 bg-white border border-zinc-200 rounded-xl flex items-center justify-center gap-3 text-[14px] font-bold text-zinc-700 hover:bg-zinc-50 transition-colors shadow-sm cursor-pointer"
         >
           <svg className="w-5 h-5" viewBox="0 0 24 24">
@@ -38,37 +63,6 @@ export function AuthSocialButtons() {
             <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" />
           </svg>
           Continue with Google
-        </button>
-
-        <button
-          type="button"
-          onClick={() => {}} // Usually Email is a form, but Figma shows it as a button. Might just focus the email input or handle magic link
-          className="w-full h-11 bg-white border border-zinc-200 rounded-xl flex items-center justify-center gap-3 text-[14px] font-bold text-zinc-700 hover:bg-zinc-50 transition-colors shadow-sm cursor-pointer"
-        >
-          <Mail className="w-5 h-5 text-zinc-700" />
-          Continue with Email
-        </button>
-
-        <button
-          type="button"
-          onClick={() => handleProvider("apple")}
-          className="w-full h-11 bg-white border border-zinc-200 rounded-xl flex items-center justify-center gap-3 text-[14px] font-bold text-zinc-700 hover:bg-zinc-50 transition-colors shadow-sm cursor-pointer"
-        >
-          <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M17.05 13.97c-.03-2.39 1.94-3.55 2.03-3.61-1.12-1.63-2.85-1.87-3.48-1.9-1.48-.15-2.9.88-3.66.88-.76 0-1.92-.85-3.14-.83-1.6.03-3.08.93-3.9 2.37-1.68 2.9-.43 7.2 1.2 9.56.8 1.15 1.74 2.43 2.99 2.39 1.18-.05 1.64-.76 3.08-.76 1.43 0 1.86.76 3.1.73 1.28-.03 2.11-1.18 2.9-2.33 1.12-1.65 1.58-3.24 1.6-3.32-.03-.02-2.18-.84-2.2-3.38zm-1.89-6.32c.62-.76 1.04-1.82.93-2.87-1.1.05-2.22.68-2.86 1.44-.57.68-1.06 1.76-.93 2.79 1.22.1 2.24-.6 2.86-1.36z" />
-          </svg>
-          Continue with Apple
-        </button>
-
-        <button
-          type="button"
-          onClick={() => handleProvider("facebook")}
-          className="w-full h-11 bg-white border border-zinc-200 rounded-xl flex items-center justify-center gap-3 text-[14px] font-bold text-zinc-700 hover:bg-zinc-50 transition-colors shadow-sm cursor-pointer"
-        >
-          <svg className="w-5 h-5" viewBox="0 0 24 24" fill="#1877F2">
-            <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.469h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.469h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
-          </svg>
-          Continue with Facebook
         </button>
       </div>
     </div>

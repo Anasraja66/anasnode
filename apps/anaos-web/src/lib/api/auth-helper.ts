@@ -14,7 +14,7 @@
  */
 
 import { NextResponse } from "next/server";
-import { auth } from "@/auth";
+import { getSessionUser } from "@/lib/auth/session";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -47,17 +47,11 @@ export class AuthError extends Error {
  * @throws {AuthError} if the request has no valid session
  */
 export async function requireAuth(): Promise<AuthResult> {
-  const session = await auth();
+  const user = await getSessionUser();
 
-  if (!session?.user?.email) {
+  if (!user?.email) {
     throw new AuthError("Unauthorized — please log in");
   }
-
-  const user = session.user as {
-    email: string;
-    accountId?: string;
-    id?: string;
-  };
 
   if (!user.accountId) {
     throw new AuthError("Account not found in session");

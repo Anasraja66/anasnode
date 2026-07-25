@@ -1,12 +1,34 @@
 "use client";
 
-import { SessionProvider } from "next-auth/react";
+import { useEffect, useState, createContext, useContext } from "react";
+import { onAuthStateChanged, User } from "firebase/auth";
+import { auth } from "@/lib/firebase";
 
-/** Avoid hammering /api/auth/session when dev server is slow. */
+interface AuthContextType {
+  user: User | null;
+  loading: boolean;
+}
+
+const AuthContext = createContext<AuthContextType>({ user: null, loading: true });
+
+export const useAuth = () => useContext(AuthContext);
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setUser(user);
+      setLoading(false);
+    });
+
+    return () => unsubscribe();
+  }, []);
+
   return (
-    <SessionProvider refetchOnWindowFocus={false} refetchInterval={0}>
+    <AuthContext.Provider value={{ user, loading }}>
       {children}
-    </SessionProvider>
+    </AuthContext.Provider>
   );
 }

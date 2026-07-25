@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useSession } from "next-auth/react";
+import { useAuth } from "@/components/providers/AuthProvider";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowRight,
@@ -22,7 +22,7 @@ import { LANGUAGE_CATALOG } from "@/lib/i18n/languages";
 import { AnaosLogo } from "@/components/ui/AnaosLogo";
 
 export default function OnboardingPage() {
-  const { data: session, update: updateSession } = useSession();
+  const { user: session } = useAuth();
   const router = useRouter();
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
@@ -43,8 +43,8 @@ export default function OnboardingPage() {
   }, []);
 
   useEffect(() => {
-    if (session?.user?.name && !fullName) {
-      setFullName(session.user.name);
+    if (session?.displayName && !fullName) {
+      setFullName(session.displayName);
     }
   }, [session, fullName]);
 
@@ -100,7 +100,6 @@ export default function OnboardingPage() {
       });
 
       if (response.ok) {
-        await updateSession();
         clearInterval(interval);
         setTimeout(() => {
           router.push("/dashboard?tab=overview");

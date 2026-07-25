@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { auth } from "@/auth";
+import { getSessionUser } from "@/lib/auth/session";
 import { prisma, isDbAvailable } from "@/lib/db";
 import { normalizeIndustryLabel } from "@/lib/industry/presets";
 import { FastApiClient } from "@/lib/api/fastapi";
@@ -132,8 +132,7 @@ function resolveRequiredProvider(missing: string[]): "meta" | "commerce" | "goog
 
 export async function GET(request: Request) {
   try {
-    const session = await auth();
-    const user = session?.user as any;
+    const user = await getSessionUser();
     if (!user?.accountId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }

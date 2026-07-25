@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   Search, Zap, MessageCircle, ShoppingBag, Users, Megaphone,
   HeadphonesIcon, Brain, Share2, Settings, Star, Sparkles,
-  ArrowRight, Clock, Plug, Check, Filter, X
+  ArrowRight, Clock, Plug, Check, Filter, X, LayoutTemplate
 } from "lucide-react";
 import {
   WORKFLOW_TEMPLATES,
@@ -120,6 +120,8 @@ function TemplateCard({ template, onUse }: { template: WorkflowTemplate; onUse: 
   );
 }
 
+import { AIPromptGenerator } from "@/components/automations/AIPromptGenerator";
+
 export default function TemplatesPage() {
   const router = useRouter();
   const [activeCategory, setActiveCategory] = useState<TemplateCategory | "all" | "popular">("popular");
@@ -162,17 +164,29 @@ export default function TemplatesPage() {
   return (
     <div className="min-h-screen bg-[#F8FAFC]">
       {/* Header */}
-      <div className="bg-white border-b border-zinc-100 px-8 py-6">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex items-center justify-between mb-6">
+      <div className="bg-white border-b border-zinc-100 px-8 py-10 relative overflow-hidden">
+        {/* Decorative Background Elements */}
+        <div className="absolute top-0 right-0 -translate-y-1/4 translate-x-1/4 w-96 h-96 bg-blue-50 rounded-full blur-3xl opacity-50 pointer-events-none" />
+        <div className="absolute bottom-0 left-0 translate-y-1/4 -translate-x-1/4 w-64 h-64 bg-indigo-50 rounded-full blur-3xl opacity-50 pointer-events-none" />
+        
+        <div className="max-w-7xl mx-auto relative z-10">
+          <div className="text-center mb-10">
+            <h1 className="text-4xl font-extrabold text-zinc-900 mb-4 tracking-tight">
+              What would you like to automate?
+            </h1>
+            <p className="text-lg text-zinc-500 max-w-2xl mx-auto font-medium">
+              Simply describe your workflow and AnaOS AI will build it instantly, or pick from our {WORKFLOW_TEMPLATES.length}+ production-ready templates.
+            </p>
+          </div>
+          
+          <AIPromptGenerator />
+          
+          <div className="flex items-center justify-between mt-12 mb-6">
             <div>
-              <h1 className="text-2xl font-bold text-zinc-900 flex items-center gap-2">
-                <Zap className="w-6 h-6 text-blue-600" />
+              <h2 className="text-xl font-bold text-zinc-900 flex items-center gap-2">
+                <LayoutTemplate className="w-5 h-5 text-blue-600" />
                 Template Library
-              </h1>
-              <p className="text-zinc-500 text-sm mt-1">
-                {WORKFLOW_TEMPLATES.length}+ production-ready automations — inspired by Zapier, n8n & Make.com
-              </p>
+              </h2>
             </div>
             {/* Search */}
             <div className="relative w-80">

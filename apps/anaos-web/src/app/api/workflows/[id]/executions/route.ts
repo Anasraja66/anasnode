@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
-import prisma from "@/lib/db";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { prisma } from "@/lib/db";
+import { getSessionUser } from "@/lib/auth/session";
 
 export const dynamic = "force-dynamic";
 
@@ -11,7 +10,7 @@ export async function GET(
 ) {
   try {
     const { id: workflowId } = await params;
-    const session = await getServerSession(authOptions);
+    const session = await getSessionUser();
 
     const executions = await prisma.workflowExecution.findMany({
       where: { workflowId },

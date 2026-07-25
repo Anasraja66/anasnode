@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { auth } from "@/auth";
+import { getSessionUser } from "@/lib/auth/session";
 import { fetchGoogleDocText } from "@/lib/knowledge/google-doc";
 import { saveKnowledgeDoc } from "@/lib/knowledge/store";
 
@@ -7,9 +7,8 @@ export const dynamic = "force-dynamic";
 
 export async function POST(request: Request) {
   try {
-    const session = await auth();
-    const user = session?.user as any;
-    const accountId = user?.accountId as string | undefined;
+    const user = await getSessionUser();
+    const accountId = user?.accountId;
     if (!accountId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const body = await request.json();

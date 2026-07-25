@@ -1113,6 +1113,7 @@ export default function WorkflowCanvas({ workflowId, initialData, workflowName =
   const [isGenerating, setIsGenerating] = useState(false);
   const [showHistoryPanel, setShowHistoryPanel] = useState(false);
   const [showTemplates, setShowTemplates] = useState(false);
+  const [isNodeModalOpen, setIsNodeModalOpen] = useState(false);
 
   const canvasRef = useRef<HTMLDivElement>(null);
   const selectedNodeData = nodes.find(n => n.id === selectedNode) || null;
@@ -1143,6 +1144,33 @@ export default function WorkflowCanvas({ workflowId, initialData, workflowName =
     window.addEventListener("mouseup", onUp);
     return () => { window.removeEventListener("mousemove", onMove); window.removeEventListener("mouseup", onUp); };
   }, [isPanning, panStart]);
+
+  // Add node from modal
+  const handleAddNode = useCallback((type: string) => {
+    const rect = canvasRef.current?.getBoundingClientRect();
+    if (!rect) return;
+    
+    // Calculate center of the canvas
+    const centerX = (rect.width / 2 - pan.x) / zoom;
+    const centerY = (rect.height / 2 - pan.y) / zoom;
+    
+    const typeKey = normaliseType(type);
+    const cfg = NODE_TYPES[typeKey] ?? NODE_TYPES["trigger_whatsapp"];
+    
+    const offset = Math.random() * 40 - 20;
+    
+    const newNode: WorkflowNodeData = {
+      id: `node-${Date.now()}`,
+      type: type,
+      label: cfg.label,
+      x: Math.max(20, centerX + offset - 100),
+      y: Math.max(20, centerY + offset - 25),
+      config: {},
+    };
+    
+    setNodes(prev => [...prev, newNode]);
+    setSelectedNode(newNode.id);
+  }, [pan, zoom]);
 
   // Drop from palette
   const handleCanvasDrop = useCallback((e: React.DragEvent) => {
@@ -1302,37 +1330,13 @@ export default function WorkflowCanvas({ workflowId, initialData, workflowName =
         backgroundSize: "20px 20px",
       }} />
 
-      {/* ── Left Sidebar ─────────────────────────────────────────────────── */}
-      <div
-        className="w-[240px] shrink-0 border-r flex flex-col p-3 z-20 relative"
-        style={{ background: "#0F172A", borderColor: "#1E293B" }}
-      >
-        {/* Logo */}
-        <div className="flex items-center gap-2 mb-4 px-1">
-          <div className="w-6 h-6 rounded-lg bg-blue-600/20 border border-blue-500/30 flex items-center justify-center">
-            <Sparkles size={11} className="text-blue-400" />
-          </div>
-          <span className="text-[12px] font-bold text-white/80 tracking-tight">Anaos Builder</span>
-        </div>
-
-        <NodePalette
-          onDragStart={setDraggingNodeType}
-          search={search}
-          setSearch={setSearch}
-        />
-
-        {/* Stats */}
-        <div className="mt-3 pt-3 border-t border-white/5 grid grid-cols-2 gap-2">
-          <div className="bg-white/3 rounded-xl p-2 text-center">
-            <p className="text-[16px] font-bold text-white">{nodeCount}</p>
-            <p className="text-[9px] text-white/30 font-bold uppercase tracking-wider">Nodes</p>
-          </div>
-          <div className="bg-white/3 rounded-xl p-2 text-center">
-            <p className="text-[16px] font-bold text-white">{edgeCount}</p>
-            <p className="text-[9px] text-white/30 font-bold uppercase tracking-wider">Edges</p>
-          </div>
-        </div>
-      </div>
+      <NodeSelectorModal
+        isOpen={isNodeModalOpen}
+        onClose={() => setIsNodeModalOpen(false)}
+        onSelect={handleAddNode}
+        search={search}
+        setSearch={setSearch}
+      />
 
       {/* ── Main Area ─────────────────────────────────────────────────────── */}
       <div className="flex flex-col flex-1 min-w-0">
@@ -1362,7 +1366,9 @@ export default function WorkflowCanvas({ workflowId, initialData, workflowName =
           </div>
 
           <div className="flex items-center gap-2.5">
-            {/* Zoom */}
+
+
+          {/* Zoom Controls */}
             <div className="flex items-center gap-1 bg-white/4 border border-white/8 rounded-xl px-2 py-1.5">
               <button onClick={() => setZoom(z => Math.max(0.3, z - 0.1))} className="text-white/40 hover:text-white transition-colors cursor-pointer">
                 <ZoomOut size={12} />
@@ -1426,12 +1432,21 @@ export default function WorkflowCanvas({ workflowId, initialData, workflowName =
             onClick={() => { if (!connecting) setSelectedNode(null); }}
             style={{ cursor: isPanning ? "grabbing" : connecting ? "crosshair" : "default" }}
           >
+            {/* Floating Add Node Button */}
+            <button
+              onClick={() => setIsNodeModalOpen(true)}
+              className="absolute bottom-8 left-8 z-40 flex items-center justify-center gap-2 px-5 py-3 rounded-2xl bg-[#0F172A] hover:bg-[#1E293B] text-white font-bold shadow-lg shadow-black/20 border border-white/10 transition-all hover:scale-105 active:scale-95 cursor-pointer"
+            >
+              <Plus size={20} className="text-[#FF6E4A]" />
+              <span className="tracking-tight">Add Node</span>
+            </button>
+
             {/* Empty state (n8n style) */}
             {nodes.length === 0 && (
               <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
                 <div className="flex items-center gap-6 bg-[#FAFAFA]/80 backdrop-blur-sm p-8 rounded-2xl pointer-events-auto shadow-sm">
                   <button 
-                    onClick={() => {}} 
+                    onClick={() => setIsNodeModalOpen(true)} 
                     className="flex flex-col items-center justify-center w-[120px] h-[120px] bg-white border border-dashed border-gray-300 rounded-xl hover:border-orange-500 hover:text-orange-500 transition-colors cursor-pointer group"
                   >
                     <div className="text-gray-400 group-hover:text-orange-500 mb-2">

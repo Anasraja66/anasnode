@@ -56,6 +56,7 @@ import {
   ChevronLeft,
   PhoneCall,
   Calendar,
+  LayoutTemplate,
 } from "lucide-react";
 import { InboxPage } from "@/components/dashboard/InboxPage";
 import { ContactsHub } from "@/components/dashboard/ContactsHub";
@@ -560,6 +561,7 @@ function Sidebar({ active, onChange, ws, onWsChange, workspaces, preset, user, o
     { id: "approvals",   label: "Approvals",      icon: CheckSquare },
     { id: "contacts",    label: "Contacts",       icon: Users },
     { id: "bookings",    label: "Calendar",       icon: Calendar },
+    { id: "templates",   label: "Templates",      icon: LayoutTemplate },
   ];
 
   if (preset.id === "real-estate") {
@@ -2119,6 +2121,7 @@ export default function Dashboard() {
               {tab === "contacts"    && <ContactsHub />}
               {tab === "bookings"    && <BookingsHub />}
               {tab === "automations" && <AutomationsPage ws={ws} integrations={integrations} toggleAutomation={toggleAutomation} toggleLoading={toggleLoading} />}
+              {tab === "templates"   && <TemplatesHub />}
               {tab === "broadcasts"  && <BroadcastsPage ws={ws} />}
               {tab === "analytics"   && <AnalyticsPage />}
               {tab === "team"        && <TeamSettingsPage />}

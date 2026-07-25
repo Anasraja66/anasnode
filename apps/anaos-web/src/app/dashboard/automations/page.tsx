@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Plus, Play, Pause, Trash2, Edit2, Zap } from "lucide-react";
+import { Plus, Play, Pause, Trash2, Edit2, Zap, History } from "lucide-react";
 
 export default function AutomationsPage() {
   const router = useRouter();
@@ -89,6 +89,13 @@ export default function AutomationsPage() {
                   title={w.isActive ? "Pause Automation" : "Start Automation"}
                 >
                   {w.isActive ? <Pause size={18} /> : <Play size={18} />}
+                </button>
+                <button 
+                  onClick={() => router.push(`/dashboard/workflows/${w.id}/logs`)}
+                  className="p-2 rounded-lg border text-purple-600 border-purple-200 bg-purple-50 hover:bg-purple-100"
+                  title="Execution Logs"
+                >
+                  <History size={18} />
                 </button>
                 <button 
                   onClick={() => router.push(`/dashboard/automations/builder/${w.id}`)}

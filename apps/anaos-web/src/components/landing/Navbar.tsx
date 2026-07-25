@@ -129,6 +129,7 @@ export function Navbar() {
                         <Link
                           key={item.label}
                           href={item.href}
+                          onClick={() => setActiveDropdown(null)}
                           className="flex items-start gap-3 p-2 rounded-lg hover:bg-zinc-50 transition-colors"
                         >
                           <span className="mt-0.5 p-1 rounded-md bg-zinc-50 border border-zinc-200/40">
@@ -169,6 +170,7 @@ export function Navbar() {
                         <Link
                           key={item.label}
                           href={item.href}
+                          onClick={() => setActiveDropdown(null)}
                           className="flex items-start gap-3 p-2 rounded-lg hover:bg-zinc-50 transition-colors"
                         >
                           <span className="mt-0.5 p-1 rounded-md bg-zinc-50 border border-zinc-200/40">
@@ -209,6 +211,7 @@ export function Navbar() {
                         <Link
                           key={item.label}
                           href={item.href}
+                          onClick={() => setActiveDropdown(null)}
                           className="flex items-start gap-3 p-2 rounded-lg hover:bg-zinc-50 transition-colors"
                         >
                           <span className="mt-0.5 p-1 rounded-md bg-zinc-50 border border-zinc-200/40">

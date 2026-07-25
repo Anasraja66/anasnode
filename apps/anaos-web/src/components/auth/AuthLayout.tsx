@@ -53,8 +53,8 @@ export function AuthLayout({
         transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
         className="text-center mb-8 w-full z-10"
       >
-        <Link href="/" className="inline-block mb-6 group">
-          <AnaosLogo className="w-16 h-16 mx-auto transform group-hover:scale-105 transition-transform drop-shadow-md" />
+        <Link href="/" className="inline-block mb-4 group">
+          <AnaosLogo className="w-24 h-24 mx-auto transform group-hover:scale-105 transition-transform drop-shadow-md" />
         </Link>
         <h1 className="text-[22px] sm:text-[24px] font-semibold tracking-tight text-zinc-900 mb-2">{title}</h1>
         <p className="text-[14px] sm:text-[15px] text-zinc-500 font-medium">{subtitle}</p>

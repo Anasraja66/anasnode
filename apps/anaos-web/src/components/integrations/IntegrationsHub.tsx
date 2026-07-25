@@ -107,14 +107,14 @@ const CONNECTORS: Connector[] = [
 
   // Productivity
   { id: "google_calendar", name: "Google Calendar", desc: "Book appointments directly from WhatsApp or form chats.", category: "Productivity", color: "#4285F4", bg: "#4285F418", icon: <Calendar className="w-6 h-6" />, status: "available", href: "/dashboard/integrations/google-calendar" },
-  { id: "slack", name: "Slack", desc: "Send team alerts and notifications to any Slack channel.", category: "Productivity", color: "#4A154B", bg: "#4A154B18", icon: <SlackIcon />, status: "coming_soon" },
-  { id: "notion", name: "Notion", desc: "Create and update Notion pages from automation workflows.", category: "Productivity", color: "#000000", bg: "#00000018", icon: <NotionIcon />, status: "coming_soon" },
-  { id: "google_drive", name: "Google Drive", desc: "Store brochures, invoices and files — share via WhatsApp.", category: "Productivity", color: "#FBBC04", bg: "#FBBC0418", icon: <Folder className="w-6 h-6" />, status: "coming_soon" },
+  { id: "slack", name: "Slack", desc: "Send team alerts and notifications to any Slack channel.", category: "Productivity", color: "#4A154B", bg: "#4A154B18", icon: <SlackIcon />, status: "available" },
+  { id: "notion", name: "Notion", desc: "Create and update Notion pages from automation workflows.", category: "Productivity", color: "#000000", bg: "#00000018", icon: <NotionIcon />, status: "available" },
+  { id: "google_drive", name: "Google Drive", desc: "Store brochures, invoices and files — share via WhatsApp.", category: "Productivity", color: "#FBBC04", bg: "#FBBC0418", icon: <Folder className="w-6 h-6" />, status: "available" },
 
   // Developer
   { id: "webhook", name: "Webhooks", desc: "Trigger any workflow from any external app via HTTP webhook.", category: "Developer", color: "#F59E0B", bg: "#F59E0B18", icon: <Zap className="w-6 h-6" />, status: "available" },
   { id: "http_api", name: "HTTP / REST API", desc: "Call any external API or service from inside a workflow node.", category: "Developer", color: "#F97316", bg: "#F9731618", icon: <Globe className="w-6 h-6" />, status: "available" },
-  { id: "custom_code", name: "Custom Code", desc: "Run custom JavaScript logic inside a workflow step.", category: "Developer", color: "#374151", bg: "#37415118", icon: <Code className="w-6 h-6" />, status: "coming_soon" },
+  { id: "custom_code", name: "Custom Code", desc: "Run custom JavaScript logic inside a workflow step.", category: "Developer", color: "#374151", bg: "#37415118", icon: <Code className="w-6 h-6" />, status: "available" },
 ];
 
 const CATEGORIES = ["All", "Messaging", "CRM", "E-commerce", "AI", "Productivity", "Developer"];
@@ -272,17 +272,13 @@ export function IntegrationsHub() {
                       >
                         Manage
                       </Link>
-                    ) : effectiveStatus === "available" ? (
+                    ) : (
                       <Link
                         href={connector.href || "#"}
-                        className="w-full text-center py-2 rounded-xl bg-[#0A6BFF] hover:bg-blue-600 text-white text-xs font-semibold transition-colors shadow-sm"
+                        className="w-full text-center py-2 rounded-xl bg-[#0A6BFF] hover:bg-blue-600 text-white text-xs font-semibold transition-colors shadow-sm inline-block"
                       >
                         Connect
                       </Link>
-                    ) : (
-                      <div className="w-full text-center py-2 rounded-xl border border-zinc-200 text-zinc-400 text-xs font-semibold cursor-not-allowed">
-                        Coming Soon
-                      </div>
                     )}
                   </motion.div>
                 );

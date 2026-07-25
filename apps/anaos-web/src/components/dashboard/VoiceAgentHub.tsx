@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { Mic, PhoneCall, Save, Settings, Sparkles, Volume2, Key, Globe, Shield, Play } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Mic, PhoneCall, Save, Settings, Sparkles, Volume2, Key, Globe, Shield, Play, Loader2 } from "lucide-react";
 
 export function VoiceAgentHub() {
   const [tab, setTab] = useState<"native" | "advanced">("native");
@@ -16,14 +16,55 @@ export function VoiceAgentHub() {
   const [provider, setProvider] = useState("anaos");
   const [customKey, setCustomKey] = useState("");
 
-  const handleSave = () => {
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch("/api/voice-agent")
+      .then(res => res.json())
+      .then(data => {
+        if (data.success && data.data) {
+          setPrompt(data.data.systemPrompt);
+          setFirstMessage(data.data.firstMessage);
+          setVoiceId(data.data.voiceId);
+          setProvider(data.data.provider);
+          setCustomKey(data.data.customApiKey || "");
+          if (data.data.provider !== "anaos") {
+            setTab("advanced");
+          }
+        }
+      })
+      .finally(() => setLoading(false));
+  }, []);
+
+  const handleSave = async () => {
     setSaving(true);
-    // Mock save delay
-    setTimeout(() => {
+    try {
+      const res = await fetch("/api/voice-agent", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          systemPrompt: prompt,
+          firstMessage,
+          voiceId,
+          provider: tab === "native" ? "anaos" : provider,
+          customApiKey: customKey,
+        }),
+      });
+      if (res.ok) {
+        alert("Voice Agent configuration saved successfully!");
+      } else {
+        alert("Failed to save configuration.");
+      }
+    } catch (e) {
+      alert("Network error.");
+    } finally {
       setSaving(false);
-      alert("Voice Agent configuration saved successfully!");
-    }, 1200);
+    }
   };
+
+  if (loading) {
+    return <div className="flex justify-center p-12"><Loader2 className="w-6 h-6 animate-spin text-purple-600" /></div>;
+  }
 
   return (
     <div className="max-w-6xl mx-auto font-sans pb-12">
@@ -232,9 +273,9 @@ export function VoiceAgentHub() {
             </div>
             {tab === "native" ? (
               <>
-                <h3 className="text-2xl font-bold mb-1">$0.08 <span className="text-sm font-medium opacity-70">/ minute</span></h3>
+                <h3 className="text-2xl font-bold mb-1">$0.10 <span className="text-sm font-medium opacity-70">/ minute</span></h3>
                 <p className="text-sm opacity-80 leading-relaxed mb-4">
-                  Using AnaOS Native Voice is the most cost-effective way to handle calls. Powered by Twilio Media Streams and GPT-4o-mini.
+                  Using AnaOS Native Voice guarantees you get the exact same industry rates as Vapi or Retell, but fully integrated into your CRM. Powered by ElevenLabs and GPT-4o.
                 </p>
               </>
             ) : (

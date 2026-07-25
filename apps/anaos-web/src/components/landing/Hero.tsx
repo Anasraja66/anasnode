@@ -16,7 +16,7 @@ export function Hero() {
   const [showConnectors, setShowConnectors] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [showAdvanced, setShowAdvanced] = useState(false);
-  const [selectedIndustry, setSelectedIndustry] = useState<Industry | null>(null);
+  const [loadingIndustry, setLoadingIndustry] = useState<string | null>(null);
   const [previewData, setPreviewData] = useState<any>(null);
 
   const businessConnectors = [
@@ -305,8 +305,8 @@ export function Hero() {
             />
           </div>
 
-          {!selectedIndustry && (
-            <div className="mt-16">
+          {/* We don't hide it when clicked, we just show a spinner on it */}
+          <div className="mt-16">
               <motion.p 
                 initial={{ opacity: 0, y: 14 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -316,25 +316,41 @@ export function Hero() {
                 Or pick an industry template to start instantly
               </motion.p>
               <IndustrySelector 
-                onSelect={(ind) => {
-                  setSelectedIndustry(ind);
+                loadingId={loadingIndustry}
+                onSelect={async (ind) => {
+                  setLoadingIndustry(ind.id);
                   const prompt = `Build an automated system for my ${ind.name} business. It should: ${ind.workflows.join(', ')}. Enable draft mode for safety.`;
                   setLastPrompt(prompt);
-                  setIsModalOpen(true);
-                  setShowConnectors(false);
                   
-                  const pendingId = "wf_" + Math.random().toString(36).substring(7);
-                  localStorage.setItem("anaos_pending_workflow", JSON.stringify({
-                    id: pendingId,
-                    prompt: prompt,
-                    name: `${ind.name} OS`,
-                    industry: ind.id
-                  }));
-                  window.location.href = `/dashboard/workflows/${pendingId}`;
+                  try {
+                    const res = await fetch("/api/generate/workflow", {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({ prompt }),
+                    });
+                    const data = await res.json();
+                    if (data.success && data.workflow) {
+                      const entry = {
+                        id: "wf_" + Math.random().toString(36).substring(7),
+                        name: data.workflowName || `${ind.name} OS`,
+                        workflow: data.workflow,
+                        industry: ind.id,
+                        prompt,
+                        features: data.features || [],
+                        createdAt: Date.now(),
+                      };
+                      setPreviewData(entry);
+                      // Scroll slightly up so the modal is centered
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }
+                  } catch (e) {
+                    console.error(e);
+                  } finally {
+                    setLoadingIndustry(null);
+                  }
                 }} 
               />
             </div>
-          )}
         </motion.div>
 
         {/* Stable container to prevent layout jumping when ResultCard appears */}

@@ -59,11 +59,9 @@ const industries: Industry[] = [
   }
 ];
 
-export function IndustrySelector({ onSelect }: { onSelect: (industry: Industry) => void }) {
-  const [selected, setSelected] = useState<string | null>(null);
-
+export function IndustrySelector({ onSelect, loadingId }: { onSelect: (industry: Industry) => void, loadingId?: string | null }) {
   const handleSelect = (ind: Industry) => {
-    setSelected(ind.id);
+    if (loadingId) return;
     onSelect(ind);
   };
 
@@ -92,22 +90,26 @@ export function IndustrySelector({ onSelect }: { onSelect: (industry: Industry) 
               whileTap={{ scale: 0.98 }}
               onClick={() => handleSelect(ind)}
               className={`cursor-pointer p-4 rounded-xl border-2 transition-all flex flex-col gap-2 ${
-                selected === ind.id 
+                loadingId === ind.id 
                   ? "border-blue-600 bg-blue-50/50" 
                   : "border-zinc-100 hover:border-zinc-200 bg-white/80 backdrop-blur-md"
-              }`}
+              } ${loadingId ? "opacity-70 pointer-events-none" : ""}`}
             >
               <div className="flex items-center gap-3">
                 <div className={`w-10 h-10 rounded-lg flex items-center justify-center shadow-sm ${
-                  selected === ind.id ? "bg-blue-600 text-white" : "bg-zinc-100 text-zinc-600"
+                  loadingId === ind.id ? "bg-blue-600 text-white" : "bg-zinc-100 text-zinc-600"
                 }`}>
-                  {ind.icon}
+                  {loadingId === ind.id ? (
+                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  ) : (
+                    ind.icon
+                  )}
                 </div>
                 <div className="text-left flex-1">
                   <div className="font-bold text-zinc-900 text-[14px]">{ind.name}</div>
                   <div className="text-[12px] text-zinc-500 line-clamp-1">{ind.description}</div>
                 </div>
-                <ChevronRight className={`w-4 h-4 ${selected === ind.id ? "text-blue-600" : "text-zinc-300"}`} />
+                <ChevronRight className={`w-4 h-4 ${loadingId === ind.id ? "text-blue-600" : "text-zinc-300"}`} />
               </div>
             </motion.div>
           ))}

@@ -1,9 +1,84 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/auth";
-import { prisma } from "@/lib/db";
+import { prisma, isDbAvailable } from "@/lib/db";
 import { normalizeIndustryLabel } from "@/lib/industry/presets";
 import { FastApiClient } from "@/lib/api/fastapi";
 import { decrypt } from "@/lib/crypto";
+
+// ─── Demo data returned when no database is connected ───────────────────────
+const DEMO_RESPONSE = {
+  success: true,
+  user: { id: "demo", email: "demo@anaos.app", name: "Demo User", role: "owner" },
+  workspaces: [
+    {
+      id: "demo-ws",
+      name: "My Business (Demo)",
+      industry: "E-Commerce",
+      slug: "my-business",
+      plan: "pro",
+      automations: [
+        {
+          id: "demo-wf-1",
+          name: "WhatsApp Lead Qualifier",
+          description: "Automatically qualifies inbound WhatsApp leads using AI",
+          type: "whatsapp_flow",
+          enabled: true,
+          status: "active",
+          runs: 142,
+          lastRun: "5 min ago",
+          ctr: "n/a",
+          lastModified: new Date().toLocaleDateString(),
+          nodes: [],
+          edges: [],
+          requiredIntegrations: ["whatsapp"],
+          missingIntegrations: [],
+          requiredProvider: null,
+        },
+        {
+          id: "demo-wf-2",
+          name: "Abandoned Cart Recovery",
+          description: "Recovers lost sales via WhatsApp follow-up messages",
+          type: "whatsapp_flow",
+          enabled: false,
+          status: "draft",
+          runs: 0,
+          lastRun: "Never",
+          ctr: "n/a",
+          lastModified: new Date().toLocaleDateString(),
+          nodes: [],
+          edges: [],
+          requiredIntegrations: ["whatsapp", "shopify"],
+          missingIntegrations: ["shopify"],
+          requiredProvider: "commerce",
+        },
+      ],
+      variables: [],
+    },
+  ],
+  contacts: [
+    { id: "c1", name: "Ahmed Khan", phone: "+923001234567", channel: "whatsapp", stage: "active", lastMessage: "Is the product available?", time: "2 min ago", tags: ["hot-lead"], unreadCount: 1, aiEnabled: true, optedOut: false },
+    { id: "c2", name: "Sara Ali", phone: "+923007654321", channel: "whatsapp", stage: "new", lastMessage: "What are your timings?", time: "15 min ago", tags: [], unreadCount: 0, aiEnabled: true, optedOut: false },
+    { id: "c3", name: "Bilal Raza", phone: "+923009988776", channel: "instagram", stage: "active", lastMessage: "Can I get a discount?", time: "1 hr ago", tags: ["returning"], unreadCount: 0, aiEnabled: false, optedOut: false },
+  ],
+  roiMetrics: {
+    leadsThisWeek: 24,
+    aiReplies: 187,
+    workflowReplies: 64,
+    totalReplies: 251,
+    avgResponseSec: 3,
+    reviewRequestsSent: 12,
+    appointmentsBooked: 8,
+    leadsRecovered: 5,
+  },
+  integrations: {
+    whatsapp: false,
+    instagram: false,
+    facebook: false,
+    shopify: false,
+    smtp: false,
+    fastapi: true,
+  },
+};
 
 function formatRelativeTime(date: Date): string {
   const diff = Date.now() - date.getTime();
@@ -61,6 +136,19 @@ export async function GET(request: Request) {
     const user = session?.user as any;
     if (!user?.accountId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    // ── No database? Return demo data so dashboard doesn't crash ──────
+    if (!isDbAvailable || !prisma) {
+      return NextResponse.json({
+        ...DEMO_RESPONSE,
+        user: {
+          id: user.id || "demo",
+          email: user.email || "demo@anaos.app",
+          name: user.name || "Demo User",
+          role: (user as any).role || "owner",
+        },
+      });
     }
 
     const accountId = user.accountId;

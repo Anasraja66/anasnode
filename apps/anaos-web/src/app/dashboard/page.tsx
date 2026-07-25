@@ -185,49 +185,7 @@ function DashboardHome({ ws, preset, roiMetrics }: { ws: Workspace; preset: Indu
     setDateStr(new Date().toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }));
   }, []);
 
-  const businessConnectors = [
-    { 
-      name: "WhatsApp", 
-      icon: (
-        <svg viewBox="0 0 24 24" className="w-full h-full p-1.5">
-          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L0 24l6.335-1.662c1.72.94 3.659 1.437 5.634 1.437h.005c6.558 0 11.894-5.335 11.897-11.893a11.821 11.821 0 00-3.48-8.413z" fill="#25D366"/>
-        </svg>
-      )
-    },
-    { 
-      name: "Facebook", 
-      icon: (
-        <svg viewBox="0 0 24 24" className="w-full h-full p-1.5">
-          <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.469h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" fill="#1877F2"/>
-        </svg>
-      )
-    },
-    { 
-      name: "Instagram", 
-      icon: (
-        <svg viewBox="0 0 24 24" className="w-full h-full p-1.5">
-          <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z" fill="#E4405F"/>
-        </svg>
-      )
-    },
-    { 
-      name: "Shopify", 
-      icon: (
-        <svg viewBox="0 0 24 24" className="w-full h-full p-1.5">
-          <path fill="#96bf48" d="M18.8 6.4L16.2 0H7.8L5.2 6.4L0 7.8L1.6 22.4L12 24L22.4 22.4L24 7.8L18.8 6.4Z" />
-          <path fill="#fff" d="M12 19.2c-1.6 0-2.8-1-3.2-2l-.6-.8 1.8-.8.4.6c.2.4.8 1 1.6 1 .8 0 1.4-.4 1.4-1s-.4-.8-1.4-1.2c-1.6-.6-2.8-1.2-2.8-2.8 0-1.4 1-2.4 2.6-2.4 1.4 0 2.4.8 2.8 1.6l.6.8-1.8.8-.4-.6c-.2-.4-.6-.8-1.2-.8-.6 0-1 .4-1 .8 0 .4.4.6 1.2 1 1.6.6 2.8 1.2 2.8 2.8 0 1.4-1 2.8-2.8 2.8z" />
-        </svg>
-      )
-    },
-    { 
-      name: "TikTok", 
-      icon: (
-        <svg viewBox="0 0 24 24" className="w-full h-full p-1.5 bg-black rounded-full">
-          <path d="M12.525.02c1.31 0 2.591.26 3.811.73v4.257c-.711-.31-1.481-.47-2.281-.47-2.92 0-5.29 2.37-5.29 5.29 0 .09.01.18.02.27v4.25c-.01-.09-.02-.18-.02-.27 0-5.28 4.29-9.57 9.57-9.57.81 0 1.58.1 2.31.29V.75C19.385.25 18.104 0 16.794 0h-4.269v16.706c0 2.214-1.801 4.015-4.015 4.015s-4.015-1.801-4.015-4.015 1.801-4.015 4.015-4.015c.253 0 .495.029.731.083v-4.172c-.24-.022-.482-.036-.731-.036-4.51 0-8.17 3.66-8.17 8.17 0 4.51 3.66 8.17 8.17 8.17s8.17-3.66 8.17-8.17v-10.08c1.505 1.225 3.411 1.956 5.49 1.956v-4.17c-3.13 0-5.67-2.54-5.67-5.67V.02h-4.25z" fill="#fff" />
-        </svg>
-      )
-    }
-  ];
+  // Note: businessConnectors SVGs removed to use BrandIcon natively
   
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -404,22 +362,22 @@ function DashboardHome({ ws, preset, roiMetrics }: { ws: Workspace; preset: Indu
           {/* LEFT: Messaging Channels */}
           <motion.div 
             variants={itemVariants}
-            className="bg-white border border-zinc-200 rounded-xl p-6 space-y-6 shadow-sm hover:border-zinc-300 transition-all duration-300 flex flex-col group"
+            className="bg-[#DDEBFF] border-none rounded-xl p-6 space-y-6 shadow-sm transition-all duration-300 flex flex-col group"
           >
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-[#FAFAFA] border border-zinc-200 text-zinc-700 flex items-center justify-center shadow-sm">
-                <MessageSquare className="w-4.5 h-4.5" />
+              <div className="w-9 h-9 rounded-lg bg-white text-[#0A6BFF] flex items-center justify-center shadow-sm">
+                <MessageSquare className="w-5 h-5" />
               </div>
-              <h3 className="text-[14px] font-semibold text-zinc-900">Messaging</h3>
+              <h3 className="text-[15px] font-bold text-zinc-900">Messaging</h3>
             </div>
             <div className="space-y-3 flex-1">
               {[
                 { name: "WhatsApp Business", id: "whatsapp", href: "/dashboard/integrations/whatsapp" },
                 { name: "Instagram DM", id: "instagram", href: "/dashboard/integrations/instagram" },
-                { name: "Facebook Messenger", id: "facebook", href: "/dashboard/integrations/facebook" },
+                { name: "FB Messenger", id: "facebook", href: "/dashboard/integrations/facebook" },
                 { name: "Email & SMS", id: "smtp", href: "/dashboard/integrations/email" }
               ].map((c) => (
-                <Link href={c.href} key={c.name} className="bg-white border border-zinc-200 px-4 py-3 rounded-xl text-[13px] font-semibold text-zinc-750 shadow-sm flex items-center justify-between hover:border-sky-300 transition-colors cursor-pointer group/item block">
+                <Link href={c.href} key={c.name} className="bg-white border-none px-4 py-3.5 rounded-xl text-[13px] font-bold text-zinc-800 shadow-sm flex items-center justify-between hover:bg-zinc-50 transition-colors cursor-pointer group/item block">
                   <div className="flex items-center gap-3">
                     <BrandIcon id={c.id} className="w-5 h-5 shrink-0" />
                     <span>{c.name}</span>
@@ -434,17 +392,17 @@ function DashboardHome({ ws, preset, roiMetrics }: { ws: Workspace; preset: Indu
           <div className="flex flex-col gap-6">
             <Link 
               href="/dashboard/integrations"
-              className="bg-white border border-zinc-200 rounded-xl p-6 shadow-sm flex flex-col items-center text-center relative overflow-hidden group hover:border-sky-300 transition-colors block"
+              className="bg-[#DDEBFF] border-none rounded-xl p-6 shadow-sm flex flex-col items-center justify-center text-center relative overflow-hidden group transition-colors block"
             >
-              <div className="w-14 h-14 rounded-full bg-sky-50 flex items-center justify-center text-sky-500 mb-4 relative border border-sky-100 shadow-sm group-hover:scale-110 transition-transform">
-                 <PhoneCall className="w-6 h-6" />
+              <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center text-[#0A6BFF] mb-4 relative shadow-sm group-hover:scale-110 transition-transform">
+                 <PhoneCall className="w-5 h-5" />
               </div>
               <div className="space-y-1">
-                <h3 className="text-[16px] font-semibold text-zinc-900">AnaOS Voice Calling Agent</h3>
+                <h3 className="text-[15px] font-bold text-zinc-900">Voice Agent</h3>
                 <div className="flex items-center justify-center gap-1.5 mt-1">
                   <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                  <p className="text-[11px] font-medium text-emerald-600 uppercase tracking-wider">
-                    INTEGRATION ACTIVE
+                  <p className="text-[10px] font-bold text-emerald-600 uppercase tracking-widest">
+                    ACTIVE
                   </p>
                 </div>
               </div>
@@ -453,22 +411,22 @@ function DashboardHome({ ws, preset, roiMetrics }: { ws: Workspace; preset: Indu
             {/* BOTTOM: Content & Growth */}
             <motion.div 
               variants={itemVariants}
-              className="bg-white border border-zinc-200 rounded-xl p-6 space-y-6 shadow-sm hover:border-zinc-300 transition-all duration-300 flex-1 group"
+              className="bg-[#DDEBFF] border-none rounded-xl p-6 space-y-6 shadow-sm transition-all duration-300 flex-1 group"
             >
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg bg-[#FAFAFA] border border-zinc-200 text-zinc-700 flex items-center justify-center shadow-sm">
-                  <TrendingUp className="w-4.5 h-4.5" />
+                <div className="w-9 h-9 rounded-lg bg-white text-[#0A6BFF] flex items-center justify-center shadow-sm">
+                  <TrendingUp className="w-5 h-5" />
                 </div>
-                <h3 className="text-[14px] font-semibold text-zinc-900">Growth AI</h3>
+                <h3 className="text-[15px] font-bold text-zinc-900">Growth AI</h3>
               </div>
               <div className="grid grid-cols-2 gap-3">
                 {[
-                  { name: "TikTok Ads", id: "tiktok", href: "/dashboard/integrations" },
+                  { name: "TikTok", id: "tiktok", href: "/dashboard/integrations" },
                   { name: "YouTube", id: "youtube", href: "/dashboard/integrations" },
                   { name: "LinkedIn", id: "linkedin", href: "/dashboard/integrations" },
-                  { name: "Blog Posts", id: "blog", href: "/dashboard/integrations" }
+                  { name: "Blog", id: "blog", href: "/dashboard/integrations" }
                 ].map((c) => (
-                  <Link href={c.href} key={c.name} className="bg-white border border-zinc-200 px-3 py-2.5 rounded-xl text-[12px] font-semibold text-zinc-750 shadow-sm flex items-center gap-2.5 hover:border-sky-300 transition-colors cursor-pointer block">
+                  <Link href={c.href} key={c.name} className="bg-white border-none px-3 py-3 rounded-xl text-[12px] font-bold text-zinc-800 shadow-sm flex items-center gap-2.5 hover:bg-zinc-50 transition-colors cursor-pointer block">
                     <div className="flex items-center gap-2.5">
                       <BrandIcon id={c.id} className="w-5 h-5 shrink-0" />
                       <span className="truncate">{c.name}</span>
@@ -482,13 +440,13 @@ function DashboardHome({ ws, preset, roiMetrics }: { ws: Workspace; preset: Indu
           {/* RIGHT: Business Integrations */}
           <motion.div 
             variants={itemVariants}
-            className="bg-white border border-zinc-200 rounded-xl p-6 space-y-6 shadow-sm hover:border-zinc-300 transition-all duration-300 flex flex-col group"
+            className="bg-[#DDEBFF] border-none rounded-xl p-6 space-y-6 shadow-sm transition-all duration-300 flex flex-col group"
           >
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-[#FAFAFA] border border-zinc-200 text-zinc-700 flex items-center justify-center shadow-sm">
-                <Layers className="w-4.5 h-4.5" />
+              <div className="w-9 h-9 rounded-lg bg-white text-[#0A6BFF] flex items-center justify-center shadow-sm">
+                <Layers className="w-5 h-5" />
               </div>
-              <h3 className="text-[14px] font-semibold text-zinc-900">Integrations</h3>
+              <h3 className="text-[15px] font-bold text-zinc-900">Integrations</h3>
             </div>
             <div className="space-y-3 flex-1">
               {[
@@ -497,12 +455,12 @@ function DashboardHome({ ws, preset, roiMetrics }: { ws: Workspace; preset: Indu
                 { name: "HubSpot CRM", id: "hubspot", href: "/dashboard/integrations" },
                 { name: "Stripe Payments", id: "stripe", href: "/dashboard/integrations" }
               ].map((c) => (
-                <Link href={c.href} key={c.name} className="bg-white border border-zinc-200 px-4 py-3 rounded-xl text-[13px] font-semibold text-zinc-750 shadow-sm flex items-center justify-between hover:border-sky-300 transition-colors cursor-pointer group/item block">
+                <Link href={c.href} key={c.name} className="bg-white border-none px-4 py-3.5 rounded-xl text-[13px] font-bold text-zinc-800 shadow-sm flex items-center justify-between hover:bg-zinc-50 transition-colors cursor-pointer group/item block">
                   <div className="flex items-center gap-3">
                     <BrandIcon id={c.id} className="w-5 h-5 shrink-0" />
                     <span>{c.name}</span>
                   </div>
-                  <ArrowUpRight className="w-4 h-4 text-zinc-400 group-hover/item:text-sky-500 transition-colors" />
+                  <ArrowUpRight className="w-4 h-4 text-zinc-400 group-hover/item:text-zinc-600 transition-colors" />
                 </Link>
               ))}
             </div>

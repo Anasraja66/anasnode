@@ -81,6 +81,7 @@ import { MaintenanceOrdersPage } from "@/components/dashboard/industries/mainten
 import { ITTicketsPage } from "@/components/dashboard/industries/it/ITTicketsPage";
 import { FencingEstimatesPage } from "@/components/dashboard/industries/fencing/FencingEstimatesPage";
 import { BookingsHub } from "@/components/dashboard/BookingsHub";
+import { TemplatesHub } from "@/components/dashboard/TemplatesHub";
 
 // â”€â”€â”€ Types â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 

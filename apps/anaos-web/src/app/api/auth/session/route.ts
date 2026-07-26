@@ -56,8 +56,8 @@ export async function POST(req: NextRequest) {
         if (!accountId) {
           const account = await prisma.account.create({
             data: {
+              email: email,
               name: `${name}'s Account`,
-              domain: domain || null,
             },
           });
           accountId = account.id;
@@ -76,8 +76,8 @@ export async function POST(req: NextRequest) {
         // Create user
         dbUser = await prisma.user.create({
           data: {
-            id: uid, // Use Firebase UID as Postgres ID where possible, though prisma cuid is default. Let's just store it.
             email,
+            password: uid, // Store Firebase UID as placeholder password
             name,
             role: "owner",
             accountId,

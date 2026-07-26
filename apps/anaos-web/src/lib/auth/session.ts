@@ -12,7 +12,7 @@ export type SessionUser = {
 
 export async function getSessionUser(): Promise<SessionUser | null> {
   try {
-    const cookieStore = cookies();
+    const cookieStore = await cookies();
     const sessionCookie = cookieStore.get("__session")?.value;
     if (!sessionCookie) return null;
 

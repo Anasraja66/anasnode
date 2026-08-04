@@ -23,6 +23,10 @@ import { WorkflowSidebar } from './WorkflowSidebar';
 
 const nodeTypes = {
   customNode: CustomNode,
+  trigger: CustomNode,
+  action: CustomNode,
+  condition: CustomNode,
+  ai_reply: CustomNode,
 };
 
 export interface WorkflowData {

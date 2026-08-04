@@ -9,33 +9,31 @@ interface NodeData {
   description?: string;
 }
 
-export function CustomNode({ data }: { data: NodeData }) {
-  const isTrigger = data.type === "trigger";
+export function CustomNode({ data, type }: { data: any, type: string }) {
+  // Map backend types if they don't match exactly
+  const nodeType = data.type === 'trigger' || type === 'trigger' ? 'trigger' 
+                 : type === 'condition' ? 'condition' 
+                 : 'action';
+  
+  const isTrigger = nodeType === "trigger";
+
+  const appName = data.app || data.type || data.actionType || "unknown";
+  const label = data.label || data.title || "Unknown Node";
+  const desc = data.description || `Execute ${appName} step`;
 
   // Determine icon based on app
   const getIcon = () => {
-    switch (data.app?.toLowerCase()) {
-      case "whatsapp":
-        return <BrandIcon id="whatsapp" className="w-6 h-6" />;
-      case "slack":
-        return <BrandIcon id="slack" className="w-6 h-6" />;
-      case "hubspot":
-        return <BrandIcon id="hubspot" className="w-6 h-6" />;
-      case "notion":
-        return <BrandIcon id="notion" className="w-6 h-6" />;
-      case "openai":
-        return <BrandIcon id="openai" className="w-6 h-6" />;
-      case "schedule":
-        return <Clock className="w-6 h-6 text-purple-500" />;
-      case "webhook":
-        return <Zap className="w-6 h-6 text-orange-500" />;
-      case "email":
-        return <Mail className="w-6 h-6 text-blue-500" />;
-      case "ai":
-        return <Bot className="w-6 h-6 text-emerald-500" />;
-      default:
-        return <Database className="w-6 h-6 text-zinc-500" />;
-    }
+    const a = appName.toLowerCase();
+    if (a.includes("whatsapp")) return <BrandIcon id="whatsapp" className="w-6 h-6" />;
+    if (a.includes("slack")) return <BrandIcon id="slack" className="w-6 h-6" />;
+    if (a.includes("hubspot") || a.includes("crm")) return <BrandIcon id="hubspot" className="w-6 h-6" />;
+    if (a.includes("notion")) return <BrandIcon id="notion" className="w-6 h-6" />;
+    if (a.includes("openai") || a.includes("ai")) return <BrandIcon id="openai" className="w-6 h-6" />;
+    if (a.includes("schedule")) return <Clock className="w-6 h-6 text-purple-500" />;
+    if (a.includes("webhook")) return <Zap className="w-6 h-6 text-orange-500" />;
+    if (a.includes("email")) return <Mail className="w-6 h-6 text-blue-500" />;
+    if (type === "condition") return <Zap className="w-6 h-6 text-purple-500" />;
+    return <Database className="w-6 h-6 text-zinc-500" />;
   };
 
   // Determine styles based on type
@@ -49,7 +47,7 @@ export function CustomNode({ data }: { data: NodeData }) {
         tagText: "text-green-700",
       };
     }
-    if (data.type === "condition") {
+    if (nodeType === "condition") {
       return {
         border: "border-purple-500/30",
         bg: "bg-white",
@@ -87,17 +85,17 @@ export function CustomNode({ data }: { data: NodeData }) {
         </div>
         <div>
           <div className="font-bold text-[14px] text-zinc-900 leading-tight">
-            {data.label}
+            {label}
           </div>
           <div className="text-[12px] text-zinc-500 font-medium mt-0.5 line-clamp-1">
-            {data.description || `Execute ${data.app} step`}
+            {desc}
           </div>
         </div>
       </div>
 
       <div className="mt-3 flex justify-between items-center">
         <span className={`text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider ${styles.tagBg} ${styles.tagText}`}>
-          {data.type}
+          {nodeType}
         </span>
       </div>
 

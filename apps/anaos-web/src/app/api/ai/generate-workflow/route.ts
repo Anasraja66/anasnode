@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server";
-import { v4 as uuidv4 } from "uuid";
 
 // Very basic keyword-based matching for now. In a real scenario, this would call OpenAI/Gemini.
 export async function POST(req: Request) {
@@ -14,7 +13,7 @@ export async function POST(req: Request) {
     
     // Baseline workflow structure
     const newWorkflow = {
-      id: uuidv4(),
+      id: "node_" + crypto.randomUUID(),
       name: "AI Generated Workflow",
       nodes: [
         {
@@ -40,7 +39,7 @@ export async function POST(req: Request) {
 
     // Condition Node
     if (p.includes("if") || p.includes("condition") || p.includes("score")) {
-      const condId = "condition_" + uuidv4().slice(0,4);
+      const condId = "condition_" + crypto.randomUUID().slice(0,4);
       newWorkflow.nodes.push({
         id: condId,
         type: "condition",
@@ -63,7 +62,7 @@ export async function POST(req: Request) {
 
     // AI Reply Node
     if (p.includes("ai") || p.includes("reply") || p.includes("respond")) {
-      const aiId = "ai_" + uuidv4().slice(0,4);
+      const aiId = "ai_" + crypto.randomUUID().slice(0,4);
       newWorkflow.nodes.push({
         id: aiId,
         type: "ai_reply",
@@ -88,7 +87,7 @@ export async function POST(req: Request) {
 
     // CRM/Sync Node
     if (p.includes("crm") || p.includes("lead") || p.includes("sync")) {
-      const syncId = "sync_" + uuidv4().slice(0,4);
+      const syncId = "sync_" + crypto.randomUUID().slice(0,4);
       newWorkflow.nodes.push({
         id: syncId,
         type: "action",

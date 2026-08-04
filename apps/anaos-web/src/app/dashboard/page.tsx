@@ -456,7 +456,7 @@ function DashboardHome({ ws, preset, roiMetrics, user }: { ws: Workspace; preset
                 { name: "FB Messenger", id: "facebook", href: "/dashboard/integrations/connect/facebook" },
                 { name: "Email & SMS", id: "smtp", href: "/dashboard/integrations/connect/smtp" }
               ].map((c) => {
-                const isConnected = recentWorkflow?.requiredIntegrations?.map((i: string) => i.toLowerCase()).includes(c.id);
+                const isConnected = (recentWorkflow?.requiredIntegrations || []).map((i: string) => i.toLowerCase()).includes(c.id);
                 return (
                   <Link href={c.href} key={c.name} className="bg-white border-none px-4 py-3.5 rounded-xl text-[13px] font-bold text-zinc-800 shadow-sm flex items-center justify-between hover:bg-zinc-50 transition-colors cursor-pointer group/item block">
                     <div className="flex items-center gap-3">
@@ -484,7 +484,7 @@ function DashboardHome({ ws, preset, roiMetrics, user }: { ws: Workspace; preset
               className="bg-[#DDEBFF] border-none rounded-xl p-6 shadow-sm flex flex-col items-center justify-center text-center relative overflow-hidden group transition-colors block"
             >
               {(() => {
-                const isPhoneConnected = recentWorkflow?.requiredIntegrations?.map((i: string) => i.toLowerCase()).includes("phone") || recentWorkflow?.requiredIntegrations?.map((i: string) => i.toLowerCase()).includes("voice");
+                const isPhoneConnected = (recentWorkflow?.requiredIntegrations || []).map((i: string) => i.toLowerCase()).includes("phone") || (recentWorkflow?.requiredIntegrations || []).map((i: string) => i.toLowerCase()).includes("voice");
                 return (
                   <>
                     <div className="w-12 h-12 rounded-full bg-white text-[#0A6BFF] flex items-center justify-center mb-4 relative shadow-sm group-hover:scale-110 transition-transform">
@@ -526,7 +526,7 @@ function DashboardHome({ ws, preset, roiMetrics, user }: { ws: Workspace; preset
                   { name: "LinkedIn", id: "linkedin", href: "/dashboard/integrations" },
                   { name: "Blog", id: "blog", href: "/dashboard/integrations" }
                 ].map((c) => {
-                  const isConnected = recentWorkflow?.requiredIntegrations?.map((i: string) => i.toLowerCase()).includes(c.id);
+                  const isConnected = (recentWorkflow?.requiredIntegrations || []).map((i: string) => i.toLowerCase()).includes(c.id);
                   return (
                     <Link href={c.href} key={c.name} className="bg-white border-none px-3 py-3 rounded-xl text-[12px] font-bold text-zinc-800 shadow-sm flex items-center gap-2.5 hover:bg-zinc-50 transition-colors cursor-pointer block">
                       <div className="flex items-center gap-2.5">
@@ -558,8 +558,8 @@ function DashboardHome({ ws, preset, roiMetrics, user }: { ws: Workspace; preset
                 { name: "HubSpot CRM", id: "hubspot", href: "/dashboard/integrations/connect/hubspot" },
                 { name: "Stripe Payments", id: "stripe", href: "/dashboard/integrations/connect/stripe" }
               ].map((c) => {
-                const isConnected = recentWorkflow?.requiredIntegrations?.map((i: string) => i.toLowerCase()).includes(c.id) ||
-                  (c.id === "googlecalendar" && recentWorkflow?.requiredIntegrations?.map((i: string) => i.toLowerCase()).includes("calendar"));
+                const isConnected = (recentWorkflow?.requiredIntegrations || []).map((i: string) => i.toLowerCase()).includes(c.id) ||
+                  (c.id === "googlecalendar" && (recentWorkflow?.requiredIntegrations || []).map((i: string) => i.toLowerCase()).includes("calendar"));
                 return (
                   <Link href={c.href} key={c.name} className="bg-white border-none px-4 py-3.5 rounded-xl text-[13px] font-bold text-zinc-800 shadow-sm flex items-center justify-between hover:bg-zinc-50 transition-colors cursor-pointer group/item block">
                     <div className="flex items-center gap-3">

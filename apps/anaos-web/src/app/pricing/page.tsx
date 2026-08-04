@@ -4,78 +4,85 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { Navbar } from "@/components/landing/Navbar";
 import { Footer } from "@/components/landing/Footer";
-import { Check, Zap, Building2, Rocket, ChevronDown, ChevronUp, ArrowRight } from "lucide-react";
+import { Check, Zap, Building2, Rocket, ChevronDown, ChevronUp, ArrowRight, Shield } from "lucide-react";
 import Link from "next/link";
 
 const plans = [
   {
-    name: "Starter",
+    name: "Free",
     icon: Zap,
-    color: "#0A6BFF",
-    monthly: 29,
-    annual: 23,
-    desc: "Perfect for small businesses getting started with automation.",
+    color: "#64748B",
+    monthly: 0,
+    annual: 0,
+    desc: "Basic features to help you start automating for free.",
     badge: null,
     features: [
       "1 Workspace",
-      "1,000 automation runs/month",
-      "WhatsApp + Email channels",
-      "Basic AI responses (Groq)",
+      "500 automation runs/month",
+      "Basic Integration: WhatsApp, Facebook, Instagram",
+      "Basic CRM Sync: HubSpot, Google Sheets",
       "3 active workflows",
-      "5 team members",
       "Community support",
-      "Standard templates",
     ],
-    cta: "Start Free Trial",
+    cta: "Start Free",
     ctaHref: "/signup",
   },
   {
-    name: "Growth",
+    name: "Starter",
     icon: Rocket,
-    color: "#7C3AED",
-    monthly: 79,
-    annual: 63,
-    desc: "For growing teams that need more power and all integrations.",
+    color: "#0A6BFF",
+    monthly: 15,
+    annual: 12,
+    desc: "Perfect for growing businesses that need AI and broadcasting.",
     badge: "Most Popular",
     features: [
       "3 Workspaces",
-      "10,000 automation runs/month",
-      "All channels (WhatsApp, Instagram, Email, SMS, Voice)",
-      "Advanced AI (Claude + GPT-4)",
-      "Unlimited workflows",
-      "25 team members",
+      "5,000 automation runs/month",
+      "Full Integration: WhatsApp, FB, Insta, HubSpot",
+      "Broadcasting messages",
+      "Payments: Stripe, PayPal",
       "Priority email support",
-      "All integrations (Shopify, HubSpot, Stripe...)",
-      "Custom workflow templates",
-      "Analytics & reporting",
     ],
     cta: "Start Free Trial",
     ctaHref: "/signup",
   },
   {
-    name: "Scale",
+    name: "Pro",
     icon: Building2,
+    color: "#7C3AED",
+    monthly: 49,
+    annual: 39,
+    desc: "Everything you need: voice agents and all app integrations.",
+    badge: null,
+    features: [
+      "All-in-one automation",
+      "50,000 automation runs/month",
+      "Voice Agents",
+      "All Integrations (Shopify, Slack, Notion, etc.)",
+      "Advanced AI (Claude + GPT-4)",
+      "Custom workflow templates",
+    ],
+    cta: "Start Free Trial",
+    ctaHref: "/signup",
+  },
+  {
+    name: "Custom",
+    icon: Shield,
     color: "#059669",
-    monthly: 199,
-    annual: 159,
-    desc: "For agencies and enterprises that need full control.",
+    monthly: "Custom",
+    annual: "Custom",
+    desc: "All-over automation tailored exactly to your enterprise needs.",
     badge: null,
     features: [
       "Unlimited Workspaces",
       "Unlimited automation runs",
-      "All channels + custom channels",
       "Custom AI model training",
-      "Unlimited workflows",
-      "Unlimited team members",
+      "White-label options",
       "Dedicated account manager",
-      "White-label option",
-      "Custom integrations",
-      "SLA guarantee",
-      "On-premise option",
-      "API access (full)",
+      "SLA guarantees",
     ],
-    cta: "Contact Sales",
-    ctaHref: "/community",
+    cta: "Chat on WhatsApp",
+    ctaHref: "https://wa.me/447000000000",
   },
 ];
 
@@ -107,22 +114,15 @@ const faqs = [
 ];
 
 const comparison = [
-  { feature: "Workspaces", starter: "1", growth: "3", scale: "Unlimited" },
-  { feature: "Automation runs/month", starter: "1,000", growth: "10,000", scale: "Unlimited" },
-  { feature: "Active workflows", starter: "3", growth: "Unlimited", scale: "Unlimited" },
-  { feature: "Team members", starter: "5", growth: "25", scale: "Unlimited" },
-  { feature: "WhatsApp", starter: "✓", growth: "✓", scale: "✓" },
-  { feature: "Instagram DMs", starter: "—", growth: "✓", scale: "✓" },
-  { feature: "Email / SMTP", starter: "✓", growth: "✓", scale: "✓" },
-  { feature: "SMS (Twilio)", starter: "—", growth: "✓", scale: "✓" },
-  { feature: "Voice AI calls", starter: "—", growth: "✓", scale: "✓" },
-  { feature: "Shopify integration", starter: "—", growth: "✓", scale: "✓" },
-  { feature: "HubSpot / Salesforce", starter: "—", growth: "✓", scale: "✓" },
-  { feature: "Stripe integration", starter: "—", growth: "✓", scale: "✓" },
-  { feature: "Custom AI training", starter: "—", growth: "—", scale: "✓" },
-  { feature: "White-label", starter: "—", growth: "—", scale: "✓" },
-  { feature: "API access", starter: "Limited", growth: "Full", scale: "Full" },
-  { feature: "Support", starter: "Community", growth: "Priority email", scale: "Dedicated manager" },
+  { feature: "Workspaces", free: "1", starter: "3", pro: "Unlimited", custom: "Unlimited" },
+  { feature: "Automation runs", free: "500", starter: "5,000", pro: "50,000", custom: "Unlimited" },
+  { feature: "Active workflows", free: "3", starter: "10", pro: "Unlimited", custom: "Unlimited" },
+  { feature: "WhatsApp", free: "✓ (Basic)", starter: "✓", pro: "✓", custom: "✓" },
+  { feature: "Broadcasting", free: "—", starter: "✓", pro: "✓", custom: "✓" },
+  { feature: "AI Integration", free: "—", starter: "✓ (Basic)", pro: "✓ (Advanced)", custom: "✓ (Custom Models)" },
+  { feature: "Voice Agents", free: "—", starter: "—", pro: "✓", custom: "✓" },
+  { feature: "All Integrations", free: "—", starter: "—", pro: "✓", custom: "✓" },
+  { feature: "Support", free: "Community", starter: "Priority Email", pro: "24/7 Chat", custom: "Dedicated Manager" },
 ];
 
 export default function PricingPage() {
@@ -173,8 +173,8 @@ export default function PricingPage() {
         </section>
 
         {/* Pricing cards */}
-        <section className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto mb-24">
-          <div className="grid md:grid-cols-3 gap-6 lg:gap-8">
+        <section className="px-4 sm:px-6 lg:px-8 max-w-[1400px] mx-auto mb-24">
+          <div className="grid md:grid-cols-2 xl:grid-cols-4 gap-6">
             {plans.map((plan, i) => {
               const Icon = plan.icon;
               const price = annual ? plan.annual : plan.monthly;
@@ -206,14 +206,25 @@ export default function PricingPage() {
                     <p className="text-sm text-zinc-500">{plan.desc}</p>
                   </div>
 
-                  <div className="mb-8">
+                  <div className="mb-8 h-20">
                     <div className="flex items-end gap-1">
-                      <span className="text-5xl font-bold text-zinc-900">${price}</span>
-                      <span className="text-zinc-500 mb-2">/month</span>
+                      {price === "Custom" ? (
+                        <span className="text-4xl font-bold text-zinc-900">Custom</span>
+                      ) : (
+                        <>
+                          <span className="text-5xl font-bold text-zinc-900">${price}</span>
+                          <span className="text-zinc-500 mb-2">/month</span>
+                        </>
+                      )}
                     </div>
-                    {annual && (
+                    {annual && price !== "Custom" && price !== 0 && (
                       <p className="text-xs text-emerald-600 font-semibold mt-1">
-                        Billed annually (${price * 12}/yr)
+                        Billed annually (${(price as number) * 12}/yr)
+                      </p>
+                    )}
+                    {price === 0 && (
+                      <p className="text-xs text-zinc-500 font-medium mt-1">
+                        Forever free
                       </p>
                     )}
                   </div>
@@ -245,25 +256,27 @@ export default function PricingPage() {
         </section>
 
         {/* Comparison Table */}
-        <section className="px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto mb-24">
+        <section className="px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto mb-24">
           <h2 className="text-3xl font-bold text-zinc-900 text-center mb-12">Compare plans</h2>
           <div className="rounded-2xl border border-zinc-200 overflow-hidden">
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-zinc-50 border-b border-zinc-200">
                   <th className="text-left px-6 py-4 font-semibold text-zinc-900">Feature</th>
-                  <th className="px-6 py-4 font-semibold text-zinc-900 text-center">Starter</th>
-                  <th className="px-6 py-4 font-semibold text-violet-700 text-center bg-violet-50">Growth</th>
-                  <th className="px-6 py-4 font-semibold text-zinc-900 text-center">Scale</th>
+                  <th className="px-6 py-4 font-semibold text-zinc-900 text-center">Free</th>
+                  <th className="px-6 py-4 font-semibold text-blue-700 text-center bg-blue-50/50">Starter</th>
+                  <th className="px-6 py-4 font-semibold text-violet-700 text-center">Pro</th>
+                  <th className="px-6 py-4 font-semibold text-emerald-700 text-center">Custom</th>
                 </tr>
               </thead>
               <tbody>
                 {comparison.map((row, i) => (
                   <tr key={row.feature} className={`border-b border-zinc-100 ${i % 2 === 0 ? "bg-white" : "bg-zinc-50/50"}`}>
                     <td className="px-6 py-3.5 font-medium text-zinc-700">{row.feature}</td>
-                    <td className="px-6 py-3.5 text-center text-zinc-600">{row.starter}</td>
-                    <td className="px-6 py-3.5 text-center text-zinc-700 font-medium bg-violet-50/30">{row.growth}</td>
-                    <td className="px-6 py-3.5 text-center text-zinc-600">{row.scale}</td>
+                    <td className="px-6 py-3.5 text-center text-zinc-600">{row.free}</td>
+                    <td className="px-6 py-3.5 text-center text-zinc-700 font-medium bg-blue-50/20">{row.starter}</td>
+                    <td className="px-6 py-3.5 text-center text-zinc-600">{row.pro}</td>
+                    <td className="px-6 py-3.5 text-center text-zinc-600 font-medium">{row.custom}</td>
                   </tr>
                 ))}
               </tbody>

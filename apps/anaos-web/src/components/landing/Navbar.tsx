@@ -5,23 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { 
   Menu, 
   X, 
-  ChevronDown, 
-  BookOpen, 
-  Terminal, 
-  HelpCircle, 
-  Layers, 
-  Database, 
-  ShoppingCart, 
-  Star, 
-  MessageSquare, 
-  FileText, 
-  Bell,
-  Building2,
-  ShoppingBag,
-  Heart,
-  Coffee,
-  Truck,
-  Sparkles
+  ChevronDown
 } from "lucide-react";
 import Link from "next/link";
 import { AnaosLogo } from "@/components/ui/AnaosLogo";
@@ -30,10 +14,10 @@ import { AnaosLogo } from "@/components/ui/AnaosLogo";
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [activeDropdown, setActiveDropdown] = useState<"automations" | "industries" | "resources" | null>(null);
+  const [activeDropdown, setActiveDropdown] = useState<"platform" | "industries" | "resources" | null>(null);
 
   // Mobile navigation expansion state
-  const [mobileAutomationsOpen, setMobileAutomationsOpen] = useState(false);
+  const [mobilePlatformOpen, setMobilePlatformOpen] = useState(false);
   const [mobileIndustriesOpen, setMobileIndustriesOpen] = useState(false);
   const [mobileResourcesOpen, setMobileResourcesOpen] = useState(false);
 
@@ -55,32 +39,38 @@ export function Navbar() {
     };
   }, [mobileOpen]);
 
-  // Automations data (Directly maps to the templates in Industries.tsx)
-  const automations = [
-    { label: "WhatsApp Lead Responder", desc: "Qualify leads & sync to Sheets/CRM", icon: <Database className="w-4 h-4 text-sky-500" />, href: "/automations/whatsapp-lead-responder" },
-    { label: "Abandoned Cart Recoverer", desc: "WhatsApp & SMS checkout reminders", icon: <ShoppingCart className="w-4 h-4 text-rose-500" />, href: "/automations/abandoned-cart-recoverer" },
-    { label: "Google Reviews Collector", desc: "Auto-request post-purchase 5-star ratings", icon: <Star className="w-4 h-4 text-amber-500" />, href: "/automations/google-reviews-collector" },
-    { label: "AI Helpdesk Support Bot", desc: "24/7 automated FAQ response on WhatsApp", icon: <MessageSquare className="w-4 h-4 text-emerald-500" />, href: "/automations/ai-helpdesk-support-bot" },
-    { label: "Billing & Stripe Sync", desc: "Auto-send PDF invoices to paid clients", icon: <FileText className="w-4 h-4 text-indigo-500" />, href: "/automations/billing-stripe-sync" },
-    { label: "Appointment Reminders", desc: "Reduce no-shows with scheduling alerts", icon: <Bell className="w-4 h-4 text-pink-500" />, href: "/automations/appointment-reminders" },
+  // Platform Features data
+  const platformFeatures = [
+    { label: "AI Adoption Stack", href: "/platform/ai-adoption-stack" },
+    { label: "AI Agents", href: "/platform/ai-agents" },
+    { label: "Control & Governance", href: "/ai-governance" },
+    { label: "Deployment & Cost", href: "/platform/deployment-cost" },
+  ];
+
+  const platformIntegrations = [
+    { label: "Gmail", icon: "https://img.icons8.com/fluency/48/new-post.png", href: "/dashboard/integrations" },
+    { label: "OpenAI", icon: "https://img.icons8.com/color/48/chatgpt.png", href: "/dashboard/integrations" },
+    { label: "Slack", icon: "https://img.icons8.com/color/48/slack-new.png", href: "/dashboard/integrations" },
+    { label: "Notion", icon: "https://img.icons8.com/color/48/notion--v1.png", href: "/dashboard/integrations" },
+    { label: "HubSpot", icon: "https://cdn.simpleicons.org/hubspot/ff7a59", href: "/dashboard/integrations" },
   ];
 
   // Industries data
   const industries = [
-    { label: "E-commerce & Retail", desc: "Checkout drops & review boosters", icon: <ShoppingBag className="w-4 h-4 text-rose-500" />, href: "/industries/e-commerce-and-retail" },
-    { label: "Real Estate & Agencies", desc: "Buyer prequalification & touring schedules", icon: <Building2 className="w-4 h-4 text-amber-500" />, href: "/industries/real-estate-and-agencies" },
-    { label: "Healthcare & Wellness", desc: "Patient reminders & followup campaigns", icon: <Heart className="w-4 h-4 text-emerald-500" />, href: "/industries/healthcare-and-wellness" },
-    { label: "Restaurants & Food", desc: "Digital interactive menus & table bookings", icon: <Coffee className="w-4 h-4 text-sky-500" />, href: "/industries/restaurants-and-food" },
-    { label: "Logistics & Dispatch", desc: "Shipping alerts & instant invoice triggers", icon: <Truck className="w-4 h-4 text-indigo-500" />, href: "/industries/logistics-and-dispatch" },
-    { label: "SaaS & Tech Startups", desc: "Onboarding workflows & webhook routing", icon: <Sparkles className="w-4 h-4 text-purple-500" />, href: "/industries/saas-and-tech-startups" },
+    { label: "E-commerce & Retail", href: "/industries/e-commerce-and-retail" },
+    { label: "Real Estate & Agencies", href: "/industries/real-estate-and-agencies" },
+    { label: "Healthcare & Wellness", href: "/industries/healthcare-and-wellness" },
+    { label: "Restaurants & Food", href: "/industries/restaurants-and-food" },
+    { label: "Logistics & Dispatch", href: "/industries/logistics-and-dispatch" },
+    { label: "SaaS & Tech Startups", href: "/industries/saas-and-tech-startups" },
   ];
 
   // Resources data
   const resources = [
-    { label: "Documentation", desc: "Quickstart guides & workflow setups", icon: <BookOpen className="w-4 h-4 text-zinc-500" />, href: "/resources/documentation" },
-    { label: "API Reference", desc: "Integrate Anaos into your systems", icon: <Terminal className="w-4 h-4 text-blue-500" />, href: "/resources/api-reference" },
-    { label: "Templates", desc: "Pre-built WhatsApp & CRM automation flows", icon: <Layers className="w-4 h-4 text-purple-500" />, href: "/resources/templates" },
-    { label: "Help Center", desc: "FAQs, chat support, and documentation", icon: <HelpCircle className="w-4 h-4 text-teal-500" />, href: "/resources/help-center" },
+    { label: "Docs", href: "/resources/documentation" },
+    { label: "Support Forum", href: "/community" },
+    { label: "YouTube", href: "https://youtube.com" },
+    { label: "Discord", href: "https://discord.com" },
   ];
 
   return (
@@ -105,42 +95,67 @@ export function Navbar() {
             {/* Desktop Navigation Links */}
             <nav className="hidden md:flex items-center gap-8 text-[14px] text-zinc-600 font-medium">
               
-              {/* Automations Dropdown */}
+              {/* Platform Dropdown */}
               <div 
                 className="relative py-4 cursor-pointer"
-                onMouseEnter={() => setActiveDropdown("automations")}
+                onMouseEnter={() => setActiveDropdown("platform")}
                 onMouseLeave={() => setActiveDropdown(null)}
               >
                 <button className="flex items-center gap-1.5 hover:text-[#0A6BFF] transition-colors focus:outline-none">
-                  Automations
-                  <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${activeDropdown === "automations" ? "rotate-180" : ""}`} />
+                  Platform
+                  <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${activeDropdown === "platform" ? "rotate-180" : ""}`} />
                 </button>
 
                 <AnimatePresence>
-                  {activeDropdown === "automations" && (
+                  {activeDropdown === "platform" && (
                     <motion.div
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: 10 }}
                       transition={{ duration: 0.15 }}
-                      className="absolute left-0 top-[44px] w-[560px] bg-white rounded-xl border border-zinc-200/80 shadow-xl p-3.5 z-50 grid grid-cols-2 gap-2"
+                      className="absolute left-0 top-[44px] w-[560px] bg-white rounded-xl border border-zinc-200/80 shadow-xl p-6 z-50 flex gap-8"
                     >
-                      {automations.map((item) => (
-                        <Link
-                          key={item.label}
-                          href={item.href}
+                      {/* Left Column - Platform Features */}
+                      <div className="flex-1 flex flex-col gap-1 border-r border-zinc-100 pr-6">
+                        {platformFeatures.map((item) => (
+                          <Link 
+                            key={item.label}
+                            href={item.href} 
+                            onClick={() => setActiveDropdown(null)}
+                            className="flex items-center gap-3 p-2.5 rounded-lg hover:bg-zinc-50 transition-colors group"
+                          >
+                            <div className="w-1.5 h-1.5 bg-zinc-700 rounded-sm group-hover:bg-[#0A6BFF] transition-colors"></div>
+                            <span className="text-[14px] font-semibold text-zinc-900 group-hover:text-[#0A6BFF] transition-colors">{item.label}</span>
+                          </Link>
+                        ))}
+                      </div>
+
+                      {/* Right Column - Integrations */}
+                      <div className="w-[220px] flex flex-col">
+                        <div className="text-[11px] font-bold text-zinc-400 uppercase tracking-widest mb-3 px-2">
+                          756+ INTEGRATIONS
+                        </div>
+                        <div className="flex flex-col gap-1 mb-3">
+                          {platformIntegrations.map((integration) => (
+                            <Link 
+                              key={integration.label}
+                              href={integration.href} 
+                              onClick={() => setActiveDropdown(null)}
+                              className="flex items-center gap-3 p-2 rounded-lg hover:bg-zinc-50 transition-colors"
+                            >
+                              <img src={integration.icon} alt={integration.label} className="w-4 h-4 object-contain" />
+                              <span className="text-[13px] font-medium text-zinc-700">{integration.label}</span>
+                            </Link>
+                          ))}
+                        </div>
+                        <Link 
+                          href="/dashboard/integrations" 
                           onClick={() => setActiveDropdown(null)}
-                          className="flex items-start gap-3 p-2 rounded-lg hover:bg-zinc-50 transition-colors"
+                          className="px-2 text-[12px] font-semibold text-[#0A6BFF] hover:underline flex items-center gap-1"
                         >
-                          <span className="mt-0.5 p-1 rounded-md bg-zinc-50 border border-zinc-200/40">
-                            {item.icon}
-                          </span>
-                          <div>
-                            <div className="text-[13px] font-semibold text-[#111827]">{item.label}</div>
-                            <div className="text-[11px] text-zinc-500 leading-normal mt-0.5">{item.desc}</div>
-                          </div>
+                          View all <ChevronDown className="w-3 h-3 -rotate-90" />
                         </Link>
-                      ))}
+                      </div>
                     </motion.div>
                   )}
                 </AnimatePresence>
@@ -164,22 +179,17 @@ export function Navbar() {
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: 10 }}
                       transition={{ duration: 0.15 }}
-                      className="absolute left-0 top-[44px] w-[560px] bg-white rounded-xl border border-zinc-200/80 shadow-xl p-3.5 z-50 grid grid-cols-2 gap-2"
+                      className="absolute left-0 top-[44px] w-[240px] bg-white rounded-xl border border-zinc-200/80 shadow-xl p-3 z-50 flex flex-col gap-1"
                     >
                       {industries.map((item) => (
                         <Link
                           key={item.label}
                           href={item.href}
                           onClick={() => setActiveDropdown(null)}
-                          className="flex items-start gap-3 p-2 rounded-lg hover:bg-zinc-50 transition-colors"
+                          className="flex items-center gap-3 p-2.5 rounded-lg hover:bg-zinc-50 transition-colors group"
                         >
-                          <span className="mt-0.5 p-1 rounded-md bg-zinc-50 border border-zinc-200/40">
-                            {item.icon}
-                          </span>
-                          <div>
-                            <div className="text-[13px] font-semibold text-[#111827]">{item.label}</div>
-                            <div className="text-[11px] text-zinc-500 leading-normal mt-0.5">{item.desc}</div>
-                          </div>
+                          <div className="w-1.5 h-1.5 bg-zinc-700 rounded-sm group-hover:bg-[#0A6BFF] transition-colors"></div>
+                          <span className="text-[14px] font-semibold text-zinc-900 group-hover:text-[#0A6BFF] transition-colors">{item.label}</span>
                         </Link>
                       ))}
                     </motion.div>
@@ -205,22 +215,17 @@ export function Navbar() {
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: 10 }}
                       transition={{ duration: 0.15 }}
-                      className="absolute left-0 top-[44px] w-[280px] bg-white rounded-xl border border-zinc-200/80 shadow-xl p-2.5 z-50 grid gap-1"
+                      className="absolute left-0 top-[44px] w-[200px] bg-white rounded-xl border border-zinc-200/80 shadow-xl p-3 z-50 flex flex-col gap-1"
                     >
                       {resources.map((item) => (
                         <Link
                           key={item.label}
                           href={item.href}
                           onClick={() => setActiveDropdown(null)}
-                          className="flex items-start gap-3 p-2 rounded-lg hover:bg-zinc-50 transition-colors"
+                          className="flex items-center gap-3 p-2.5 rounded-lg hover:bg-zinc-50 transition-colors group"
                         >
-                          <span className="mt-0.5 p-1 rounded-md bg-zinc-50 border border-zinc-200/40">
-                            {item.icon}
-                          </span>
-                          <div>
-                            <div className="text-[13px] font-semibold text-[#111827]">{item.label}</div>
-                            <div className="text-[11px] text-zinc-500 mt-0.5 leading-normal">{item.desc}</div>
-                          </div>
+                          <div className="w-1.5 h-1.5 bg-zinc-700 rounded-sm group-hover:bg-[#0A6BFF] transition-colors"></div>
+                          <span className="text-[14px] font-semibold text-zinc-900 group-hover:text-[#0A6BFF] transition-colors">{item.label}</span>
                         </Link>
                       ))}
                     </motion.div>
@@ -299,34 +304,61 @@ export function Navbar() {
                 </div>
 
                 <nav className="px-5 py-4 flex flex-col gap-0.5">
-                  {/* Automations Mobile */}
+                  {/* Platform Mobile */}
                   <div>
                     <button
-                      onClick={() => setMobileAutomationsOpen(!mobileAutomationsOpen)}
+                      onClick={() => setMobilePlatformOpen(!mobilePlatformOpen)}
                       className="w-full py-3 flex items-center justify-between text-[14.5px] font-semibold text-zinc-800 border-b border-zinc-50"
                     >
-                      Automations
-                      <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${mobileAutomationsOpen ? "rotate-180" : ""}`} />
+                      Platform
+                      <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${mobilePlatformOpen ? "rotate-180" : ""}`} />
                     </button>
                     <AnimatePresence>
-                      {mobileAutomationsOpen && (
+                      {mobilePlatformOpen && (
                         <motion.div
                           initial={{ height: 0, opacity: 0 }}
                           animate={{ height: "auto", opacity: 1 }}
                           exit={{ height: 0, opacity: 0 }}
-                          className="overflow-hidden bg-zinc-50/50 rounded-lg px-2 py-1.5 mt-1 grid gap-1.5"
+                          className="overflow-hidden bg-zinc-50/50 rounded-lg px-3 py-3 mt-1 grid gap-4"
                         >
-                          {automations.map((item) => (
-                            <Link
-                              key={item.label}
-                              href={item.href}
-                              onClick={() => setMobileOpen(false)}
-                              className="flex items-center gap-2.5 py-1.5 px-2 text-[13px] text-zinc-600 font-medium"
-                            >
-                              {item.icon}
-                              {item.label}
-                            </Link>
-                          ))}
+                          <div className="flex flex-col gap-2">
+                            {platformFeatures.map((item) => (
+                              <Link
+                                key={item.label}
+                                href={item.href}
+                                onClick={() => setMobileOpen(false)}
+                                className="flex items-center gap-2.5 py-1 text-[13.5px] text-zinc-800 font-semibold"
+                              >
+                                <div className="w-1 h-1 bg-zinc-800 rounded-sm"></div>
+                                {item.label}
+                              </Link>
+                            ))}
+                          </div>
+                          <div className="pt-3 border-t border-zinc-200/60">
+                            <div className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-3">
+                              756+ INTEGRATIONS
+                            </div>
+                            <div className="flex flex-col gap-2.5">
+                              {platformIntegrations.map((item) => (
+                                <Link
+                                  key={item.label}
+                                  href={item.href}
+                                  onClick={() => setMobileOpen(false)}
+                                  className="flex items-center gap-2.5 text-[13px] text-zinc-600 font-medium"
+                                >
+                                  <img src={item.icon} alt={item.label} className="w-4 h-4 object-contain" />
+                                  {item.label}
+                                </Link>
+                              ))}
+                              <Link
+                                href="/dashboard/integrations"
+                                onClick={() => setMobileOpen(false)}
+                                className="text-[12px] font-semibold text-[#0A6BFF] hover:underline flex items-center gap-1 mt-1"
+                              >
+                                View all <ChevronDown className="w-3 h-3 -rotate-90" />
+                              </Link>
+                            </div>
+                          </div>
                         </motion.div>
                       )}
                     </AnimatePresence>
@@ -347,16 +379,16 @@ export function Navbar() {
                           initial={{ height: 0, opacity: 0 }}
                           animate={{ height: "auto", opacity: 1 }}
                           exit={{ height: 0, opacity: 0 }}
-                          className="overflow-hidden bg-zinc-50/50 rounded-lg px-2 py-1.5 mt-1 grid gap-1.5"
+                          className="overflow-hidden bg-zinc-50/50 rounded-lg px-3 py-3 mt-1 flex flex-col gap-2"
                         >
                           {industries.map((item) => (
                             <Link
                               key={item.label}
                               href={item.href}
                               onClick={() => setMobileOpen(false)}
-                              className="flex items-center gap-2.5 py-1.5 px-2 text-[13px] text-zinc-600 font-medium"
+                              className="flex items-center gap-2.5 py-1 text-[13.5px] text-zinc-800 font-semibold"
                             >
-                              {item.icon}
+                              <div className="w-1 h-1 bg-zinc-800 rounded-sm"></div>
                               {item.label}
                             </Link>
                           ))}
@@ -380,16 +412,16 @@ export function Navbar() {
                           initial={{ height: 0, opacity: 0 }}
                           animate={{ height: "auto", opacity: 1 }}
                           exit={{ height: 0, opacity: 0 }}
-                          className="overflow-hidden bg-zinc-50/50 rounded-lg px-2 py-1.5 mt-1 grid gap-1.5"
+                          className="overflow-hidden bg-zinc-50/50 rounded-lg px-3 py-3 mt-1 flex flex-col gap-2"
                         >
                           {resources.map((item) => (
                             <Link
                               key={item.label}
                               href={item.href}
                               onClick={() => setMobileOpen(false)}
-                              className="flex items-center gap-2.5 py-1.5 px-2 text-[13px] text-zinc-600 font-medium"
+                              className="flex items-center gap-2.5 py-1 text-[13.5px] text-zinc-800 font-semibold"
                             >
-                              {item.icon}
+                              <div className="w-1 h-1 bg-zinc-800 rounded-sm"></div>
                               {item.label}
                             </Link>
                           ))}

@@ -6,6 +6,7 @@ import { Footer } from "@/components/landing/Footer";
 import { Sparkles, ArrowRight, CheckCircle2 } from "lucide-react";
 import { WordRotator } from "@/components/landing/WordRotator";
 import { PageData } from "@/lib/page-data";
+import { WorkflowCanvas } from "@/components/landing/WorkflowCanvas";
 import Link from "next/link";
 
 export function DynamicPageTemplate({ data }: { data: PageData }) {
@@ -60,6 +61,10 @@ export function DynamicPageTemplate({ data }: { data: PageData }) {
               </Link>
             </div>
           </motion.div>
+
+          <div className="mt-16 sm:mt-24">
+            <WorkflowCanvas />
+          </div>
         </section>
 
         {/* Features & Benefits Split */}

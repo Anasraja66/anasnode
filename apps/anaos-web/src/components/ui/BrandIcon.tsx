@@ -34,7 +34,7 @@ export default function BrandIcon({ id, className = "w-5 h-5" }: BrandIconProps)
       case "googleoauth":
       case "googleaccount": return "https://img.icons8.com/color/96/google-logo.png";
       case "hubspot":
-      case "hubspotcrm": return "https://img.icons8.com/fluency/96/hubspot.png"; // fixed hubspot
+      case "hubspotcrm": return "https://cdn.simpleicons.org/hubspot/ff7a59"; // fixed hubspot
       case "twilio":
       case "phone":
       case "voice": return "https://img.icons8.com/fluency/96/ringer-volume.png"; // nicer phone

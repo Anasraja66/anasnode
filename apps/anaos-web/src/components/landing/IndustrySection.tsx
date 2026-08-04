@@ -65,6 +65,8 @@ const INDUSTRIES: IndustryItem[] = [
   }
 ];
 
+import { WorkflowIndustry } from "./WorkflowIndustry";
+
 export function IndustrySection() {
   return (
     <section id="industries" className="py-24 sm:py-32 px-6 bg-white border-t border-zinc-100 relative overflow-hidden">
@@ -78,7 +80,7 @@ export function IndustrySection() {
         
         {/* Header Block */}
         <FadeIn delay={0.1}>
-          <div className="text-center max-w-3xl mx-auto mb-16 sm:mb-20">
+          <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-12">
             <h2 className="text-[24px] sm:text-[40px] font-bold text-[#111827] tracking-tight leading-[1.08]">
               <Typewriter text="Built for every industry" />
             </h2>
@@ -137,6 +139,12 @@ export function IndustrySection() {
             </FadeIn>
           ))}
         </div>
+
+        <FadeIn delay={0.4}>
+          <div className="mt-16">
+            <WorkflowIndustry />
+          </div>
+        </FadeIn>
 
       </div>
     </section>

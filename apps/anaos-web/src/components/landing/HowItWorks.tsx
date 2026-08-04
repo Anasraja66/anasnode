@@ -2,6 +2,7 @@
 
 import { Building2, Utensils, Stethoscope } from "lucide-react";
 import { Typewriter } from "./Typewriter";
+import { WorkflowMeetAnaos } from "./WorkflowMeetAnaos";
 
 export function HowItWorks() {
   return (

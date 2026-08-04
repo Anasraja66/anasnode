@@ -9,6 +9,7 @@ const footerColumns = [
       { label: "Integrations", href: "/dashboard/integrations" },
       { label: "AI Automation", href: "/automations/ai-helpdesk-support-bot" },
       { label: "Pricing", href: "/pricing" },
+      { label: "Community", href: "/community" },
     ],
   },
   {
@@ -18,6 +19,8 @@ const footerColumns = [
       { label: "Cart Recovery", href: "/automations/abandoned-cart-recoverer" },
       { label: "Appointment Reminders", href: "/automations/appointment-reminders" },
       { label: "Google Reviews", href: "/automations/google-reviews-collector" },
+      { label: "AI Helpdesk Bot", href: "/automations/ai-helpdesk-support-bot" },
+      { label: "Billing & Stripe Sync", href: "/automations/billing-stripe-sync" },
     ],
   },
   {
@@ -26,7 +29,9 @@ const footerColumns = [
       { label: "E-commerce & Retail", href: "/industries/e-commerce-and-retail" },
       { label: "Real Estate", href: "/industries/real-estate-and-agencies" },
       { label: "Healthcare", href: "/industries/healthcare-and-wellness" },
-      { label: "Restaurants", href: "/industries/restaurants-and-food" },
+      { label: "Restaurants & Food", href: "/industries/restaurants-and-food" },
+      { label: "Logistics & Dispatch", href: "/industries/logistics-and-dispatch" },
+      { label: "SaaS & Tech Startups", href: "/industries/saas-and-tech-startups" },
     ],
   },
   {
@@ -35,7 +40,7 @@ const footerColumns = [
       { label: "Documentation", href: "/resources/documentation" },
       { label: "API Reference", href: "/resources/api-reference" },
       { label: "Templates", href: "/resources/templates" },
-      { label: "Community", href: "/community" },
+      { label: "Help Center", href: "/resources/help-center" },
     ],
   },
   {
@@ -44,15 +49,20 @@ const footerColumns = [
       { label: "Privacy Policy", href: "/privacy" },
       { label: "Terms of Service", href: "/terms" },
       { label: "Data Deletion", href: "/data-deletion" },
+      { label: "AI Governance (UK)", href: "/ai-governance" },
+      { label: "Contact Us", href: "/contact" },
     ],
   },
 ];
+
 
 
 export function Footer() {
   return (
     <footer className="relative bg-white/60 backdrop-blur-xl border-t border-zinc-200 overflow-hidden" suppressHydrationWarning>
       <div className="max-w-[1200px] mx-auto px-6 pt-16 pb-8 relative z-10">
+
+
 
         {/* ── Main grid: Logo left + columns right ── */}
         <div className="flex flex-col lg:flex-row gap-12 lg:gap-20 mb-16">
@@ -66,6 +76,7 @@ export function Footer() {
             <p className="text-[14px] text-zinc-600 font-medium leading-relaxed">
               The all-in-one automation OS for modern businesses. Build, deploy, and scale AI agents in minutes.
             </p>
+
           </div>
 
           {/* Columns */}
@@ -83,6 +94,9 @@ export function Footer() {
                         className="text-[14px] text-zinc-600 hover:text-[#0A6BFF] font-semibold transition-colors duration-200 block"
                       >
                         {link.label}
+                        {link.label === "AI Governance (UK)" && (
+                          <span className="ml-1.5 text-[10px] font-bold bg-blue-100 text-[#0A6BFF] px-1.5 py-0.5 rounded-full align-middle">UK Gov</span>
+                        )}
                       </a>
                     </li>
                   ))}
@@ -92,20 +106,12 @@ export function Footer() {
           </div>
         </div>
 
-        {/* ── Language selector ── */}
-        <div className="flex items-center gap-2 text-[14px] text-zinc-500 mb-8 cursor-pointer hover:text-zinc-900 transition-colors w-fit font-bold">
-          <svg className="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5a17.92 17.92 0 01-8.716-2.247m0 0A9.015 9.015 0 003 12c0-1.605.42-3.113 1.157-4.418" />
-          </svg>
-          EN (English)
-        </div>
-
         {/* ── Bottom bar ── */}
         <div className="h-px bg-zinc-200 mb-6" />
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 text-[14px] text-zinc-500 font-semibold">
-          <span>© {new Date().getFullYear()} Anaos Technologies Inc.</span>
+          <span>© {new Date().getFullYear()} Anas Technologies Ltd. All rights reserved.</span>
           <span className="flex items-center gap-1.5">
-            Built for operators with <span className="text-[#0A6BFF] font-bold">AI</span>.
+            Built for every <span className="text-[#0A6BFF] font-bold">technology</span>. 🇬🇧
           </span>
         </div>
       </div>

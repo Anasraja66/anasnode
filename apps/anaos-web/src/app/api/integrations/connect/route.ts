@@ -14,9 +14,12 @@ const ALLOWED_TYPES = [
   "claude",
   "gemini",
   "google_calendar",
+  "google_sheets",
+  "google_drive",
   "hubspot",
   "smtp",
   "twilio",
+  "stripe",
   "instagram",
   "facebook",
 ] as const;
@@ -74,6 +77,49 @@ export async function POST(request: Request) {
       }
     }
 
+    if (type === "google_sheets" || type === "google_drive") {
+      if (!credentials.clientId || !credentials.clientSecret || !credentials.refreshToken) {
+        return NextResponse.json(
+          {
+            error:
+              "Google Sheets and Drive require clientId, clientSecret, and refreshToken",
+          },
+          { status: 400 }
+        );
+      }
+    }
+
+    if (type === "hubspot") {
+      if (!credentials.apiKey && !credentials.accessToken) {
+        return NextResponse.json(
+          {
+            error: "HubSpot requires apiKey or accessToken",
+          },
+          { status: 400 }
+        );
+      }
+    }
+
+    if (type === "twilio") {
+      if (!credentials.accountSid || !credentials.authToken || !credentials.fromNumber) {
+        return NextResponse.json(
+          {
+            error: "Twilio requires accountSid, authToken, and fromNumber",
+          },
+          { status: 400 }
+        );
+      }
+    }
+
+    if (type === "stripe") {
+      if (!credentials.secretKey) {
+        return NextResponse.json(
+          { error: "Stripe requires secretKey" },
+          { status: 400 }
+        );
+      }
+    }
+
     const encryptedData = encrypt(JSON.stringify(credentials));
 
     const existing = await prisma.integrationCredential.findFirst({
@@ -82,20 +128,20 @@ export async function POST(request: Request) {
 
     const saved = existing
       ? await prisma.integrationCredential.update({
-          where: { id: existing.id },
-          data: { name, credentials: encryptedData, isActive: true },
-          select: { id: true, type: true, name: true, isActive: true, createdAt: true },
-        })
+        where: { id: existing.id },
+        data: { name, credentials: encryptedData, isActive: true },
+        select: { id: true, type: true, name: true, isActive: true, createdAt: true },
+      })
       : await prisma.integrationCredential.create({
-          data: {
-            accountId,
-            type,
-            name,
-            credentials: encryptedData,
-            isActive: true,
-          },
-          select: { id: true, type: true, name: true, isActive: true, createdAt: true },
-        });
+        data: {
+          accountId,
+          type,
+          name,
+          credentials: encryptedData,
+          isActive: true,
+        },
+        select: { id: true, type: true, name: true, isActive: true, createdAt: true },
+      });
 
     let activatedWorkflowId: string | null = null;
 

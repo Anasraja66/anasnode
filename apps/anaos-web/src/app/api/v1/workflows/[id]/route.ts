@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/db";
 import { getAccountId } from "@/lib/auth/session";
+import { WorkflowService } from "@/lib/services/workflow.service";
+import { handleApiError } from "@/lib/errors";
 
 export const dynamic = "force-dynamic";
 
@@ -15,29 +16,11 @@ export async function GET(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const workflow = await prisma.workflow.findFirst({
-      where: { id, accountId },
-    });
-
-    if (!workflow) {
-      return NextResponse.json({ error: "Workflow not found" }, { status: 404 });
-    }
-
-    const formatted = {
-      ...workflow,
-      nodes: JSON.parse(workflow.nodes || "[]"),
-      edges: JSON.parse(workflow.edges || "[]"),
-      variables: JSON.parse(workflow.variables || "[]"),
-      stats: JSON.parse(workflow.stats || "{}"),
-    };
-
-    return NextResponse.json({
-      success: true,
-      workflow: formatted,
-    });
+    const workflow = await WorkflowService.getById(accountId, id);
+    return NextResponse.json({ success: true, workflow });
   } catch (error) {
     console.error("GET workflow error:", error);
-    return NextResponse.json({ error: "Failed to fetch workflow" }, { status: 500 });
+    return handleApiError(error);
   }
 }
 
@@ -51,41 +34,20 @@ export async function PUT(
     if (!accountId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
+
     const body = await request.json();
-    const { name, description, nodes, edges, variables } = body;
+    const { name, description, definition, variables } = body;
 
-    const workflow = await prisma.workflow.findFirst({
-      where: { id, accountId },
+    const updated = await WorkflowService.update(accountId, id, {
+      name,
+      description,
+      definition,
+      variables,
     });
 
-    if (!workflow) {
-      return NextResponse.json({ error: "Workflow not found" }, { status: 404 });
-    }
-
-    const updated = await prisma.workflow.update({
-      where: { id },
-      data: {
-        name: name !== undefined ? name : workflow.name,
-        description: description !== undefined ? description : workflow.description,
-        nodes: nodes !== undefined ? JSON.stringify(nodes) : workflow.nodes,
-        edges: edges !== undefined ? JSON.stringify(edges) : workflow.edges,
-        variables: variables !== undefined ? JSON.stringify(variables) : workflow.variables,
-        version: workflow.version + 1, // Increment layout version
-      },
-    });
-
-    return NextResponse.json({
-      success: true,
-      workflow: {
-        ...updated,
-        nodes: JSON.parse(updated.nodes || "[]"),
-        edges: JSON.parse(updated.edges || "[]"),
-        variables: JSON.parse(updated.variables || "[]"),
-        stats: JSON.parse(updated.stats || "{}"),
-      },
-    });
+    return NextResponse.json({ success: true, workflow: updated });
   } catch (error) {
     console.error("PUT workflow error:", error);
-    return NextResponse.json({ error: "Failed to update workflow" }, { status: 500 });
+    return handleApiError(error);
   }
 }

@@ -1,5 +1,6 @@
 import { Navbar } from "@/components/landing/Navbar";
 import { Hero } from "@/components/landing/Hero";
+import { AppScroll } from "@/components/landing/AppScroll";
 import { HowItWorks } from "@/components/landing/HowItWorks";
 import { IntegrationsSection } from "@/components/landing/IntegrationsSection";
 import { Industries } from "@/components/landing/Industries";
@@ -13,6 +14,7 @@ export default function Home() {
     <main className="min-h-screen gemini-bg text-foreground overflow-x-hidden">
       <Navbar />
       <Hero />
+      <AppScroll />
       <HowItWorks />
       <Industries />
       <IndustrySection />

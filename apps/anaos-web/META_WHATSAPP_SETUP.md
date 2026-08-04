@@ -23,8 +23,8 @@ End clients only click **Connect with Meta** in the dashboard. This doc is for *
 - Login with JavaScript SDK: **Yes**
 - **Allowed domains:** `localhost` (dev), your production domain
 - **Valid OAuth redirect URIs:**
-  - `http://localhost:3000/dashboard/integrations/whatsapp`
-  - `https://YOUR-DOMAIN/dashboard/integrations/whatsapp`
+  - `http://localhost:3000/dashboard/integrations/connect/whatsapp`
+  - `https://YOUR-DOMAIN/dashboard/integrations/connect/whatsapp`
 
 ## 4. Webhooks (app level)
 
@@ -45,7 +45,7 @@ META_FB_LOGIN_CONFIG_ID="your-configuration-id"
 NEXT_PUBLIC_META_APP_ID="same-as-app-id"
 NEXT_PUBLIC_META_FB_LOGIN_CONFIG_ID="same-as-config-id"
 META_GRAPH_API_VERSION="v21.0"
-META_OAUTH_REDIRECT_URI="http://localhost:3000/dashboard/integrations/whatsapp"
+META_OAUTH_REDIRECT_URI="http://localhost:3000/dashboard/integrations/connect/whatsapp"
 ```
 
 ## 6. Test

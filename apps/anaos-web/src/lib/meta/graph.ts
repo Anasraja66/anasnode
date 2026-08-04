@@ -144,5 +144,5 @@ export function resolveMetaRedirectUri(): string {
     return process.env.META_OAUTH_REDIRECT_URI;
   }
   const base = process.env.NEXTAUTH_URL || "http://localhost:3000";
-  return `${base.replace(/\/$/, "")}/dashboard/integrations/whatsapp`;
+  return `${base.replace(/\/$/, "")}/dashboard/integrations/connect/whatsapp`;
 }

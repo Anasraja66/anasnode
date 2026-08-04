@@ -1,4 +1,4 @@
-import { Copy, UserPlus, Crown, Shield, User } from "lucide-react";
+import { Copy, UserPlus, Crown, Shield, User, Users } from "lucide-react";
 import { useState } from "react";
 
 const teamMembers = [
@@ -7,6 +7,8 @@ const teamMembers = [
   { id: 3, name: "James Chen", email: "james@anaos.ai", role: "agent", avatar: "JC" },
   { id: 4, name: "Emily Parker", email: "emily@anaos.ai", role: "agent", avatar: "EP" },
 ];
+
+import { InnerPageHeader } from "@/components/ui/InnerPageHeader";
 
 export function GithubTeamSettings() {
   const [selectedRole, setSelectedRole] = useState<"admin" | "agent">("admin");
@@ -36,16 +38,16 @@ export function GithubTeamSettings() {
   };
 
   return (
-    <div className="flex h-full w-full bg-white rounded-xl overflow-hidden border border-[#E5E7EB] shadow-sm flex-col overflow-y-auto">
+    <div className="flex h-full w-full bg-[#F7F8FA] flex-col overflow-y-auto">
+      <InnerPageHeader
+        title="Team Members"
+        subtitle="Manage your team and their permissions"
+        icon={Users}
+        backHref="/dashboard"
+        backLabel="Back to dashboard"
+      />
+      
       <div className="px-10 pt-8 pb-10">
-        <div className="mb-8">
-          <h1 className="text-[22px] font-bold tracking-tight text-[#09090B] mb-1">
-            Team Members
-          </h1>
-          <p className="text-[13px] text-[#71717A]">
-            Manage your team and their permissions
-          </p>
-        </div>
 
         <div className="grid grid-cols-3 gap-7">
           {/* Team List */}

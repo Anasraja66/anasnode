@@ -56,11 +56,16 @@ function SignupForm() {
       setSuccess(true);
 
       // Redirect
-      const queryParams = new URLSearchParams();
-      if (prompt) queryParams.set("prompt", prompt);
-      if (workspace) queryParams.set("workspace", workspace);
-      const queryString = queryParams.toString();
-      router.push(queryString ? `/onboarding?${queryString}` : "/onboarding");
+      const callbackUrl = searchParams?.get("callbackUrl");
+      if (callbackUrl) {
+        router.push(callbackUrl);
+      } else {
+        const queryParams = new URLSearchParams();
+        if (prompt) queryParams.set("prompt", prompt);
+        if (workspace) queryParams.set("workspace", workspace);
+        const queryString = queryParams.toString();
+        router.push(queryString ? `/onboarding?${queryString}` : "/dashboard");
+      }
       router.refresh();
       
     } catch (err: any) {

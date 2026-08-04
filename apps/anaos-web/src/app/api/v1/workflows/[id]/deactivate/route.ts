@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/db";
 import { getAccountId } from "@/lib/auth/session";
+import { WorkflowService } from "@/lib/services/workflow.service";
+import { handleApiError } from "@/lib/errors";
 
 export const dynamic = "force-dynamic";
 
@@ -15,26 +16,15 @@ export async function POST(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const workflow = await prisma.workflow.findFirst({
-      where: { id, accountId },
-    });
-
-    if (!workflow) {
-      return NextResponse.json({ error: "Workflow not found" }, { status: 404 });
-    }
-
-    const updated = await prisma.workflow.update({
-      where: { id },
-      data: { isActive: false },
-    });
+    const workflow = await WorkflowService.deactivate(accountId, id);
 
     return NextResponse.json({
       success: true,
-      isActive: false,
-      message: `Workflow "${updated.name}" has been deactivated.`,
+      isActive: workflow.isActive,
+      message: `Workflow "${workflow.name}" has been deactivated.`,
     });
   } catch (error: any) {
     console.error("Workflow deactivation error:", error);
-    return NextResponse.json({ success: false, message: error.message }, { status: 500 });
+    return handleApiError(error);
   }
 }

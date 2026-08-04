@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/db";
 import { getAccountId } from "@/lib/auth/session";
+import { WorkflowService } from "@/lib/services/workflow.service";
+import { handleApiError } from "@/lib/errors";
 
 export const dynamic = "force-dynamic";
 
@@ -11,42 +12,15 @@ export async function GET(request: Request) {
     if (!accountId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
+
     const { searchParams } = new URL(request.url);
-    const workspaceId = searchParams.get("workspaceId");
+    const workspaceId = searchParams.get("workspaceId") ?? undefined;
 
-    const query: any = { accountId };
-    if (workspaceId) {
-      query.workspaceId = workspaceId;
-    }
-
-    const workflows = await prisma.workflow.findMany({
-      where: query,
-      select: {
-        id: true,
-        name: true,
-        description: true,
-        isActive: true,
-        version: true,
-        stats: true,
-        lastRunAt: true,
-        createdAt: true,
-      },
-      orderBy: { createdAt: "desc" },
-    });
-
-    // Parse stats string
-    const formatted = workflows.map((w: { id: string; name: string; description: string | null; isActive: boolean; version: number; stats: string; lastRunAt: Date | null; createdAt: Date }) => ({
-      ...w,
-      stats: JSON.parse(w.stats || "{}"),
-    }));
-
-    return NextResponse.json({
-      success: true,
-      workflows: formatted,
-    });
+    const workflows = await WorkflowService.list(accountId, workspaceId);
+    return NextResponse.json({ success: true, workflows });
   } catch (error) {
     console.error("GET workflows error:", error);
-    return NextResponse.json({ error: "Failed to list workflows" }, { status: 500 });
+    return handleApiError(error);
   }
 }
 
@@ -57,51 +31,27 @@ export async function POST(request: Request) {
     if (!accountId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
+
     const body = await request.json();
-    const { name, description, workspaceId, nodes = [], edges = [] } = body;
+    const { name, description, workspaceId, definition, nodes, edges, variables } = body;
 
     if (!name || !workspaceId) {
       return NextResponse.json({ error: "Missing required fields: name or workspaceId" }, { status: 400 });
     }
 
-    // Verify workspace exists or auto-create in development
-    const workspace = await prisma.workspace.upsert({
-      where: { id: workspaceId },
-      update: {},
-      create: {
-        id: workspaceId,
-        accountId,
-        name: "My Business Workspace",
-        industry: "General",
-        slug: "my-business-workspace",
-        status: "draft",
-      }
+    const workflowDefinition = definition ?? { nodes: nodes || [], edges: edges || [] };
+
+    const workflow = await WorkflowService.create(accountId, {
+      name,
+      description,
+      workspaceId,
+      definition: workflowDefinition,
+      variables: variables ?? [],
     });
 
-    const workflow = await prisma.workflow.create({
-      data: {
-        accountId,
-        workspaceId: workspace.id,
-        name,
-        description,
-        nodes: JSON.stringify(nodes),
-        edges: JSON.stringify(edges),
-        variables: "[]",
-        stats: JSON.stringify({ runs: 0, success: 0, failed: 0 }),
-      },
-    });
-
-    return NextResponse.json({
-      success: true,
-      workflow: {
-        ...workflow,
-        nodes,
-        edges,
-        stats: { runs: 0, success: 0, failed: 0 },
-      },
-    });
+    return NextResponse.json({ success: true, workflow });
   } catch (error) {
     console.error("POST workflow error:", error);
-    return NextResponse.json({ error: "Failed to create workflow" }, { status: 500 });
+    return handleApiError(error);
   }
 }

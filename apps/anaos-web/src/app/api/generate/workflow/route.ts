@@ -30,6 +30,8 @@ export async function POST(req: Request) {
     return NextResponse.json({
       success: true,
       data: result,
+      workflowName: result.workflowName,
+      features: result.features,
       workspace: result.workflow,
       nodes: result.workflow.nodes,
       edges: result.workflow.edges

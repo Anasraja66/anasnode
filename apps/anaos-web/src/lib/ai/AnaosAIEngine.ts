@@ -111,7 +111,12 @@ Rules:
           nodes: parsed.nodes,
           edges: parsed.edges
         },
-        features: parsed.nodes.map((n: any) => n.data?.title).filter(Boolean)
+        features: parsed.nodes.map((n: any) => ({
+          category: n.type === 'trigger' ? 'Trigger' : (n.type === 'action' ? 'Automation' : 'Logic'),
+          title: n.data?.title || "Workflow Step",
+          description: n.data?.description || `AI-powered step using ${n.data?.provider || 'built-in capabilities'}.`,
+          defaultOn: true
+        }))
       };
 
     } catch (error) {

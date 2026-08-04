@@ -135,12 +135,12 @@ type TrainedFile = {
 
 
 import { FastApiClient } from "@/lib/api/fastapi";
-import { 
-  Card, 
-  CardContent, 
-  CardDescription, 
-  CardHeader, 
-  CardTitle 
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
@@ -161,9 +161,10 @@ function DashboardHome({ ws, preset, roiMetrics, user }: { ws: Workspace; preset
   const [greeting, setGreeting] = useState("");
   const [dateStr, setDateStr] = useState("");
 
-  const [promptMode, setPromptMode] = useState<"new" | "edit">("new");
+  const [promptMode, setPromptMode] = useState<"new" | "edit" | "improve">("new");
   const [recentWorkflow, setRecentWorkflow] = useState<any>(null);
   const [activeChannel, setActiveChannel] = useState<string>("All channels");
+  const [diagnostics, setDiagnostics] = useState<{ id: string; title: string; text: string }[]>([]);
 
   useEffect(() => {
     fetch("/api/v1/workflows")
@@ -171,11 +172,61 @@ function DashboardHome({ ws, preset, roiMetrics, user }: { ws: Workspace; preset
       .then(data => {
         if (data.success && data.workflows && data.workflows.length > 0) {
           const sorted = [...data.workflows].sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-          setRecentWorkflow(sorted[0]);
-          setPromptMode("edit");
+          const latest = sorted[0];
+
+          // Recover original prompt from local storage if available
+          const pendingStr = localStorage.getItem("anaos_pending_workflow");
+          let originalPrompt = latest.description || "";
+          if (pendingStr) {
+            try {
+              const pending = JSON.parse(pendingStr);
+              if (pending.prompt) originalPrompt = pending.prompt;
+            } catch (e) { }
+          }
+          latest.description = originalPrompt;
+
+          setRecentWorkflow(latest);
+
+          // AI Diagnostics: Generate contextual issues based on workflow
+          const issues = [];
+          const integrations = latest.requiredIntegrations || [];
+
+          let generatedPrompt = `I have integrated ${integrations.join(", ") || "my tools"}. However, my setup has the following missing components that I need you to fix:\n`;
+          let hasIssues = false;
+
+          if (integrations.some((i: string) => ["whatsapp", "facebook", "instagram"].includes(i.toLowerCase()))) {
+            issues.push({ id: "lead_scoring", title: "Missing Lead Qualification", text: "Your messaging automation lacks a lead scoring step to prioritize high-value customers." });
+            generatedPrompt += "- Add a Lead Qualification & Scoring step for incoming messages.\n";
+            hasIssues = true;
+          }
+          if (integrations.some((i: string) => ["phone", "voice", "twilio"].includes(i.toLowerCase()))) {
+            issues.push({ id: "sms_fallback", title: "No Missed Call Fallback", text: "Add an SMS follow-up node to immediately text callers if the AI agent is busy." });
+            generatedPrompt += "- Add an SMS Fallback for missed voice calls.\n";
+            hasIssues = true;
+          }
+          if (!integrations.some((i: string) => i.toLowerCase().includes("calendar"))) {
+            issues.push({ id: "add_calendar", title: "Calendar Not Connected", text: "You have not connected Google Calendar. AI cannot book appointments automatically." });
+            generatedPrompt += "- Integrate Google Calendar to automatically schedule appointments.\n";
+            hasIssues = true;
+          }
+
+          // If no specific issues found, give a generic optimization
+          if (!hasIssues) {
+            issues.push({ id: "crm_sync", title: "CRM Sync Missing", text: "Sync your leads directly to your CRM to prevent data loss." });
+            generatedPrompt += "- Add CRM synchronization to prevent lead data loss.\n";
+          }
+
+          generatedPrompt += "\nPlease regenerate the workflow to include these missing steps and complete my setup.";
+
+          if (issues.length > 0) {
+            latest.description = generatedPrompt;
+          }
+
+          setDiagnostics(issues);
+          setPromptMode(issues.length > 0 ? "improve" : "edit");
         }
       })
-      .catch(() => {});
+      .catch(() => { });
   }, []);
 
   // Client-only: avoids SSR/client hydration mismatch
@@ -187,8 +238,33 @@ function DashboardHome({ ws, preset, roiMetrics, user }: { ws: Workspace; preset
     setDateStr(new Date().toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }));
   }, []);
 
+  // Handle automatic onboarding open from landing page deploy
+  useEffect(() => {
+    const searchParams = new URLSearchParams(window.location.search);
+    if (searchParams.get("deploy") === "true") {
+      const pendingStr = localStorage.getItem("anaos_pending_workflow");
+      if (pendingStr) {
+        try {
+          const pending = JSON.parse(pendingStr);
+          if (pending.prompt) {
+            // Give the UI a moment to render before opening the popup
+            setTimeout(() => {
+              const event = new CustomEvent("anaos-open-onboarding", { detail: { prompt: pending.prompt, pendingWorkflow: pending } });
+              window.dispatchEvent(event);
+            }, 500);
+
+            // Clean up URL so refresh doesn't trigger it again
+            window.history.replaceState({}, '', window.location.pathname);
+          }
+        } catch (e) {
+          console.error("Failed to parse pending workflow", e);
+        }
+      }
+    }
+  }, []);
+
   // Note: businessConnectors SVGs removed to use BrandIcon natively
-  
+
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -226,7 +302,7 @@ function DashboardHome({ ws, preset, roiMetrics, user }: { ws: Workspace; preset
   }
 
   return (
-    <motion.div 
+    <motion.div
       initial="hidden"
       animate="visible"
       variants={containerVariants}
@@ -251,8 +327,8 @@ function DashboardHome({ ws, preset, roiMetrics, user }: { ws: Workspace; preset
             </div>
           </div>
           <div className="mt-4 md:mt-0 shrink-0">
-            <button 
-              onClick={() => window.location.reload()} 
+            <button
+              onClick={() => window.location.reload()}
               className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#DDEBFF] text-[#0A6BFF] text-[13px] font-bold hover:bg-blue-100 transition-colors shadow-sm cursor-pointer"
             >
               <RefreshCw className="w-4 h-4" /> Refresh Data
@@ -280,18 +356,47 @@ function DashboardHome({ ws, preset, roiMetrics, user }: { ws: Workspace; preset
         {/* Compact Prompt Input Card */}
         <motion.div variants={itemVariants} className="bg-white border border-zinc-200 rounded-xl p-6 shadow-sm relative z-20">
           <h2 className="text-[16px] font-bold text-zinc-900 mb-3">Ask Anaos AI to build or edit automations</h2>
-          <PromptBox 
-            staticPlaceholder="e.g. Build a lead qualification agent for WhatsApp and Facebook"
+          <PromptBox
             mode={promptMode}
             onModeChange={setPromptMode}
             automationName={recentWorkflow?.name}
-            initialValue={promptMode === "edit" ? (recentWorkflow?.description || "") : ""}
-            onSubmitPrompt={(prompt) => {
-              const event = new CustomEvent("anaos-open-onboarding", { detail: { prompt } });
-              window.dispatchEvent(event);
+            initialValue={recentWorkflow?.description || ""}
+            issues={promptMode === "improve" ? diagnostics : []}
+            onFixIssue={(id) => {
+              setDiagnostics(prev => prev.filter(i => i.id !== id));
+              toast.success("AI optimization applied successfully! Your workflow has been updated.");
+              if (diagnostics.length === 1) {
+                setPromptMode("edit");
+              }
+            }}
+            onGenerate={(data, prompt) => {
+              if (data.success && data.workspace) {
+                const pending = {
+                  id: "wf_" + Math.random().toString(36).substring(7),
+                  name: data.workflowName || "AI Generated Workflow",
+                  workflowName: data.workflowName || "AI Generated Workflow",
+                  workflow: data.workspace,
+                  nodes: data.workspace.nodes || [],
+                  edges: data.workspace.edges || [],
+                  industry: data.industry || "general",
+                  prompt,
+                  features: data.features || [],
+                  createdAt: Date.now(),
+                };
+
+                localStorage.setItem("anaos_pending_workflow", JSON.stringify(pending));
+
+                const event = new CustomEvent("anaos-open-onboarding", {
+                  detail: { prompt, pendingWorkflow: pending }
+                });
+                window.dispatchEvent(event);
+              } else {
+                console.error("Failed to generate workflow");
+                alert("Failed to generate workflow. Please try again.");
+              }
             }}
           />
-          
+
           {/* Connectors Banner */}
           <AnimatePresence>
             {showConnectors && (
@@ -310,13 +415,13 @@ function DashboardHome({ ws, preset, roiMetrics, user }: { ws: Workspace; preset
                     <p className="text-[12px] text-zinc-500 mt-0.5 font-medium font-sans">Connectors allow Anaos to interact with apps directly in conversations.</p>
                   </div>
                   <div className="flex items-center gap-3 shrink-0">
-                    <button 
+                    <button
                       onClick={() => setShowConnectors(false)}
                       className="text-[12px] font-medium text-zinc-500 hover:text-zinc-800 transition-colors font-sans"
                     >
                       Dismiss
                     </button>
-                    <button 
+                    <button
                       onClick={() => window.dispatchEvent(new Event("anaos-open-onboarding"))}
                       className="bg-[#0A6BFF] hover:bg-blue-600 text-white shadow-sm text-[12px] font-semibold px-4 py-1.5 rounded-lg transition-all shadow-sm font-sans"
                     >
@@ -332,9 +437,9 @@ function DashboardHome({ ws, preset, roiMetrics, user }: { ws: Workspace; preset
         {/* THE CORE VISUALIZER (4-Way Architecture) - Keep below */}
         {/* THE CORE VISUALIZER (4-Way Architecture) */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
-          
+
           {/* LEFT: Messaging Channels */}
-          <motion.div 
+          <motion.div
             variants={itemVariants}
             className="bg-[#DDEBFF] border-none rounded-xl p-6 space-y-6 shadow-sm transition-all duration-300 flex flex-col group"
           >
@@ -346,44 +451,65 @@ function DashboardHome({ ws, preset, roiMetrics, user }: { ws: Workspace; preset
             </div>
             <div className="space-y-3 flex-1">
               {[
-                { name: "WhatsApp Business", id: "whatsapp", href: "/dashboard/integrations/whatsapp" },
-                { name: "Instagram DM", id: "instagram", href: "/dashboard/integrations/instagram" },
-                { name: "FB Messenger", id: "facebook", href: "/dashboard/integrations/facebook" },
-                { name: "Email & SMS", id: "smtp", href: "/dashboard/integrations/email" }
-              ].map((c) => (
-                <Link href={c.href} key={c.name} className="bg-white border-none px-4 py-3.5 rounded-xl text-[13px] font-bold text-zinc-800 shadow-sm flex items-center justify-between hover:bg-zinc-50 transition-colors cursor-pointer group/item block">
-                  <div className="flex items-center gap-3">
-                    <BrandIcon id={c.id} className="w-5 h-5 shrink-0" />
-                    <span>{c.name}</span>
-                  </div>
-                  <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                </Link>
-              ))}
+                { name: "WhatsApp Business", id: "whatsapp", href: "/dashboard/integrations/connect/whatsapp" },
+                { name: "Instagram DM", id: "instagram", href: "/dashboard/integrations/connect/instagram" },
+                { name: "FB Messenger", id: "facebook", href: "/dashboard/integrations/connect/facebook" },
+                { name: "Email & SMS", id: "smtp", href: "/dashboard/integrations/connect/smtp" }
+              ].map((c) => {
+                const isConnected = recentWorkflow?.requiredIntegrations?.map((i: string) => i.toLowerCase()).includes(c.id);
+                return (
+                  <Link href={c.href} key={c.name} className="bg-white border-none px-4 py-3.5 rounded-xl text-[13px] font-bold text-zinc-800 shadow-sm flex items-center justify-between hover:bg-zinc-50 transition-colors cursor-pointer group/item block">
+                    <div className="flex items-center gap-3">
+                      <BrandIcon id={c.id} className="w-5 h-5 shrink-0" />
+                      <span className={isConnected ? "text-zinc-900" : "text-zinc-500"}>{c.name}</span>
+                    </div>
+                    {isConnected ? (
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-[10px] font-bold text-emerald-600 uppercase">Connected</span>
+                        <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                      </div>
+                    ) : (
+                      <span className="text-[10px] font-bold text-zinc-400 uppercase">Disconnected</span>
+                    )}
+                  </Link>
+                );
+              })}
             </div>
           </motion.div>
 
           {/* CENTER: Voice Integration */}
           <div className="flex flex-col gap-6">
-            <Link 
+            <Link
               href="/dashboard/integrations"
               className="bg-[#DDEBFF] border-none rounded-xl p-6 shadow-sm flex flex-col items-center justify-center text-center relative overflow-hidden group transition-colors block"
             >
-              <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center text-[#0A6BFF] mb-4 relative shadow-sm group-hover:scale-110 transition-transform">
-                 <PhoneCall className="w-5 h-5" />
-              </div>
-              <div className="space-y-1">
-                <h3 className="text-[15px] font-bold text-zinc-900">Voice Agent</h3>
-                <div className="flex items-center justify-center gap-1.5 mt-1">
-                  <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                  <p className="text-[10px] font-bold text-emerald-600 uppercase tracking-widest">
-                    ACTIVE
-                  </p>
-                </div>
-              </div>
+              {(() => {
+                const isPhoneConnected = recentWorkflow?.requiredIntegrations?.map((i: string) => i.toLowerCase()).includes("phone") || recentWorkflow?.requiredIntegrations?.map((i: string) => i.toLowerCase()).includes("voice");
+                return (
+                  <>
+                    <div className="w-12 h-12 rounded-full bg-white text-[#0A6BFF] flex items-center justify-center mb-4 relative shadow-sm group-hover:scale-110 transition-transform">
+                      <PhoneCall className="w-5 h-5" />
+                    </div>
+                    <div className="space-y-1">
+                      <h3 className={`text-[15px] font-bold ${isPhoneConnected ? "text-zinc-900" : "text-zinc-500"}`}>Voice Agent</h3>
+                      {isPhoneConnected ? (
+                        <div className="flex items-center justify-center gap-1.5 mt-1">
+                          <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                          <p className="text-[10px] font-bold text-emerald-600 uppercase tracking-widest">ACTIVE</p>
+                        </div>
+                      ) : (
+                        <div className="flex items-center justify-center gap-1.5 mt-1">
+                          <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">DISCONNECTED</p>
+                        </div>
+                      )}
+                    </div>
+                  </>
+                );
+              })()}
             </Link>
 
             {/* BOTTOM: Content & Growth */}
-            <motion.div 
+            <motion.div
               variants={itemVariants}
               className="bg-[#DDEBFF] border-none rounded-xl p-6 space-y-6 shadow-sm transition-all duration-300 flex-1 group"
             >
@@ -399,20 +525,23 @@ function DashboardHome({ ws, preset, roiMetrics, user }: { ws: Workspace; preset
                   { name: "YouTube", id: "youtube", href: "/dashboard/integrations" },
                   { name: "LinkedIn", id: "linkedin", href: "/dashboard/integrations" },
                   { name: "Blog", id: "blog", href: "/dashboard/integrations" }
-                ].map((c) => (
-                  <Link href={c.href} key={c.name} className="bg-white border-none px-3 py-3 rounded-xl text-[12px] font-bold text-zinc-800 shadow-sm flex items-center gap-2.5 hover:bg-zinc-50 transition-colors cursor-pointer block">
-                    <div className="flex items-center gap-2.5">
-                      <BrandIcon id={c.id} className="w-5 h-5 shrink-0" />
-                      <span className="truncate">{c.name}</span>
-                    </div>
-                  </Link>
-                ))}
+                ].map((c) => {
+                  const isConnected = recentWorkflow?.requiredIntegrations?.map((i: string) => i.toLowerCase()).includes(c.id);
+                  return (
+                    <Link href={c.href} key={c.name} className="bg-white border-none px-3 py-3 rounded-xl text-[12px] font-bold text-zinc-800 shadow-sm flex items-center gap-2.5 hover:bg-zinc-50 transition-colors cursor-pointer block">
+                      <div className="flex items-center gap-2.5">
+                        <BrandIcon id={c.id} className="w-5 h-5 shrink-0" />
+                        <span className={`truncate ${isConnected ? "text-zinc-900" : "text-zinc-500"}`}>{c.name}</span>
+                      </div>
+                    </Link>
+                  );
+                })}
               </div>
             </motion.div>
           </div>
 
           {/* RIGHT: Business Integrations */}
-          <motion.div 
+          <motion.div
             variants={itemVariants}
             className="bg-[#DDEBFF] border-none rounded-xl p-6 space-y-6 shadow-sm transition-all duration-300 flex flex-col group"
           >
@@ -424,19 +553,30 @@ function DashboardHome({ ws, preset, roiMetrics, user }: { ws: Workspace; preset
             </div>
             <div className="space-y-3 flex-1">
               {[
-                { name: "Shopify Store", id: "shopify", href: "/dashboard/integrations/shopify" },
-                { name: "Google Calendar", id: "googlecalendar", href: "/dashboard/integrations/google-calendar" },
-                { name: "HubSpot CRM", id: "hubspot", href: "/dashboard/integrations" },
-                { name: "Stripe Payments", id: "stripe", href: "/dashboard/integrations" }
-              ].map((c) => (
-                <Link href={c.href} key={c.name} className="bg-white border-none px-4 py-3.5 rounded-xl text-[13px] font-bold text-zinc-800 shadow-sm flex items-center justify-between hover:bg-zinc-50 transition-colors cursor-pointer group/item block">
-                  <div className="flex items-center gap-3">
-                    <BrandIcon id={c.id} className="w-5 h-5 shrink-0" />
-                    <span>{c.name}</span>
-                  </div>
-                  <ArrowUpRight className="w-4 h-4 text-zinc-400 group-hover/item:text-zinc-600 transition-colors" />
-                </Link>
-              ))}
+                { name: "Shopify Store", id: "shopify", href: "/dashboard/integrations/connect/shopify" },
+                { name: "Google Calendar", id: "googlecalendar", href: "/dashboard/integrations/connect/google_calendar" },
+                { name: "HubSpot CRM", id: "hubspot", href: "/dashboard/integrations/connect/hubspot" },
+                { name: "Stripe Payments", id: "stripe", href: "/dashboard/integrations/connect/stripe" }
+              ].map((c) => {
+                const isConnected = recentWorkflow?.requiredIntegrations?.map((i: string) => i.toLowerCase()).includes(c.id) ||
+                  (c.id === "googlecalendar" && recentWorkflow?.requiredIntegrations?.map((i: string) => i.toLowerCase()).includes("calendar"));
+                return (
+                  <Link href={c.href} key={c.name} className="bg-white border-none px-4 py-3.5 rounded-xl text-[13px] font-bold text-zinc-800 shadow-sm flex items-center justify-between hover:bg-zinc-50 transition-colors cursor-pointer group/item block">
+                    <div className="flex items-center gap-3">
+                      <BrandIcon id={c.id} className="w-5 h-5 shrink-0" />
+                      <span className={isConnected ? "text-zinc-900" : "text-zinc-500"}>{c.name}</span>
+                    </div>
+                    {isConnected ? (
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-[10px] font-bold text-emerald-600 uppercase">Connected</span>
+                        <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                      </div>
+                    ) : (
+                      <span className="text-[10px] font-bold text-zinc-400 uppercase">Disconnected</span>
+                    )}
+                  </Link>
+                );
+              })}
             </div>
           </motion.div>
 
@@ -445,7 +585,7 @@ function DashboardHome({ ws, preset, roiMetrics, user }: { ws: Workspace; preset
         {/* Bookings & Operational Activity */}
         <motion.div variants={itemVariants} className="grid grid-cols-1 lg:grid-cols-2 gap-[28px] pt-6">
           <TodayBookingsWidget />
-          <ChannelStatusWidget />
+          <ChannelStatusWidget requiredIntegrations={recentWorkflow?.requiredIntegrations || []} />
         </motion.div>
 
         {/* Minimal Channel Switcher - Refined */}
@@ -454,11 +594,10 @@ function DashboardHome({ ws, preset, roiMetrics, user }: { ws: Workspace; preset
             {["OVERVIEW", "WHATSAPP", "INSTAGRAM", "VOICE"].map((tab) => (
               <button
                 key={tab}
-                className={`pb-4 text-[12px] font-semibold transition-all relative tracking-[0.2em] ${
-                  tab === "OVERVIEW" 
-                    ? "text-[#0A6BFF] after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[2px] after:bg-[#0A6BFF]" 
-                    : "text-zinc-400 hover:text-zinc-650"
-                }`}
+                className={`pb-4 text-[12px] font-semibold transition-all relative tracking-[0.2em] ${tab === "OVERVIEW"
+                  ? "text-[#0A6BFF] after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[2px] after:bg-[#0A6BFF]"
+                  : "text-zinc-400 hover:text-zinc-650"
+                  }`}
               >
                 {tab}
               </button>
@@ -489,17 +628,17 @@ function Sidebar({ active, onChange, ws, onWsChange, workspaces, preset, user, o
   const isAgent = user?.role === "agent";
 
   const NAV_ITEMS: { id: Tab; label: string; icon: React.ElementType }[] = [
-    { id: "overview",    label: "Home",           icon: Home },
-    { id: "inbox",       label: "Inbox",          icon: Inbox },
-    { id: "approvals",   label: "Approvals",      icon: CheckSquare },
-    { id: "contacts",    label: "Contacts",       icon: Users },
-    { id: "bookings",    label: "Calendar",       icon: Calendar },
-    { id: "templates",   label: "Templates",      icon: LayoutTemplate },
+    { id: "overview", label: "Home", icon: Home },
+    { id: "inbox", label: "Inbox", icon: Inbox },
+    { id: "approvals", label: "Approvals", icon: CheckSquare },
+    { id: "contacts", label: "Contacts", icon: Users },
+    { id: "bookings", label: "Calendar", icon: Calendar },
+    { id: "templates", label: "Templates", icon: LayoutTemplate },
   ];
 
   if (preset.id === "real-estate") {
-    NAV_ITEMS.push({ id: "properties",  label: "Properties",     icon: Building2 });
-    NAV_ITEMS.push({ id: "leads",       label: "Lead Pipeline",  icon: LayoutDashboard });
+    NAV_ITEMS.push({ id: "properties", label: "Properties", icon: Building2 });
+    NAV_ITEMS.push({ id: "leads", label: "Lead Pipeline", icon: LayoutDashboard });
   } else if (preset.id === "cleaning") {
     NAV_ITEMS.push({ id: "cleaning_bookings", label: "Bookings", icon: Calendar });
   } else if (preset.id === "construction") {
@@ -514,15 +653,15 @@ function Sidebar({ active, onChange, ws, onWsChange, workspaces, preset, user, o
 
   if (!isAgent) {
     NAV_ITEMS.push({ id: "automations", label: "Workflows", icon: GitBranch });
-    NAV_ITEMS.push({ id: "broadcasts",  label: "Broadcasts", icon: Megaphone });
+    NAV_ITEMS.push({ id: "broadcasts", label: "Broadcasts", icon: Megaphone });
   }
 
-  NAV_ITEMS.push({ id: "calls",       label: "Call Logs",         icon: PhoneCall });
-  NAV_ITEMS.push({ id: "voice_agent", label: "Voice AI",        icon: PhoneCall });
-  NAV_ITEMS.push({ id: "ai_agent",    label: "Knowledge Base",    icon: FileText });
+  NAV_ITEMS.push({ id: "calls", label: "Call Logs", icon: PhoneCall });
+  NAV_ITEMS.push({ id: "voice_agent", label: "Voice AI", icon: PhoneCall });
+  NAV_ITEMS.push({ id: "ai_agent", label: "Knowledge Base", icon: FileText });
 
   return (
-    <aside 
+    <aside
       onMouseEnter={() => setIsCollapsed(false)}
       onMouseLeave={() => { setIsCollapsed(true); setWsOpen(false); }}
       className={`dashboard-sidebar shrink-0 border-r border-zinc-200 bg-white flex flex-col h-full z-40 transition-all duration-300 md:translate-x-0 md:static fixed inset-y-0 left-0 ${open ? "translate-x-0" : "-translate-x-full"} ${isCollapsed ? "w-[68px]" : "w-[260px]"}`}
@@ -539,8 +678,8 @@ function Sidebar({ active, onChange, ws, onWsChange, workspaces, preset, user, o
           <button
             type="button"
             onClick={() => {
-               setIsCollapsed(true);
-               setOpen(false);
+              setIsCollapsed(true);
+              setOpen(false);
             }}
             className="p-1.5 rounded-lg hover:bg-zinc-100 text-zinc-400 transition-colors cursor-pointer shrink-0 md:hidden"
           >
@@ -561,7 +700,7 @@ function Sidebar({ active, onChange, ws, onWsChange, workspaces, preset, user, o
         >
           <div className="relative shrink-0 flex items-center justify-center">
             <div className={`rounded-full bg-zinc-200 flex items-center justify-center overflow-hidden border border-zinc-300 ${isCollapsed ? "w-8 h-8" : "w-9 h-9"}`}>
-               <Users className={`text-zinc-500 ${isCollapsed ? "w-4 h-4" : "w-5 h-5"}`} />
+              <Users className={`text-zinc-500 ${isCollapsed ? "w-4 h-4" : "w-5 h-5"}`} />
             </div>
             {!isCollapsed && (
               <div className="absolute -bottom-1.5 -right-1 bg-zinc-600 text-white text-[8px] font-bold px-1 rounded-[3px] border border-white shadow-sm whitespace-nowrap">
@@ -593,7 +732,7 @@ function Sidebar({ active, onChange, ws, onWsChange, workspaces, preset, user, o
               >
                 <div className="relative shrink-0">
                   <div className="w-8 h-8 rounded-full bg-[#dbe1ea] flex items-center justify-center overflow-hidden">
-                     <Users className="w-4 h-4 text-white mt-1.5" />
+                    <Users className="w-4 h-4 text-white mt-1.5" />
                   </div>
                 </div>
                 <div className="min-w-0 flex-1 flex items-center justify-between">
@@ -630,18 +769,15 @@ function Sidebar({ active, onChange, ws, onWsChange, workspaces, preset, user, o
                 if (window.innerWidth < 768) setOpen(false);
               }}
               title={isCollapsed ? label : undefined}
-              className={`w-full flex items-center h-10 rounded-[8px] transition-all cursor-pointer group ${
-                isCollapsed ? "justify-center px-0" : "gap-3 px-3.5"
-              } ${
-                isActive
+              className={`w-full flex items-center h-10 rounded-[8px] transition-all cursor-pointer group ${isCollapsed ? "justify-center px-0" : "gap-3 px-3.5"
+                } ${isActive
                   ? "bg-[#0A6BFF]/10 text-[#0A6BFF] font-semibold"
                   : "text-zinc-500 font-medium hover:bg-zinc-100 hover:text-zinc-900"
-              }`}
+                }`}
             >
               <Icon
-                className={`w-[18px] h-[18px] shrink-0 transition-colors ${
-                  isActive ? "text-[#0A6BFF] stroke-[2]" : "text-zinc-400 group-hover:text-zinc-600 stroke-[2]"
-                }`}
+                className={`w-[18px] h-[18px] shrink-0 transition-colors ${isActive ? "text-[#0A6BFF] stroke-[2]" : "text-zinc-400 group-hover:text-zinc-600 stroke-[2]"
+                  }`}
               />
               {!isCollapsed && <span className="whitespace-nowrap">{label}</span>}
             </button>
@@ -656,26 +792,23 @@ function Sidebar({ active, onChange, ws, onWsChange, workspaces, preset, user, o
               </div>
             )}
             {isCollapsed && <div className="h-4" />}
-            
+
             <button
               type="button"
               onClick={() => {
-                 onChange("analytics");
-                 if (window.innerWidth < 768) setOpen(false);
+                onChange("analytics");
+                if (window.innerWidth < 768) setOpen(false);
               }}
               title={isCollapsed ? "Analytics" : undefined}
-              className={`w-full flex items-center h-10 rounded-[8px] transition-all cursor-pointer group ${
-                isCollapsed ? "justify-center px-0" : "gap-3 px-3.5"
-              } ${
-                active === "analytics"
+              className={`w-full flex items-center h-10 rounded-[8px] transition-all cursor-pointer group ${isCollapsed ? "justify-center px-0" : "gap-3 px-3.5"
+                } ${active === "analytics"
                   ? "bg-[#0A6BFF]/10 text-[#0A6BFF] font-semibold"
                   : "text-zinc-500 font-medium hover:bg-zinc-100 hover:text-zinc-900"
-              }`}
+                }`}
             >
               <BarChart2
-                className={`w-[18px] h-[18px] shrink-0 transition-colors ${
-                  active === "analytics" ? "text-[#0A6BFF] stroke-[2]" : "text-zinc-400 group-hover:text-zinc-600 stroke-[2]"
-                }`}
+                className={`w-[18px] h-[18px] shrink-0 transition-colors ${active === "analytics" ? "text-[#0A6BFF] stroke-[2]" : "text-zinc-400 group-hover:text-zinc-600 stroke-[2]"
+                  }`}
               />
               {!isCollapsed && <span className="whitespace-nowrap">Analytics</span>}
             </button>
@@ -693,13 +826,11 @@ function Sidebar({ active, onChange, ws, onWsChange, workspaces, preset, user, o
               if (window.innerWidth < 768) setOpen(false);
             }}
             title={isCollapsed ? "Team Settings" : undefined}
-            className={`w-full flex items-center h-10 rounded-[8px] transition-all cursor-pointer group ${
-              isCollapsed ? "justify-center px-0" : "gap-3 px-3.5"
-            } ${
-              active === "team"
+            className={`w-full flex items-center h-10 rounded-[8px] transition-all cursor-pointer group ${isCollapsed ? "justify-center px-0" : "gap-3 px-3.5"
+              } ${active === "team"
                 ? "bg-[#0A6BFF]/10 text-[#0A6BFF] font-semibold"
                 : "text-zinc-500 font-medium hover:bg-zinc-100 hover:text-zinc-900"
-            }`}
+              }`}
           >
             <Users className={`w-[18px] h-[18px] shrink-0 transition-colors ${active === "team" ? "text-[#0A6BFF]" : "text-zinc-400 group-hover:text-zinc-600"} stroke-[2]`} />
             {!isCollapsed && <span className="whitespace-nowrap">Team Settings</span>}
@@ -708,28 +839,35 @@ function Sidebar({ active, onChange, ws, onWsChange, workspaces, preset, user, o
         <a
           href="/dashboard/integrations"
           title={isCollapsed ? "Integrations" : undefined}
-          className={`w-full flex items-center h-10 rounded-[8px] text-zinc-500 font-medium hover:bg-zinc-100 hover:text-zinc-900 transition-all cursor-pointer group ${
-            isCollapsed ? "justify-center px-0" : "gap-3 px-3.5"
-          }`}
+          className={`w-full flex items-center h-10 rounded-[8px] text-zinc-500 font-medium hover:bg-zinc-100 hover:text-zinc-900 transition-all cursor-pointer group ${isCollapsed ? "justify-center px-0" : "gap-3 px-3.5"
+            }`}
         >
           <Plug className="w-[18px] h-[18px] shrink-0 transition-colors text-zinc-400 group-hover:text-zinc-600 stroke-[2]" />
           {!isCollapsed && <span className="whitespace-nowrap">Integrations</span>}
         </a>
-        <button 
+        <button
           onClick={async () => {
-            await firebaseSignOut(auth);
-            await fetch("/api/auth/session", { method: "DELETE" });
-            router.push("/");
+            try {
+              await firebaseSignOut(auth);
+            } catch (e) {
+              console.error("Firebase signout error:", e);
+            }
+            try {
+              await fetch("/api/auth/session", { method: "DELETE" });
+            } catch (e) {
+              console.error("Session delete error:", e);
+            }
+            // Use window.location.href to force a full page reload and clear Next.js router cache
+            window.location.href = "/";
           }}
           title={isCollapsed ? "Log out" : undefined}
-          className={`w-full flex items-center h-10 rounded-[8px] text-zinc-500 font-medium hover:bg-zinc-100 hover:text-zinc-900 transition-all cursor-pointer group ${
-            isCollapsed ? "justify-center px-0" : "gap-3 px-3.5"
-          }`}
+          className={`w-full flex items-center h-10 rounded-[8px] text-zinc-500 font-medium hover:bg-zinc-100 hover:text-zinc-900 transition-all cursor-pointer group ${isCollapsed ? "justify-center px-0" : "gap-3 px-3.5"
+            }`}
         >
           <LogOut className="w-[18px] h-[18px] shrink-0 transition-colors text-zinc-400 group-hover:text-zinc-600 stroke-[2]" />
           {!isCollapsed && <span className="whitespace-nowrap">Log out</span>}
         </button>
-        
+
         {/* User Profile Footer */}
         <div className={`mt-3 border-t border-zinc-100 ${isCollapsed ? "pt-3 flex justify-center" : "pt-4 px-3 flex items-center gap-3"}`}>
           <div className="w-9 h-9 rounded-lg bg-zinc-800 flex items-center justify-center shrink-0 shadow-lg ring-2 ring-white/10">
@@ -762,9 +900,9 @@ type WAStatus = {
   hints?: string[];
 };
 
-function Topbar({ title, ws, preset, waStatus, integrations, onMenuClick }: { 
-  title: string; 
-  ws: Workspace; 
+function Topbar({ title, ws, preset, waStatus, integrations, onMenuClick }: {
+  title: string;
+  ws: Workspace;
   preset: IndustryPreset;
   waStatus: WAStatus;
   integrations: { whatsapp: boolean; shopify: boolean; fastapi: boolean };
@@ -778,7 +916,7 @@ function Topbar({ title, ws, preset, waStatus, integrations, onMenuClick }: {
 
   // Determine if we show the alert banner
   const hasIssue = waStatus.tokenExpired || waStatus.phoneNumberIdInvalid || waStatus.needsPublicWebhook || !integrations.fastapi;
-  
+
   let alertMessage = "";
   if (waStatus.tokenExpired) alertMessage = "Meta token expired — reconnect WhatsApp in Integrations.";
   else if (waStatus.phoneNumberIdInvalid) alertMessage = `Phone ID Error: ${waStatus.phoneNumberIdError || "Check settings"}`;
@@ -806,8 +944,8 @@ function Topbar({ title, ws, preset, waStatus, integrations, onMenuClick }: {
     <div className="flex flex-col shrink-0">
       <header className="h-16 border-b border-zinc-200 bg-white px-4 md:px-6 flex items-center justify-between shrink-0 relative z-[60]">
         <div className="flex items-center gap-3 text-[13.5px]">
-          <button 
-            type="button" 
+          <button
+            type="button"
             onClick={onMenuClick}
             className="md:hidden p-1 rounded-lg hover:bg-zinc-100 text-zinc-500 transition-colors"
           >
@@ -821,7 +959,7 @@ function Topbar({ title, ws, preset, waStatus, integrations, onMenuClick }: {
           <ChevronRight className="w-4 h-4 text-zinc-200 hidden sm:inline" />
           <span className="font-bold text-zinc-700 tracking-tight">{title}</span>
         </div>
-        
+
         <div className="flex items-center gap-4">
           <div className="relative group hidden md:block z-50">
             <Search className="w-4 h-4 text-zinc-400 absolute left-3 top-2.5 transition-colors group-focus-within:text-sky-500" />
@@ -832,7 +970,7 @@ function Topbar({ title, ws, preset, waStatus, integrations, onMenuClick }: {
               placeholder="Search NLP indexed data..."
               className="h-9 pl-9 pr-4 rounded-lg border border-zinc-200 text-[13px] bg-zinc-50/50 focus:outline-none focus:border-sky-300 focus:bg-white focus:ring-4 focus:ring-sky-100 transition-all w-64 md:w-80"
             />
-            
+
             {/* Search Results Dropdown â€” TF-IDF Powered */}
             {searchQuery && (
               <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-zinc-200 rounded-xl shadow-2xl overflow-hidden max-h-[420px] overflow-y-auto">
@@ -866,22 +1004,22 @@ function Topbar({ title, ws, preset, waStatus, integrations, onMenuClick }: {
                   <div className="divide-y divide-zinc-50">
                     {searchResults.map((res: any, idx: number) => {
                       // Handle both old format (IndexedDocument) and new TF-IDF (SearchResult)
-                      const doc    = res.document ?? res;
-                      const score  = res.score ?? null;
-                      const terms  = res.matchedTerms ?? [];
-                      const data   = doc.data;
+                      const doc = res.document ?? res;
+                      const score = res.score ?? null;
+                      const terms = res.matchedTerms ?? [];
+                      const data = doc.data;
 
                       const sentimentColor = {
                         positive: "bg-emerald-100 text-emerald-700",
-                        neutral:  "bg-zinc-100 text-zinc-600",
+                        neutral: "bg-zinc-100 text-zinc-600",
                         negative: "bg-rose-100 text-rose-700",
                       }[data.sentiment as string] ?? "bg-zinc-100 text-zinc-600";
 
                       const nerCategoryColor: Record<string, string> = {
                         ENAMEX: "bg-violet-100 text-violet-700",
-                        NUMEX:  "bg-amber-100 text-amber-700",
-                        TIMEX:  "bg-sky-100 text-sky-700",
-                        MISC:   "bg-zinc-100 text-zinc-600",
+                        NUMEX: "bg-amber-100 text-amber-700",
+                        TIMEX: "bg-sky-100 text-sky-700",
+                        MISC: "bg-zinc-100 text-zinc-600",
                       };
 
                       return (
@@ -964,7 +1102,7 @@ function Topbar({ title, ws, preset, waStatus, integrations, onMenuClick }: {
               <Bell className="w-4.5 h-4.5 transition-transform group-hover:rotate-12" />
               {hasIssue && <span className="absolute top-2 right-2.5 w-2 h-2 rounded-full bg-rose-500 border-2 border-white" />}
             </button>
-            
+
             {showNotifications && (
               <div className="absolute top-full right-0 mt-2 w-80 bg-white border border-zinc-200 rounded-xl shadow-2xl overflow-hidden z-50 animate-in fade-in slide-in-from-top-2">
                 <div className="px-4 py-3 border-b border-zinc-100 flex justify-between items-center bg-zinc-50/50">
@@ -981,7 +1119,7 @@ function Topbar({ title, ws, preset, waStatus, integrations, onMenuClick }: {
                         <div>
                           <p className="text-[13px] font-bold text-zinc-900 leading-tight mb-1">CRM System Alert</p>
                           <p className="text-[12px] text-zinc-500 leading-snug">{alertMessage}</p>
-                          <button onClick={() => window.location.href='/dashboard/integrations/whatsapp'} className="mt-2 text-[11px] font-bold text-sky-600 hover:underline">Fix Issue &rarr;</button>
+                          <button onClick={() => window.location.href = '/dashboard/integrations/connect/whatsapp'} className="mt-2 text-[11px] font-bold text-sky-600 hover:underline">Fix Issue &rarr;</button>
                         </div>
                       </div>
                     </div>
@@ -1007,11 +1145,11 @@ function Topbar({ title, ws, preset, waStatus, integrations, onMenuClick }: {
           <div className="flex items-center gap-3 mb-3 md:mb-0">
             <div className="w-2.5 h-2.5 rounded-full bg-white animate-pulse shrink-0 shadow-sm" />
             <p className="text-[14px] font-bold tracking-wide">
-              System Error: {alertMessage} 
+              System Error: {alertMessage}
             </p>
           </div>
           <div className="flex items-center gap-4">
-            <button onClick={() => window.location.href='/dashboard/integrations/whatsapp'} className="bg-white text-rose-600 hover:bg-rose-50 text-[13px] font-bold px-5 py-2 rounded-lg transition-colors shadow-sm">
+            <button onClick={() => window.location.href = '/dashboard/integrations/connect/whatsapp'} className="bg-white text-rose-600 hover:bg-rose-50 text-[13px] font-bold px-5 py-2 rounded-lg transition-colors shadow-sm">
               Fix Issue Now
             </button>
             <button className="text-white hover:text-rose-100 text-[13px] font-bold px-2 py-2 flex items-center gap-1.5 transition-colors">
@@ -1085,13 +1223,14 @@ function AnalyticsPage() {
   ];
 
   return (
-    <div className="space-y-10 max-w-5xl relative z-10 pb-10">
-      <div className="space-y-1">
-        <h1 className="text-3xl font-bold text-zinc-800 tracking-tight">Analytics</h1>
-        <p className="text-[15px] text-zinc-500 font-medium leading-relaxed">
-          Real-time performance from your workflows â€” last 7 days
-        </p>
-      </div>
+    <div className="space-y-6 max-w-5xl relative z-10 pb-10">
+      <InnerPageHeader
+        title="Analytics"
+        subtitle="Real-time performance from your workflows — last 7 days."
+        icon={TrendingUp}
+        backHref="/dashboard"
+        backLabel="Back to dashboard"
+      />
 
       {loading ? (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
@@ -1196,12 +1335,12 @@ function detectChannels(text: string): string[] {
 }
 
 const CHANNEL_META: Record<string, { label: string; color: string; connectHref: string }> = {
-  whatsapp:        { label: "WhatsApp",        color: "#25D366", connectHref: "/dashboard/integrations/whatsapp" },
-  instagram:       { label: "Instagram",       color: "#E4405F", connectHref: "/dashboard/integrations/instagram" },
-  facebook:        { label: "Facebook",        color: "#1877F2", connectHref: "/dashboard/integrations/facebook" },
-  shopify:         { label: "Shopify",         color: "#96bf48", connectHref: "/dashboard/integrations/shopify" },
-  smtp:            { label: "Email",           color: "#6366F1", connectHref: "/dashboard/integrations/email" },
-  google_calendar: { label: "Google Calendar", color: "#EA4335", connectHref: "/dashboard/integrations/google-calendar" },
+  whatsapp: { label: "WhatsApp", color: "#25D366", connectHref: "/dashboard/integrations/connect/whatsapp" },
+  instagram: { label: "Instagram", color: "#E4405F", connectHref: "/dashboard/integrations/connect/instagram" },
+  facebook: { label: "Facebook", color: "#1877F2", connectHref: "/dashboard/integrations/connect/facebook" },
+  shopify: { label: "Shopify", color: "#96bf48", connectHref: "/dashboard/integrations/connect/shopify" },
+  smtp: { label: "Email", color: "#6366F1", connectHref: "/dashboard/integrations/connect/smtp" },
+  google_calendar: { label: "Google Calendar", color: "#EA4335", connectHref: "/dashboard/integrations/connect/google_calendar" },
 };
 
 function ChannelBadge({ channelId, connected }: { channelId: string; connected: boolean }) {
@@ -1230,9 +1369,9 @@ function ChannelBadge({ channelId, connected }: { channelId: string; connected: 
 
 function AutomationStateBadge({ state }: { state: AutomationChannelState }) {
   const cfg = {
-    live:             { label: "Live",             bg: "bg-sky-50",      text: "text-sky-700",      border: "border-sky-100",     dot: "bg-sky-500" },
-    draft:            { label: "Draft",            bg: "bg-zinc-100",    text: "text-zinc-500",     border: "border-zinc-200",    dot: "bg-zinc-400" },
-    needs_connection: { label: "Needs Connection", bg: "bg-orange-50",   text: "text-orange-700",   border: "border-orange-200",  dot: "bg-orange-500" },
+    live: { label: "Live", bg: "bg-sky-50", text: "text-sky-700", border: "border-sky-100", dot: "bg-sky-500" },
+    draft: { label: "Draft", bg: "bg-zinc-100", text: "text-zinc-500", border: "border-zinc-200", dot: "bg-zinc-400" },
+    needs_connection: { label: "Needs Connection", bg: "bg-orange-50", text: "text-orange-700", border: "border-orange-200", dot: "bg-orange-500" },
   };
   const { label, bg, text, border, dot } = cfg[state];
   return (
@@ -1288,14 +1427,14 @@ function AutomationsPage({ ws, integrations, toggleAutomation, toggleLoading }: 
 
   const resolveConnectHref = (missing: string[], provider: GeneratedAutomation["requiredProvider"]): string => {
     if (provider === "meta") {
-      if (missing.includes("instagram")) return "/dashboard/integrations/instagram";
-      if (missing.includes("facebook")) return "/dashboard/integrations/facebook";
-      return "/dashboard/integrations/whatsapp";
+      if (missing.includes("instagram")) return "/dashboard/integrations/connect/instagram";
+      if (missing.includes("facebook")) return "/dashboard/integrations/connect/facebook";
+      return "/dashboard/integrations/connect/whatsapp";
     }
-    if (provider === "commerce") return "/dashboard/integrations/shopify";
+    if (provider === "commerce") return "/dashboard/integrations/connect/shopify";
     if (provider === "google") {
-      if (missing.includes("google_calendar")) return "/dashboard/integrations/google-calendar";
-      return "/dashboard/integrations/email";
+      if (missing.includes("google_calendar")) return "/dashboard/integrations/connect/google_calendar";
+      return "/dashboard/integrations/connect/smtp";
     }
     return "/dashboard/integrations";
   };
@@ -1330,9 +1469,9 @@ function AutomationsPage({ ws, integrations, toggleAutomation, toggleLoading }: 
           setApiAutomations(mapped);
         }
       })
-      .catch(() => {})
+      .catch(() => { })
       .finally(() => setLoadingList(false));
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ws.id, integrations.whatsapp, integrations.instagram, integrations.facebook, integrations.shopify, integrations.smtp]);
 
   useEffect(() => {
@@ -1340,7 +1479,7 @@ function AutomationsPage({ ws, integrations, toggleAutomation, toggleLoading }: 
     const channels = detectChannels(prompt);
     setDetectedChannels(channels);
     setShowConnectPrompt(channels.some((c) => !isConnected(c)));
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [prompt, integrations.whatsapp, integrations.instagram, integrations.facebook, integrations.shopify, integrations.smtp]);
 
   const handleBuild = async (e: React.FormEvent) => {
@@ -1356,12 +1495,12 @@ function AutomationsPage({ ws, integrations, toggleAutomation, toggleLoading }: 
       });
       const data = await res.json();
       if (!res.ok) { setError(data.error || "Build failed"); return; }
-      
+
       if (data.workflow?.id) {
         router.push(`/dashboard/workflows/${data.workflow.id}`);
         return;
       }
-      
+
       const channels = detectChannels(prompt);
       const missing = channels.filter((c) => !isConnected(c));
       const allConn = missing.length === 0;
@@ -1419,21 +1558,21 @@ function AutomationsPage({ ws, integrations, toggleAutomation, toggleLoading }: 
     (a, idx, arr) => arr.findIndex((b) => b.id === a.id) === idx
   );
 
-  const liveCount  = finalList.filter((a) => a.state === "live").length;
+  const liveCount = finalList.filter((a) => a.state === "live").length;
   const needsCount = finalList.filter((a) => a.state === "needs_connection").length;
 
   return (
     <div className="space-y-6 max-w-3xl pb-10">
 
       {/* â”€â”€ Header â”€â”€ */}
-      <div className="flex items-start justify-between gap-4">
-        <div>
-          <h1 className="text-[22px] font-bold text-zinc-900 tracking-tight leading-none">Automations</h1>
-          <p className="text-[13.5px] text-zinc-400 font-medium mt-1.5 leading-snug">
-            Describe a flow in plain language â€” Anaos builds it. Connect the channel to go live.
-          </p>
-        </div>
-        <div className="flex items-center gap-2 shrink-0 flex-wrap justify-end pt-1">
+      <InnerPageHeader
+        title="Workflows"
+        subtitle="Describe a flow in plain language — AnaOS builds it. Connect the channel to go live."
+        icon={GitBranch}
+        backHref="/dashboard"
+        backLabel="Back to dashboard"
+      >
+        <div className="flex items-center gap-2 shrink-0 flex-wrap justify-end">
           {liveCount > 0 && (
             <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-50 border border-emerald-100 text-[11px] font-bold text-emerald-700 uppercase tracking-wider">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
@@ -1447,7 +1586,7 @@ function AutomationsPage({ ws, integrations, toggleAutomation, toggleLoading }: 
             </span>
           )}
         </div>
-      </div>
+      </InnerPageHeader>
 
       {/* â”€â”€ Build with Prompt Card â”€â”€ */}
       <div className="rounded-xl border border-zinc-200 bg-white shadow-sm overflow-hidden">
@@ -1553,8 +1692,8 @@ function AutomationsPage({ ws, integrations, toggleAutomation, toggleLoading }: 
                     style={{
                       backgroundColor:
                         a.state === "live" ? "#10B981"
-                        : a.state === "needs_connection" ? "#F97316"
-                        : "#E5E7EB",
+                          : a.state === "needs_connection" ? "#F97316"
+                            : "#E5E7EB",
                     }}
                   />
 
@@ -1619,15 +1758,13 @@ function AutomationsPage({ ws, integrations, toggleAutomation, toggleLoading }: 
                           type="button"
                           onClick={() => toggleAutomation(a.id)}
                           disabled={toggleLoading === a.id}
-                          className={`w-11 h-6 rounded-full transition-all cursor-pointer relative shrink-0 ${
-                            a.enabled ? "bg-emerald-500 shadow-sm shadow-emerald-200" : "bg-zinc-200"
-                          } disabled:opacity-50`}
+                          className={`w-11 h-6 rounded-full transition-all cursor-pointer relative shrink-0 ${a.enabled ? "bg-emerald-500 shadow-sm shadow-emerald-200" : "bg-zinc-200"
+                            } disabled:opacity-50`}
                           title={a.enabled ? "Pause automation" : "Activate automation"}
                         >
                           <div
-                            className={`absolute top-1 w-4 h-4 rounded-full bg-white shadow transition-all ${
-                              a.enabled ? "left-6" : "left-1"
-                            }`}
+                            className={`absolute top-1 w-4 h-4 rounded-full bg-white shadow transition-all ${a.enabled ? "left-6" : "left-1"
+                              }`}
                           />
                         </button>
                       )}
@@ -1737,7 +1874,7 @@ export default function Dashboard() {
     async function loadDashboardData() {
       try {
         setLoadError(null);
-        
+
         // --- INTERCEPTOR LOGIC FOR LANDING PAGE DEPLOYMENTS ---
         const savedWorkspaces = localStorage.getItem("anaos_custom_workspaces");
         if (savedWorkspaces) {
@@ -1766,14 +1903,14 @@ export default function Dashboard() {
           return;
         }
         const data = await res.json();
-        
+
         if (data.user) {
           setUser(data.user);
         }
         if (data.roiMetrics) {
           setRoiMetrics(data.roiMetrics);
         }
-        
+
         if (data.integrations) {
           setIntegrations(data.integrations);
           setWebhookActive(!!data.integrations.whatsapp);
@@ -1795,7 +1932,7 @@ export default function Dashboard() {
               });
             }
           })
-          .catch(() => {});
+          .catch(() => { });
 
         if (data.success && data.workspaces?.length > 0) {
           const mapped: Workspace[] = data.workspaces.map((w: {
@@ -1908,18 +2045,18 @@ export default function Dashboard() {
 
   const tabLabel: Record<Tab, string> = {
     voice_agent: "Voice AI",
-    ai_agent:    "Automate",
+    ai_agent: "Automate",
     calls: "Call Logs",
-    overview:    "Home",
-    inbox:       "Inbox",
-    approvals:   "Approvals",
-    contacts:    "Contacts",
+    overview: "Home",
+    inbox: "Inbox",
+    approvals: "Approvals",
+    contacts: "Contacts",
     automations: "Workflows",
-    broadcasts:  "Broadcasts",
-    analytics:   "Analytics",
-    team:        "Team Settings",
-    properties:  "Properties",
-    leads:       "Lead Pipeline",
+    broadcasts: "Broadcasts",
+    analytics: "Analytics",
+    team: "Team Settings",
+    properties: "Properties",
+    leads: "Lead Pipeline",
   };
 
   if (!mounted || loadingData || isDeployingAgent) {
@@ -1929,7 +2066,7 @@ export default function Dashboard() {
         <div className="absolute inset-0 z-0">
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-blue-100/40 rounded-full blur-[100px] animate-pulse" />
         </div>
-        
+
         <div className="z-10 bg-white p-8 rounded-3xl shadow-[0_8px_30px_rgba(0,0,0,0.06)] border border-zinc-100 flex flex-col items-center max-w-sm w-full text-center">
           <div className="w-16 h-16 bg-blue-50 text-[#0A6BFF] rounded-2xl flex items-center justify-center mb-6 shadow-inner border border-blue-100/50">
             {isDeployingAgent ? <Activity className="w-8 h-8 animate-bounce" /> : <Loader2 className="w-8 h-8 animate-spin" />}
@@ -1939,7 +2076,7 @@ export default function Dashboard() {
               <h2 className="text-xl font-bold text-zinc-900 mb-2">
                 Deploying Your AI Agent...
               </h2>
-              
+
               <p className="text-[13px] text-zinc-500 font-medium mb-8">
                 We are building your workspace and wiring up your automations to the AI engine.
               </p>
@@ -2003,62 +2140,61 @@ export default function Dashboard() {
 
   return (
     <IndustryShell preset={industryPreset}>
-    <div className="flex h-screen bg-white overflow-hidden font-sans relative">
-      {/* High-Vibrancy Glowing Blur Blobs (Dashboard Root) */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
-        <div className="absolute top-[-5%] right-[-5%] w-[600px] h-[600px] rounded-full bg-[#00B0FF] opacity-[0.05] blur-[120px]" />
-        <div className="absolute bottom-[-5%] left-[-5%] w-[600px] h-[600px] rounded-full bg-[#3B82F6] opacity-[0.05] blur-[120px]" />
-      </div>
+      <div className="flex h-screen bg-white overflow-hidden font-sans relative">
+        {/* High-Vibrancy Glowing Blur Blobs (Dashboard Root) */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
+          <div className="absolute top-[-5%] right-[-5%] w-[600px] h-[600px] rounded-full bg-[#00B0FF] opacity-[0.05] blur-[120px]" />
+          <div className="absolute bottom-[-5%] left-[-5%] w-[600px] h-[600px] rounded-full bg-[#3B82F6] opacity-[0.05] blur-[120px]" />
+        </div>
 
-      <Sidebar
-        active={tab}
-        onChange={handleTabChange}
-        ws={ws}
-        onWsChange={(w) => { setWs(w); handleTabChange("overview"); }}
-        workspaces={workspaces}
-        preset={industryPreset}
-        user={user}
-        open={sidebarOpen}
-        setOpen={setSidebarOpen}
-      />
-
-      {sidebarOpen && (
-        <div 
-          className="fixed inset-0 bg-black/20 backdrop-blur-xs z-30 md:hidden animate-in fade-in duration-200"
-          onClick={() => setSidebarOpen(false)}
+        <Sidebar
+          active={tab}
+          onChange={handleTabChange}
+          ws={ws}
+          onWsChange={(w) => { setWs(w); handleTabChange("overview"); }}
+          workspaces={workspaces}
+          preset={industryPreset}
+          user={user}
+          open={sidebarOpen}
+          setOpen={setSidebarOpen}
         />
-      )}
 
-      <div className="dashboard-shell flex-1 flex flex-col overflow-hidden min-w-0 bg-transparent relative z-10">
-        <Topbar 
-          title={tabLabel[tab]} 
-          ws={ws} 
-          preset={industryPreset} 
-          waStatus={waStatus} 
-          integrations={integrations} 
-          onMenuClick={() => setSidebarOpen(true)} 
-        />
-          
+        {sidebarOpen && (
+          <div
+            className="fixed inset-0 bg-black/20 backdrop-blur-xs z-30 md:hidden animate-in fade-in duration-200"
+            onClick={() => setSidebarOpen(false)}
+          />
+        )}
+
+        <div className="dashboard-shell flex-1 flex flex-col overflow-hidden min-w-0 bg-transparent relative z-10">
+          <Topbar
+            title={tabLabel[tab]}
+            ws={ws}
+            preset={industryPreset}
+            waStatus={waStatus}
+            integrations={integrations}
+            onMenuClick={() => setSidebarOpen(true)}
+          />
+
           <main
-            className={`flex-1 overflow-y-auto overflow-x-hidden ${
-              tab === "inbox" ? "overflow-hidden p-0" : "bg-[#F8F9FA]"
-            }`}
+            className={`flex-1 overflow-y-auto overflow-x-hidden ${tab === "inbox" ? "overflow-hidden p-0" : "bg-[#F8F9FA]"
+              }`}
           >
             <div className={tab === "inbox" || tab === "voice_agent" || tab === "calls" || tab === "ai_agent" || tab === "contacts" || tab === "bookings" || tab === "properties" || tab === "leads" || tab === "cleaning_bookings" || tab === "construction_projects" || tab === "maintenance_orders" || tab === "it_tickets" || tab === "fencing_estimates" ? "" : "px-4 py-6 md:px-10 md:pt-8 md:pb-8"}>
               {tab === "voice_agent" && <VoiceAgentHub />}
-              {tab === "ai_agent"    && <AIAgentPage     ws={ws} />}
-              {tab === "overview"    && <DashboardHome ws={ws} preset={industryPreset} roiMetrics={roiMetrics} user={user} />}
-              {tab === "calls"       && <CallsPage />}
-              {tab === "inbox"       && <InboxPage initialConversationId={inboxChatId} preset={industryPreset} />}
-              {tab === "contacts"    && <ContactsHub />}
-              {tab === "bookings"    && <BookingsHub />}
+              {tab === "ai_agent" && <AIAgentPage ws={ws} />}
+              {tab === "overview" && <DashboardHome ws={ws} preset={industryPreset} roiMetrics={roiMetrics} user={user} />}
+              {tab === "calls" && <CallsPage />}
+              {tab === "inbox" && <InboxPage initialConversationId={inboxChatId} preset={industryPreset} />}
+              {tab === "contacts" && <ContactsHub />}
+              {tab === "bookings" && <BookingsHub />}
               {tab === "automations" && <AutomationsPage ws={ws} integrations={integrations} toggleAutomation={toggleAutomation} toggleLoading={toggleLoading} />}
-              {tab === "templates"   && <TemplatesHub />}
-              {tab === "broadcasts"  && <BroadcastsPage ws={ws} />}
-              {tab === "analytics"   && <AnalyticsPage />}
-              {tab === "team"        && <TeamSettingsPage />}
-              {tab === "properties"  && <PropertiesEmbedPage />}
-              {tab === "leads"       && <LeadsEmbedPage />}
+              {tab === "templates" && <TemplatesHub />}
+              {tab === "broadcasts" && <BroadcastsPage ws={ws} />}
+              {tab === "analytics" && <AnalyticsPage />}
+              {tab === "team" && <TeamSettingsPage />}
+              {tab === "properties" && <PropertiesEmbedPage />}
+              {tab === "leads" && <LeadsEmbedPage />}
               {tab === "cleaning_bookings" && <CleaningBookingsPage />}
               {tab === "construction_projects" && <ConstructionProjectsPage />}
               {tab === "maintenance_orders" && <MaintenanceOrdersPage />}
@@ -2066,8 +2202,8 @@ export default function Dashboard() {
               {tab === "fencing_estimates" && <FencingEstimatesPage />}
             </div>
           </main>
+        </div>
       </div>
-    </div>
     </IndustryShell>
   );
 }

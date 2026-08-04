@@ -1,27 +1,27 @@
 import { NextResponse } from "next/server";
-import { TEMPLATES, createWorkflowFromTemplate } from "@/lib/workflow/templates";
 import { getAccountId } from "@/lib/auth/session";
+import { TemplateService } from "@/lib/services/template.service";
+import { handleApiError } from "@/lib/errors";
+import { TEMPLATES, createWorkflowFromTemplate } from "@/lib/workflow/templates";
 
 export const dynamic = "force-dynamic";
 
 // GET /api/v1/workflows/templates - Get all available templates
 export async function GET() {
   try {
-    const briefTemplates = TEMPLATES.map(t => ({
+    const templates = await TemplateService.list();
+    const briefTemplates = templates.map(t => ({
       id: t.id,
       name: t.name,
       description: t.description,
-      industry: t.industry,
-      nodeCount: t.nodes.length,
+      industry: t.category,
+      nodeCount: JSON.parse(t.definition || "{}").nodes?.length ?? 0,
     }));
 
-    return NextResponse.json({
-      success: true,
-      templates: briefTemplates,
-    });
+    return NextResponse.json({ success: true, templates: briefTemplates });
   } catch (error) {
     console.error("GET templates error:", error);
-    return NextResponse.json({ error: "Failed to list templates" }, { status: 500 });
+    return handleApiError(error);
   }
 }
 
@@ -48,6 +48,6 @@ export async function POST(request: Request) {
     return NextResponse.json(result);
   } catch (error: any) {
     console.error("POST instantiate template error:", error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return handleApiError(error);
   }
 }

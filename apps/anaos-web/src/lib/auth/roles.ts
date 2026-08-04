@@ -1,19 +1,19 @@
-import { auth } from "@/auth";
+import { getSessionUser, SessionUser } from "@/lib/auth/session";
 import { ForbiddenError, AuthenticationError } from "@/lib/errors";
 
-export type Role = 'owner' | 'admin' | 'user';
+export type Role = 'owner' | 'admin' | 'user' | 'super-admin';
 
-export async function getCurrentUser() {
-  const session = await auth();
-  if (!session?.user) {
+export async function getCurrentUser(): Promise<SessionUser> {
+  const session = await getSessionUser();
+  if (!session?.email) {
     throw new AuthenticationError();
   }
-  return session.user as any;
+  return session;
 }
 
 export async function checkRole(allowedRoles: Role[]) {
   const user = await getCurrentUser();
-  if (!allowedRoles.includes(user.role as Role)) {
+  if (!user.role || !allowedRoles.includes(user.role as Role)) {
     throw new ForbiddenError('You do not have permission to perform this action');
   }
   return user;
@@ -24,5 +24,9 @@ export async function isOwner() {
 }
 
 export async function isAdmin() {
-  return checkRole(['owner', 'admin']);
+  return checkRole(['owner', 'admin', 'super-admin']);
+}
+
+export async function isSuperAdmin() {
+  return checkRole(['super-admin']);
 }

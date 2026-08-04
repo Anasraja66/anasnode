@@ -7,7 +7,7 @@ export function middleware(request: NextRequest) {
   // If no session and trying to access dashboard, redirect to login
   if (!session && request.nextUrl.pathname.startsWith("/dashboard")) {
     const loginUrl = new URL("/login", request.url);
-    loginUrl.searchParams.set("callbackUrl", request.nextUrl.pathname);
+    loginUrl.searchParams.set("callbackUrl", request.nextUrl.pathname + request.nextUrl.search);
     return NextResponse.redirect(loginUrl);
   }
 

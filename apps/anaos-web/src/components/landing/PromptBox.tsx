@@ -15,13 +15,15 @@ interface Props {
   compact?: boolean;
   staticPlaceholder?: string;
   onSubmitPrompt?: (prompt: string) => void;
-  mode?: "new" | "edit";
+  mode?: "new" | "edit" | "improve";
   automationName?: string;
   initialValue?: string;
-  onModeChange?: (mode: "new" | "edit") => void;
+  onModeChange?: (mode: "new" | "edit" | "improve") => void;
+  issues?: { id: string; title: string; text: string }[];
+  onFixIssue?: (id: string) => void;
 }
 
-export function PromptBox({ onGenerate, compact, staticPlaceholder, onSubmitPrompt, mode = "new", automationName, initialValue, onModeChange }: Props) {
+export function PromptBox({ onGenerate, compact, staticPlaceholder, onSubmitPrompt, mode = "new", automationName, initialValue, onModeChange, issues = [], onFixIssue }: Props) {
   const [value, setValue] = useState(initialValue || "");
   const [loading, setLoading] = useState(false);
   const [stage, setStage] = useState(0);
@@ -158,7 +160,7 @@ export function PromptBox({ onGenerate, compact, staticPlaceholder, onSubmitProm
       setTimeout(() => {
         setLoading(false);
         if (data.success && data.workspace) {
-          onGenerate?.(data.workspace, value.trim());
+          onGenerate?.(data, value.trim());
         }
       }, 500);
     } catch (e) {
@@ -191,13 +193,56 @@ export function PromptBox({ onGenerate, compact, staticPlaceholder, onSubmitProm
             </button>
           </div>
         )}
+
+        {/* AI Diagnostics Panel */}
+        <AnimatePresence>
+          {issues.length > 0 && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              className="mb-3 px-1"
+            >
+              <div className="bg-amber-50/70 border border-amber-200/60 rounded-2xl p-4 overflow-hidden relative">
+                <div className="flex items-center gap-2 mb-3">
+                  <Sparkles className="w-4 h-4 text-amber-500" />
+                  <span className="text-[13px] font-bold text-amber-900 tracking-tight">AI Optimization Opportunities</span>
+                </div>
+                <div className="space-y-2">
+                  {issues.map(issue => (
+                    <motion.div 
+                      key={issue.id} 
+                      layout
+                      initial={{ opacity: 0, y: 5 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, x: -10 }}
+                      className="bg-white border border-amber-100 rounded-xl p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-sm"
+                    >
+                      <div>
+                        <h4 className="text-[13px] font-bold text-zinc-900">{issue.title}</h4>
+                        <p className="text-[12px] text-zinc-600 mt-0.5">{issue.text}</p>
+                      </div>
+                      <button 
+                        onClick={() => onFixIssue && onFixIssue(issue.id)}
+                        className="shrink-0 bg-amber-500 hover:bg-amber-600 text-white text-[12px] font-bold px-4 py-2 rounded-lg transition-colors shadow-sm"
+                      >
+                        Auto-Fix
+                      </button>
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
         <textarea
           value={value}
           onChange={(e) => setValue(e.target.value)}
           placeholder={mounted && !value ? (staticPlaceholder || placeholderText) : (staticPlaceholder || "Describe your business automation...")}
           rows={4}
           disabled={loading}
-          className="w-full resize-none bg-transparent px-3 sm:px-4 pt-3 pb-2 text-[14px] sm:text-[15px] font-medium text-zinc-700 placeholder:text-zinc-400 focus:outline-none leading-relaxed"
+          className="w-full resize-none bg-transparent px-3 sm:px-4 pt-2 pb-2 text-[14px] sm:text-[15px] font-medium text-zinc-700 placeholder:text-zinc-400 focus:outline-none leading-relaxed"
         />
         
         {mounted && (

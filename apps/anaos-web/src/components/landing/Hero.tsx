@@ -9,6 +9,7 @@ import { X, Search, Plus } from "lucide-react";
 import { Typewriter } from "./Typewriter";
 import { WordRotator } from "./WordRotator";
 import { WorkflowPreviewModal } from "./WorkflowPreviewModal";
+import { WorkflowCanvas } from "./WorkflowCanvas";
 import BrandIcon from "@/components/ui/BrandIcon";
 
 export function Hero() {
@@ -245,32 +246,21 @@ export function Hero() {
         >
           <div className="relative w-full z-20">
             <PromptBox 
-              onGenerate={async (ws, prompt) => {
-                try {
-                  const res = await fetch("/api/generate/workflow", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ prompt: prompt || `Automation for ${ws.name}` }),
-                  });
-                  const data = await res.json();
-                  if (data.success && data.workflow) {
-                    const entry = {
-                      id: ws.id,
-                      name: data.workflowName || ws.name,
-                      workflow: data.workflow,
-                      industry: data.industry,
-                      prompt,
-                      features: data.features || [],
-                      createdAt: Date.now(),
-                    };
-                    setPreviewData(entry);
-                  } else {
-                    setWorkspace(ws);
-                    setLastPrompt(prompt);
-                  }
-                } catch (e) {
-                  setWorkspace(ws);
-                  setLastPrompt(prompt);
+              onGenerate={(data, prompt) => {
+                if (data.success && data.workspace) {
+                  const entry = {
+                    id: "wf_" + Math.random().toString(36).substring(7),
+                    name: data.workflowName || "AI Generated Workflow",
+                    workflow: data.workspace,
+                    industry: data.industry || "general",
+                    prompt,
+                    features: data.features || [],
+                    createdAt: Date.now(),
+                  };
+                  setPreviewData(entry);
+                } else {
+                  console.error("Failed to generate workflow");
+                  alert("Failed to generate workflow. Please try again.");
                 }
               }}
             />
@@ -300,11 +290,11 @@ export function Hero() {
                       body: JSON.stringify({ prompt }),
                     });
                     const data = await res.json();
-                    if (data.success && data.workflow) {
+                    if (data.success && (data.workspace || data.workflow)) {
                       const entry = {
                         id: "wf_" + Math.random().toString(36).substring(7),
                         name: data.workflowName || `${ind.name} OS`,
-                        workflow: data.workflow,
+                        workflow: data.workspace || data.workflow,
                         industry: ind.id,
                         prompt,
                         features: data.features || [],
@@ -396,6 +386,9 @@ export function Hero() {
           </AnimatePresence>
         </div>
       </div>
+      
+      <WorkflowCanvas />
+
       <WorkflowPreviewModal 
         isOpen={!!previewData}
         onClose={() => setPreviewData(null)}

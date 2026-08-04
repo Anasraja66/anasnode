@@ -13,7 +13,7 @@ type ChannelStatus = {
   status: "connected" | "platform" | "action_required" | "available" | "coming_soon";
 };
 
-export default function ChannelStatusWidget() {
+export default function ChannelStatusWidget({ requiredIntegrations = [] }: { requiredIntegrations?: string[] }) {
   const [channels, setChannels] = useState<ChannelStatus[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -25,10 +25,17 @@ export default function ChannelStatusWidget() {
       const res = await fetch("/api/integrations/status");
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Failed to load channel statuses");
-      
-      // Filter only messaging and google calendar channels
+
+      // Filter only messaging and google calendar channels that were selected in the workflow
+      const allowedChannels = ["whatsapp", "instagram", "facebook", "google_calendar"];
+
       const messagingAndCal = (data.integrations || []).filter(
-        (i: any) => i.id === "whatsapp" || i.id === "instagram" || i.id === "facebook" || i.id === "google_calendar"
+        (i: any) => {
+          if (!allowedChannels.includes(i.id)) return false;
+          // Map api ids to the requiredIntegrations ids
+          const checkId = i.id === "google_calendar" ? "calendar" : i.id;
+          return requiredIntegrations.map(req => req.toLowerCase()).includes(checkId);
+        }
       );
       setChannels(messagingAndCal);
     } catch (err: any) {
@@ -40,7 +47,7 @@ export default function ChannelStatusWidget() {
 
   useEffect(() => {
     fetchStatus();
-  }, []);
+  }, [requiredIntegrations]);
 
   const getChannelIcon = (id: string) => {
     return <BrandIcon id={id} className="w-5 h-5" />;
@@ -79,10 +86,10 @@ export default function ChannelStatusWidget() {
   };
 
   const connectHrefForChannel = (id: string) => {
-    if (id === "google_calendar") return "/dashboard/integrations/google-calendar";
-    if (id === "instagram") return "/dashboard/integrations/instagram";
-    if (id === "facebook") return "/dashboard/integrations/facebook";
-    return "/dashboard/integrations/whatsapp";
+    if (id === "google_calendar") return "/dashboard/integrations/connect/google_calendar";
+    if (id === "instagram") return "/dashboard/integrations/connect/instagram";
+    if (id === "facebook") return "/dashboard/integrations/connect/facebook";
+    return "/dashboard/integrations/connect/whatsapp";
   };
 
   return (
@@ -115,10 +122,15 @@ export default function ChannelStatusWidget() {
             <AlertCircle className="w-4 h-4 shrink-0" />
             <span>{error}</span>
           </div>
+        ) : channels.length === 0 ? (
+          <div className="py-8 text-center text-zinc-400 text-[13px]">
+            No messaging channels integrated yet. <br />
+            Update your workflow to connect channels.
+          </div>
         ) : (
           <div className="space-y-4">
             {channels.map((channel) => (
-              <div 
+              <div
                 key={channel.id}
                 className="flex items-center justify-between py-1.5"
               >
@@ -133,7 +145,7 @@ export default function ChannelStatusWidget() {
                     </p>
                   </div>
                 </div>
-                
+
                 <div className="flex items-center gap-3 shrink-0">
                   {getStatusBadge(channel.status)}
                   {channel.status !== "connected" && channel.status !== "platform" && channel.status !== "coming_soon" && (

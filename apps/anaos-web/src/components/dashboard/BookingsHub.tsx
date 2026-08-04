@@ -4,6 +4,8 @@ import { useState, useEffect } from "react";
 import { format, isToday, isTomorrow, isPast, isFuture } from "date-fns";
 import { Calendar as CalendarIcon, Clock, Phone, MapPin, User, ArrowUpRight, Search, Loader2 } from "lucide-react";
 
+import { InnerPageHeader } from "@/components/ui/InnerPageHeader";
+
 export function BookingsHub() {
   const [bookings, setBookings] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -31,12 +33,14 @@ export function BookingsHub() {
   const pastBookings = bookings.filter(b => isPast(new Date(b.endAt)));
 
   return (
-    <div className="max-w-7xl mx-auto space-y-8 font-sans animate-in fade-in duration-300">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-        <div>
-          <h1 className="text-2xl md:text-3xl font-bold text-zinc-900 tracking-tight">Calendar & Bookings</h1>
-          <p className="text-zinc-500 mt-1">Manage appointments scheduled by your AI agents.</p>
-        </div>
+    <div className="min-h-screen bg-[#F7F8FA]">
+      <InnerPageHeader
+        title="Calendar & Bookings"
+        subtitle="Manage appointments scheduled by your AI agents."
+        icon={CalendarIcon}
+        backHref="/dashboard"
+        backLabel="Back to dashboard"
+      >
         <div className="flex items-center gap-3 w-full md:w-auto">
           <div className="relative w-full md:w-64">
             <Search className="w-4 h-4 text-zinc-400 absolute left-3 top-1/2 -translate-y-1/2" />
@@ -51,7 +55,9 @@ export function BookingsHub() {
             Sync Calendar
           </button>
         </div>
-      </div>
+      </InnerPageHeader>
+
+      <div className="max-w-7xl mx-auto space-y-8 font-sans animate-in fade-in duration-300 p-8">
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="bg-white p-6 rounded-2xl border border-zinc-200/80 shadow-sm flex flex-col justify-between">
@@ -173,6 +179,7 @@ export function BookingsHub() {
           </div>
         </div>
       )}
+    </div>
     </div>
   );
 }

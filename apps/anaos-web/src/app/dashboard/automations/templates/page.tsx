@@ -17,6 +17,8 @@ import {
   type TemplateCategory,
   type WorkflowTemplate
 } from "@/lib/templates/workflow-templates";
+import { InnerPageHeader } from "@/components/ui/InnerPageHeader";
+import { AIPromptGenerator } from "@/components/automations/AIPromptGenerator";
 
 const CATEGORY_ICONS: Record<string, any> = {
   whatsapp: MessageCircle,
@@ -120,8 +122,6 @@ function TemplateCard({ template, onUse }: { template: WorkflowTemplate; onUse: 
   );
 }
 
-import { AIPromptGenerator } from "@/components/automations/AIPromptGenerator";
-
 export default function TemplatesPage() {
   const router = useRouter();
   const [activeCategory, setActiveCategory] = useState<TemplateCategory | "all" | "popular">("popular");
@@ -149,36 +149,37 @@ export default function TemplatesPage() {
       });
       const data = await res.json();
       if (data.workflow?.id) {
-        router.push(`/dashboard/automations/builder/${data.workflow.id}`);
+        router.push(`/dashboard/workflows/${data.workflow.id}`);
       } else {
         // Fallback: open builder with template in localStorage
-        localStorage.setItem("anaos_template_draft", JSON.stringify(template));
-        router.push("/dashboard/automations/builder/new");
+        localStorage.setItem("anaos_pending_workflow", JSON.stringify({
+          id: "new",
+          name: template.name,
+          workflow: template.definition
+        }));
+        router.push("/dashboard/workflows/new");
       }
     } catch {
-      localStorage.setItem("anaos_template_draft", JSON.stringify(template));
-      router.push("/dashboard/automations/builder/new");
+      localStorage.setItem("anaos_pending_workflow", JSON.stringify({
+        id: "new",
+        name: template.name,
+        workflow: template.definition
+      }));
+      router.push("/dashboard/workflows/new");
     }
   };
 
   return (
     <div className="min-h-screen bg-[#F8FAFC]">
-      {/* Header */}
-      <div className="bg-white border-b border-zinc-100 px-8 py-10 relative overflow-hidden">
-        {/* Decorative Background Elements */}
-        <div className="absolute top-0 right-0 -translate-y-1/4 translate-x-1/4 w-96 h-96 bg-blue-50 rounded-full blur-3xl opacity-50 pointer-events-none" />
-        <div className="absolute bottom-0 left-0 translate-y-1/4 -translate-x-1/4 w-64 h-64 bg-indigo-50 rounded-full blur-3xl opacity-50 pointer-events-none" />
-        
+      <InnerPageHeader 
+        title="What would you like to automate?" 
+        subtitle={`Simply describe your workflow and AnaOS AI will build it instantly, or pick from our ${WORKFLOW_TEMPLATES.length}+ production-ready templates.`}
+        icon={LayoutTemplate}
+        backHref="/dashboard?tab=automations"
+        backLabel="Back to Automations"
+      />
+      <div className="bg-white border-b border-zinc-100 px-8 py-6 relative overflow-hidden">
         <div className="max-w-7xl mx-auto relative z-10">
-          <div className="text-center mb-10">
-            <h1 className="text-4xl font-extrabold text-zinc-900 mb-4 tracking-tight">
-              What would you like to automate?
-            </h1>
-            <p className="text-lg text-zinc-500 max-w-2xl mx-auto font-medium">
-              Simply describe your workflow and AnaOS AI will build it instantly, or pick from our {WORKFLOW_TEMPLATES.length}+ production-ready templates.
-            </p>
-          </div>
-          
           <AIPromptGenerator />
           
           <div className="flex items-center justify-between mt-12 mb-6">

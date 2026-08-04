@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { Download, LayoutTemplate, ArrowRight, Zap, Copy, CheckCircle2, ChevronRight, Tags } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { InnerPageHeader } from "@/components/ui/InnerPageHeader";
 
 const TEMPLATES = [
   {
@@ -69,28 +71,29 @@ const TEMPLATES = [
 export function TemplatesHub() {
   const [cloning, setCloning] = useState<string | null>(null);
 
+  const router = useRouter();
+
   const handleClone = async (id: string) => {
     setCloning(id);
-    // Simulate cloning process
     setTimeout(() => {
       setCloning(null);
-      alert(`Template "${id}" installed successfully!`);
-    }, 1500);
+      // Route to builder with the template ID so it can be loaded
+      router.push(`/dashboard/workflows/new?template=${id}`);
+    }, 1000);
   };
 
   return (
-    <div className="p-8 max-w-7xl mx-auto font-sans">
-      <div className="flex justify-between items-center mb-8">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-            <LayoutTemplate className="text-purple-600" />
-            Template Library
-          </h1>
-          <p className="text-gray-500 mt-1">1-Click install pre-built workflows for your industry.</p>
-        </div>
-      </div>
+    <div className="min-h-screen bg-[#F7F8FA]">
+      <InnerPageHeader
+        title="Template Library"
+        subtitle="1-Click install pre-built workflows designed for your industry."
+        icon={LayoutTemplate}
+        backHref="/dashboard"
+        backLabel="Back to dashboard"
+      />
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="p-8 max-w-7xl mx-auto font-sans">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {TEMPLATES.map(tpl => (
           <div key={tpl.id} className="bg-white border border-gray-200 rounded-2xl overflow-hidden hover:shadow-lg transition-all group flex flex-col h-full">
             <div className="p-6 flex-1">
@@ -133,6 +136,7 @@ export function TemplatesHub() {
           </div>
         ))}
       </div>
+    </div>
     </div>
   );
 }

@@ -25,7 +25,8 @@ export default function BrandIcon({ id, className = "w-5 h-5" }: BrandIconProps)
       case "smtp":
       case "gmail":
       case "businessemail":
-      case "email": return "https://img.icons8.com/color/96/gmail-new.png";
+      case "email": return "https://img.icons8.com/fluency/96/new-post.png"; // better email icon
+      case "calendar":
       case "googlecalendar": return "https://img.icons8.com/color/96/google-calendar--v2.png";
       case "googlesheets": return "https://img.icons8.com/color/96/google-sheets.png";
       case "googledrive": return "https://img.icons8.com/color/96/google-drive--v2.png";
@@ -33,13 +34,15 @@ export default function BrandIcon({ id, className = "w-5 h-5" }: BrandIconProps)
       case "googleoauth":
       case "googleaccount": return "https://img.icons8.com/color/96/google-logo.png";
       case "hubspot":
-      case "hubspotcrm": return "https://img.icons8.com/color/96/hubspot.png";
-      case "twilio": return "https://img.icons8.com/color/96/twilio.png";
+      case "hubspotcrm": return "https://img.icons8.com/fluency/96/hubspot.png"; // fixed hubspot
+      case "twilio":
+      case "phone":
+      case "voice": return "https://img.icons8.com/fluency/96/ringer-volume.png"; // nicer phone
       case "openai": return "https://img.icons8.com/color/96/chatgpt.png";
       case "stripe":
       case "stripepayments": return "https://img.icons8.com/color/96/stripe.png";
       case "tiktok":
-      case "tiktokads": return "https://img.icons8.com/color/96/tiktok--v1.png";
+      case "tiktokads": return "https://img.icons8.com/fluency/96/tiktok.png";
       case "youtube": return "https://img.icons8.com/color/96/youtube-play.png";
       case "linkedin": return "https://img.icons8.com/color/96/linkedin.png";
       case "telegram": return "https://img.icons8.com/color/96/telegram-app.png";
@@ -50,7 +53,7 @@ export default function BrandIcon({ id, className = "w-5 h-5" }: BrandIconProps)
       case "airtable": return "https://img.icons8.com/fluency/96/airtable.png";
       case "salesforce": return "https://img.icons8.com/color/96/salesforce.png";
       case "blog":
-      case "blogposts": return "https://img.icons8.com/color/96/wordpress.png";
+      case "blogposts": return "https://img.icons8.com/fluency/96/wordpress.png";
       default: return null;
     }
   };

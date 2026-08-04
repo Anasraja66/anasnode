@@ -4,6 +4,8 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Plus, Play, Pause, Trash2, Edit2, Zap, History, LayoutTemplate } from "lucide-react";
 
+import { InnerPageHeader } from "@/components/ui/InnerPageHeader";
+
 export default function AutomationsPage() {
   const router = useRouter();
   const [workflows, setWorkflows] = useState<any[]>([]);
@@ -22,7 +24,7 @@ export default function AutomationsPage() {
     const res = await fetch("/api/workflows", { method: "POST", body: JSON.stringify({}) });
     const data = await res.json();
     if (data.workflow) {
-      router.push(`/dashboard/automations/builder/${data.workflow.id}`);
+      router.push(`/dashboard/workflows/${data.workflow.id}`);
     }
   };
 
@@ -41,32 +43,29 @@ export default function AutomationsPage() {
   };
 
   return (
-    <div className="p-8 max-w-7xl mx-auto">
-      <div className="flex justify-between items-center mb-8">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-            <Zap className="text-blue-600" />
-            Automations
-          </h1>
-          <p className="text-gray-500">Native workflows to completely automate your Real Estate operations</p>
-        </div>
-        <div className="flex items-center gap-3">
-          <button
-            onClick={() => router.push("/dashboard/automations/templates")}
-            className="border border-zinc-200 text-zinc-700 px-4 py-2 rounded-lg hover:bg-zinc-50 transition flex items-center gap-2 font-medium"
-          >
-            <LayoutTemplate size={18} />
-            Browse Templates
-          </button>
-          <button 
-            onClick={createNew}
-            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition flex items-center gap-2 font-medium"
-          >
-            <Plus size={18} />
-            Create Automation
-          </button>
-        </div>
-      </div>
+    <div className="min-h-screen bg-[#F8FAFC]">
+      <InnerPageHeader 
+        title="Automations" 
+        subtitle="Native workflows to completely automate your operations."
+        icon={Zap}
+      >
+        <button
+          onClick={() => router.push("/dashboard/automations/templates")}
+          className="border border-zinc-200 bg-white text-zinc-700 px-4 py-2.5 rounded-xl hover:bg-zinc-50 transition flex items-center gap-2 font-bold text-[13px] shadow-sm"
+        >
+          <LayoutTemplate size={16} />
+          Browse Templates
+        </button>
+        <button 
+          onClick={createNew}
+          className="bg-blue-600 text-white px-4 py-2.5 rounded-xl hover:bg-blue-700 transition flex items-center gap-2 font-bold text-[13px] shadow-sm"
+        >
+          <Plus size={16} />
+          Create Automation
+        </button>
+      </InnerPageHeader>
+
+      <div className="p-8 max-w-7xl mx-auto">
 
       {loading ? (
         <div className="text-center py-20 text-gray-500">Loading automations...</div>
@@ -107,7 +106,7 @@ export default function AutomationsPage() {
                   <History size={18} />
                 </button>
                 <button 
-                  onClick={() => router.push(`/dashboard/automations/builder/${w.id}`)}
+                  onClick={() => router.push(`/dashboard/workflows/${w.id}`)}
                   className="p-2 rounded-lg border text-blue-600 border-blue-200 bg-blue-50 hover:bg-blue-100"
                   title="Edit Workflow"
                 >
@@ -125,6 +124,7 @@ export default function AutomationsPage() {
           ))}
         </div>
       )}
+      </div>
     </div>
   );
 }

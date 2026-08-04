@@ -10,7 +10,9 @@ import {
   ExternalLink,
   Loader2,
   Save,
+  Settings2
 } from "lucide-react";
+import { InnerPageHeader } from "@/components/ui/InnerPageHeader";
 
 type Step = 1 | 2 | 3 | 4;
 
@@ -34,7 +36,7 @@ export default function SetupHelpPage() {
           setConfigId(data.configId || "");
         }
       })
-      .catch(() => {});
+      .catch(() => { });
   }, []);
 
   const saveMeta = async () => {
@@ -89,9 +91,8 @@ export default function SetupHelpPage() {
     <button
       type="button"
       onClick={() => setStep(n)}
-      className={`flex items-center gap-2 text-left text-[13px] font-bold ${
-        step === n ? "text-[#3B82F6]" : "text-zinc-500"
-      }`}
+      className={`flex items-center gap-2 text-left text-[13px] font-bold ${step === n ? "text-[#3B82F6]" : "text-zinc-500"
+        }`}
     >
       {step > n || (n === 4 && alreadySaved) ? (
         <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
@@ -103,19 +104,13 @@ export default function SetupHelpPage() {
   );
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] py-10 px-6 font-sans">
-      <div className="max-w-lg mx-auto">
-        <Link
-          href="/dashboard"
-          className="inline-flex items-center gap-2 text-[13px] font-semibold text-zinc-500 mb-6 hover:text-zinc-800 transition-colors"
-        >
-          <ArrowLeft className="w-4 h-4" /> Dashboard
-        </Link>
-
-        <h1 className="text-[24px] font-semibold text-zinc-950 tracking-tight">Setup Help</h1>
-        <p className="text-[14px] text-zinc-500 mt-2 font-medium">
-          Only <strong>one-time setup</strong> — then every client simply clicks Connect. No .env files needed.
-        </p>
+    <div className="min-h-screen bg-[#F8FAFC] font-sans">
+      <InnerPageHeader
+        title="Setup Help"
+        subtitle="Only one-time setup — then every client simply clicks Connect. No .env files needed."
+        icon={Settings2}
+      />
+      <div className="max-w-lg mx-auto py-10 px-6">
 
         <div className="grid gap-2 mt-8 mb-6">
           <StepDot n={1} label="1. Open Meta Developers portal" />
@@ -245,7 +240,7 @@ export default function SetupHelpPage() {
                 Now connect your WhatsApp — click the <strong>Connect with Meta</strong> button inside integrations.
               </p>
               <Link
-                href="/dashboard/integrations/whatsapp"
+                href="/dashboard/integrations/connect/whatsapp"
                 className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-[14px] transition-all"
               >
                 Go to WhatsApp Integration <ArrowRight className="w-4 h-4" />

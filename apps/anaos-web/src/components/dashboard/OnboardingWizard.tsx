@@ -3,14 +3,15 @@
 import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowRight, CheckCircle2 } from "lucide-react";
+import { ArrowRight, CheckCircle2, Phone, Calendar, Mail, Plug } from "lucide-react";
 import { FaWhatsapp, FaInstagram, FaFacebookMessenger } from "react-icons/fa";
+import BrandIcon from "@/components/ui/BrandIcon";
 import { MetaEmbeddedSignup } from "@/components/integrations/MetaEmbeddedSignup";
 
 export function OnboardingWizard() {
   const [show, setShow] = useState(false);
   const [step, setStep] = useState(1);
-  const [selectedChannels, setSelectedChannels] = useState<("whatsapp"|"instagram"|"facebook")[]>([]);
+  const [selectedChannels, setSelectedChannels] = useState<string[]>([]);
   const [completed, setCompleted] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [filteredChannels, setFilteredChannels] = useState<string[]>([]);
@@ -23,13 +24,35 @@ export function OnboardingWizard() {
       setStep(1);
       setCompleted(false);
 
-      if (e && e.detail && typeof e.detail.prompt === "string") {
-        const text = e.detail.prompt.toLowerCase();
-        const detected = [];
-        if (text.includes("whatsapp") || text.includes("wa")) detected.push("whatsapp");
-        if (text.includes("instagram") || text.includes("ig")) detected.push("instagram");
-        if (text.includes("facebook") || text.includes("messenger") || text.includes("fb")) detected.push("facebook");
-        setFilteredChannels(detected);
+      if (e && e.detail && (e.detail.pendingWorkflow || e.detail.prompt)) {
+        const detected: string[] = [];
+        
+        // Dynamic detection from backend nodes
+        if (e.detail.pendingWorkflow && e.detail.pendingWorkflow.nodes) {
+          e.detail.pendingWorkflow.nodes.forEach((node: any) => {
+            if (node.data?.provider) {
+              const p = node.data.provider.toLowerCase();
+              if (!detected.includes(p)) detected.push(p);
+            }
+          });
+        }
+        
+        const text = (e.detail.prompt || "").toLowerCase();
+        if (text.includes("whatsapp") || text.includes("wa")) if (!detected.includes("whatsapp")) detected.push("whatsapp");
+        if (text.includes("instagram") || text.includes("ig")) if (!detected.includes("instagram")) detected.push("instagram");
+        if (text.includes("facebook") || text.includes("messenger") || text.includes("fb")) if (!detected.includes("facebook")) detected.push("facebook");
+        if (text.includes("call") || text.includes("phone") || text.includes("voice") || text.includes("vapi")) if (!detected.includes("phone")) detected.push("phone");
+        if (text.includes("calendar") || text.includes("book") || text.includes("meeting") || text.includes("appoint")) if (!detected.includes("calendar")) detected.push("calendar");
+        if (text.includes("email") || text.includes("gmail") || text.includes("mail")) if (!detected.includes("email")) detected.push("email");
+        if (text.includes("sms") || text.includes("message")) {
+            if (!detected.includes("whatsapp") && !detected.includes("sms") && !detected.includes("instagram") && !detected.includes("facebook")) {
+              detected.push("whatsapp"); // Default generic message to WhatsApp
+            }
+        }
+        
+        // Filter out non-integrations or internal tools
+        const finalDetected = detected.filter(d => !["ai", "condition", "trigger", "openai", "groq", "anaos", "system"].includes(d));
+        setFilteredChannels(finalDetected);
       } else {
         setFilteredChannels([]);
       }
@@ -46,7 +69,7 @@ export function OnboardingWizard() {
     }, 2500);
   };
 
-  const toggleChannel = (c: "whatsapp"|"instagram"|"facebook") => {
+  const toggleChannel = (c: string) => {
     setSelectedChannels(prev => 
       prev.includes(c) ? prev.filter(x => x !== c) : [...prev, c]
     );
@@ -88,15 +111,33 @@ export function OnboardingWizard() {
 
                   <div className="grid grid-cols-1 gap-3 w-full max-w-md mx-auto">
                     {(() => {
-                      const channelsData = [
-                        { id: "whatsapp" as const, name: "WhatsApp Business", icon: FaWhatsapp, color: "text-[#25D366]", bg: "bg-[#25D366]/10", border: "border-[#25D366]" },
-                        { id: "instagram" as const, name: "Instagram DM", icon: FaInstagram, color: "text-[#E4405F]", bg: "bg-[#E4405F]/10", border: "border-[#E4405F]" },
-                        { id: "facebook" as const, name: "Facebook Messenger", icon: FaFacebookMessenger, color: "text-[#1877F2]", bg: "bg-[#1877F2]/10", border: "border-[#1877F2]" },
-                      ];
+                      const knownChannels: Record<string, any> = {
+                        "whatsapp": { name: "WhatsApp Business", icon: FaWhatsapp, color: "text-[#25D366]", bg: "bg-[#25D366]/10", border: "border-[#25D366]" },
+                        "instagram": { name: "Instagram DM", icon: FaInstagram, color: "text-[#E4405F]", bg: "bg-[#E4405F]/10", border: "border-[#E4405F]" },
+                        "facebook": { name: "Facebook Messenger", icon: FaFacebookMessenger, color: "text-[#1877F2]", bg: "bg-[#1877F2]/10", border: "border-[#1877F2]" },
+                        "phone": { name: "AI Voice Agent", icon: Phone, color: "text-[#8B5CF6]", bg: "bg-[#8B5CF6]/10", border: "border-[#8B5CF6]" },
+                        "calendar": { name: "Google Calendar", icon: Calendar, color: "text-[#F59E0B]", bg: "bg-[#F59E0B]/10", border: "border-[#F59E0B]" },
+                        "email": { name: "Email Automation", icon: Mail, color: "text-[#EF4444]", bg: "bg-[#EF4444]/10", border: "border-[#EF4444]" },
+                      };
                       
                       const visibleChannels = filteredChannels.length > 0 
-                        ? channelsData.filter(c => filteredChannels.includes(c.id))
-                        : channelsData;
+                        ? filteredChannels.map(id => {
+                            if (knownChannels[id]) return { id, ...knownChannels[id] };
+                            // Create dynamic generic channel
+                            return {
+                              id,
+                              name: id.charAt(0).toUpperCase() + id.slice(1) + " Integration",
+                              icon: Plug,
+                              color: "text-[#0A6BFF]",
+                              bg: "bg-[#0A6BFF]/10",
+                              border: "border-[#0A6BFF]"
+                            };
+                          })
+                        : [
+                            { id: "whatsapp", ...knownChannels["whatsapp"] },
+                            { id: "instagram", ...knownChannels["instagram"] },
+                            { id: "facebook", ...knownChannels["facebook"] }
+                          ];
 
                       return visibleChannels.map((c) => {
                       const isSelected = selectedChannels.includes(c.id);
@@ -110,8 +151,8 @@ export function OnboardingWizard() {
                               : `border-zinc-200 hover:border-zinc-300 hover:bg-zinc-50`
                           }`}
                         >
-                          <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${isSelected ? c.bg : "bg-zinc-100"}`}>
-                            <c.icon className={`w-5 h-5 ${isSelected ? c.color : "text-zinc-500"}`} />
+                          <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${isSelected ? "bg-white shadow-sm border border-zinc-100" : "bg-zinc-100/50"}`}>
+                            <BrandIcon id={c.id} className="w-7 h-7" />
                           </div>
                           <span className={`font-bold text-[15px] ${isSelected ? "text-zinc-900" : "text-zinc-600"}`}>
                             {c.name}
@@ -150,16 +191,75 @@ export function OnboardingWizard() {
                 <motion.div
                   initial={{ opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}
-                  className="flex flex-col items-center"
+                  className="flex flex-col items-center w-full"
                 >
                   <button 
                     onClick={() => setStep(1)}
-                    className="self-start -mt-4 mb-4 text-zinc-400 hover:text-zinc-700 p-2"
+                    className="self-start -mt-4 mb-4 text-zinc-400 hover:text-zinc-700 p-2 flex items-center gap-2 text-sm font-bold"
                   >
-                    <ArrowLeft className="w-5 h-5" />
+                    <ArrowLeft className="w-5 h-5" /> Back
                   </button>
                   
-                  <MetaEmbeddedSignup onSuccess={() => handleComplete()} />
+                  <div className="w-full space-y-6">
+                    {/* Render Meta Signup if any Meta channel is selected */}
+                    {(selectedChannels.includes("whatsapp") || selectedChannels.includes("instagram") || selectedChannels.includes("facebook")) && (
+                      <div className="border rounded-2xl p-6 bg-zinc-50/50">
+                        <h3 className="text-lg font-bold text-zinc-900 mb-4">Connect Meta Accounts</h3>
+                        <MetaEmbeddedSignup onSuccess={() => {}} />
+                      </div>
+                    )}
+                    
+                    {/* Render Phone Integration */}
+                    {selectedChannels.includes("phone") && (
+                      <div className="border rounded-2xl p-6 bg-zinc-50/50">
+                        <h3 className="text-lg font-bold text-zinc-900 mb-2">Connect Voice Agent</h3>
+                        <p className="text-sm text-zinc-500 mb-4">Purchase a phone number via Vapi/Twilio to start receiving AI voice calls.</p>
+                        <button className="w-full h-11 bg-zinc-900 hover:bg-zinc-800 text-white rounded-xl font-bold flex items-center justify-center gap-2">
+                          <BrandIcon id="phone" className="w-5 h-5 filter brightness-0 invert" /> Buy Phone Number
+                        </button>
+                      </div>
+                    )}
+
+                    {/* Render Calendar Integration */}
+                    {selectedChannels.includes("calendar") && (
+                      <div className="border rounded-2xl p-6 bg-zinc-50/50">
+                        <h3 className="text-lg font-bold text-zinc-900 mb-2">Connect Google Calendar</h3>
+                        <p className="text-sm text-zinc-500 mb-4">Allow Anaos AI to automatically schedule appointments from leads.</p>
+                        <button className="w-full h-11 bg-white border border-zinc-200 hover:bg-zinc-50 text-zinc-900 rounded-xl font-bold flex items-center justify-center gap-2 shadow-sm">
+                          <BrandIcon id="calendar" className="w-5 h-5" /> Sign in with Google
+                        </button>
+                      </div>
+                    )}
+
+                    {/* Render Email Integration */}
+                    {selectedChannels.includes("email") && (
+                      <div className="border rounded-2xl p-6 bg-zinc-50/50">
+                        <h3 className="text-lg font-bold text-zinc-900 mb-2">Connect Email Automation</h3>
+                        <p className="text-sm text-zinc-500 mb-4">Connect your SMTP or Gmail account to send follow-ups.</p>
+                        <button className="w-full h-11 bg-white border border-zinc-200 hover:bg-zinc-50 text-zinc-900 rounded-xl font-bold flex items-center justify-center gap-2 shadow-sm">
+                          <BrandIcon id="email" className="w-5 h-5" /> Connect Mailbox
+                        </button>
+                      </div>
+                    )}
+                    
+                    {/* Render Generic Integrations (Any channel not handled explicitly above) */}
+                    {selectedChannels.filter(c => !["whatsapp", "instagram", "facebook", "phone", "calendar", "email"].includes(c)).map(c => (
+                      <div key={c} className="border rounded-2xl p-6 bg-zinc-50/50">
+                        <h3 className="text-lg font-bold text-zinc-900 mb-2 capitalize">Connect {c}</h3>
+                        <p className="text-sm text-zinc-500 mb-4">Authenticate your {c.charAt(0).toUpperCase() + c.slice(1)} account using OAuth or API Key.</p>
+                        <button className="w-full h-11 bg-white border border-zinc-200 hover:bg-zinc-50 text-zinc-900 rounded-xl font-bold flex items-center justify-center gap-2 shadow-sm">
+                          <BrandIcon id={c} className="w-5 h-5" /> Connect {c.charAt(0).toUpperCase() + c.slice(1)}
+                        </button>
+                      </div>
+                    ))}
+                    
+                    <button
+                      onClick={handleComplete}
+                      className="mt-6 w-full h-12 bg-[#0A6BFF] hover:bg-blue-600 text-white shadow-sm font-bold rounded-xl flex items-center justify-center gap-2 transition-all"
+                    >
+                      Complete Setup <CheckCircle2 className="w-5 h-5" />
+                    </button>
+                  </div>
                 </motion.div>
               )}
             </AnimatePresence>

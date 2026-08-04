@@ -39,7 +39,10 @@ function LoginForm() {
       });
 
       if (res.ok) {
-        if (prompt) {
+        const callbackUrl = searchParams?.get("callbackUrl");
+        if (callbackUrl) {
+          router.push(callbackUrl);
+        } else if (prompt) {
           const queryParams = new URLSearchParams();
           queryParams.set("prompt", prompt);
           if (workspace) queryParams.set("workspace", workspace);

@@ -14,6 +14,8 @@ type Campaign = {
   dailyCap: number;
 };
 
+import { InnerPageHeader } from "@/components/ui/InnerPageHeader";
+
 export function BroadcastsHub({ workspaceName }: { workspaceName: string }) {
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   const [loading, setLoading] = useState(true);
@@ -54,18 +56,14 @@ export function BroadcastsHub({ workspaceName }: { workspaceName: string }) {
   }
 
   return (
-    <div className="space-y-10 max-w-6xl mx-auto px-6 py-10 relative z-10 pb-10 font-sans">
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
-        <div className="space-y-1">
-          <h1 className="text-[22px] font-bold text-zinc-900 tracking-tight leading-tight flex items-center gap-2">
-            <Megaphone className="text-[#0A6BFF]" size={24} />
-            Bulk Broadcasts
-          </h1>
-          <p className="text-[14px] text-zinc-500 font-medium max-w-2xl leading-relaxed mt-2">
-            Send bulk messages via WhatsApp, Voice Calls, or Emails to your real estate leads while staying compliant with 
-            <span className="text-emerald-600 font-bold mx-1">Meta Business Rules</span>.
-          </p>
-        </div>
+    <div className="min-h-screen bg-[#F7F8FA]">
+      <InnerPageHeader
+        title="Bulk Broadcasts"
+        subtitle="Send bulk messages via WhatsApp, Voice Calls, or Emails to your real estate leads while staying compliant with Meta Business Rules."
+        icon={Megaphone}
+        backHref="/dashboard"
+        backLabel="Back to dashboard"
+      >
         <button
           onClick={() => setIsCreating(true)}
           className="inline-flex items-center gap-2 h-11 px-6 rounded-xl bg-[#0A6BFF] text-white text-[14px] font-bold hover:bg-blue-600 transition-all shadow-lg shadow-blue-500/20 active:scale-95"
@@ -73,7 +71,9 @@ export function BroadcastsHub({ workspaceName }: { workspaceName: string }) {
           <Plus className="w-5 h-5" />
           New Broadcast
         </button>
-      </div>
+      </InnerPageHeader>
+
+      <div className="space-y-10 max-w-6xl mx-auto px-6 py-10 relative z-10 pb-10 font-sans">
 
       {/* AI OS: Prompt to Campaign */}
       <div className="rounded-xl border border-zinc-200 bg-white p-6 space-y-4 shadow-sm">
@@ -199,6 +199,7 @@ export function BroadcastsHub({ workspaceName }: { workspaceName: string }) {
           </table>
         </div>
       </div>
+    </div>
     </div>
   );
 }

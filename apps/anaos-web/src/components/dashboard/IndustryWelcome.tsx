@@ -50,21 +50,21 @@ export function IndustryWelcome({
             {preset.welcomeBody}
           </p>
           <div className="flex items-center gap-4 pt-4">
-             <div className="flex -space-x-3">
-                {[1,2,3].map(i => (
-                  <div key={i} className="w-8 h-8 rounded-full border-4 border-white bg-zinc-200 shadow-sm" />
-                ))}
-             </div>
-             <p className="text-[14px] text-zinc-600 font-bold">
-               <span className="text-zinc-900">{ws.name}</span> — {activeCount}{" "}
-               automation{activeCount === 1 ? "" : "s"} live
-             </p>
+            <div className="flex -space-x-3">
+              {[1, 2, 3].map(i => (
+                <div key={i} className="w-8 h-8 rounded-full border-4 border-white bg-zinc-200 shadow-sm" />
+              ))}
+            </div>
+            <p className="text-[14px] text-zinc-600 font-bold">
+              <span className="text-zinc-900">{ws.name}</span> — {activeCount}{" "}
+              automation{activeCount === 1 ? "" : "s"} live
+            </p>
           </div>
         </div>
       </div>
       <div className="flex flex-wrap gap-5 mt-12 relative z-10">
         <Link
-          href="/dashboard/integrations/whatsapp"
+          href="/dashboard/integrations/connect/whatsapp"
           className="inline-flex items-center gap-3 h-14 px-10 rounded-[20px] text-white text-[15px] font-bold shadow-xl hover:scale-105 transition-all active:scale-95 shadow-blue-500/20"
           style={{ backgroundColor: preset.primary }}
         >

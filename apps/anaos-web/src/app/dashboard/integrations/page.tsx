@@ -21,6 +21,9 @@ const CATEGORIES = [
       { id: "bland", name: "Bland AI", desc: "Programmable phone calling via high-speed AI voice.", status: "disconnected", href: "/dashboard/voice_agent" },
       { id: "claude", name: "Claude (Anthropic)", desc: "Highly capable AI models with massive context windows.", status: "disconnected", href: "/dashboard/setup" },
       { id: "gemini", name: "Google Gemini", desc: "Multimodal AI models natively integrated by Google.", status: "disconnected", href: "/dashboard/setup" },
+      { id: "dalle", name: "DALL-E 3", desc: "Generate high-quality AI images automatically.", status: "disconnected", href: "/dashboard/integrations/connect/dalle" },
+      { id: "midjourney", name: "Midjourney", desc: "Advanced AI image generation workflows.", status: "disconnected", href: "/dashboard/integrations/connect/midjourney" },
+      { id: "pinecone", name: "Pinecone", desc: "Vector database for AI knowledge and long-term memory.", status: "disconnected", href: "/dashboard/integrations/connect/pinecone" },
     ]
   },
   {
@@ -40,6 +43,19 @@ const CATEGORIES = [
       { id: "telegram", name: "Telegram Bot", desc: "Automate Telegram groups and direct messages.", status: "disconnected", href: "/dashboard/integrations/connect/telegram" },
       { id: "discord", name: "Discord", desc: "Manage Discord servers and send channel messages.", status: "disconnected", href: "/dashboard/integrations/connect/discord" },
       { id: "mailchimp", name: "Mailchimp", desc: "Sync email subscribers and trigger campaigns.", status: "disconnected", href: "/dashboard/integrations/connect/mailchimp" },
+      { id: "twitter", name: "Twitter (X)", desc: "Automate tweets and track brand mentions.", status: "disconnected", href: "/dashboard/integrations/connect/twitter" },
+      { id: "pinterest", name: "Pinterest", desc: "Auto-publish pins from your content channels.", status: "disconnected", href: "/dashboard/integrations/connect/pinterest" },
+      { id: "youtube", name: "YouTube", desc: "Trigger workflows on new video uploads or comments.", status: "disconnected", href: "/dashboard/integrations/connect/youtube" },
+      { id: "vimeo", name: "Vimeo", desc: "Automate video sharing and marketing flows.", status: "disconnected", href: "/dashboard/integrations/connect/vimeo" },
+      { id: "buffer", name: "Buffer", desc: "Schedule and manage social media posts.", status: "disconnected", href: "/dashboard/integrations/connect/buffer" },
+      { id: "hootsuite", name: "Hootsuite", desc: "Advanced social media management and posting.", status: "disconnected", href: "/dashboard/integrations/connect/hootsuite" },
+      { id: "klaviyo", name: "Klaviyo", desc: "Advanced e-commerce email marketing automations.", status: "disconnected", href: "/dashboard/integrations/connect/klaviyo" },
+      { id: "brevo", name: "Brevo (Sendinblue)", desc: "Send transactional emails and SMS campaigns.", status: "disconnected", href: "/dashboard/integrations/connect/brevo" },
+      { id: "convertkit", name: "ConvertKit", desc: "Email marketing for creators and newsletters.", status: "disconnected", href: "/dashboard/integrations/connect/convertkit" },
+      { id: "constantcontact", name: "Constant Contact", desc: "Bulk email marketing and customer engagement.", status: "disconnected", href: "/dashboard/integrations/connect/constantcontact" },
+      { id: "messagebird", name: "MessageBird", desc: "Omnichannel communication and SMS APIs.", status: "disconnected", href: "/dashboard/integrations/connect/messagebird" },
+      { id: "plivo", name: "Plivo", desc: "Cloud communications for SMS and Voice.", status: "disconnected", href: "/dashboard/integrations/connect/plivo" },
+      { id: "manychat", name: "ManyChat", desc: "Sync chatbot data from Instagram and Facebook.", status: "disconnected", href: "/dashboard/integrations/connect/manychat" },
     ]
   },
   {
@@ -89,6 +105,17 @@ const CATEGORIES = [
       { id: "aws", name: "AWS", desc: "Trigger Lambda functions and manage cloud resources.", status: "disconnected", href: "/dashboard/integrations/connect/aws" },
       { id: "ftp", name: "FTP / SFTP", desc: "Automate file transfers securely to remote servers.", status: "disconnected", href: "/dashboard/integrations/connect/ftp" },
       { id: "webhooks", name: "Custom Webhooks", desc: "Catch payloads from any external app (like Zapier/Make).", status: "disconnected", href: "/dashboard/integrations/connect/webhooks" },
+      { id: "bamboohr", name: "BambooHR", desc: "Automate HR processes and employee onboarding.", status: "disconnected", href: "/dashboard/integrations/connect/bamboohr" },
+      { id: "workable", name: "Workable", desc: "Sync candidates and trigger recruitment workflows.", status: "disconnected", href: "/dashboard/integrations/connect/workable" },
+      { id: "deel", name: "Deel", desc: "Automate international payroll and contract creation.", status: "disconnected", href: "/dashboard/integrations/connect/deel" },
+      { id: "canva", name: "Canva", desc: "Trigger workflows on new design creations or edits.", status: "disconnected", href: "/dashboard/integrations/connect/canva" },
+      { id: "figma", name: "Figma", desc: "Sync comments and design updates to your team.", status: "disconnected", href: "/dashboard/integrations/connect/figma" },
+      { id: "mixpanel", name: "Mixpanel", desc: "Send event data and track product analytics.", status: "disconnected", href: "/dashboard/integrations/connect/mixpanel" },
+      { id: "amplitude", name: "Amplitude", desc: "Sync user behavior data for product insights.", status: "disconnected", href: "/dashboard/integrations/connect/amplitude" },
+      { id: "segment", name: "Segment", desc: "Route customer data payloads across tools.", status: "disconnected", href: "/dashboard/integrations/connect/segment" },
+      { id: "webex", name: "Webex", desc: "Schedule meetings and trigger webinar alerts.", status: "disconnected", href: "/dashboard/integrations/connect/webex" },
+      { id: "gotowebinar", name: "GoToWebinar", desc: "Automate webinar registrations and follow-ups.", status: "disconnected", href: "/dashboard/integrations/connect/gotowebinar" },
+      { id: "microsoftteams", name: "Microsoft Teams", desc: "Send notifications to Teams channels.", status: "disconnected", href: "/dashboard/integrations/connect/microsoftteams" },
     ]
   }
 ];

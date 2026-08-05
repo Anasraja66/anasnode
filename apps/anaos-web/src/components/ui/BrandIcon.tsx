@@ -35,7 +35,16 @@ import {
   Target,
   Cloud,
   Server,
-  Webhook
+  Webhook,
+  Image,
+  Twitter,
+  Youtube,
+  Share2,
+  CalendarDays,
+  PenTool,
+  Figma,
+  BarChart2,
+  UserPlus
 } from "lucide-react";
 
 type BrandIconProps = {
@@ -113,15 +122,33 @@ export default function BrandIcon({ id, className = "w-5 h-5" }: BrandIconProps)
     case "github": return <GitBranch className={`${className}`} />;
     case "claude": return <BotMessageSquare className={`${className}`} />;
     case "gemini": return <BotMessageSquare className={`${className}`} />;
+    case "dalle":
+    case "midjourney": return <Image className={`${className}`} />;
+    case "pinecone": return <Database className={`${className}`} />;
     case "facebookleads":
     case "tiktokleads":
     case "linkedinads":
     case "googleads": return <Target className={`${className}`} />;
+    case "twitter": return <Twitter className={`${className}`} />;
+    case "youtube": return <Youtube className={`${className}`} />;
+    case "vimeo": return <Video className={`${className}`} />;
+    case "buffer":
+    case "hootsuite": return <Share2 className={`${className}`} />;
+    case "klaviyo":
+    case "brevo":
+    case "convertkit":
+    case "constantcontact": return <Mail className={`${className}`} />;
+    case "messagebird":
+    case "plivo":
+    case "manychat": return <MessageCircle className={`${className}`} />;
     case "magento":
     case "bigcommerce": return <ShoppingCart className={`${className}`} />;
     case "salesforce":
     case "zohocrm":
     case "activecampaign": return <Users className={`${className}`} />;
+    case "bamboohr":
+    case "workable":
+    case "deel": return <UserPlus className={`${className}`} />;
     case "paypal":
     case "razorpay":
     case "quickbooks":
@@ -130,6 +157,14 @@ export default function BrandIcon({ id, className = "w-5 h-5" }: BrandIconProps)
     case "onedrive": return <Cloud className={`${className}`} />;
     case "googledocs":
     case "docusign": return <FileText className={`${className}`} />;
+    case "canva": return <PenTool className={`${className}`} />;
+    case "figma": return <Figma className={`${className}`} />;
+    case "mixpanel":
+    case "amplitude":
+    case "segment": return <BarChart2 className={`${className}`} />;
+    case "webex":
+    case "gotowebinar": return <Video className={`${className}`} />;
+    case "microsoftteams": return <Users className={`${className}`} />;
     case "monday":
     case "clickup":
     case "jira": return <Layout className={`${className}`} />;

@@ -29,7 +29,8 @@ import {
   Mic,
   CheckCircle,
   Layout,
-  Github
+  GitBranch,
+  Headphones
 } from "lucide-react";
 
 type BrandIconProps = {
@@ -94,7 +95,14 @@ export default function BrandIcon({ id, className = "w-5 h-5" }: BrandIconProps)
     case "asana": return <CheckCircle className={`${className}`} />;
     case "trello": return <Layout className={`${className}`} />;
     case "dropbox": return <HardDrive className={`${className}`} />;
-    case "github": return <Github className={`${className}`} />;
+    case "zendesk": return <Headphones className={`${className}`} />;
+    case "intercom": return <MessageSquare className={`${className}`} />;
+    case "typeform": return <FileText className={`${className}`} />;
+    case "wordpress": return <Globe className={`${className}`} />;
+    case "mysql": return <Database className={`${className}`} />;
+    case "postgres":
+    case "postgresql": return <Database className={`${className}`} />;
+    case "github": return <GitBranch className={`${className}`} />;
     case "blog":
     case "blogposts": return <FileText className={`${className}`} />;
     default: return <Layers className={`${className} text-zinc-400`} />;

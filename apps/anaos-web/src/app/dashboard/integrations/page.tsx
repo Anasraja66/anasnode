@@ -19,6 +19,8 @@ const CATEGORIES = [
       { id: "vapi", name: "Vapi.ai", desc: "End-to-end voice AI platform for conversational agents.", status: "disconnected", href: "/dashboard/voice_agent" },
       { id: "retell", name: "Retell AI", desc: "Conversational voice APIs for building human-like agents.", status: "disconnected", href: "/dashboard/voice_agent" },
       { id: "bland", name: "Bland AI", desc: "Programmable phone calling via high-speed AI voice.", status: "disconnected", href: "/dashboard/voice_agent" },
+      { id: "claude", name: "Claude (Anthropic)", desc: "Highly capable AI models with massive context windows.", status: "disconnected", href: "/dashboard/setup" },
+      { id: "gemini", name: "Google Gemini", desc: "Multimodal AI models natively integrated by Google.", status: "disconnected", href: "/dashboard/setup" },
     ]
   },
   {
@@ -55,6 +57,12 @@ const CATEGORIES = [
       { id: "asana", name: "Asana", desc: "Create tasks and manage project workflows.", status: "disconnected", href: "/dashboard/integrations/connect/asana" },
       { id: "trello", name: "Trello", desc: "Automate boards, lists, and card creation.", status: "disconnected", href: "/dashboard/integrations/connect/trello" },
       { id: "dropbox", name: "Dropbox", desc: "Manage files and trigger document workflows.", status: "disconnected", href: "/dashboard/integrations/connect/dropbox" },
+      { id: "zendesk", name: "Zendesk", desc: "Automate customer support tickets and replies.", status: "disconnected", href: "/dashboard/integrations/connect/zendesk" },
+      { id: "intercom", name: "Intercom", desc: "Sync conversations and manage customer leads.", status: "disconnected", href: "/dashboard/integrations/connect/intercom" },
+      { id: "typeform", name: "Typeform", desc: "Trigger workflows instantly when a form is submitted.", status: "disconnected", href: "/dashboard/integrations/connect/typeform" },
+      { id: "wordpress", name: "WordPress", desc: "Publish posts and manage CMS data automatically.", status: "disconnected", href: "/dashboard/integrations/connect/wordpress" },
+      { id: "mysql", name: "MySQL", desc: "Read, write, and sync data directly with your SQL database.", status: "disconnected", href: "/dashboard/integrations/connect/mysql" },
+      { id: "postgres", name: "PostgreSQL", desc: "Execute queries and automate database operations.", status: "disconnected", href: "/dashboard/integrations/connect/postgres" },
     ]
   }
 ];

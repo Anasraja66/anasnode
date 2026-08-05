@@ -665,6 +665,45 @@ export class WorkflowExecutor {
           break;
         }
 
+        case "activepieces_action":
+        case "ACTIVEPIECES_ACTION": {
+          console.log(`[ACTION] Executing Activepieces Action: ${node.config?.pieceName} -> ${node.config?.actionName}`);
+          let apResult = null;
+          let status = "failed";
+          try {
+            const { getAction } = await import("@/lib/pieces/registry");
+            const action = getAction(node.config?.pieceName, node.config?.actionName);
+            
+            // Retrieve integration credentials from DB based on workflow accountId & pieceName
+            const credential = await prisma.integrationCredential.findFirst({
+              where: { 
+                accountId: ctx.accountId, 
+                providerId: node.config?.pieceName?.replace("piece-", "") 
+              }
+            });
+            
+            const auth = credential ? JSON.parse(credential.encryptedData) : {};
+            
+            // Execute the action
+            apResult = await action.action.run({
+              auth: auth,
+              propsValue: node.config?.propsValue || {},
+              store: {} as any, // Mock store
+              connections: { get: async () => null } as any
+            });
+            status = "success";
+          } catch (err: any) {
+            console.error(`Activepieces Action Failed: ${err.message}`);
+            apResult = { error: err.message };
+          }
+
+          result = {
+            output: { activepiecesResult: apResult, status },
+            nextNodeIds: node.outputs,
+          };
+          break;
+        }
+
         case NodeType.GOOGLE_CALENDAR: {
           const summary = resolveTemplate(node.config.summary || "Booking Slot", ctx);
           const start = resolveTemplate(node.config.startTime || new Date().toISOString(), ctx);

@@ -1,10 +1,10 @@
 "use client";
 
 import React from "react";
-import Component from "@/components/dashboard/BookingsHub";
+import Component from "@/components/dashboard/AnaosAIHub";
 import { useDashboard } from "@/lib/context/DashboardContext";
 
-export default function BookingsRoute() {
+export default function Ai_agentRoute() {
   const { ws, user, industryPreset } = useDashboard();
   
   if (!ws) return null;

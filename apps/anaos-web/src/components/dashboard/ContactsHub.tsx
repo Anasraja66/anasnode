@@ -185,3 +185,5 @@ export function ContactsHub() {
     </div>
   );
 }
+
+export default ContactsHub;

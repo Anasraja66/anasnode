@@ -203,3 +203,5 @@ export function BroadcastsHub({ workspaceName }: { workspaceName: string }) {
     </div>
   );
 }
+
+export default BroadcastsHub;

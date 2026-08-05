@@ -1,6 +1,6 @@
 import type { IndustryPreset } from "@/lib/industry/presets";
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Sparkles } from "lucide-react";
 
 type Ws = {
   name: string;
@@ -18,65 +18,59 @@ export function IndustryWelcome({
   const activeCount = ws.automations.filter((a) => a.enabled).length;
 
   return (
-    <div
-      className="rounded-[32px] border-2 p-10 sm:p-12 shadow-2xl shadow-zinc-200/20 relative overflow-hidden backdrop-blur-md"
-      style={{
-        borderColor: preset.softBorder,
-        background: `linear-gradient(145deg, ${preset.gradientFrom}cc 0%, ${preset.gradientTo}cc 100%)`,
-      }}
-    >
-      {/* Decorative background element */}
-      <div className="absolute top-0 right-0 -mr-24 -mt-24 w-80 h-80 bg-white/20 rounded-full blur-[100px] pointer-events-none" />
-      <div className="absolute bottom-0 left-0 -ml-24 -mb-24 w-80 h-80 bg-white/10 rounded-full blur-[80px] pointer-events-none" />
+    <div className="bg-white border border-zinc-200 rounded-3xl p-8 sm:p-10 shadow-sm relative overflow-hidden">
+      {/* Decorative clean background element */}
+      <div className="absolute top-0 right-0 w-64 h-64 bg-zinc-50 rounded-full blur-[80px] pointer-events-none -mr-10 -mt-10" />
 
-      <div className="flex flex-col sm:flex-row sm:items-center gap-10 relative z-10">
-        <div
-          className="w-24 h-24 rounded-[2.5rem] flex items-center justify-center shrink-0 shadow-2xl ring-8 ring-white/20 transform hover:scale-105 transition-transform duration-500"
-          style={{ backgroundColor: preset.primary, color: "white" }}
-        >
-          <Icon className="w-12 h-12" />
+      <div className="flex flex-col sm:flex-row sm:items-start gap-8 relative z-10">
+        <div className="w-16 h-16 rounded-2xl flex items-center justify-center shrink-0 border border-zinc-150 bg-zinc-50 text-zinc-900 shadow-sm">
+          <Icon className="w-8 h-8" />
         </div>
-        <div className="flex-1 space-y-3">
-          <p
-            className="text-[12px] font-bold uppercase tracking-[0.3em] opacity-80"
-            style={{ color: preset.accent }}
-          >
-            {preset.label} · ANASNODE OS
-          </p>
-          <h2 className="text-4xl sm:text-5xl font-bold text-zinc-950 leading-[1.05] tracking-tight">
-            {preset.welcomeTitle}
-          </h2>
-          <p className="text-[18px] text-zinc-800/70 font-bold max-w-2xl leading-relaxed">
+        
+        <div className="flex-1 space-y-4">
+          <div>
+            <div className="flex items-center gap-2 mb-2">
+              <Sparkles className="w-4 h-4 text-[#0A6BFF]" />
+              <p className="text-[11px] font-bold uppercase tracking-widest text-zinc-500">
+                {preset.label} Intelligence
+              </p>
+            </div>
+            <h2 className="text-3xl sm:text-4xl font-bold text-zinc-900 leading-tight tracking-tight max-w-2xl">
+              {preset.welcomeTitle}
+            </h2>
+          </div>
+          
+          <p className="text-[16px] text-zinc-500 font-medium max-w-2xl leading-relaxed">
             {preset.welcomeBody}
           </p>
-          <div className="flex items-center gap-4 pt-4">
-            <div className="flex -space-x-3">
-              {[1, 2, 3].map(i => (
-                <div key={i} className="w-8 h-8 rounded-full border-4 border-white bg-zinc-200 shadow-sm" />
-              ))}
+          
+          <div className="flex items-center gap-3 pt-2">
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-50 border border-emerald-100">
+              <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+              <p className="text-[12px] font-bold text-emerald-700">
+                {activeCount} {activeCount === 1 ? "Agent" : "Agents"} Live
+              </p>
             </div>
-            <p className="text-[14px] text-zinc-600 font-bold">
-              <span className="text-zinc-900">{ws.name}</span> — {activeCount}{" "}
-              automation{activeCount === 1 ? "" : "s"} live
+            <p className="text-[13px] text-zinc-400 font-medium">
+              Running in <span className="text-zinc-700 font-bold">{ws.name}</span>
             </p>
           </div>
         </div>
       </div>
-      <div className="flex flex-wrap gap-5 mt-12 relative z-10">
+      
+      <div className="flex flex-wrap gap-4 mt-10 relative z-10 border-t border-zinc-100 pt-8">
         <Link
           href="/dashboard/integrations/connect/whatsapp"
-          className="inline-flex items-center gap-3 h-14 px-10 rounded-[20px] text-white text-[15px] font-bold shadow-xl hover:scale-105 transition-all active:scale-95 shadow-blue-500/20"
-          style={{ backgroundColor: preset.primary }}
+          className="inline-flex items-center gap-2 h-12 px-6 rounded-xl bg-zinc-900 text-white text-[14px] font-bold shadow-sm hover:bg-zinc-800 transition-colors"
         >
           {preset.connectWhatsApp}
-          <ArrowRight className="w-5 h-5" />
+          <ArrowRight className="w-4 h-4" />
         </Link>
         <Link
           href="/dashboard?tab=inbox"
-          className="inline-flex items-center gap-3 h-14 px-10 rounded-[20px] border-2 bg-white/60 backdrop-blur-md text-[15px] font-bold text-zinc-900 hover:bg-white transition-all shadow-sm active:scale-95"
-          style={{ borderColor: preset.softBorder }}
+          className="inline-flex items-center gap-2 h-12 px-6 rounded-xl border border-zinc-200 bg-white text-[14px] font-bold text-zinc-700 hover:bg-zinc-50 transition-colors shadow-sm"
         >
-          Launch Inbox
+          Open Inbox
         </Link>
       </div>
     </div>

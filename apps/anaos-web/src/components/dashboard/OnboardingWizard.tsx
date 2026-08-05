@@ -112,12 +112,12 @@ export function OnboardingWizard() {
                   <div className="grid grid-cols-1 gap-3 w-full max-w-md mx-auto">
                     {(() => {
                       const knownChannels: Record<string, any> = {
-                        "whatsapp": { name: "WhatsApp Business", icon: FaWhatsapp, color: "text-[#25D366]", bg: "bg-[#25D366]/10", border: "border-[#25D366]" },
-                        "instagram": { name: "Instagram DM", icon: FaInstagram, color: "text-[#E4405F]", bg: "bg-[#E4405F]/10", border: "border-[#E4405F]" },
-                        "facebook": { name: "Facebook Messenger", icon: FaFacebookMessenger, color: "text-[#1877F2]", bg: "bg-[#1877F2]/10", border: "border-[#1877F2]" },
-                        "phone": { name: "AI Voice Agent", icon: Phone, color: "text-[#8B5CF6]", bg: "bg-[#8B5CF6]/10", border: "border-[#8B5CF6]" },
-                        "calendar": { name: "Google Calendar", icon: Calendar, color: "text-[#F59E0B]", bg: "bg-[#F59E0B]/10", border: "border-[#F59E0B]" },
-                        "email": { name: "Email Automation", icon: Mail, color: "text-[#EF4444]", bg: "bg-[#EF4444]/10", border: "border-[#EF4444]" },
+                        "whatsapp": { name: "WhatsApp Business", icon: FaWhatsapp, color: "text-zinc-900", bg: "bg-zinc-100", border: "border-zinc-300" },
+                        "instagram": { name: "Instagram DM", icon: FaInstagram, color: "text-zinc-900", bg: "bg-zinc-100", border: "border-zinc-300" },
+                        "facebook": { name: "Facebook Messenger", icon: FaFacebookMessenger, color: "text-zinc-900", bg: "bg-zinc-100", border: "border-zinc-300" },
+                        "phone": { name: "AI Voice Agent", icon: Phone, color: "text-zinc-900", bg: "bg-zinc-100", border: "border-zinc-300" },
+                        "calendar": { name: "Google Calendar", icon: Calendar, color: "text-zinc-900", bg: "bg-zinc-100", border: "border-zinc-300" },
+                        "email": { name: "Email Automation", icon: Mail, color: "text-zinc-900", bg: "bg-zinc-100", border: "border-zinc-300" },
                       };
                       
                       const visibleChannels = filteredChannels.length > 0 
@@ -128,9 +128,9 @@ export function OnboardingWizard() {
                               id,
                               name: id.charAt(0).toUpperCase() + id.slice(1) + " Integration",
                               icon: Plug,
-                              color: "text-[#0A6BFF]",
-                              bg: "bg-[#0A6BFF]/10",
-                              border: "border-[#0A6BFF]"
+                              color: "text-zinc-900",
+                              bg: "bg-zinc-100",
+                              border: "border-zinc-300"
                             };
                           })
                         : [

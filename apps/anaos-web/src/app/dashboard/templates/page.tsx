@@ -1,10 +1,10 @@
 "use client";
 
 import React from "react";
-import Component from "@/components/dashboard/BookingsHub";
+import Component from "@/components/dashboard/TemplatesHub";
 import { useDashboard } from "@/lib/context/DashboardContext";
 
-export default function BookingsRoute() {
+export default function TemplatesRoute() {
   const { ws, user, industryPreset } = useDashboard();
   
   if (!ws) return null;

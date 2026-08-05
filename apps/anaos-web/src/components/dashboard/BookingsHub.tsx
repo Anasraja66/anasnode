@@ -183,3 +183,5 @@ export function BookingsHub() {
     </div>
   );
 }
+
+export default BookingsHub;

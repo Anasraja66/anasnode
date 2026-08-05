@@ -233,3 +233,5 @@ export function GithubAutomationHistory() {
     </div>
   );
 }
+
+export default GithubAutomationHistory;

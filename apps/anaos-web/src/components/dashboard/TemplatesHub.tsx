@@ -1,11 +1,22 @@
 "use client";
 
 import { useState } from "react";
-import { Download, LayoutTemplate, ArrowRight, Zap, Copy, CheckCircle2, ChevronRight, Tags } from "lucide-react";
+import { Download, LayoutTemplate, ArrowRight, Zap, Copy, CheckCircle2, ChevronRight, Tags, Bot, Mic } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { InnerPageHeader } from "@/components/ui/InnerPageHeader";
+import { useDashboard } from "@/lib/context/DashboardContext";
 
-const TEMPLATES = [
+const BASE_TEMPLATES = [
+  {
+    id: "chatgpt-voice-agent",
+    name: "ChatGPT Voice AI Agent",
+    category: "Voice & AI",
+    description: "Deploy a human-like voice agent powered by ChatGPT and ElevenLabs to answer calls 24/7.",
+    icon: Mic,
+    color: "text-purple-600",
+    bg: "bg-purple-100",
+    nodes: ["Inbound Call", "ChatGPT Node", "ElevenLabs TTS", "CRM Update"]
+  },
   {
     id: "abandoned-cart",
     name: "Abandoned Cart Recovery",
@@ -15,16 +26,6 @@ const TEMPLATES = [
     color: "text-amber-500",
     bg: "bg-amber-50",
     nodes: ["Shopify Trigger", "Delay (30m)", "WhatsApp Button Message"]
-  },
-  {
-    id: "real-estate-qualifier",
-    name: "Real Estate AI Qualifier",
-    category: "Real Estate",
-    description: "An AI agent that chats with incoming leads, asks budget/location, and tags them in CRM.",
-    icon: LayoutTemplate,
-    color: "text-blue-500",
-    bg: "bg-blue-50",
-    nodes: ["WhatsApp Inbound", "AI Agent Node", "HubSpot CRM Update"]
   },
   {
     id: "appointment-reminder",
@@ -42,8 +43,8 @@ const TEMPLATES = [
     category: "Support",
     description: "If a user sends an email to support, create a Slack notification and auto-reply with a ticket number.",
     icon: Copy,
-    color: "text-purple-500",
-    bg: "bg-purple-50",
+    color: "text-blue-500",
+    bg: "bg-blue-50",
     nodes: ["Email Trigger", "Slack Notification", "Email Reply"]
   },
   {
@@ -55,23 +56,27 @@ const TEMPLATES = [
     color: "text-rose-500",
     bg: "bg-rose-50",
     nodes: ["Webhook Trigger", "Email Send", "Wait (1 Day)"]
-  },
-  {
-    id: "payment-failed",
-    name: "Failed Payment Recovery",
-    category: "Finance",
-    description: "Triggered by Stripe. Sends a courteous SMS to the customer with a link to update their card.",
-    icon: Tags,
-    color: "text-sky-500",
-    bg: "bg-sky-50",
-    nodes: ["Stripe Trigger", "Condition", "Twilio SMS"]
   }
 ];
 
 export function TemplatesHub() {
   const [cloning, setCloning] = useState<string | null>(null);
-
   const router = useRouter();
+  const { preset } = useDashboard();
+
+  // Dynamically add an industry-specific template based on the active preset
+  const industryTemplate = {
+    id: `industry-${preset.id}-qualifier`,
+    name: `${preset.label} AI Qualifier`,
+    category: preset.label,
+    description: preset.welcomeBody,
+    icon: preset.icon || LayoutTemplate,
+    color: "text-white",
+    bg: "bg-[#0A6BFF]", // Premium AnaOS blue
+    nodes: ["WhatsApp Inbound", "ChatGPT Node", "Update CRM"]
+  };
+
+  const templates = [industryTemplate, ...BASE_TEMPLATES];
 
   const handleClone = async (id: string) => {
     setCloning(id);
@@ -86,7 +91,7 @@ export function TemplatesHub() {
     <div className="min-h-screen bg-[#F7F8FA]">
       <InnerPageHeader
         title="Template Library"
-        subtitle="1-Click install pre-built workflows designed for your industry."
+        subtitle="1-Click install pre-built workflows integrated with ChatGPT Cloud."
         icon={LayoutTemplate}
         backHref="/dashboard"
         backLabel="Back to dashboard"
@@ -94,10 +99,17 @@ export function TemplatesHub() {
 
       <div className="p-8 max-w-7xl mx-auto font-sans">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {TEMPLATES.map(tpl => (
-          <div key={tpl.id} className="bg-white border border-gray-200 rounded-2xl overflow-hidden hover:shadow-lg transition-all group flex flex-col h-full">
+        {templates.map((tpl, idx) => (
+          <div key={tpl.id} className={`bg-white border ${idx === 0 ? 'border-blue-200 shadow-md ring-1 ring-blue-100' : 'border-gray-200 shadow-sm'} rounded-2xl overflow-hidden hover:shadow-lg transition-all group flex flex-col h-full relative`}>
+            
+            {idx === 0 && (
+              <div className="absolute top-0 right-0 bg-[#0A6BFF] text-white text-[10px] font-bold px-3 py-1 rounded-bl-lg uppercase tracking-wider">
+                Recommended for you
+              </div>
+            )}
+            
             <div className="p-6 flex-1">
-              <div className="flex justify-between items-start mb-4">
+              <div className="flex justify-between items-start mb-4 mt-2">
                 <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${tpl.bg}`}>
                   <tpl.icon className={tpl.color} size={24} />
                 </div>
@@ -122,7 +134,7 @@ export function TemplatesHub() {
               <button 
                 onClick={() => handleClone(tpl.id)}
                 disabled={cloning === tpl.id}
-                className="w-full py-2.5 bg-white border border-gray-200 text-gray-900 font-bold rounded-lg hover:border-purple-300 hover:text-purple-700 transition-colors flex items-center justify-center gap-2 shadow-sm disabled:opacity-50"
+                className={`w-full py-2.5 bg-white border ${idx === 0 ? 'border-[#0A6BFF] text-[#0A6BFF]' : 'border-gray-200 text-gray-900'} font-bold rounded-lg hover:bg-zinc-50 transition-colors flex items-center justify-center gap-2 shadow-sm disabled:opacity-50`}
               >
                 {cloning === tpl.id ? (
                   <span className="animate-pulse">Installing...</span>
@@ -140,3 +152,5 @@ export function TemplatesHub() {
     </div>
   );
 }
+
+export default TemplatesHub;

@@ -167,3 +167,5 @@ export function GithubPerformanceInsights() {
     </div>
   );
 }
+
+export default GithubPerformanceInsights;

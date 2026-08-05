@@ -1,10 +1,13 @@
-import { ContactsHub } from "@/components/dashboard/ContactsHub";
+"use client";
 
-export const metadata = {
-  title: "Contacts | AnaOS",
-  description: "Manage your leads and contacts",
-};
+import React from "react";
+import Component from "@/components/dashboard/ContactsHub";
+import { useDashboard } from "@/lib/context/DashboardContext";
 
-export default function ContactsPage() {
-  return <ContactsHub />;
+export default function ContactsRoute() {
+  const { ws, user, industryPreset } = useDashboard();
+  
+  if (!ws) return null;
+  
+  return <Component ws={ws} user={user} preset={industryPreset} />;
 }

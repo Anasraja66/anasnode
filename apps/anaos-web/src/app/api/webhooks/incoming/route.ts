@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
-import { WorkflowEngine } from "@/lib/workflow/engine";
+import { WorkflowExecutor } from "@/lib/workflow/executor";
 
 // Webhook receiver for third-party platforms (WhatsApp, Facebook, etc.)
 export async function POST(req: Request) {
@@ -64,7 +64,8 @@ export async function POST(req: Request) {
       const definition = workflow.definition || "{}";
       if (definition.includes(payload.source) || definition.includes("all")) {
         // Run engine in background without blocking response
-        WorkflowEngine.executeWorkflow(workflow.id, payload).catch(err => {
+        const executor = new WorkflowExecutor();
+        executor.execute(workflow.id, payload).catch(err => {
           console.error(`Workflow ${workflow.id} execution failed:`, err);
         });
       }

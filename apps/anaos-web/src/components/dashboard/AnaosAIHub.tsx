@@ -308,3 +308,5 @@ export function AnaosAIHub({ ws }: { ws: Workspace }) {
     </div>
   );
 }
+
+export default AnaosAIHub;

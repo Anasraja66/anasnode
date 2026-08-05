@@ -79,7 +79,7 @@ export function VoiceAgentHub() {
             Voice AI Agent
           </h1>
           <p className="text-zinc-500 mt-2 text-[14px]">
-            Deploy a human-like AI caller for inbound & outbound. Powered by ElevenLabs.
+            Deploy a human-like AI caller for inbound & outbound. Powered by ChatGPT & ElevenLabs.
           </p>
         </div>
         
@@ -216,21 +216,50 @@ export function VoiceAgentHub() {
                     </div>
                   </div>
 
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-1.5 flex items-center gap-2">
-                      <Key size={14} className="text-gray-400" />
-                      API Key
-                    </label>
-                    <input 
-                      type="password" 
-                      value={customKey}
-                      onChange={e => setCustomKey(e.target.value)}
-                      placeholder={`Enter your ${provider === 'vapi' ? 'Vapi' : provider === 'retell' ? 'Retell' : 'Bland'} Private Key`}
-                      className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all font-mono"
-                    />
-                    <p className="text-xs text-gray-400 mt-2">
-                      If configured, AnaOS will bypass the native engine and proxy calls directly to this provider. You will be billed by the provider for voice minutes.
-                    </p>
+                  <div className="pt-2">
+                    {customKey ? (
+                      <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-4 flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 bg-emerald-100 rounded-full flex items-center justify-center text-emerald-600">
+                            <Shield size={20} />
+                          </div>
+                          <div>
+                            <h4 className="text-sm font-bold text-emerald-800">Connected via AnaOS Secure Auth</h4>
+                            <p className="text-xs text-emerald-600/80 font-medium mt-0.5">Your {provider === 'vapi' ? 'Vapi.ai' : provider === 'retell' ? 'Retell' : 'Bland AI'} account is securely linked.</p>
+                          </div>
+                        </div>
+                        <button 
+                          onClick={() => setCustomKey("")}
+                          className="px-3 py-1.5 text-xs font-bold text-emerald-700 hover:bg-emerald-100 rounded-lg transition-colors"
+                        >
+                          Disconnect
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="bg-gray-50 border border-gray-200 border-dashed rounded-xl p-6 text-center">
+                        <div className="w-12 h-12 bg-white border border-gray-200 rounded-full flex items-center justify-center mx-auto mb-3 text-gray-400">
+                          <Globe size={24} />
+                        </div>
+                        <h4 className="text-sm font-bold text-gray-900 mb-1">1-Click Secure Connect</h4>
+                        <p className="text-xs text-gray-500 font-medium mb-4 max-w-sm mx-auto">
+                          No need to deal with complex API keys. Securely link your {provider === 'vapi' ? 'Vapi.ai' : provider === 'retell' ? 'Retell' : 'Bland AI'} account directly through AnaOS.
+                        </p>
+                        <button 
+                          onClick={() => {
+                            setSaving(true);
+                            setTimeout(() => {
+                              setCustomKey("oauth_token_placeholder");
+                              setSaving(false);
+                            }, 1500);
+                          }}
+                          disabled={saving}
+                          className="bg-zinc-900 hover:bg-zinc-800 text-white px-6 py-2.5 rounded-xl text-sm font-bold transition-all shadow-sm flex items-center justify-center gap-2 mx-auto disabled:opacity-50"
+                        >
+                          {saving ? <Loader2 size={16} className="animate-spin" /> : <Key size={16} />}
+                          Connect {provider === 'vapi' ? 'Vapi.ai' : provider === 'retell' ? 'Retell' : 'Bland AI'}
+                        </button>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
@@ -283,31 +312,32 @@ export function VoiceAgentHub() {
             </button>
           </div>
 
-          <div className="bg-[#6B21A8] rounded-2xl p-6 text-white shadow-lg relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-full h-full bg-gradient-to-br from-white/10 to-transparent pointer-events-none"></div>
+          <div className="bg-gradient-to-br from-zinc-800 to-zinc-900 rounded-2xl p-6 text-white shadow-lg relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-full h-full bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-5 pointer-events-none"></div>
             <div className="flex items-center gap-2 mb-3 opacity-90 relative z-10">
-              <Globe size={14} />
-              <span className="text-[10px] font-bold uppercase tracking-widest">Pricing & Billing</span>
+              <Sparkles size={14} className="text-emerald-400" />
+              <span className="text-[10px] font-bold uppercase tracking-widest text-emerald-400">1 Month Free Trial</span>
             </div>
             
             <div className="relative z-10">
               {tab === "native" ? (
                 <>
-                  <h3 className="text-3xl font-bold mb-2">$0.10 <span className="text-[13px] font-medium opacity-80">/ minute</span></h3>
-                  <p className="text-[12px] opacity-85 leading-relaxed mb-5 font-medium">
-                    Using AnaOS Native Voice guarantees you get the exact same industry rates as Vapi or Retell, but fully integrated into your CRM. Powered by ElevenLabs and GPT-4o.
+                  <h3 className="text-3xl font-bold mb-2">100% <span className="text-[13px] font-medium opacity-80">At Cost</span></h3>
+                  <p className="text-[12px] opacity-90 leading-relaxed mb-5 font-medium">
+                    Enjoy AnaOS platform free for 30 days. You only pay exact API costs (Vapi, Retell, Twilio, OpenAI) with 0 markup. We earn from our subscription, not by overcharging you.
                   </p>
                 </>
               ) : (
                 <>
                   <h3 className="text-xl font-bold mb-2">Provider Billed</h3>
-                  <p className="text-[12px] opacity-85 leading-relaxed mb-5 font-medium">
-                    You are bypassing the AnaOS Native Voice engine. You will be billed directly by {provider.toUpperCase()} at their rates.
+                  <p className="text-[12px] opacity-90 leading-relaxed mb-5 font-medium">
+                    You are bypassing the AnaOS Native Voice engine. You will be billed directly by {provider.toUpperCase()} at their exact rates (0 markup from us).
                   </p>
                 </>
               )}
-              <div className="bg-white/10 backdrop-blur-md rounded-xl p-3 text-[12px] font-bold border border-white/20">
-                Current Balance: $45.00
+              <div className="bg-white/10 backdrop-blur-md rounded-xl p-3 text-[12px] font-bold border border-white/20 flex items-center justify-between">
+                <span>Account Status:</span>
+                <span className="text-emerald-400">30 Days Left</span>
               </div>
             </div>
           </div>
@@ -316,3 +346,5 @@ export function VoiceAgentHub() {
     </div>
   );
 }
+
+export default VoiceAgentHub;

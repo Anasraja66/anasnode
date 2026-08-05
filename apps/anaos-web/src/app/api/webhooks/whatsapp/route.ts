@@ -1,4 +1,5 @@
 import { after, NextResponse } from "next/server";
+import crypto from "crypto";
 import { resolveAccountIdFromWhatsApp } from "@/lib/inbox/store";
 import { parseWhatsAppInboundMessage } from "@/lib/whatsapp/parse-inbound";
 import { processInboundWhatsAppMessage } from "@/lib/whatsapp/process-inbound";
@@ -22,7 +23,22 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   try {
-    const body = await request.json();
+    const rawBody = await request.text();
+    const signature = request.headers.get("x-hub-signature-256");
+
+    // Enforce Webhook Security Verification for Meta
+    if (process.env.META_APP_SECRET && signature) {
+      const hmac = crypto.createHmac("sha256", process.env.META_APP_SECRET);
+      const digest = "sha256=" + hmac.update(rawBody).digest("hex");
+      if (signature !== digest) {
+        console.warn("[WhatsApp Webhook] Invalid signature detected!");
+        return new Response("Invalid signature", { status: 401 });
+      }
+    } else if (process.env.NODE_ENV === "production" && !process.env.META_APP_SECRET) {
+      console.warn("[WhatsApp Webhook] WARNING: META_APP_SECRET is not set in production. Webhooks are insecure.");
+    }
+
+    const body = JSON.parse(rawBody);
     const entry = body.entry?.[0];
     const change = entry?.changes?.[0];
     const val = change?.value;

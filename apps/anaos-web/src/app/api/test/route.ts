@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
-import { WorkflowEngine } from "@/lib/workflow/engine";
+import { WorkflowExecutor } from "@/lib/workflow/executor";
 
 export async function GET() {
   console.log("🚀 Starting AnaOS Workflow Engine Test from API...");
@@ -57,7 +57,8 @@ export async function GET() {
     });
 
     const payload = { phone: "+1234567890", message: "Hi, test me!" };
-    await WorkflowEngine.executeWorkflow(workflow.id, payload);
+    const executor = new WorkflowExecutor();
+    await executor.execute(workflow.id, payload);
 
     const execution = await prisma.workflowExecution.findFirst({
       where: { workflowId: workflow.id },

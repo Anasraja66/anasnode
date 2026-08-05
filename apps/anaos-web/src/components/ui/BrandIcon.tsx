@@ -30,7 +30,12 @@ import {
   CheckCircle,
   Layout,
   GitBranch,
-  Headphones
+  Headphones,
+  BotMessageSquare,
+  Target,
+  Cloud,
+  Server,
+  Webhook
 } from "lucide-react";
 
 type BrandIconProps = {
@@ -97,12 +102,40 @@ export default function BrandIcon({ id, className = "w-5 h-5" }: BrandIconProps)
     case "dropbox": return <HardDrive className={`${className}`} />;
     case "zendesk": return <Headphones className={`${className}`} />;
     case "intercom": return <MessageSquare className={`${className}`} />;
+    case "freshdesk": return <Headphones className={`${className}`} />;
     case "typeform": return <FileText className={`${className}`} />;
+    case "googleforms": return <FileText className={`${className}`} />;
     case "wordpress": return <Globe className={`${className}`} />;
+    case "webflow": return <Globe className={`${className}`} />;
     case "mysql": return <Database className={`${className}`} />;
     case "postgres":
     case "postgresql": return <Database className={`${className}`} />;
     case "github": return <GitBranch className={`${className}`} />;
+    case "claude": return <BotMessageSquare className={`${className}`} />;
+    case "gemini": return <BotMessageSquare className={`${className}`} />;
+    case "facebookleads":
+    case "tiktokleads":
+    case "linkedinads":
+    case "googleads": return <Target className={`${className}`} />;
+    case "magento":
+    case "bigcommerce": return <ShoppingCart className={`${className}`} />;
+    case "salesforce":
+    case "zohocrm":
+    case "activecampaign": return <Users className={`${className}`} />;
+    case "paypal":
+    case "razorpay":
+    case "quickbooks":
+    case "xero": return <CreditCard className={`${className}`} />;
+    case "googledrive":
+    case "onedrive": return <Cloud className={`${className}`} />;
+    case "googledocs":
+    case "docusign": return <FileText className={`${className}`} />;
+    case "monday":
+    case "clickup":
+    case "jira": return <Layout className={`${className}`} />;
+    case "aws": return <Server className={`${className}`} />;
+    case "ftp": return <HardDrive className={`${className}`} />;
+    case "webhooks": return <Webhook className={`${className}`} />;
     case "blog":
     case "blogposts": return <FileText className={`${className}`} />;
     default: return <Layers className={`${className} text-zinc-400`} />;

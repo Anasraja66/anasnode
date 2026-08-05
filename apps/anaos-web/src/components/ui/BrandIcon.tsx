@@ -44,7 +44,11 @@ import {
   PenTool,
   Figma,
   BarChart2,
-  UserPlus
+  UserPlus,
+  Activity,
+  Ticket,
+  ClipboardList,
+  Table2
 } from "lucide-react";
 
 type BrandIconProps = {
@@ -122,9 +126,12 @@ export default function BrandIcon({ id, className = "w-5 h-5" }: BrandIconProps)
     case "github": return <GitBranch className={`${className}`} />;
     case "claude": return <BotMessageSquare className={`${className}`} />;
     case "gemini": return <BotMessageSquare className={`${className}`} />;
+    case "openaiassistants": return <BotMessageSquare className={`${className}`} />;
     case "dalle":
     case "midjourney": return <Image className={`${className}`} />;
-    case "pinecone": return <Database className={`${className}`} />;
+    case "pinecone":
+    case "firebase":
+    case "supabase": return <Database className={`${className}`} />;
     case "facebookleads":
     case "tiktokleads":
     case "linkedinads":
@@ -137,10 +144,18 @@ export default function BrandIcon({ id, className = "w-5 h-5" }: BrandIconProps)
     case "klaviyo":
     case "brevo":
     case "convertkit":
-    case "constantcontact": return <Mail className={`${className}`} />;
+    case "constantcontact":
+    case "sendgrid":
+    case "postmark":
+    case "mailgun":
+    case "aweber":
+    case "getresponse": return <Mail className={`${className}`} />;
     case "messagebird":
     case "plivo":
-    case "manychat": return <MessageCircle className={`${className}`} />;
+    case "manychat":
+    case "crisp":
+    case "drift":
+    case "tidio": return <MessageCircle className={`${className}`} />;
     case "magento":
     case "bigcommerce": return <ShoppingCart className={`${className}`} />;
     case "salesforce":
@@ -152,11 +167,22 @@ export default function BrandIcon({ id, className = "w-5 h-5" }: BrandIconProps)
     case "paypal":
     case "razorpay":
     case "quickbooks":
-    case "xero": return <CreditCard className={`${className}`} />;
+    case "xero":
+    case "squarepos":
+    case "braintree":
+    case "paddle":
+    case "gumroad":
+    case "lemonsqueezy": return <CreditCard className={`${className}`} />;
     case "googledrive":
     case "onedrive": return <Cloud className={`${className}`} />;
     case "googledocs":
-    case "docusign": return <FileText className={`${className}`} />;
+    case "docusign":
+    case "ghost":
+    case "strapi":
+    case "contentful":
+    case "sanity":
+    case "medium":
+    case "coda": return <FileText className={`${className}`} />;
     case "canva": return <PenTool className={`${className}`} />;
     case "figma": return <Figma className={`${className}`} />;
     case "mixpanel":
@@ -168,6 +194,23 @@ export default function BrandIcon({ id, className = "w-5 h-5" }: BrandIconProps)
     case "monday":
     case "clickup":
     case "jira": return <Layout className={`${className}`} />;
+    case "gitlab":
+    case "bitbucket":
+    case "githubactions": return <GitBranch className={`${className}`} />;
+    case "linear":
+    case "datadog":
+    case "sentry":
+    case "pagerduty": return <Activity className={`${className}`} />;
+    case "apolloio":
+    case "seamlessai":
+    case "clearbit": return <Users className={`${className}`} />;
+    case "front":
+    case "gorgias":
+    case "kustomer": return <Headphones className={`${className}`} />;
+    case "jotform":
+    case "surveymonkey": return <ClipboardList className={`${className}`} />;
+    case "eventbrite": return <Ticket className={`${className}`} />;
+    case "smartsheet": return <Table2 className={`${className}`} />;
     case "aws": return <Server className={`${className}`} />;
     case "ftp": return <HardDrive className={`${className}`} />;
     case "webhooks": return <Webhook className={`${className}`} />;

@@ -8,20 +8,64 @@ import { validatePhoneNumberId } from "@/lib/whatsapp/credentials";
 export const dynamic = "force-dynamic";
 
 const ALLOWED_TYPES = [
-  "whatsapp",
-  "shopify",
-  "openai",
-  "claude",
-  "gemini",
-  "google_calendar",
-  "google_sheets",
-  "google_drive",
-  "hubspot",
-  "smtp",
-  "twilio",
-  "stripe",
-  "instagram",
-  "facebook",
+  // Messaging & Social
+  "whatsapp", "instagram", "facebook", "telegram", "slack", "discord",
+  "twitter", "youtube", "pinterest", "vimeo", "manychat",
+  // E-commerce
+  "shopify", "woocommerce", "magento", "bigcommerce", "gumroad",
+  "squarepos", "lemonsqueezy",
+  // AI & Voice
+  "openai", "openaiassistants", "claude", "gemini", "dalle",
+  "midjourney", "pinecone", "vapi", "elevenlabs", "retell", "bland",
+  // CRM & Sales
+  "hubspot", "salesforce", "zohocrm", "pipedrive", "activecampaign",
+  "apolloio", "seamlessai", "clearbit",
+  // Email Marketing
+  "smtp", "mailchimp", "sendgrid", "postmark", "mailgun", "brevo",
+  "klaviyo", "convertkit", "constantcontact", "aweber", "getresponse",
+  // Payments & Finance
+  "stripe", "paypal", "razorpay", "quickbooks", "xero", "braintree",
+  "paddle",
+  // Google Suite
+  "google_calendar", "google_sheets", "google_drive", "googledocs",
+  "googleforms", "googleads",
+  // Cloud & Dev Tools
+  "aws", "firebase", "supabase", "ftp", "webhooks",
+  "github", "gitlab", "bitbucket", "githubactions",
+  // Project Management
+  "asana", "trello", "notion", "airtable", "monday", "clickup",
+  "jira", "linear", "coda", "smartsheet",
+  // Meetings & Scheduling
+  "zoom", "calendly", "google_calendar", "webex", "gotowebinar",
+  "microsoftteams",
+  // Storage
+  "dropbox", "onedrive",
+  // HR & Payroll
+  "bamboohr", "workable", "deel",
+  // Monitoring & Analytics
+  "datadog", "sentry", "pagerduty", "mixpanel", "amplitude", "segment",
+  // Support & Chat
+  "zendesk", "intercom", "freshdesk", "crisp", "drift", "tidio",
+  "front", "gorgias", "kustomer",
+  // Design
+  "canva", "figma",
+  // Content & CMS
+  "wordpress", "webflow", "ghost", "strapi", "contentful", "sanity",
+  "medium",
+  // Advertising
+  "facebookleads", "tiktokleads", "linkedinads",
+  // Social Scheduling
+  "buffer", "hootsuite",
+  // Forms & Surveys
+  "typeform", "googleforms", "jotform", "surveymonkey",
+  // Communication APIs
+  "twilio", "messagebird", "plivo",
+  // Docs & Signing
+  "docusign",
+  // Events
+  "eventbrite",
+  // Databases
+  "mysql", "postgres",
 ] as const;
 
 /**

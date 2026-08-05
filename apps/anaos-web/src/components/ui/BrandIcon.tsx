@@ -37,12 +37,9 @@ import {
   Server,
   Webhook,
   Image,
-  Twitter,
-  Youtube,
   Share2,
   CalendarDays,
   PenTool,
-  Figma,
   BarChart2,
   UserPlus,
   Activity,
@@ -136,8 +133,8 @@ export default function BrandIcon({ id, className = "w-5 h-5" }: BrandIconProps)
     case "tiktokleads":
     case "linkedinads":
     case "googleads": return <Target className={`${className}`} />;
-    case "twitter": return <Twitter className={`${className}`} />;
-    case "youtube": return <Youtube className={`${className}`} />;
+    case "twitter": return <MessageCircle className={`${className}`} />;
+    case "youtube": return <PlayCircle className={`${className}`} />;
     case "vimeo": return <Video className={`${className}`} />;
     case "buffer":
     case "hootsuite": return <Share2 className={`${className}`} />;
@@ -184,7 +181,7 @@ export default function BrandIcon({ id, className = "w-5 h-5" }: BrandIconProps)
     case "medium":
     case "coda": return <FileText className={`${className}`} />;
     case "canva": return <PenTool className={`${className}`} />;
-    case "figma": return <Figma className={`${className}`} />;
+    case "figma": return <PenTool className={`${className}`} />;
     case "mixpanel":
     case "amplitude":
     case "segment": return <BarChart2 className={`${className}`} />;

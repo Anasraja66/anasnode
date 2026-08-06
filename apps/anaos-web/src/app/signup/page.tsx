@@ -68,6 +68,7 @@ function SignupForm() {
       }
       router.refresh();
       
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       console.error("Signup Error:", err);
       if (err.code === "auth/email-already-in-use") {

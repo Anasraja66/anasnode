@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getAccountId } from "@/lib/auth/session";
 import { TemplateService } from "@/lib/services/template.service";
 import { handleApiError } from "@/lib/errors";
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { TEMPLATES, createWorkflowFromTemplate } from "@/lib/workflow/templates";
 
 export const dynamic = "force-dynamic";
@@ -46,6 +47,7 @@ export async function POST(request: Request) {
     });
 
     return NextResponse.json(result);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     console.error("POST instantiate template error:", error);
     return handleApiError(error);

@@ -33,6 +33,7 @@ export default function JoinTeamPage({ params }: { params: Promise<{ token: stri
         } else {
           setInvite(data.invite);
         }
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (err) {
         setError("Something went wrong. Please check your internet connection.");
       } finally {
@@ -67,6 +68,7 @@ export default function JoinTeamPage({ params }: { params: Promise<{ token: stri
           router.push("/login");
         }, 3000);
       }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (err) {
       setError("Failed to submit. Please try again.");
     } finally {

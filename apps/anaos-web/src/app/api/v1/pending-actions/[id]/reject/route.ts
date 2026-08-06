@@ -12,6 +12,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     await PendingActionService.reject(id);
 
     return NextResponse.json({ success: true });
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     console.error("POST /api/v1/pending-actions/[id]/reject error:", error);
     return handleApiError(error);

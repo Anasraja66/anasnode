@@ -73,6 +73,7 @@ export async function POST(request: Request) {
             description: auto.description || `Auto-generated ${auto.type} workflow`,
             isActive: true,
             definition: JSON.stringify({ nodes, edges, viewport: { x: 0, y: 0, zoom: 1 } }),
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             variables: JSON.stringify(ws.variables?.map((v: any) => v.key) || []),
           }
         });

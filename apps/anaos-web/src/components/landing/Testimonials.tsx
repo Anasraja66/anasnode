@@ -1,5 +1,6 @@
 "use client";
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { FadeIn, Section, SectionLabel } from "./Section";
 import { Typewriter } from "./Typewriter";
 

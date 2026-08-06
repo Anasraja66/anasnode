@@ -72,6 +72,7 @@ export async function POST(req: Request) {
     });
 
     return NextResponse.json({ success: true, message: "Webhook received and processing started." });
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     console.error("Webhook processing error:", error);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });

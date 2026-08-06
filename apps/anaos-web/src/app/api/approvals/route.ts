@@ -16,6 +16,7 @@ export async function GET(req: Request) {
     });
 
     return NextResponse.json({ approvals });
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
@@ -47,6 +48,7 @@ export async function POST(req: Request) {
       let payload;
       try {
          payload = JSON.parse(pending.payload || "{}");
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch(e) {
          payload = {};
       }
@@ -83,6 +85,7 @@ export async function POST(req: Request) {
     }
 
     return NextResponse.json({ error: "Invalid action" }, { status: 400 });
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     console.error("Approval error:", error);
     return NextResponse.json({ error: error.message }, { status: 500 });

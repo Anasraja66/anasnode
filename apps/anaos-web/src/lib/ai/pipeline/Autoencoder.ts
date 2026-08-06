@@ -140,6 +140,7 @@ const W_dec2 = generateDeterministicWeights(INPUT_DIM,  HIDDEN_DIM, 4); // Decod
 function textToFeatureVector(text: string): number[] {
   const lower = text.toLowerCase();
   const words = lower.split(/\s+/);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const wordSet = new Set(words);
 
   // TF (term frequency) for each vocab word

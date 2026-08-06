@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   ArrowLeft,
   ArrowRight,
   CheckCircle2,

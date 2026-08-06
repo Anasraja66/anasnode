@@ -1,8 +1,10 @@
 import React from 'react';
 import BrandIcon from "@/components/ui/BrandIcon";
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { Zap, Mail, Bot, Clock } from "lucide-react";
 
 export function WorkflowSidebar() {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const onDragStart = (event: React.DragEvent, nodeType: string, appData: any) => {
     event.dataTransfer.setData('application/reactflow', JSON.stringify({ type: nodeType, data: appData }));
     event.dataTransfer.effectAllowed = 'move';

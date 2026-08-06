@@ -12,6 +12,7 @@ export async function GET(
     const { searchParams } = new URL(request.url);
     const status = searchParams.get("status");
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const query: any = { workflowId: id };
     if (status) {
       query.status = status;

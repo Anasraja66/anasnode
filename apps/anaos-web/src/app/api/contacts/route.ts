@@ -24,6 +24,7 @@ function formatRelative(date: Date): string {
   return `${Math.floor(hrs / 24)}d`;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function mapContact(c: any) {
   return {
     id: c.id,

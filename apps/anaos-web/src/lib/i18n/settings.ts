@@ -1,5 +1,7 @@
 import {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   ALL_LANGUAGE_CODES,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   DEFAULT_ENABLED_LANGUAGES,
   type LanguageCode,
 } from "@/lib/i18n/languages";

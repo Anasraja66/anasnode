@@ -42,6 +42,7 @@ export async function POST(request: Request) {
     });
 
     // 3. Create the User linked to the account
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const user = await prisma.user.create({
       data: {
         email,
@@ -53,6 +54,7 @@ export async function POST(request: Request) {
     });
 
     return NextResponse.json({ success: true, message: "Registration successful" }, { status: 201 });
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     console.error("Registration error:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });

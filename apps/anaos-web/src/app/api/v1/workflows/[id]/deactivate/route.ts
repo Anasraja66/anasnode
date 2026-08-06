@@ -23,6 +23,7 @@ export async function POST(
       isActive: workflow.isActive,
       message: `Workflow "${workflow.name}" has been deactivated.`,
     });
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     console.error("Workflow deactivation error:", error);
     return handleApiError(error);

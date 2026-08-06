@@ -23,6 +23,7 @@ interface CreateBroadcastBody {
   footerText?: string;
   optOutLine?: string;
   category?: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   audienceFilter?: Record<string, any>;
   dailyCap?: number;
   workspaceId?: string;
@@ -93,6 +94,7 @@ export async function POST(request: Request): Promise<NextResponse> {
         console.log(
           `[Broadcasts] Campaign ${campaign.id} complete: sent=${result.sent} failed=${result.failed}`
         );
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (err: any) {
         console.error(`[Broadcasts] Campaign ${campaign.id} send failed:`, err.message);
 

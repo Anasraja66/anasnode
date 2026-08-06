@@ -19,6 +19,7 @@ export class WorkflowExecutor {
   private startTime: number = 0;
   private totalExecuted: number = 0;
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async execute(workflowId: string, triggerData: any) {
     this.nodeVisits = {};
     this.startTime = Date.now();
@@ -53,10 +54,12 @@ export class WorkflowExecutor {
     }
 
     let nodes: WorkflowNode[] = [];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let edges: any[] = [];
     try {
       nodes = JSON.parse(workflow.nodes);
       edges = JSON.parse(workflow.edges || "[]");
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (e) {
       throw new Error("Invalid workflow nodes/edges JSON.");
     }
@@ -130,6 +133,7 @@ export class WorkflowExecutor {
 
         if (conversation) {
           // Parse custom fields (stored as JSON string)
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           let custom: Record<string, any> = {};
           try {
             custom = JSON.parse(conversation.customFields || "{}");
@@ -184,6 +188,7 @@ export class WorkflowExecutor {
         }
       });
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       console.error("Workflow Execution failed:", error);
       const duration = Date.now() - this.startTime;
@@ -225,6 +230,7 @@ export class WorkflowExecutor {
     }
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async executeNode(node: WorkflowNode, ctx: ExecutionContext, nodes: WorkflowNode[], edges: any[]) {
     // ── LOOP PROTECTION CHECKS ──
     this.totalExecuted++;
@@ -256,6 +262,7 @@ export class WorkflowExecutor {
       let handler = null;
       try {
         handler = globalRegistry.getHandler(node.type);
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (e) {
         // Fallback to monolithic switch if not found
       }
@@ -370,11 +377,13 @@ export class WorkflowExecutor {
           let extractedData = {};
           try {
             extractedData = JSON.parse(extractedText.replace(/```json/g, "").replace(/```/g, "").trim());
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
           } catch (e) {
             // parsing fallback regex
             schema.forEach((k: string) => {
               const regex = new RegExp(`"${k}"\\s*:\\s*"([^"]+)"`, "i");
               const m = extractedText.match(regex);
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
               if (m?.[1]) (extractedData as any)[k] = m[1];
             });
           }
@@ -387,7 +396,9 @@ export class WorkflowExecutor {
         }
 
         case NodeType.AI_MATCH_PROPERTIES: {
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
           const userMessage = resolveTemplate(node.config.userMessage || "{{message}}", ctx);
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
           const limit = Number(node.config.limit || 3);
           
           // Deprecated: Moving to Universal Module System
@@ -581,6 +592,7 @@ export class WorkflowExecutor {
               callId = vapiResult.callId;
               callStatus = vapiResult.status;
               console.log(`[ACTION] [SEND_VOICE_CALL] Dispatched Vapi call to ${to}, ID: ${callId}`);
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             } catch (err: any) {
               console.error(`[ACTION] [SEND_VOICE_CALL] Failed:`, err);
               callStatus = "failed: " + err.message;
@@ -688,10 +700,13 @@ export class WorkflowExecutor {
             apResult = await action.action.run({
               auth: auth,
               propsValue: node.config?.propsValue || {},
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
               store: {} as any, // Mock store
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
               connections: { get: async () => null } as any
             });
             status = "success";
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           } catch (err: any) {
             console.error(`Activepieces Action Failed: ${err.message}`);
             apResult = { error: err.message };
@@ -739,6 +754,7 @@ export class WorkflowExecutor {
           let parsedResponse = {};
           try {
             parsedResponse = JSON.parse(responseText);
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
           } catch (e) {
             parsedResponse = { raw: responseText };
           }
@@ -815,6 +831,7 @@ export class WorkflowExecutor {
       ctx.nodeData[node.name] = { output: result.output };
       ctx.nodeData[node.id] = { output: result.output };
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
       ctx.logs[logIndex].finishedAt = Date.now();
       ctx.logs[logIndex].status = "failed";
@@ -826,6 +843,7 @@ export class WorkflowExecutor {
     if (result.output && result.output._suspendExecution) {
       // The node (like WAIT or manual approval) halted the execution.
       // We pass it to the scheduler to resume at the NEXT nodes when the time comes.
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
       const { workflowScheduler } = require("./scheduler");
       const delayMinutes = Number(node.config.minutes || node.config.duration || 1);
       

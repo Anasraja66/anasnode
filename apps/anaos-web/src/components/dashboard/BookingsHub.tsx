@@ -2,11 +2,13 @@
 
 import { useState, useEffect } from "react";
 import { format, isToday, isTomorrow, isPast, isFuture } from "date-fns";
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { Calendar as CalendarIcon, Clock, Phone, MapPin, User, ArrowUpRight, Search, Loader2 } from "lucide-react";
 
 import { InnerPageHeader } from "@/components/ui/InnerPageHeader";
 
 export function BookingsHub() {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [bookings, setBookings] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 

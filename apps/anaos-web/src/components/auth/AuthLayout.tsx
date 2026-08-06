@@ -23,6 +23,7 @@ export function AuthLayout({
   footerText,
   footerLinkText,
   footerLinkHref,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   cardMaxWidth = "480px",
   cardRadius = "32px",
   cardBorderColor = "#C2C6D8",

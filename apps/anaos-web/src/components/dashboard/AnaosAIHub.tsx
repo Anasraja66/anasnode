@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+ 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { Loader2, MessageCircle, Send } from "lucide-react";
 
 type Workspace = { name: string; industry?: string };

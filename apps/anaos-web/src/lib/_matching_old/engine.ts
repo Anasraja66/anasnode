@@ -10,6 +10,7 @@ export async function matchPropertiesForLead(
   const { budgetMax, budgetMin, preferredArea, preferredType, bedrooms, intent } = preferences;
 
   // Build Prisma where clause dynamically based on available preferences
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const where: any = {
     accountId,
     status: "available", // Only match available properties

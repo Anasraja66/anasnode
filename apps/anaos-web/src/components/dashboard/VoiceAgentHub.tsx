@@ -56,6 +56,7 @@ export function VoiceAgentHub() {
       } else {
         alert("Failed to save configuration.");
       }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (e) {
       alert("Network error.");
     } finally {

@@ -1,5 +1,6 @@
 "use client";
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight, Check, Zap, Sparkles, Loader2, GitBranch } from "lucide-react";
 import { useState, useEffect } from "react";

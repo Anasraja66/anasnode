@@ -1,7 +1,11 @@
 "use client";
 
+ 
+ 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { Building2, Utensils, Stethoscope } from "lucide-react";
 import { Typewriter } from "./Typewriter";
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { WorkflowMeetAnaos } from "./WorkflowMeetAnaos";
 
 export function HowItWorks() {

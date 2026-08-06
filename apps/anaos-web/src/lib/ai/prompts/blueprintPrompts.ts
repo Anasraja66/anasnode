@@ -41,6 +41,7 @@ DO NOT return any conversational text. ONLY return valid JSON matching the exact
 }
 `;
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function buildGenerationPrompt(rawPrompt: string, nlpContext: any): string {
   return `
 USER'S RAW PROMPT:

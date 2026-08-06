@@ -42,6 +42,7 @@ export async function GET(request: Request) {
       return NextResponse.json({ success: false, error: data.message }, { status: response.status });
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const numbers = data.available_phone_numbers.map((n: any) => ({
       phoneNumber: n.phone_number,
       friendlyName: n.friendly_name,
@@ -49,6 +50,7 @@ export async function GET(request: Request) {
     }));
 
     return NextResponse.json({ success: true, numbers });
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     console.error("Twilio Number Search Error:", error);
     return NextResponse.json({ success: false, error: "Internal server error" }, { status: 500 });

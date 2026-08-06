@@ -159,7 +159,9 @@ export function MetaEmbeddedSignup({
   }, [onError, tryFinish]);
 
   const initSdk = useCallback(() => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     if (!config?.configured || !(window as any).FB) return;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (window as any).FB.init({
       appId: config.appId,
       autoLogAppEvents: true,
@@ -171,12 +173,15 @@ export function MetaEmbeddedSignup({
 
   useEffect(() => {
     if (config?.configured) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (window as any).fbAsyncInit = initSdk;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       if ((window as any).FB) initSdk();
     }
   }, [config, initSdk]);
 
   const launchSignup = () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     if (!config?.configured || !(window as any).FB || !sdkReady) {
       alert("Meta is not configured yet, or FB SDK is missing.");
       onError?.("Meta is not configured yet. Add app ID and config ID to .env.");
@@ -188,6 +193,7 @@ export function MetaEmbeddedSignup({
 
     try {
       console.log("Calling FB.login with configId:", config.configId);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (window as any).FB.login(
         (response: FbLoginResponse) => {
           console.log("FB Login Response:", response);
@@ -208,6 +214,7 @@ export function MetaEmbeddedSignup({
           extras: { setup: {} },
         }
       );
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       alert("FB login error: " + err.message);
       console.error(err);
@@ -243,6 +250,8 @@ export function MetaEmbeddedSignup({
         src="https://connect.facebook.net/en_US/sdk.js"
         strategy="afterInteractive"
         onLoad={() => {
+           
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           if ((window as any).fbAsyncInit) (window as any).fbAsyncInit();
         }}
       />

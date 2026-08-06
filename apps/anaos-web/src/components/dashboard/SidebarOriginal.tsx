@@ -1,3 +1,4 @@
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function Sidebar({ active, onChange, ws, onWsChange, workspaces, preset, user, open, setOpen }: {
   active: Tab;
   onChange: (t: Tab) => void;

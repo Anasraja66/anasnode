@@ -24,7 +24,7 @@ export async function GET() {
 
     // Check if Meta ecosystem is connected
     const metaCred = credByType.get("whatsapp");
-    let hasMeta = !!metaCred;
+    const hasMeta = !!metaCred;
     let instagramConnected = false;
     let facebookConnected = false;
     let instagramActionRequired = false;

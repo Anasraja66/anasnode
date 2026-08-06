@@ -19,6 +19,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
 
     if (!workflow) return NextResponse.json({ error: "Not found" }, { status: 404 });
     return NextResponse.json({ workflow });
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (error) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
@@ -31,6 +32,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     const { id } = await params;
     const body = await req.json();
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const data: any = {};
     if (body.name !== undefined) data.name = body.name;
     if (body.description !== undefined) data.description = body.description;
@@ -45,6 +47,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
 
     if (result.count === 0) return NextResponse.json({ error: "Not found" }, { status: 404 });
     return NextResponse.json({ success: true });
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (error) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
@@ -61,6 +64,7 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
     });
     
     return NextResponse.json({ success: true });
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (error) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }

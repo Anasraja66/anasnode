@@ -1,7 +1,14 @@
 "use client";
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { useState } from "react";
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { motion, AnimatePresence } from "framer-motion";
+ 
+ 
+ 
+ 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { Briefcase, Building, Coffee, ShoppingBag, Stethoscope, Scissors, HeartPulse, Hammer, ChevronRight, Wand2 } from "lucide-react";
 
 export interface Industry {

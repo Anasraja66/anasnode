@@ -17,6 +17,7 @@ export async function POST(req: Request) {
     console.log("[Anaos Matrix] Running NLP Pipeline...");
     
     // We pass "general" as industry for now since we want the LLM to deduce specific industry
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const nlpResult = AnaosNLP.processText(prompt, "general" as any);
     
     // Determine high-level business action required
@@ -32,7 +33,9 @@ export async function POST(req: Request) {
     // ─────────────────────────────────────────────────────────────────
     // STEP 2: Build the LLM Request Payload
     // ─────────────────────────────────────────────────────────────────
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const systemPrompt = PLATFORM_BLUEPRINT_SCHEMA;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const userPrompt = buildGenerationPrompt(prompt, nlpContext);
 
     console.log("[Anaos Matrix] Calling LLM (Grok) with structured data...");
@@ -87,6 +90,7 @@ export async function POST(req: Request) {
       blueprint: generatedBlueprint // The actual UI driving data
     });
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     console.error("[Anaos Matrix] Error generating platform:", error);
     return NextResponse.json({ error: error.message }, { status: 500 });

@@ -3,9 +3,11 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { PromptBox } from "./PromptBox";
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IndustrySelector, Industry } from "./IndustrySelector";
 import { ResultCard } from "./ResultCard";
 import { X, Search, Plus } from "lucide-react";
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { Typewriter } from "./Typewriter";
 import { WordRotator } from "./WordRotator";
 import { WorkflowPreviewModal } from "./WorkflowPreviewModal";
@@ -13,12 +15,17 @@ import { WorkflowCanvas } from "./WorkflowCanvas";
 import BrandIcon from "@/components/ui/BrandIcon";
 
 export function Hero() {
+   
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [workspace, setWorkspace] = useState<any>(null);
   const [lastPrompt, setLastPrompt] = useState("");
   const [showConnectors, setShowConnectors] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
+   
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [loadingIndustry, setLoadingIndustry] = useState<string | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [previewData, setPreviewData] = useState<any>(null);
 
   const businessConnectors = [

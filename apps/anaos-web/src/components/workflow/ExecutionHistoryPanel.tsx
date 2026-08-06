@@ -10,13 +10,11 @@ interface ExecutionHistoryPanelProps {
 }
 
 export default function ExecutionHistoryPanel({ workflowId, onClose }: ExecutionHistoryPanelProps) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [executions, setExecutions] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [selectedExec, setSelectedExec] = useState<any | null>(null);
-
-  useEffect(() => {
-    fetchExecutions();
-  }, [workflowId]);
 
   const fetchExecutions = async () => {
     setLoading(true);
@@ -32,6 +30,11 @@ export default function ExecutionHistoryPanel({ workflowId, onClose }: Execution
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchExecutions();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [workflowId]);
 
   const parseLogs = (logsString: string) => {
     try {
@@ -123,6 +126,7 @@ export default function ExecutionHistoryPanel({ workflowId, onClose }: Execution
               {/* Timeline */}
               <div className="relative pl-4 space-y-6 before:absolute before:inset-0 before:ml-[23px] before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-gray-200 before:to-transparent">
                 
+                {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                 {parseLogs(selectedExec.logs).map((log: any, idx: number) => {
                   const isError = log.status === "failed";
                   return (

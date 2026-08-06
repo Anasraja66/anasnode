@@ -11,6 +11,7 @@ const EXAMPLES = [
 ];
 
 interface Props {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   onGenerate?: (workspace: any, prompt: string) => void;
   compact?: boolean;
   staticPlaceholder?: string;
@@ -28,12 +29,16 @@ export function PromptBox({ onGenerate, compact, staticPlaceholder, onSubmitProm
   const [loading, setLoading] = useState(false);
   const [stage, setStage] = useState(0);
   const [mounted, setMounted] = useState(false);
+   
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [selectedAction, setSelectedAction] = useState("Build");
 
   const [isRecording, setIsRecording] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const startRecording = () => {
+     
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
     if (!SpeechRecognition) {
       alert("Voice recognition is not supported in your browser. Please use Chrome or Edge.");
@@ -45,13 +50,16 @@ export function PromptBox({ onGenerate, compact, staticPlaceholder, onSubmitProm
     recognition.lang = 'en-US';
 
     recognition.onstart = () => setIsRecording(true);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     recognition.onresult = (event: any) => {
       const transcript = Array.from(event.results)
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         .map((result: any) => result[0])
         .map((result) => result.transcript)
         .join('');
       setValue(prev => (prev + " " + transcript).trim());
     };
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     recognition.onerror = (event: any) => {
       console.error("Speech recognition error", event.error);
       setIsRecording(false);

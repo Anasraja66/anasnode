@@ -16,12 +16,15 @@ type Campaign = {
 
 import { InnerPageHeader } from "@/components/ui/InnerPageHeader";
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function BroadcastsHub({ workspaceName }: { workspaceName: string }) {
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   const [loading, setLoading] = useState(true);
   const [isCreating, setIsCreating] = useState(false);
   const [prompt, setPrompt] = useState("");
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [creating, setCreating] = useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [error, setError] = useState<string | null>(null);
 
   const load = useCallback(async () => {

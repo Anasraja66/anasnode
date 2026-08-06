@@ -111,6 +111,7 @@ Rules:
           nodes: parsed.nodes,
           edges: parsed.edges
         },
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         features: parsed.nodes.map((n: any) => ({
           category: n.type === 'trigger' ? 'Trigger' : (n.type === 'action' ? 'Automation' : 'Logic'),
           title: n.data?.title || "Workflow Step",

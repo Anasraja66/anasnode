@@ -1,8 +1,10 @@
 import { INodeHandler } from "../engine/registry";
 import { WorkflowNode, ExecutionContext, NodeResult } from "../types";
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { evaluateExpression } from "../engine/evaluator";
 
 export class WaitNode implements INodeHandler {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async execute(node: WorkflowNode, ctx: ExecutionContext): Promise<NodeResult> {
     const config = node.config || {};
     const duration = parseInt(config.duration || "1", 10);

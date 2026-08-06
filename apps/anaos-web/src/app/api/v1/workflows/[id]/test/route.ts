@@ -65,6 +65,7 @@ export async function POST(
       }
     });
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     console.error("Workflow dry-run test error:", error);
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });

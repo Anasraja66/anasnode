@@ -32,6 +32,7 @@ export async function GET(request: Request) {
     let accountId: string;
     try {
       accountId = await requireAccountId();
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (authErr) {
       console.error("[Meta OAuth Auth Error] Session not found");
       return NextResponse.redirect(new URL("/login?redirect=/dashboard/integrations", request.url));

@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Check, X, Clock, Edit2, Loader2, Send } from "lucide-react";
 
 export function ApprovalsPage() {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [actions, setActions] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [editingId, setEditingId] = useState<string | null>(null);

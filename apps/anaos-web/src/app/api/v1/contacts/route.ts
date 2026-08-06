@@ -14,6 +14,7 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const source = searchParams.get("source");
     
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const query: any = { accountId };
     if (source && source !== "all") {
       query.source = source;

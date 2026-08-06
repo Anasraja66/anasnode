@@ -9,7 +9,9 @@ import {
   RefreshCw,
   Search,
   Send,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   User,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Sparkles,
   Tag,
   Mail,
@@ -64,6 +66,7 @@ function avatarHue(seed: string) {
   return [215, 168, 142, 198, 120][n % 5];
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function sourceLabel(source: string, direction: string) {
   if (source === "ai") return "Anaos AI";
   if (source === "agent") return "Agent";

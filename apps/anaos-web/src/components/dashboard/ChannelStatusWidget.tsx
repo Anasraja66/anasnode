@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+ 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { MessageSquare, Calendar, CheckCircle2, AlertCircle, ArrowRight, RefreshCw } from "lucide-react";
 
 import BrandIcon from "../ui/BrandIcon";
@@ -30,6 +32,7 @@ export default function ChannelStatusWidget({ requiredIntegrations = [] }: { req
       const allowedChannels = ["whatsapp", "instagram", "facebook", "google_calendar"];
 
       const messagingAndCal = (data.integrations || []).filter(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (i: any) => {
           if (!allowedChannels.includes(i.id)) return false;
           // Map api ids to the requiredIntegrations ids
@@ -38,6 +41,7 @@ export default function ChannelStatusWidget({ requiredIntegrations = [] }: { req
         }
       );
       setChannels(messagingAndCal);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       setError(err.message || "Failed to fetch channel status");
     } finally {

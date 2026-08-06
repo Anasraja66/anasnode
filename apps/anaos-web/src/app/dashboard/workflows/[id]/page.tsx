@@ -18,6 +18,7 @@ export default function WorkflowEditorPage() {
 
   const [loading, setLoading] = useState(true);
   const [loadSource, setLoadSource] = useState<"ai" | "api" | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {

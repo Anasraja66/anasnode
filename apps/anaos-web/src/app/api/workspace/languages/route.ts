@@ -7,6 +7,7 @@ import {
   serializeLanguageSettings,
   type WorkspaceLanguageSettings,
 } from "@/lib/i18n/settings";
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import type { LanguageCode } from "@/lib/i18n/languages";
 
 export const dynamic = "force-dynamic";

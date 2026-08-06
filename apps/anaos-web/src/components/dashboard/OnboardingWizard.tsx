@@ -19,6 +19,7 @@ export function OnboardingWizard() {
   useEffect(() => {
     setMounted(true);
     // Still allow manual trigger or trigger with prompt
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const handleOpen = (e: any) => {
       setShow(true);
       setStep(1);
@@ -29,6 +30,7 @@ export function OnboardingWizard() {
         
         // Dynamic detection from backend nodes
         if (e.detail.pendingWorkflow && e.detail.pendingWorkflow.nodes) {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           e.detail.pendingWorkflow.nodes.forEach((node: any) => {
             if (node.data?.provider) {
               const p = node.data.provider.toLowerCase();
@@ -111,6 +113,7 @@ export function OnboardingWizard() {
 
                   <div className="grid grid-cols-1 gap-3 w-full max-w-md mx-auto">
                     {(() => {
+                      // eslint-disable-next-line @typescript-eslint/no-explicit-any
                       const knownChannels: Record<string, any> = {
                         "whatsapp": { name: "WhatsApp Business", icon: FaWhatsapp, color: "text-zinc-900", bg: "bg-zinc-100", border: "border-zinc-300" },
                         "instagram": { name: "Instagram DM", icon: FaInstagram, color: "text-zinc-900", bg: "bg-zinc-100", border: "border-zinc-300" },
@@ -286,6 +289,7 @@ export function OnboardingWizard() {
 }
 
 // ArrowLeft since it's not imported at top
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function ArrowLeft(props: any) {
   return (
     <svg

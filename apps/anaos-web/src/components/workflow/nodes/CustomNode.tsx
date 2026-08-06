@@ -1,7 +1,10 @@
 import { Handle, Position } from "@xyflow/react";
 import BrandIcon from "@/components/ui/BrandIcon";
+ 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { Zap, Bell, Mail, Database, Bot, Clock } from "lucide-react";
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 interface NodeData {
   label: string;
   type: "trigger" | "action" | "condition";
@@ -9,6 +12,7 @@ interface NodeData {
   description?: string;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function CustomNode({ data, type }: { data: any, type: string }) {
   // Map backend types if they don't match exactly
   const nodeType = data.type === 'trigger' || type === 'trigger' ? 'trigger' 

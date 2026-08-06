@@ -18,6 +18,7 @@ export default function TwilioOnboardingModal({ isOpen, onClose, accountId }: Tw
   // Buy State
   const [country, setCountry] = useState("US");
   const [areaCode, setAreaCode] = useState("");
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [numbers, setNumbers] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [buying, setBuying] = useState<string | null>(null);
@@ -47,6 +48,7 @@ export default function TwilioOnboardingModal({ isOpen, onClose, accountId }: Tw
       } else {
         setError(data.error || "Failed to search numbers");
       }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (err) {
       setError("Network error occurred");
     } finally {
@@ -71,6 +73,7 @@ export default function TwilioOnboardingModal({ isOpen, onClose, accountId }: Tw
       } else {
         setError(data.error || "Failed to purchase number");
       }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (err) {
       setError("Purchase failed due to network error");
     } finally {
@@ -96,6 +99,7 @@ export default function TwilioOnboardingModal({ isOpen, onClose, accountId }: Tw
       } else {
         setError(data.error || "Failed to connect number");
       }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (err) {
       setError("Connection failed due to network error");
     } finally {

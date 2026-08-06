@@ -1,4 +1,6 @@
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 const fs = require("fs");
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 const { execSync } = require("child_process");
 
 const envVars = fs.readFileSync(".env", "utf8")
@@ -16,6 +18,7 @@ for (const [key, value] of Object.entries(envVars)) {
   console.log(`Setting ${key}...`);
   try {
     execSync(`npx vercel env rm ${key} production preview development --yes`, { stdio: "ignore" });
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (e) {} // Ignore if doesn't exist
   try {
     for (const env of ["production", "preview", "development"]) {

@@ -47,6 +47,7 @@ export class EmailNodeHandler implements INodeHandler {
           output: { status: "success", data: { message: "Email sent successfully via SMTP" } }, 
           nextNodeIds: node.outputs || [] 
         };
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (err: any) {
         throw new Error(`SMTP Error: ${err.message}`);
       }

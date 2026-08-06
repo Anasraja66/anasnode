@@ -206,7 +206,9 @@ export function Sidebar({ open, setOpen }: { open: boolean; setOpen: (o: boolean
         </Link>
         <button
           onClick={async () => {
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
             try { await firebaseSignOut(auth); } catch (e) { }
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
             try { await fetch("/api/auth/session", { method: "DELETE" }); } catch (e) { }
             window.location.href = "/";
           }}

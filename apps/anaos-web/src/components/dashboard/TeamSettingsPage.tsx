@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { 
   Users, UserPlus, Shield, User, Trash2, Mail, Copy, 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Check, ArrowRight, X, Clock, AlertCircle, RefreshCw 
 } from "lucide-react";
 
@@ -52,6 +53,7 @@ export default function TeamSettingsPage() {
       
       setMembers(data.members || []);
       setInvites(data.invites || []);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       setError(err.message || "An unexpected error occurred");
     } finally {
@@ -76,6 +78,7 @@ export default function TeamSettingsPage() {
       if (!res.ok) throw new Error(data.error || "Failed to update role");
       
       setMembers(members.map(m => m.id === memberId ? { ...m, role: newRole } : m));
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       alert(err.message);
     }
@@ -94,6 +97,7 @@ export default function TeamSettingsPage() {
       if (!res.ok) throw new Error(data.error || "Failed to remove member");
       
       setMembers(members.filter(m => m.id !== memberId));
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       alert(err.message);
     }
@@ -119,6 +123,7 @@ export default function TeamSettingsPage() {
       setGeneratedUrl(data.inviteUrl);
       setInvites([data.invite, ...invites]);
       setInviteEmail("");
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       alert(err.message);
     } finally {

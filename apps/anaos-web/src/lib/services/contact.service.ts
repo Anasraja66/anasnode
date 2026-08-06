@@ -26,6 +26,7 @@ export class ContactService {
     });
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   static async update(id: string, accountId: string, data: any) {
     logger.info('Updating contact', { id, accountId, data });
     

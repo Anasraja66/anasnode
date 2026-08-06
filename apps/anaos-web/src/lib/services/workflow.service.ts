@@ -6,6 +6,7 @@ export class WorkflowService {
     static async list(accountId: string, workspaceId?: string) {
         logger.info("Listing workflows", { accountId, workspaceId });
 
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const query: any = { accountId };
         if (workspaceId) query.workspaceId = workspaceId;
 
@@ -41,6 +42,8 @@ export class WorkflowService {
         };
     }
 
+     
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     static async create(accountId: string, data: { name: string; description?: string; workspaceId: string; definition?: any; variables?: any }) {
         logger.info("Creating workflow", { accountId, data });
 
@@ -68,6 +71,8 @@ export class WorkflowService {
         };
     }
 
+     
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     static async update(accountId: string, id: string, data: { name?: string; description?: string; definition?: any; variables?: any; isActive?: boolean }) {
         logger.info("Updating workflow", { accountId, id, data });
 
@@ -101,7 +106,9 @@ export class WorkflowService {
 
         const workflow = await this.getById(accountId, id);
         const nodes = workflow.definition?.nodes || [];
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const hasTrigger = nodes.some((node: any) => node.type?.startsWith("trigger_"));
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const hasAction = nodes.some((node: any) => !node.type?.startsWith("trigger_"));
 
         if (!hasTrigger || !hasAction) {

@@ -2,6 +2,10 @@
 
 import { motion } from "framer-motion";
 import BrandIcon from "@/components/ui/BrandIcon";
+ 
+ 
+ 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { Users, Bot, Zap, Mail, Send, Hash, LayoutGrid, BookOpen, Calendar, Folder, Code } from "lucide-react";
 
 const APPS = [

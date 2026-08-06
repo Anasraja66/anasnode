@@ -30,6 +30,7 @@ export class SendWhatsAppNode implements INodeHandler {
         output: { success: true, messageId: responseId, sentText: resolvedMessage },
         nextNodeIds: node.outputs,
       };
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       throw new Error(`WhatsApp Send Failed: ${error.message}`);
     }

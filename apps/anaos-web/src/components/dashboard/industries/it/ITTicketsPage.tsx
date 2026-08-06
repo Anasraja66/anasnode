@@ -1,9 +1,12 @@
 "use client";
 
 import { useState } from "react";
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { Briefcase, Search, Plus } from "lucide-react";
 
 export function ITTicketsPage() {
+   
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [search, setSearch] = useState("");
 
   return (

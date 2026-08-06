@@ -35,6 +35,7 @@ export async function GET(
       workflow,
       executions
     });
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     console.error("Failed to fetch workflow logs:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });

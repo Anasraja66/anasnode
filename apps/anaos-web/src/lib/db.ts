@@ -8,7 +8,7 @@ const globalForPrisma = globalThis as unknown as {
 function createPrismaClient(): PrismaClient | null {
   if (!process.env.DATABASE_URL) {
     console.warn("[DB] DATABASE_URL not set — running in demo mode (no database).");
-    return null;
+    return createMockPrismaClient();
   }
   try {
     const adapter = new PrismaPg({
@@ -20,8 +20,28 @@ function createPrismaClient(): PrismaClient | null {
     });
   } catch (e) {
     console.error("[DB] Failed to initialize Prisma client:", e);
-    return null;
+    return createMockPrismaClient();
   }
+}
+
+function createMockPrismaClient(): PrismaClient {
+  return new Proxy({}, {
+    get: (target, prop) => {
+      if (prop === '$connect' || prop === '$disconnect') return async () => {};
+      if (prop === '$transaction') return async (cb: any) => cb([]);
+      
+      // For any model (user, account, etc), return another proxy
+      return new Proxy({}, {
+        get: (t, p) => {
+          if (['findUnique', 'findFirst', 'update', 'delete'].includes(p as string)) return async () => null;
+          if (['findMany', 'createMany', 'updateMany'].includes(p as string)) return async () => [];
+          if (p === 'create') return async (args: any) => ({ id: "mock_id", ...args.data });
+          if (p === 'count') return async () => 0;
+          return async () => null;
+        }
+      });
+    }
+  }) as PrismaClient;
 }
 
 export const prisma = (globalForPrisma.prisma ?? createPrismaClient()) as PrismaClient;

@@ -121,6 +121,7 @@ export async function POST(request: Request): Promise<NextResponse> {
     // 4. Run the first matching workflow
     let triggered = false;
     for (const workflow of activeWorkflows) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       let nodes: any[] = [];
       try {
         nodes = JSON.parse(workflow.nodes || "[]");
@@ -129,6 +130,7 @@ export async function POST(request: Request): Promise<NextResponse> {
       }
 
       const hasWhatsAppTrigger = nodes.some(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (node: any) => node.type === "trigger_whatsapp"
       );
 

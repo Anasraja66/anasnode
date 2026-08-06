@@ -160,6 +160,7 @@ export async function executeLLMCompletion({
     }
 
     throw new Error(`Unsupported provider: ${provider}`);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     console.error("LLM completion call failed:", error);
     // Return graceful mock fallback instead of hard-failing in dev

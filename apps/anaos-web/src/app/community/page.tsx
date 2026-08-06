@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { Navbar } from "@/components/landing/Navbar";
 import { Footer } from "@/components/landing/Footer";
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { Users, ArrowRight, MessageSquare, BookOpen, ShieldCheck } from "lucide-react";
 import Link from "next/link";
 

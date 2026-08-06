@@ -5,6 +5,7 @@ import { Loader2, Link } from "lucide-react";
 
 declare global {
   interface Window {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     FB: any;
     fbAsyncInit: () => void;
   }
@@ -58,6 +59,7 @@ export default function MetaLoginButton({ appId, configId, accountId, onSuccess 
 
     // Launch Facebook login with WhatsApp config
     window.FB.login(
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (response: any) => {
         if (response.authResponse) {
           const code = response.authResponse.code;
@@ -95,6 +97,7 @@ export default function MetaLoginButton({ appId, configId, accountId, onSuccess 
       } else {
         alert(`Failed to connect: ${data.error}`);
       }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (err) {
       alert("Network error during connection.");
     } finally {

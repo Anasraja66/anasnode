@@ -69,6 +69,7 @@ export async function handleInboundWhatsApp(
 
   // Find the first workflow that has a WhatsApp trigger node
   for (const workflow of activeWorkflows) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let nodes: any[] = [];
 
     try {
@@ -79,6 +80,7 @@ export async function handleInboundWhatsApp(
     }
 
     const hasWhatsAppTrigger = nodes.some(
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (node: any) => node.type === NodeType.TRIGGER_WHATSAPP
     );
 

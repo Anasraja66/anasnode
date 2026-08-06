@@ -34,6 +34,7 @@ export default function TodayBookingsWidget() {
       } else {
         setBookings([]);
       }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       setError(err.message || "Could not sync bookings");
     } finally {

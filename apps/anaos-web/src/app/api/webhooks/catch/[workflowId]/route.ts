@@ -25,6 +25,7 @@ export const dynamic = "force-dynamic";
 // ── Body Parsers ──────────────────────────────────────────────────────────────
 
 /** Parse request body into a plain object regardless of Content-Type */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function parseRequestBody(request: Request): Promise<Record<string, any>> {
   const contentType = request.headers.get("content-type") || "";
 
@@ -94,6 +95,7 @@ export async function POST(
       try {
         const executor = new WorkflowExecutor();
         await executor.execute(workflowId, triggerData);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (err: any) {
         console.error(
           `[Webhook:catch] Workflow ${workflowId} execution failed:`,
@@ -107,6 +109,7 @@ export async function POST(
       message: "Workflow triggered",
       workflowId,
     });
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     console.error("[Webhook:catch] Error:", error);
     return NextResponse.json(

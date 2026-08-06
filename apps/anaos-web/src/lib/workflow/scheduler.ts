@@ -57,6 +57,7 @@ class WorkflowSchedulerService {
 
     const def = JSON.parse(workflow.definition || "{}");
     const nodes: WorkflowNode[] = Array.isArray(def.nodes) ? def.nodes : [];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const edges: any[] = Array.isArray(def.edges) ? def.edges : [];
     const nextNode = nodes.find(n => n.id === nextNodeId);
 
@@ -101,6 +102,7 @@ class WorkflowSchedulerService {
         }
       });
       console.log(`[SCHEDULER] Execution ${executionId} resumed and completed successfully.`);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       console.error(`[SCHEDULER] Execution ${executionId} resumed but failed:`, error);
       const duration = Date.now() - startTime;

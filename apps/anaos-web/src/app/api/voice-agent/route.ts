@@ -3,12 +3,13 @@ import { prisma } from "@/lib/db";
 
 // GET /api/voice-agent
 // Fetches the voice agent configuration for the current account.
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export async function GET(req: Request) {
   try {
     // Note: In a real app, extract accountId from session/auth. Using mock account for now.
     const accountId = "mock-account-id"; // TODO: Replace with getServerSession(authOptions).user.accountId
 
-    let agent = await prisma.voiceAgent.findFirst({
+    const agent = await prisma.voiceAgent.findFirst({
       where: { accountId },
     });
 

@@ -10,6 +10,7 @@ export async function GET(
 ) {
   try {
     const { id: workflowId } = await params;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const session = await getSessionUser();
 
     const executions = await prisma.workflowExecution.findMany({

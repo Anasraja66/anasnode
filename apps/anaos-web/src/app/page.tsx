@@ -2,6 +2,7 @@ import { Navbar } from "@/components/landing/Navbar";
 import { Hero } from "@/components/landing/Hero";
 import { AppScroll } from "@/components/landing/AppScroll";
 import { HowItWorks } from "@/components/landing/HowItWorks";
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IntegrationsSection } from "@/components/landing/IntegrationsSection";
 import { Industries } from "@/components/landing/Industries";
 import { IndustrySection } from "@/components/landing/IndustrySection";

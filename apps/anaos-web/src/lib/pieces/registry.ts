@@ -23,6 +23,7 @@ import { sendgrid } from "@activepieces/piece-sendgrid";
 import { pipedrive } from "@activepieces/piece-pipedrive";
 
 // A global registry of all activepieces we support
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const pieceRegistry: Record<string, any> = {
   "piece-openai": openai,
   "piece-google-sheets": googleSheets,

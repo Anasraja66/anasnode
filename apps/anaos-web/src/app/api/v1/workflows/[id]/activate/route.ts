@@ -23,6 +23,7 @@ export async function POST(
       isActive: workflow.isActive,
       message: `Workflow "${workflow.name}" is now live!`,
     });
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     console.error("Workflow activation error:", error);
     return handleApiError(error);

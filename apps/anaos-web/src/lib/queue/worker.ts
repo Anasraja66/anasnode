@@ -12,6 +12,7 @@ export const workflowWorker = new Worker(
     await executor.execute(workflowId, triggerData);
   },
   { 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     connection: connection as any,
     concurrency: 5 // Process 5 workflows concurrently
   }

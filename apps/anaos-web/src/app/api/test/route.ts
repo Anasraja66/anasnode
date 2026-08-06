@@ -70,6 +70,7 @@ export async function GET() {
       logs: JSON.parse(execution?.logs || "[]"),
       output: JSON.parse(execution?.output || "{}")
     });
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }

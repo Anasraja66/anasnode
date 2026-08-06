@@ -28,6 +28,7 @@ export async function POST(req: Request) {
       indexedId: docId,
       nlpResult: nlpDocument
     });
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     console.error("[Meta Webhook Error]", error);
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });

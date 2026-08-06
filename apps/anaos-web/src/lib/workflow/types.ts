@@ -59,6 +59,7 @@ export interface WorkflowNode {
   type: NodeType;
   name: string;
   position: { x: number; y: number };
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   config: Record<string, any>;
   inputs: string[];
   outputs: string[];
@@ -78,9 +79,13 @@ export interface ExecutionContext {
   accountId: string;
   mode: string;
   contactId?: string | null;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   variables: Record<string, any>; // Runtime local variables
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   nodeData: Record<string, { output: any }>; // Stores full output of every executed node by Node ID or Name
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   anamind: Record<string, any>;   // Loaded persistent customer context
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   triggerData: Record<string, any>;
   logs: {
     nodeId: string;
@@ -89,11 +94,13 @@ export interface ExecutionContext {
     finishedAt?: number;
     status: 'success' | 'failed';
     error?: string;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     output?: any;
   }[];
 }
 
 export interface NodeResult {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   output: Record<string, any>;
   nextNodeIds: string[]; // Fallback list of nodes (legacy flat array)
   branchIndex?: string | number; // Specific edge sourceHandle to traverse (n8n style multi-branching)

@@ -16,7 +16,9 @@ export interface WorkflowTemplate {
   popular?: boolean;
   new?: boolean;
   definition: {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     nodes: any[];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     edges: any[];
   };
 }

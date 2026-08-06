@@ -23,6 +23,7 @@ export async function POST(request: Request) {
     // 1. Send via Twilio
     try {
       await sendTwilioMessage(conversation.contactPhone, body, conversation.channel === "whatsapp");
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (apiError: any) {
       console.error("Failed to send message via Twilio:", apiError);
       return NextResponse.json({ error: `Failed to send message: ${apiError.message}` }, { status: 502 });

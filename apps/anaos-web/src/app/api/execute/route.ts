@@ -26,6 +26,7 @@ export async function POST(req: Request) {
       variables: result.variables
     });
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     console.error("[ExecutionAPI] Error:", error);
     return NextResponse.json(

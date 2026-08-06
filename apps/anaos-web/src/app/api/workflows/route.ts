@@ -3,6 +3,7 @@ import { requireAccountId } from "@/lib/auth/session";
 import { prisma, isDbAvailable } from "@/lib/db";
 
 // GET /api/workflows
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export async function GET(req: NextRequest) {
   try {
     const accountId = await requireAccountId();
@@ -14,6 +15,7 @@ export async function GET(req: NextRequest) {
       orderBy: { createdAt: "desc" },
     });
     return NextResponse.json({ workflows });
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (error) {
     return NextResponse.json({ workflows: [] });
   }
@@ -55,6 +57,7 @@ export async function POST(req: NextRequest) {
     });
 
     return NextResponse.json({ workflow }, { status: 201 });
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (error) {
     return NextResponse.json({ error: "Failed to create workflow" }, { status: 500 });
   }

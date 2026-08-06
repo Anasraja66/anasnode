@@ -7,10 +7,17 @@
 import React, { useState, useRef, useCallback, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
+   
+   
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Zap, GitBranch, Bot, MessageSquare, Clock, Globe, Tag, Square,
   Play, ZoomIn, ZoomOut, Trash2, ChevronRight, X,
+   
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   ArrowLeft, Loader2, Sliders, ChevronDown, Plus,
   Phone, Mail, Database, Star, UserPlus, Send, Bell, Filter,
+   
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Search, Map, LayoutGrid, Sparkles, CheckCircle2, Repeat, History, Calendar, ShoppingCart, BookOpen
 } from "lucide-react";
 import { TEMPLATES } from "@/lib/workflow/template-data";
@@ -696,6 +703,7 @@ function NodeSelectorModal({ isOpen, onClose, onSelect, search, setSearch }: {
   search: string;
   setSearch: (v: string) => void;
 }) {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [openCats, setOpenCats] = useState<string[]>(["Triggers", "Messages", "AI & Logic", "Actions", "Integrations"]);
 
   // Close on esc key
@@ -710,6 +718,7 @@ function NodeSelectorModal({ isOpen, onClose, onSelect, search, setSearch }: {
 
   if (!isOpen) return null;
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const toggleCat = (cat: string) =>
     setOpenCats(prev => prev.includes(cat) ? prev.filter(c => c !== cat) : [...prev, cat]);
 
@@ -1056,6 +1065,10 @@ function PropertiesPanel({ node, onChange, onDelete, onClose }: {
 }
 
 // ─── Mini Map ─────────────────────────────────────────────────────────────────
+ 
+ 
+ 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function MiniMap({ nodes, pan, zoom, canvasW, canvasH }: {
   nodes: WorkflowNodeData[];
   pan: { x: number; y: number };
@@ -1135,6 +1148,7 @@ function canvasTypeToDb(type: string): string {
   }
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function dbNodeToCanvas(node: any): WorkflowNodeData {
   const typeKey = normaliseType(node.type);
   const config = { ...node.config };
@@ -1160,8 +1174,10 @@ function dbNodeToCanvas(node: any): WorkflowNodeData {
   };
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function canvasNodeToDb(node: WorkflowNodeData, allEdges: WorkflowEdge[]): any {
   const dbType = canvasTypeToDb(node.type);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const config: Record<string, any> = { ...node.config };
 
   if (config.system_prompt !== undefined) {
@@ -1188,6 +1204,7 @@ function canvasNodeToDb(node: WorkflowNodeData, allEdges: WorkflowEdge[]): any {
   };
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function canvasEdgeToDb(edge: WorkflowEdge): any {
   return {
     id: edge.id,
@@ -1203,6 +1220,7 @@ export default function WorkflowCanvas({ workflowId, initialData, workflowName =
   });
   const [edges, setEdges] = useState<WorkflowEdge[]>(() => {
     if (!initialData?.edges) return [];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return initialData.edges.map((e: any) => ({
       id: e.id || `edge-${e.from ?? e.source}-${e.to ?? e.target}`,
       from: e.from ?? e.source,
@@ -1388,7 +1406,9 @@ export default function WorkflowCanvas({ workflowId, initialData, workflowName =
       });
       const data = await res.json();
       if (data.nodes && data.edges) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         setNodes(data.nodes.map((n: any) => dbNodeToCanvas(n)));
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         setEdges(data.edges.map((e: any) => ({
           id: `edge-${e.source}-${e.target}`,
           from: e.source,
@@ -1400,6 +1420,7 @@ export default function WorkflowCanvas({ workflowId, initialData, workflowName =
       } else {
         alert("Failed to load AI workflow");
       }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (e) {
       alert("Error generating workflow");
     } finally {
@@ -1431,7 +1452,9 @@ export default function WorkflowCanvas({ workflowId, initialData, workflowName =
     setZoom(z => Math.max(0.3, Math.min(2.5, z - e.deltaY * 0.001)));
   }, []);
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const nodeCount = nodes.length;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const edgeCount = edges.length;
 
   return (

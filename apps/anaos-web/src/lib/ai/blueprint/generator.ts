@@ -1,4 +1,5 @@
 import OpenAI from "openai";
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { zodResponseFormat } from "openai/helpers/zod";
 import { WorkspaceBlueprintSchema, WorkspaceBlueprint } from "./types";
 

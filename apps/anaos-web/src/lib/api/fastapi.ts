@@ -29,6 +29,7 @@ export class FastApiClient {
       }
 
       return response.json();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
       if (e.name === 'TimeoutError') {
         throw new Error("FastAPI server timeout (5s)");
@@ -44,6 +45,7 @@ export class FastApiClient {
   }
 
   // AI & Workflow Execution (Python is better for this)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   static async executeWorkflow(workflowId: string, input: any) {
     return this.request(`/v1/workflows/${workflowId}/execute`, {
       method: "POST",

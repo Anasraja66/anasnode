@@ -46,6 +46,7 @@ for (const row of rows) {
   let parsed = {};
   try {
     parsed = JSON.parse(decrypt(full.credentials));
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (e) {
     console.log("row", row.id, "decrypt failed");
     continue;

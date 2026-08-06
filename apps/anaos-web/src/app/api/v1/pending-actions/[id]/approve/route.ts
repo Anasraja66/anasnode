@@ -30,6 +30,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     }
 
     return NextResponse.json({ success: false, error: "Failed to execute action" }, { status: 500 });
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     console.error("POST /api/v1/pending-actions/[id]/approve error:", error);
     return handleApiError(error);

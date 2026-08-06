@@ -42,6 +42,7 @@ export async function POST(req: Request) {
               break;
             }
           }
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         } catch(e) {}
         if (targetExecution) break;
       }
@@ -59,6 +60,7 @@ export async function POST(req: Request) {
     }
 
     return NextResponse.json({ received: true });
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     console.error("Retell Webhook Error:", error);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });

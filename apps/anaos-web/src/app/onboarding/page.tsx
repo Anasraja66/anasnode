@@ -31,6 +31,7 @@ export default function OnboardingPage() {
   const [fullName, setFullName] = useState("");
   const [companyName, setCompanyName] = useState("");
   const [industryId, setIndustryId] = useState<IndustryId | "">("");
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [pendingWorkflow, setPendingWorkflow] = useState<any>(null);
 
   useEffect(() => {
@@ -39,6 +40,7 @@ export default function OnboardingPage() {
       if (stored) {
         setPendingWorkflow(JSON.parse(stored));
       }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (e) {}
   }, []);
 
@@ -337,6 +339,7 @@ export default function OnboardingPage() {
                              </p>
                              <div className="space-y-2.5">
                                {pendingWorkflow ? (
+                                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
                                  pendingWorkflow.steps?.map((step: any, idx: number) => (
                                    <div key={idx} className="flex items-center gap-3 bg-zinc-900/80 border border-zinc-800/80 p-3 rounded-xl hover:border-[#0A6BFF]/40 transition-colors group">
                                      <div className="w-8 h-8 rounded-lg bg-black/60 border border-zinc-800 flex items-center justify-center shrink-0 group-hover:border-[#0A6BFF]/50 transition-colors">

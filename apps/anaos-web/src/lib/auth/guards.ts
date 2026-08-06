@@ -1,3 +1,4 @@
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { NextResponse } from "next/server";
 import { getSessionUser } from "@/lib/auth/session";
 import { AuthError, ForbiddenError } from "@/lib/errors";

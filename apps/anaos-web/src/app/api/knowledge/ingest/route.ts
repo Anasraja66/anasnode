@@ -20,7 +20,7 @@ export async function POST(request: Request) {
     } = body as { workspaceId?: string; url?: string; text?: string; title?: string };
 
     let content = (text || "").trim();
-    let sourceUrl = url?.trim() || undefined;
+    const sourceUrl = url?.trim() || undefined;
 
     if (!content && sourceUrl) {
       content = await fetchGoogleDocText(sourceUrl);

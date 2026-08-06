@@ -24,6 +24,7 @@ interface ToolCall {
   id: string;
   function: {
     name: string;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     arguments: Record<string, any>;
   };
 }
@@ -55,6 +56,7 @@ interface ToolResult {
  * The AI calls this during a voice call when the customer wants to book.
  */
 async function handleBookAppointment(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   args: Record<string, any>,
   customerPhone: string
 ): Promise<string> {
@@ -113,8 +115,10 @@ async function handleBookAppointment(
  * In production this would query a real calendar.
  */
 async function handleCheckAvailability(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   args: Record<string, any>
 ): Promise<string> {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const date = args.date || args.preferredDate;
 
   // For now we return a simple message — connect to Google Calendar for real slots

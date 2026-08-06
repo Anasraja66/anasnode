@@ -1,3 +1,4 @@
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
@@ -50,6 +51,7 @@ async function test() {
         if (wf.definition) {
           const def = JSON.parse(wf.definition);
           nodes = Array.isArray(def?.nodes) ? def.nodes : [];
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
           edges = Array.isArray(def?.edges) ? def.edges : [];
         } else {
           const parsedNodes = JSON.parse(wf.nodes || "[]");

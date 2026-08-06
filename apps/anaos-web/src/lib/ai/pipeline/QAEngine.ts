@@ -23,6 +23,7 @@
 import { AnaosNLP, NLPResult } from "./AnaosNLP";
 import { esClient, SearchResult } from "../../db/searchEngine";
 import { IndustryType } from "../resources/lexicons";
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { Annotation } from "../resources/schemas";
 
 // ── Types ─────────────────────────────────────────────────────────────────────

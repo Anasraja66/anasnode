@@ -146,6 +146,7 @@ export function generateWorkspaceFromPrompt(prompt: string): GeneratedWorkspace 
   }
 
   // ── Stage 1: Traditional NLP ──────────────────────────────────────────────
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const nlpResult = AnaosNLP.processText(prompt, "general" as any);
   const action = DecisionEngine.determineAction(nlpResult);
 
@@ -317,6 +318,7 @@ export async function generateWorkspaceWithAI(
 
   // Run neural classification first to give Grok context
   const neuralResult = NeuralClassifier.classify(prompt);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const nlpResult = AnaosNLP.processText(prompt, "general" as any);
   
   // Find specific modular industry playbook

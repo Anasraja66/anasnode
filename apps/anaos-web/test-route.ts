@@ -1,4 +1,5 @@
 import { GET } from "./src/app/api/dashboard/data/route.ts";
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { PrismaClient } from "@prisma/client";
 
 // Mock auth

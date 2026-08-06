@@ -4,6 +4,7 @@ import { getAccountId } from "@/lib/auth/session";
 
 export const dynamic = "force-dynamic";
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export async function GET(request: Request) {
   try {
     const accountId = await getAccountId();

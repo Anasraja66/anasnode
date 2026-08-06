@@ -32,6 +32,7 @@ export async function GET(req: NextRequest) {
     });
 
     return NextResponse.json({ properties });
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (e: unknown) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
@@ -91,6 +92,7 @@ export async function POST(req: NextRequest) {
     });
 
     return NextResponse.json({ property }, { status: 201 });
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (e: unknown) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }

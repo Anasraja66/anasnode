@@ -1,12 +1,20 @@
 "use client";
 
+ 
+ 
+ 
+ 
+ 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { ArrowUpRight, Database, Mail, Calendar, Star, MessageSquare, ShoppingCart, ShoppingBag, Shield, Sparkles, CheckCircle, FileText, Bell } from "lucide-react";
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { Section, SectionLabel, FadeIn } from "./Section";
 import { Typewriter } from "./Typewriter";
 
 type Template = {
   name: string;
   tag: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   icon: any;
   status: string;
   title: string;

@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 // Very basic keyword-based matching for now. In a real scenario, this would call OpenAI/Gemini.
 export async function POST(req: Request) {
   try {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { prompt, integrations } = await req.json();
 
     if (!prompt) {
@@ -117,6 +118,7 @@ export async function POST(req: Request) {
       success: true,
       workflow: newWorkflow
     });
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });
   }
